@@ -9,11 +9,11 @@ namespace VFHCatalogMVC.Domain.Model
         public int Id { get; set; }       
         public string Description { get; set; }
         public string PlantPassportNumber { get; set; }
-        public int ColorId { get; set; }
+        public int? ColorId { get; set; }
         public virtual Color Color { get; set; }
-        public int FruitSizeId { get; set; }
+        public int? FruitSizeId { get; set; }
         public virtual FruitSize FruitSize { get; set; }
-        public int FruitTypeId { get; set; }
+        public int? FruitTypeId { get; set; }
         public virtual FruitType FruitType { get; set; }
         public int PlantRef { get; set; }
         public Plant Plant { get; set; }
