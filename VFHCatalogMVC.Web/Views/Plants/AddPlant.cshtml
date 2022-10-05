@@ -1,0 +1,220 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Plant.NewPlantVm
+
+@{
+    ViewData["Title"] = "AddPlant";
+}
+
+<h1>AddPlant</h1>
+
+<h4>NewPlantVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddPlant" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*<div class="form-group row">
+                <input type="hidden" asp-for="Id" class="form-control" />                
+            </div>*@
+            <div class="form-group">
+                <label asp-for="TypeId" class="control-label">Typ</label>
+               <select id="ddlType" asp-for="TypeId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GroupId" class="control-label">Grupa</label>           
+               <select id="ddlGroup" asp-for="GroupId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>
+                <span asp-validation-for="GroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SectionId" class="control-label">Sekcja</label>              
+                <select id="ddlSection" asp-for="SectionId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>
+                <span asp-validation-for="SectionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label">Nazwa</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div  class="form-group">
+                <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple="multiple",id="ddlGrowthTypes"})
+            </div>
+            <div  class="form-group">
+                <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple="multiple",id="ddlDestinations"})
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.ColorId, new SelectList(ViewBag.ColorsList,"Value","Text","-Select-"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlColors" })
+                <span asp-validation-for="PlantDetails.ColorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", multiple = "multiple", id="ddlGrowingSeazons" })
+                <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+                <label asp-for="PlantDetails.FruitTypeId" class="control-label">Typ owocu</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlFruitType" })
+               @* <select id="ddlColor" asp-for="ColorId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>*@
+                <span asp-validation-for="PlantDetails.FruitTypeId" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+                <label asp-for="PlantDetails.FruitSizeId" class="control-label">Wielkość owocu</label>
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlFruitSize" })
+                <span asp-validation-for="PlantDetails.FruitSizeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.Description" class="control-label">Opis</label>
+                <input asp-for="PlantDetails.Description" class="form-control" />
+                <span asp-validation-for="PlantDetails.Description" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="PlantDetails.PlantPassportNumber" class="control-label">Numer paszportu rośliny</label>
+                <input asp-for="PlantDetails.PlantPassportNumber" class="form-control" />
+                <span asp-validation-for="PlantDetails.PlantPassportNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="control-label">Zdjęcie</label>
+                <input asp-for="Photo" class="form-control" type="file" accept="image/*"/>
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input type="hidden" class="form-control" asp-for="isActive" value="true" /> @*@Html.DisplayNameFor(model => model.isActive)*@
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <a asp-controller="Plants" asp-action="GetGrowthTypes" asp-route-TypeId="typeId" asp-route-GroupId="groupId"></a>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <link href="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <script src="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/js/bootstrap-multiselect.js" type="text/javascript"></script>*@
+
+@section Scripts
+{
+    <script type="text/javascript">
+    $(function () {
+        $("#ddlType").change(function () {
+            $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
+                var row = "";
+                $("#ddlGroup").empty();
+                $.each(d, function (i, v) {
+                    row += "<option value=" + v.value + ">"+v.text+"</option>";
+                });
+                $("#ddlGroup").html(row);
+            })
+        })
+    })
+      $(function () {
+        $("#ddlType").change(function () {
+                $("#ddlGroup").empty();
+                $("#ddlSection").empty();
+                $("#ddlColors").val(0);
+                $("#ddlGrowingSeazons").val(0);
+                $("#ddlFruitType").empty();
+                $("#ddlFruitSize").empty();
+                $("#ddlGrowthTypes").empty();
+                $("#ddlDestinations").empty();
+        })
+    })
+        $(function() {
+            $("#ddlGroup").change(function() {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                $.post('@Url.Action("GetPlantSectionsList")', { groupId: gId, typeId: tId }, function(d) {
+                    var row = "";
+                    $("#ddlSection").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlSection").html(row);
+                })
+            })
+        })
+
+        $(function() {
+            $("#ddlSection").change(function() {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                var sId = $('#ddlSection').val();
+                $.post("@Url.Action("GetGrowthTypes")", { typeId: tId, groupId: gId, sectionId:sId }, function(d) {
+                    var row = "";
+                    $("#ddlGrowthTypes").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlGrowthTypes").html(row);
+                })
+            })
+        })
+        $(function() {
+            $("#ddlGroup").change(function() {
+                $.post("@Url.Action("GetDestinations")", function(d) {
+                    var row = "";
+                    $("#ddlDestinations").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlDestinations").html(row);
+                })
+            })
+        })
+           $(function() {
+            $("#ddlSection").change(function() {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                var sId = $('#ddlSection').val();
+                $.post("@Url.Action("GetFruitTypes")", { typeId: tId, groupId: gId, sectionId:sId }, function(d) {
+                    var row = "";
+                    $("#ddlFruitType").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlFruitType").html(row);
+                })
+            })
+        })
+        $(function() {
+            $("#ddlSection").change(function() {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                var sId = $('#ddlSection').val();
+                $.post("@Url.Action("GetFruitSizes")", { typeId: tId, groupId: gId, sectionId:sId }, function(d) {
+                    var row = "";
+                    $("#ddlFruitSize").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlFruitSize").html(row);
+                })
+            })
+        })
+        $(function () {
+            $('.ddlGrowthTypes').multiselect({
+                includeSelectAllOption: true
+            });
+        });
+        $(function () {
+            $('.ddlDestinations').multiselect({
+                includeSelectAllOption: true
+            });
+        });
+        $(function () {
+            $('.ddlGrowingSeazons').multiselect({
+                includeSelectAllOption: true
+            });
+        });
+    //})
+</script>
+}
+

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20220824153807_InitialDatabase.cs" />
+    <Compile Remove="Migrations\20220824153807_InitialDatabase.Designer.cs" />
+    <Compile Remove="Migrations\20220824160434_InitialDatabase.cs" />
+    <Compile Remove="Migrations\20220824160434_InitialDatabase.Designer.cs" />
+    <Compile Remove="Migrations\20220929094718_FirstInitial.cs" />
+    <Compile Remove="Migrations\20220929094718_FirstInitial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.28" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.28">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VFHCatalogMVC.Domain\VFHCatalogMVC.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
