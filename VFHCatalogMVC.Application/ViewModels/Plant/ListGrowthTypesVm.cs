@@ -9,6 +9,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
     {
         public List<SelectListItem> GrowthTypesList { get; set; }
         public int[] GrowthTypesIds { get; set; }
+        public List<string> GrowthTypesNames { get; set; }
     }
 }
 

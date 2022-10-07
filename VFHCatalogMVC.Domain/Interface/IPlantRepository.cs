@@ -15,6 +15,13 @@ namespace VFHCatalogMVC.Domain.Interface
         void AddPlantGrowthTypes(int[] growthTypesIds, int plantDetailId);
         void AddPlantDestinations(int[] plantDestinationsIds, int plantDestId);
         void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDestId);
+        PlantDetail GetPlantDetails(int id);
+        string GetPlantColorName(int id);
+        string GetPlantFruitSizeName(int id);
+        string GetPlantFriutTypeName(int id);
+        IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id);
+        IQueryable<PlantDestination> GetPlantDestinations(int id);
+        IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id);
         IQueryable<Plant> GetAllActivePlants(); //zwraca konkretny model bazodanowy (z konkretnej tabeli w bazie)
         //IQueryable<Plant> GetPlantByTypeId(int typeId);
         //IQueryable<Plant> GetPlantByGroupId(int groupId);

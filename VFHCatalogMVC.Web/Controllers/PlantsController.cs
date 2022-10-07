@@ -84,6 +84,14 @@ namespace VFHCatalogMVC.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var plantDetails = _plantService.GetPlantDetails(id);
+
+            return View(plantDetails);
+        }
+
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
         {

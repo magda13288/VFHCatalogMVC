@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -70,6 +71,12 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public PlantDetail GetPlantDetails(int id)
+        {
+            var plantDetails = _context.PlantDetails.FirstOrDefault(p=>p.PlantRef == id);
+            return plantDetails;
+        }
+
         //IQueryable tworzy jedynie zapytanie do bazy danych ale nie pobiera tych danych z bazy. W serwisie bedzie metoda do pobierania danych/ wyorzystuje się to ponieważ mozna dane jeszcze przefiltrowac, co robi sie pozniej
         //public IQueryable<Plant> GetPlantByTypeId(int typeId)
         //{
@@ -83,6 +90,41 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             var plant = _context.Plants.FirstOrDefault(p => p.Id == plantId);
             return plant;
+        }
+
+        public string GetPlantColorName(int id)
+        {
+            var color = _context.Colors.FirstOrDefault(p => p.Id == id);
+            return color.Name;
+        }
+
+        public string GetPlantFruitSizeName(int id)
+        {
+           var fruitSize = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
+            return fruitSize.Name;
+        }
+
+        public string GetPlantFriutTypeName(int id)
+        {
+           var fruitType = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
+            return fruitType.Name;  
+        }
+
+        public IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id)
+        {
+            var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
+            return growthTypes;
+        }
+        public IQueryable<PlantDestination> GetPlantDestinations(int id)
+        {
+            var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
+            return destinations;
+        }
+
+        public IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id)
+        {
+            var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
+            return growingSeazons;
         }
 
         public IQueryable<PlantType> GetAllTypes()

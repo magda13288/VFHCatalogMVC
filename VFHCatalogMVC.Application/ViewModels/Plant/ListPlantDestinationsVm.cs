@@ -9,5 +9,6 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
     {
         public List<SelectListItem> DestinationsList { get; set; }
         public int[] DestinationsIds { get; set; }
+        public List<string> DestinationsNames { get; set; }
     }
 }

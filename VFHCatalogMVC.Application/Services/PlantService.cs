@@ -142,11 +142,181 @@ namespace VFHCatalogMVC.Application.Services
 
         public PlantDetailsVm GetPlantDetails(int id)
         {
-            var plantDetails = _plantRepo.GetPlantById(id);
+            var plantDetails = _plantRepo.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
+            plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.Id);
+            plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.Id);
+            plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.Id);
+
+            //GrowthTypesNames
+       
+            var propertyNames = new List<string>();
+            propertyNames = GetGrowthTypesNames(plantDetails.Id);
+
+            foreach (var item in propertyNames)
+            {
+                plantDetailsVm.ListGrowthTypes.GrowthTypesNames.Add(item);
+            }
+
+            propertyNames.Clear();
+
+            //DestiantionsNames
+
+            propertyNames = GetDestinationsNames(plantDetails.Id);
+
+            foreach (var item in propertyNames)
+            {
+                plantDetailsVm.ListPlantDestinations.DestinationsNames.Add(item);
+            }
+
+            propertyNames.Clear();
+
+            //GrowingSeazonsNames
+
+            propertyNames = GetGrowthTypesNames(plantDetails.Id);
+
+            foreach (var item in propertyNames)
+            {
+                plantDetailsVm.ListGrowingSeazons.GrwoingSeazonsNames.Add(item);
+            }
+
+            propertyNames.Clear();
 
             return plantDetailsVm;
         }
+
+        public List<string> GetGrowthTypesNames(int id)
+        {
+            var plantGrowthTypes = new List<PlantGrowthTypeVm>();
+            plantGrowthTypes = _plantRepo.GetPlantGrowthTypes(id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+            var growthTypes = _plantRepo.GetGrowthTypes().ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+
+            var propertyIds = new List<int>();
+
+            foreach (var items in plantGrowthTypes)
+            {
+                propertyIds.Add(items.GrowthTypeId);
+            }
+
+            var propertyNames = new List<string>();
+
+            var growthTypesForPlant = new List<GrowthTypeVm>();
+
+            foreach (var items in propertyIds)
+            {
+                foreach (var item in growthTypes)
+                {
+                    if (item.Id == items)
+                    {
+                        growthTypesForPlant.Add(growthTypes.FirstOrDefault(p => p.Id == items));
+                    }
+                }
+                foreach (var i in growthTypesForPlant)
+                {
+                    propertyNames.Add(i.Name);
+                }
+            }
+
+            return propertyNames;
+        }
+
+        public List<string> GetDestinationsNames(int id)
+        {
+            var plantDestinations = new List<PlantDestinationsVm>();
+            plantDestinations = _plantRepo.GetPlantDestinations(id).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            var destinations = _plantRepo.GetDestinations().ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+
+            var destinationsForPlants = new List<DestinationsVm>();
+            var propertyIds = new List<int>();
+            var propertyNames = new List<string>();
+
+            foreach (var items in plantDestinations)
+            {
+                propertyIds.Add(items.DestinationId);
+            }
+
+            foreach (var items in propertyIds)
+            {
+                foreach (var item in destinations)
+                {
+                    if (item.Id == items)
+                    {
+                        destinationsForPlants.Add(destinations.FirstOrDefault(p => p.Id == items));
+                    }
+                }
+                foreach (var i in destinationsForPlants)
+                {
+                    propertyNames.Add(i.Name);
+                }
+            }
+
+            return propertyNames;
+        }
+
+        public List<string> GetGrowingSeaznosNames(int id)
+        {
+            var plantGrowingSeazons = new List<PlantGrowingSeazonsVm>();
+            plantGrowingSeazons = _plantRepo.GetPlantGrowingSeazons(id).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+            var growingSeazons = _plantRepo.GetGrowingSeazons().ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
+
+            var growingSeaznosForPlant = new List<GrowingSeazonVm>();
+            var propertyIds = new List<int>();
+            var propertyNames = new List<string>();
+
+            foreach (var items in plantGrowingSeazons)
+            {
+                propertyIds.Add(items.GrowingSeazonId);
+            }
+
+            foreach (var items in propertyIds)
+            {
+                foreach (var item in growingSeazons)
+                {
+                    if (item.Id == items)
+                    {
+                        growingSeaznosForPlant.Add(growingSeazons.FirstOrDefault(p => p.Id == items));
+                    }
+                }
+                foreach (var i in growingSeaznosForPlant)
+                {
+                    propertyNames.Add(i.Name);
+                }
+            }
+            return propertyNames;
+        }
+
+
+        //public List<string> GetPropertyNames(List<PlantGrowthTypeVm> growthTypesList, List<PlantGrowingSeazonsVm> growingSeazonsList, List<PlantDestinationsVm> destinationsList)
+        //{
+        //    var plantGrowthTypes = new List<PlantGrowthTypeVm>();
+        //    plantGrowthTypes = _plantRepo.GetPlantGrowthTypes(plantDetailsVm.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+        //    var growthTypes = _plantRepo.GetGrowthTypes().ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+        //    var propertyIdsIds = new List<int>();
+
+        //    foreach (var items in plantGrowthTypes)
+        //    {
+        //        propertyIdsIds.Add(items.GrowthTypeId);
+        //    }
+
+        //    var growthTypesNames = new List<string>();
+        //    var growthTypesForPlant = new List<GrowthTypeVm>();
+
+        //    foreach (var items in propertyIdsIds)
+        //    {
+        //        foreach (var item in growthTypes)
+        //        {
+        //            if (item.Id == items)
+        //            {
+        //                growthTypesForPlant.Add(growthTypes.FirstOrDefault(p => p.Id == items));
+        //            }
+        //        }
+        //        foreach (var i in growthTypesForPlant)
+        //        {
+        //            growthTypesNames.Add(i.Name);
+        //        }
+        //    }
+        //}
+
 
         public List<PlantGroupsVm> GetPlantGroups(int? typeId)
         {

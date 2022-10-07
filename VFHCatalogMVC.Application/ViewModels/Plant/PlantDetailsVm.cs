@@ -15,9 +15,14 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int PlantRef { get; set; }
         [Required]
         public int? ColorId { get; set; }
+        [NotMapped]
+        public string ColorName { get; set; }
         public int? FruitSizeId { get; set; }
+        [NotMapped]
+        public string FruitSizeName { get; set; }
         public int? FruitTypeId { get; set; }
-        // public int ColorId { get; set; }
+        [NotMapped]
+        public string FruitTypeName { get; set; }
         public string Description { get; set; }
        // public string Opinion { get; set; }
         public string PlantPassportNumber { get; set; }
@@ -28,13 +33,14 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public ListPlantDestinationsVm ListPlantDestinations { get; set; }
         [NotMapped]
         public ListGrowingSeazonsVm ListGrowingSeazons { get; set; }
+
         //[NotMapped]
         //public PlantGrowthTypeVm PlantGrowthType { get; set; }
         
-
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap();
+            //profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantDetail, PlantDetailsVm>();
         }
         public class PlantDetailsValidation : AbstractValidator<PlantDetailsVm>
         {
