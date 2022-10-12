@@ -23,7 +23,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var model = _plantService.GetAllActivePlantsForList(2, 1, "", null, null, null); //2 elementy na stronie, pierwsza strona, zadnego wyszukiwania
+            var model = _plantService.GetAllActivePlantsForList(4, 1, "", null, null, null); //2 elementy na stronie, pierwsza strona, zadnego wyszukiwania
             var types = _plantService.GetPlantTypes();
             ViewBag.TypesList = FillPropertyList(types,null,null);
 

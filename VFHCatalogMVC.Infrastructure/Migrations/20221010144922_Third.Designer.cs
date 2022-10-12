@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VFHCatalogMVC.Infrastructure;
 
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20221010144922_Third")]
+    partial class Third
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -624,26 +626,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("PlantDetails");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantDetailsImages", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ImageURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlantDetailId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlantDetailId");
-
-                    b.ToTable("PlantDetailsImages");
-                });
-
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantGroup", b =>
                 {
                     b.Property<int>("Id")
@@ -1076,15 +1058,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
                         .WithOne("PlantDetail")
                         .HasForeignKey("VFHCatalogMVC.Domain.Model.PlantDetail", "PlantRef")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantDetailsImages", b =>
-                {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.PlantDetail", "PlantDetail")
-                        .WithMany("PlantDetailsImages")
-                        .HasForeignKey("PlantDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

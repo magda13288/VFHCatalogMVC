@@ -19,5 +19,6 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<ContactDetail> ContactDetails { get; set; }
         public virtual ICollection<Address> Adresses { get; set; }
         public ICollection<CustomerPlantsForSale> CustomerPlantsForSale { get; set; }
+        public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }
     }
 }

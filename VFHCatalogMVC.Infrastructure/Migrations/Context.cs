@@ -33,12 +33,14 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<FruitType> FruitTypes { get; set; }
         public DbSet<GrowingSeazon> GrowingSeazons { get; set; }
         public DbSet<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
+        public DbSet<PlantDetailsImages> PlantDetailsImages { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
 
             builder.Entity<Plant>(entity =>
             { 
@@ -236,9 +238,15 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(e => e.PlantGrowingSeazons)
                 .HasForeignKey(e => e.GrowingSeazonId);
             });
-               
 
-            
+            builder.Entity<PlantOpinion>()
+            .Property(p => p.PrivateUserId)
+            .IsRequired(false);
+
+            builder.Entity<PlantOpinion>()
+                .Property(p => p.CustomerId)
+                .IsRequired(false);
+
         }
     }
 }

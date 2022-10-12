@@ -75,8 +75,13 @@
                 <span asp-validation-for="PlantDetails.PlantPassportNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Photo" class="control-label">Zdjęcie</label>
+                <label asp-for="Photo" class="control-label">Zdjęcie do wyszukiwarki</label>
                 <input asp-for="Photo" class="form-control" type="file" accept="image/*"/>
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.Images" class="control-label">Dodatkowe zdjęcia</label>
+                <input asp-for="PlantDetails.Images" class="form-control" multiple accept="image/*"/>
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group form-check">

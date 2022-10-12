@@ -15,6 +15,8 @@ namespace VFHCatalogMVC.Domain.Interface
         void AddPlantGrowthTypes(int[] growthTypesIds, int plantDetailId);
         void AddPlantDestinations(int[] plantDestinationsIds, int plantDestId);
         void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDestId);
+        void AddPlantDetailsImages(string fileName, int plantDetailId);
+        IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId);
         PlantDetail GetPlantDetails(int id);
         string GetPlantColorName(int id);
         string GetPlantFruitSizeName(int id);

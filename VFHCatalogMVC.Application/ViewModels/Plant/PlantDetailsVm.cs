@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
@@ -13,8 +14,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
     {
         public int Id { get; set; }
         public int PlantRef { get; set; }
-        [Required]
         public int? ColorId { get; set; }
+        public string Description { get; set; }
+        public string PlantPassportNumber { get; set; }
         [NotMapped]
         public string ColorName { get; set; }
         public int? FruitSizeId { get; set; }
@@ -23,31 +25,34 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int? FruitTypeId { get; set; }
         [NotMapped]
         public string FruitTypeName { get; set; }
-        public string Description { get; set; }
-       // public string Opinion { get; set; }
-        public string PlantPassportNumber { get; set; }
-        // public List<NewGrowthTypesVm> GrowthType { get; set; }
+        [NotMapped]
+        public List<string> DestinationsNames { get; set; }
+        [NotMapped]
+        public List<string> GrowingSezonsNames { get; set; }
+        [NotMapped]
+        public List<string> GrowthTypesNames { get; set; }
+        public List<IFormFile> Images { get; set; }
+
         [NotMapped]
         public ListGrowthTypesVm ListGrowthTypes { get; set; }
         [NotMapped]
         public ListPlantDestinationsVm ListPlantDestinations { get; set; }
         [NotMapped]
         public ListGrowingSeazonsVm ListGrowingSeazons { get; set; }
-
-        //[NotMapped]
-        //public PlantGrowthTypeVm PlantGrowthType { get; set; }
-        
+        [NotMapped]         
+        public List<PlantDetailsImagesVm> PlantDetailsImages { get; set; }
+      
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap();
-            //profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantDetail, PlantDetailsVm>();
+
         }
         public class PlantDetailsValidation : AbstractValidator<PlantDetailsVm>
         {
             public PlantDetailsValidation()
             {
                 //RuleFor(x => x.Id).NotEmpty();
-                RuleFor(x => x.ColorId).NotNull().WithMessage("*");
+                //RuleFor(x => x.ColorId).NotNull().WithMessage("*");
 
             }
         }

@@ -25,4 +25,8 @@
     <ProjectReference Include="..\VFHCatalogMVC.Infrastructure\VFHCatalogMVC.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\plantGallery\plantDetailsGallery\" />
+  </ItemGroup>
+
 </Project>

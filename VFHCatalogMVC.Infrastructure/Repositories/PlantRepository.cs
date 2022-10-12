@@ -71,6 +71,12 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public void AddPlantDetailsImages(string fileName, int plantDetailId)
+        {
+
+            _context.PlantDetailsImages.Add(new PlantDetailsImages { PlantDetailId = plantDetailId, ImageURL = fileName });
+           _context.SaveChanges();
+        }
         public PlantDetail GetPlantDetails(int id)
         {
             var plantDetails = _context.PlantDetails.FirstOrDefault(p=>p.PlantRef == id);
@@ -194,6 +200,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return fruitTypes;
         }
 
-      
+        public IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId)
+        {
+            var plantDetailsImages = _context.PlantDetailsImages.Where(p => p.PlantDetailId == plantDetailId);
+            return plantDetailsImages;
+        }
     }
 }

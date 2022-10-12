@@ -10,8 +10,10 @@ namespace VFHCatalogMVC.Domain.Model
         public string Opinion { get; set; }
         public int PlantDetailId { get; set; }
         public virtual PlantDetail PlantDetail { get; set; }
-        public int PrivateUserId { get; set; }
+        public int? PrivateUserId { get; set; }
         public PrivateUser PrivateUser { get; set; }
+        public int? CustomerId { get; set; }
+        public Customer Customer { get; set; }
 
 
 

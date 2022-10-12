@@ -11,6 +11,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Domain.Interface;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace VFHCatalogMVC.Application.Services
 {
@@ -36,9 +37,10 @@ namespace VFHCatalogMVC.Application.Services
 
             if (model.Photo != null)
             {
-                var fileName = UploadImage(model);     
+                string direction = "plantGallery/searchPhoto";
+                var fileName = UploadImage(model.Photo,model.FullName,direction);     
                 newPlant.Photo = fileName;
-            }       
+            }
 
             var id = _plantRepo.AddPlant(newPlant);
 
@@ -68,26 +70,38 @@ namespace VFHCatalogMVC.Application.Services
             {
                 _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
             }
+
+            if (model.PlantDetails.Images.Count > 0)
+            {
+                string direction = "plantGallery/plantDetailsGallery";
+
+                foreach (var item in model.PlantDetails.Images)
+                {
+                    string fileName = UploadImage(item,model.FullName,direction);
+                    _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                }
+            }
+
             return id;
         }
-        private string UploadImage(NewPlantVm model)
+
+        private string UploadImage(IFormFile file,string name,string path)
         {
             string fileName = null;
-            if (model.Photo != null)
+            if (file != null)
             {
-                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                string extension = Path.GetExtension(model.Photo.FileName);
-                fileName = Guid.NewGuid().ToString() + "-" + model.FullName + extension ;  
+                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, path);
+                string extension = Path.GetExtension(file.FileName);
+                fileName = Guid.NewGuid().ToString() + "-" + name + extension;
                 string filePath = Path.Combine(uploadDir, fileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    model.Photo.CopyTo(fileStream);
+                    file.CopyTo(fileStream);
                 }
             }
 
             return fileName;
         }
-
         public int EditPlant(EditPlantVm plant)
         {
             throw new NotImplementedException();
@@ -151,36 +165,55 @@ namespace VFHCatalogMVC.Application.Services
             //GrowthTypesNames
        
             var propertyNames = new List<string>();
-            propertyNames = GetGrowthTypesNames(plantDetails.Id);
+            propertyNames = GetGrowthTypesNames(plantDetailsVm.Id);
+            plantDetailsVm.GrowthTypesNames = new List<string>();
 
             foreach (var item in propertyNames)
             {
-                plantDetailsVm.ListGrowthTypes.GrowthTypesNames.Add(item);
+                plantDetailsVm.GrowthTypesNames.Add(item);
+                     
             }
 
             propertyNames.Clear();
 
             //DestiantionsNames
 
-            propertyNames = GetDestinationsNames(plantDetails.Id);
+            propertyNames = GetDestinationsNames(plantDetailsVm.Id);
 
+            plantDetailsVm.DestinationsNames = new List<string>();
             foreach (var item in propertyNames)
             {
-                plantDetailsVm.ListPlantDestinations.DestinationsNames.Add(item);
+                plantDetailsVm.DestinationsNames.Add(item);
+               
             }
 
             propertyNames.Clear();
 
             //GrowingSeazonsNames
 
-            propertyNames = GetGrowthTypesNames(plantDetails.Id);
+            propertyNames = GetGrowingSeaznosNames(plantDetailsVm.Id);
 
+            plantDetailsVm.GrowingSezonsNames = new List<string>();
             foreach (var item in propertyNames)
             {
-                plantDetailsVm.ListGrowingSeazons.GrwoingSeazonsNames.Add(item);
+                plantDetailsVm.GrowingSezonsNames.Add(item);
             }
 
             propertyNames.Clear();
+
+            //PlantGallery
+            var plantGallery = new List<PlantDetailsImagesVm>();
+
+            plantGallery = _plantRepo.GetPlantDetailsImages(plantDetails.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
+
+            if (plantGallery.Count > 0)
+            {
+                foreach (var image in plantGallery)
+                {
+                    plantDetailsVm.PlantDetailsImages.Add(image);
+                }
+            }
+            //add Opinions in PlantOpinnion after adding logic for users
 
             return plantDetailsVm;
         }
@@ -209,13 +242,17 @@ namespace VFHCatalogMVC.Application.Services
                     if (item.Id == items)
                     {
                         growthTypesForPlant.Add(growthTypes.FirstOrDefault(p => p.Id == items));
+                    
                     }
-                }
-                foreach (var i in growthTypesForPlant)
-                {
-                    propertyNames.Add(i.Name);
-                }
+                }           
             }
+
+            foreach (var i in growthTypesForPlant)
+            {
+                propertyNames.Add(i.Name);
+                propertyNames.Add(",");
+            }
+            propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
 
             return propertyNames;
         }
@@ -242,17 +279,21 @@ namespace VFHCatalogMVC.Application.Services
                     if (item.Id == items)
                     {
                         destinationsForPlants.Add(destinations.FirstOrDefault(p => p.Id == items));
+
+                      
                     }
-                }
-                foreach (var i in destinationsForPlants)
-                {
-                    propertyNames.Add(i.Name);
-                }
+                }              
             }
+            foreach (var i in destinationsForPlants)
+            {
+                propertyNames.Add(i.Name);
+                propertyNames.Add(",");  
+            }
+
+             propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
 
             return propertyNames;
         }
-
         public List<string> GetGrowingSeaznosNames(int id)
         {
             var plantGrowingSeazons = new List<PlantGrowingSeazonsVm>();
@@ -275,57 +316,24 @@ namespace VFHCatalogMVC.Application.Services
                     if (item.Id == items)
                     {
                         growingSeaznosForPlant.Add(growingSeazons.FirstOrDefault(p => p.Id == items));
+
                     }
-                }
-                foreach (var i in growingSeaznosForPlant)
-                {
-                    propertyNames.Add(i.Name);
-                }
+                }           
             }
+            foreach (var i in growingSeaznosForPlant)
+            {
+                propertyNames.Add(i.Name);
+                propertyNames.Add(",");
+            }
+
+            propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
+
             return propertyNames;
         }
-
-
-        //public List<string> GetPropertyNames(List<PlantGrowthTypeVm> growthTypesList, List<PlantGrowingSeazonsVm> growingSeazonsList, List<PlantDestinationsVm> destinationsList)
-        //{
-        //    var plantGrowthTypes = new List<PlantGrowthTypeVm>();
-        //    plantGrowthTypes = _plantRepo.GetPlantGrowthTypes(plantDetailsVm.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-        //    var growthTypes = _plantRepo.GetGrowthTypes().ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-        //    var propertyIdsIds = new List<int>();
-
-        //    foreach (var items in plantGrowthTypes)
-        //    {
-        //        propertyIdsIds.Add(items.GrowthTypeId);
-        //    }
-
-        //    var growthTypesNames = new List<string>();
-        //    var growthTypesForPlant = new List<GrowthTypeVm>();
-
-        //    foreach (var items in propertyIdsIds)
-        //    {
-        //        foreach (var item in growthTypes)
-        //        {
-        //            if (item.Id == items)
-        //            {
-        //                growthTypesForPlant.Add(growthTypes.FirstOrDefault(p => p.Id == items));
-        //            }
-        //        }
-        //        foreach (var i in growthTypesForPlant)
-        //        {
-        //            growthTypesNames.Add(i.Name);
-        //        }
-        //    }
-        //}
-
 
         public List<PlantGroupsVm> GetPlantGroups(int? typeId)
         {
             var groups = _plantRepo.GetAllGroups().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
-
-            //var groupsList = new ListPlantGroupsVm()
-            //{
-            //    Groups = groups
-            //};
 
             return groups;
         }
@@ -334,22 +342,12 @@ namespace VFHCatalogMVC.Application.Services
         {
             var types = _plantRepo.GetAllTypes().OrderBy(p=>p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
 
-            //var typesList = new ListPlantTypesVm()
-            //{
-            //    Types = types
-            //};
-
             return types;
         }
 
         public List<PlantSectionsVm> GetPlantSections(int? groupId)
         {
             var sections = _plantRepo.GetAllSections().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
-
-            //var sectionsList = new ListPlantSectionsVm()
-            //{
-            //    Sections = sections
-            //};
 
             return sections;
         }

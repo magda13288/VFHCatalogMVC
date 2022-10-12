@@ -13,8 +13,6 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int PageSize { get; set; }
         public string SearchString { get; set; }
         public int Count { get; set; } //przechowuje ilość rekordów w tabeli, wykorzystywane do paginacji na stronie
-       //// [NotMapped]
-       // public IFormFile Image { get; set; }
         public PlantForListVm PlantForList { get; set; }
 
 

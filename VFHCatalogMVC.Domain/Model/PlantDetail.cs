@@ -22,6 +22,7 @@ namespace VFHCatalogMVC.Domain.Model
         public ICollection<PlantDestination> PlantDestinations { get; set; }
         public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }
         public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
+        public virtual ICollection<PlantDetailsImages> PlantDetailsImages { get; set; }
 
     }
 }
