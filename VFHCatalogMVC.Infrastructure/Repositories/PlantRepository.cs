@@ -104,13 +104,13 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return color.Name;
         }
 
-        public string GetPlantFruitSizeName(int id)
+        public string GetPlantFruitSizeName(int? id)
         {
            var fruitSize = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
             return fruitSize.Name;
         }
 
-        public string GetPlantFriutTypeName(int id)
+        public string GetPlantFriutTypeName(int? id)
         {
            var fruitType = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
             return fruitType.Name;  
@@ -204,6 +204,86 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             var plantDetailsImages = _context.PlantDetailsImages.Where(p => p.PlantDetailId == plantDetailId);
             return plantDetailsImages;
+        }
+
+        public void UpdatePlant(Plant plant)
+        {
+            _context.Attach(plant);
+            _context.Entry(plant).Property("FullName").IsModified = true;
+            _context.Entry(plant).Property("Photo").IsModified = true;
+            _context.SaveChanges();          
+        }
+
+        public void UpdatePlantDetails(PlantDetail plant)
+        {
+            _context.Attach(plant);
+            _context.Entry(plant).Property("ColorId").IsModified = true;
+            _context.Entry(plant).Property("FruitSizeId").IsModified = true;
+            _context.Entry(plant).Property("FruitTypeId").IsModified = true;
+            _context.Entry(plant).Property("Description").IsModified = true;
+            _context.Entry(plant).Property("PlantPassportNumber").IsModified = true;
+            _context.SaveChanges();
+        }
+
+        public void UpdatePlantDestiantions(List<PlantDestination> destinations)
+        {
+            _context.Attach(destinations);
+
+            foreach (var item in destinations)
+            {
+                     _context.Entry(item).Property("DestinationId").IsModified = true;
+                     _context.SaveChanges();               
+            }
+        }
+        public void DeletePlantDestinations(int id)
+        {
+            var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
+            _context.PlantDestinations.RemoveRange(destinations);
+            _context.SaveChanges();
+        }
+
+        public void UpdatePlantGrowingSeazons(List<PlantGrowingSeazon> growingSeazons)
+        {
+            _context.Attach(growingSeazons);
+
+            foreach (var item in growingSeazons)
+            {
+                _context.Entry(item).Property("GrowingSeazonId").IsModified = true;
+                _context.SaveChanges();             
+            }
+        }
+
+        public void UpdatePlantGrowthTypes(List<PlantGrowthType> growthTypes)
+        {
+            _context.Attach(growthTypes);
+
+            foreach (var item in growthTypes)
+            {
+                _context.Entry(item).Property("GrowthTypeId").IsModified = true;
+                _context.SaveChanges();
+            }
+        }
+
+        public void DeletePlantGrowingSeazons(int id)
+        {
+            var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
+            _context.PlantGrowingSeazons.RemoveRange(growingSeazons);
+            _context.SaveChanges();
+        }
+
+        public void DeletePlantGrowthTypes(int id)
+        {
+            var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
+            _context.PlantGrowthTypes.RemoveRange(growthTypes);
+            _context.SaveChanges();
+        }
+
+        public void DeleteImageFromGallery(int id)
+        {
+            var imageToDelete = _context.PlantDetailsImages.FirstOrDefault(p => p.Id == id);
+            _context.PlantDetailsImages.Remove(imageToDelete);
+            _context.SaveChanges();
+
         }
     }
 }

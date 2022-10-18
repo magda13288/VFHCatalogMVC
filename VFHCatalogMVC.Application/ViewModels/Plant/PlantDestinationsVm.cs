@@ -13,7 +13,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantDestination, PlantDestinationsVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantDestination, PlantDestinationsVm>().ReverseMap();
         }
     }
 }

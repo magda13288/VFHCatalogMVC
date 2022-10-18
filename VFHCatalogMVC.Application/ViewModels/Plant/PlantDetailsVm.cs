@@ -25,12 +25,6 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int? FruitTypeId { get; set; }
         [NotMapped]
         public string FruitTypeName { get; set; }
-        [NotMapped]
-        public List<string> DestinationsNames { get; set; }
-        [NotMapped]
-        public List<string> GrowingSezonsNames { get; set; }
-        [NotMapped]
-        public List<string> GrowthTypesNames { get; set; }
         public List<IFormFile> Images { get; set; }
 
         [NotMapped]
@@ -41,6 +35,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public ListGrowingSeazonsVm ListGrowingSeazons { get; set; }
         [NotMapped]         
         public List<PlantDetailsImagesVm> PlantDetailsImages { get; set; }
+        public PlantForListVm Plant { get; set; }
       
         public void Mapping(Profile profile)
         {

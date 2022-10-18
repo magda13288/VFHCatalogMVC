@@ -12,9 +12,7 @@
     <div class="col-md-4">
         <form asp-action="AddPlant" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<div class="form-group row">
-                <input type="hidden" asp-for="Id" class="form-control" />                
-            </div>*@
+            @*<input type="hidden" asp-for="Id" class="control-label"/> *@
             <div class="form-group">
                 <label asp-for="TypeId" class="control-label">Typ</label>
                <select id="ddlType" asp-for="TypeId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
@@ -37,11 +35,11 @@
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple="multiple",id="ddlGrowthTypes"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple= true,id="ddlGrowthTypes"})
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple="multiple",id="ddlDestinations"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple= true,id="ddlDestinations"})
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
@@ -50,7 +48,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", multiple = "multiple", id="ddlGrowingSeazons" })
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", multiple = true, id="ddlGrowingSeazons" })
                 <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
             </div>
               <div class="form-group">
@@ -80,24 +78,24 @@
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PlantDetails.Images" class="control-label">Dodatkowe zdjęcia</label>
+                <label asp-for="PlantDetails.Images" class="control-label">Zdjęcia do galerii w sekcji "Szczegóły"</label>
                 <input asp-for="PlantDetails.Images" class="form-control" multiple accept="image/*"/>
-                <span asp-validation-for="Photo" class="text-danger"></span>
+                <span asp-validation-for="PlantDetails.Images" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input type="hidden" class="form-control" asp-for="isActive" value="true" /> @*@Html.DisplayNameFor(model => model.isActive)*@
+                    <input type="hidden" class="form-control" asp-for="isActive" value="true" /> 
                 </label>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Zapisz" class="btn btn-primary" />
             </div>
             <a asp-controller="Plants" asp-action="GetGrowthTypes" asp-route-TypeId="typeId" asp-route-GroupId="groupId"></a>
         </form>
     </div>
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Powrót do wyszukiwarki</a>
 </div>
 @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

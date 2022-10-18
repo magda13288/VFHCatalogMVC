@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,8 +19,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         //[Required] //wymagane pole DataAnnotations
         public string FullName { get; set; }
-
-        [NotMapped]
+        public string PhotoFileName { get; set; }
         public IFormFile Photo { get; set; }
         public bool isActive { get; set; }
 
@@ -34,18 +31,24 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
             profile.CreateMap<NewPlantVm, VFHCatalogMVC.Domain.Model.Plant>()
                 .ForMember(m => m.PlantTypeId, opt => opt.MapFrom(d => d.TypeId))
                 .ForMember(m => m.PlantGroupId, opt => opt.MapFrom(d => d.GroupId))
-                .ForMember(m => m.PlantSectionId, opt => opt.MapFrom(d => d.SectionId));
+                .ForMember(m => m.PlantSectionId, opt => opt.MapFrom(d => d.SectionId))
+                .ForMember(m => m.Photo, opt => opt.MapFrom(d => d.PhotoFileName)).ReverseMap()
+                .ForMember(m=>m.TypeId,opt=>opt.MapFrom(d=>d.PlantTypeId))
+                .ForMember(m=>m.GroupId,opt=>opt.MapFrom(d=>d.PlantGroupId))
+                .ForMember(m=>m.SectionId,opt=>opt.MapFrom(d=>d.PlantSectionId))
+                .ForMember(m=>m.PhotoFileName,opt=>opt.MapFrom(d=>d.Photo))
+                .ForMember(m => m.Photo, opt => opt.Ignore());
         }
         public class NewPlantValidation : AbstractValidator<NewPlantVm>
         {
             public NewPlantValidation()
             {
                 //RuleFor(x => x.Id).NotEmpty();
-                RuleFor(x => x.TypeId).NotNull().WithMessage("*");
-                RuleFor(x => x.GroupId).NotNull().WithMessage("*");
-                RuleFor(x => x.FullName).NotNull().MaximumLength(255).WithMessage("*");
+                RuleFor(x => x.TypeId).NotEmpty().WithMessage("Pole wymagane");
+                RuleFor(x => x.GroupId).NotEmpty().WithMessage("Pole wymagane");
+                RuleFor(x => x.FullName).NotNull().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
                 RuleFor(x => x.isActive).Equals(true);
-
+                
             }
         }
     }

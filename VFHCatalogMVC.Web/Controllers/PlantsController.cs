@@ -69,18 +69,19 @@ namespace VFHCatalogMVC.Web.Controllers
         [ValidateAntiForgeryToken] // zabezpiecza przed przesłaniem falszywego widoku dodawania nowego widoku (danych)
         public IActionResult AddPlant(NewPlantVm model)
         {
-            var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types,null,null);
-            var colors = _plantService.GetColors();
-            ViewBag.ColorsList = FillPropertyList(null, colors, null);
-            var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
-
+            
             if (ModelState.IsValid)
             { //check DataAnnotations
                 var id = _plantService.AddPlant(model);
                 return RedirectToAction("Index");
             }
+
+            var types = _plantService.GetPlantTypes();
+            ViewBag.TypesList = FillPropertyList(types, null, null);
+            var colors = _plantService.GetColors();
+            ViewBag.ColorsList = FillPropertyList(null, colors, null);
+            var growingSeaznos = _plantService.GetGrowingSeazons();
+            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
             return View(model);
         }
 
@@ -89,7 +90,43 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             var plantDetails = _plantService.GetPlantDetails(id);
 
+            if (plantDetails == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             return View(plantDetails);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var plantToEdit = _plantService.GetPlantToEdit(id);
+            var colors = _plantService.GetColors();
+            ViewBag.ColorsList = FillPropertyList(null, colors, null);
+            var growingSeaznos = _plantService.GetGrowingSeazons();
+            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);           
+            var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+            ViewBag.GrowthTypes = growthTypes.Value;
+            var destinations = GetDestinations();
+            ViewBag.Destinations = destinations.Value;
+            var fruitTypes = GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+            ViewBag.FruitTypes = fruitTypes.Value;
+            var fruitSize = GetFruitSizes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+            ViewBag.FruitSizes = fruitSize.Value;
+
+            return View(plantToEdit);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(NewPlantVm plant)
+        {
+            if (ModelState.IsValid)
+            {
+                _plantService.UpdatePlant(plant);
+                return RedirectToAction("Index");
+            }
+            return View(plant);
         }
 
         [HttpPost]
@@ -141,7 +178,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetGrowthTypes( int typeId, int groupId, int sectionId)
+        public JsonResult GetGrowthTypes( int typeId, int groupId, int? sectionId)
         {
             var list = _plantService.GetGrowthTypes(typeId, groupId,sectionId);
 
@@ -272,21 +309,5 @@ namespace VFHCatalogMVC.Web.Controllers
 
             return propertyList;
         }
-
-        //[HttpGet]
-        //public IActionResult EditPlant(int plantId)
-        //{
-        //    var plantModel = plantService.GetInformationAboutSelectedPlant(plantId);
-        //    return View(plantModel);
-        //}
-
-        //[HttpPost]
-
-        //public IActionResult EditPlant(PlantModel model)
-        //{
-        //    var id = plantService.EditPlant(model);
-        //    return View();
-
-        //}
     }
 }

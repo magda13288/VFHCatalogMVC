@@ -7,46 +7,26 @@
 <h1>Welcome in plants catalog</h1>
 
 <p>
-    <a asp-action="AddPlant">Create New</a>
+    <a asp-action="AddPlant">Dodaj nową roślinę</a>
 </p>
 <form asp-action="Index" asp-controller="Plants" method="post">
-    @*<div class="row">
-        <input type="text" asp-for="SearchString" name="searchString" id="searchString"/>
-        <input type="submit" value="Wyszukaj"/>
-     </div>*@
      <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
-    @*<a class="navbar-brand" href="#">Navbar</a>*@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">     
       <form class="d-flex" role="search">
-         @* <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="ddlType" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Type
-          </a>             
-          <ul class="dropdown-content" aria-labelledby="ddlType">
-              <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
-             @* @foreach (var item in new SelectList(ViewBag.TypesList,"Value", "Text")) 
-             {
-                 <li><button class="dropdown-item">@item.Text</button></li>
-             }
-            <li><button class="dropdown-item" >Action</button></li>
-            <li><button class="dropdown-item">Another action</button></li>
-         @* </ul>
-        </li> *@  
          <label asp-for="PlantForList.TypeId" class="control-label me-3">Type</label>
-               <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
+               <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
            <label asp-for="PlantForList.GroupId" class="control-label me-2">Group</label>
-               <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control" aria-label="Group" asp-items="@(new SelectList(string.Empty,"Value", "Text","Group"))" ></select>
+               <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(string.Empty,"Value", "Text","Group"))" ></select>
            <label asp-for="PlantForList.SectionId" class="control-label me-2">Section</label>
-               <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control" aria-label="Section" asp-items="@(new SelectList(string.Empty,"Value", "Text","Section"))"></select>
+               <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(string.Empty,"Value", "Text","Section"))"></select>
         <input class="form-control me-2" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <button class="btn btn-outline-success" type="submit">Szukaj</button>
                <input type="hidden" name="pageNo" id="pageNo"/>
-       <input type="hidden" name="pageSize" id="pageSize" value="4"/>  
+       <input type="hidden" name="pageSize" id="pageSize" value="4" />
       </form>
     </div>
   </div>
@@ -54,24 +34,24 @@
 <p></p>
 <p></p>
 <div class="row">
-<table class="table">
-    <thead>
-        <tr>
+<table class="table-striped table-hover table-light">
+    <thead class="thead-light">
+        <tr class="text-center">
             <th>
                 Id
             </th>
             <th>
-                Name
+                Nazwa
             </th>
             <th>
-                Photo
+                Zdjęcie
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Plants) {
-        <tr>
+        <tr class="text-center">
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
@@ -80,7 +60,7 @@
             </td>
              <td>
                 @Html.DisplayFor(modelItem => item.Image)
-                <img src="plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
+                <img src="/plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
             </td>
             <td>
                 @Html.ActionLink("Edytuj", "Edit", new {  id=item.Id }) |

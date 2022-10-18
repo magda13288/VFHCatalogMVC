@@ -88,19 +88,44 @@ namespace VFHCatalogMVC.Application.Services
         private string UploadImage(IFormFile file,string name,string path)
         {
             string fileName = null;
+
             if (file != null)
             {
-                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, path);
-                string extension = Path.GetExtension(file.FileName);
-                fileName = Guid.NewGuid().ToString() + "-" + name + extension;
-                string filePath = Path.Combine(uploadDir, fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                try
                 {
-                    file.CopyTo(fileStream);
+                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, path);
+                    string extension = Path.GetExtension(file.FileName);
+                    fileName = Guid.NewGuid().ToString() + "-" + name + extension;
+                    string filePath = Path.Combine(uploadDir, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
             }
 
             return fileName;
+        }
+
+        private void DeleteImage(string path)
+        {
+            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
+            if (System.IO.File.Exists(imagePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
         }
         public int EditPlant(EditPlantVm plant)
         {
@@ -158,61 +183,71 @@ namespace VFHCatalogMVC.Application.Services
         {
             var plantDetails = _plantRepo.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
-            plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.Id);
-            plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.Id);
-            plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.Id);
+            if (plantDetails != null)
+            {              
+                var plant = _plantRepo.GetPlantById(id);
+                var plantVm = _mapper.Map<PlantForListVm>(plant);
+                plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.Id);
+                plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.FruitSizeId);
+                plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.FruitTypeId);
+                plantDetailsVm.Plant = plantVm;
 
-            //GrowthTypesNames
-       
-            var propertyNames = new List<string>();
-            propertyNames = GetGrowthTypesNames(plantDetailsVm.Id);
-            plantDetailsVm.GrowthTypesNames = new List<string>();
+                //GrowthTypesNames
 
-            foreach (var item in propertyNames)
-            {
-                plantDetailsVm.GrowthTypesNames.Add(item);
-                     
-            }
+                var propertyNames = new List<string>();
+                propertyNames = GetGrowthTypesNames(plantDetailsVm.Id);
+                plantDetailsVm.ListGrowthTypes = new ListGrowthTypesVm();
+                plantDetailsVm.ListGrowthTypes.GrowthTypesNames = new List<string>();
 
-            propertyNames.Clear();
-
-            //DestiantionsNames
-
-            propertyNames = GetDestinationsNames(plantDetailsVm.Id);
-
-            plantDetailsVm.DestinationsNames = new List<string>();
-            foreach (var item in propertyNames)
-            {
-                plantDetailsVm.DestinationsNames.Add(item);
-               
-            }
-
-            propertyNames.Clear();
-
-            //GrowingSeazonsNames
-
-            propertyNames = GetGrowingSeaznosNames(plantDetailsVm.Id);
-
-            plantDetailsVm.GrowingSezonsNames = new List<string>();
-            foreach (var item in propertyNames)
-            {
-                plantDetailsVm.GrowingSezonsNames.Add(item);
-            }
-
-            propertyNames.Clear();
-
-            //PlantGallery
-            var plantGallery = new List<PlantDetailsImagesVm>();
-
-            plantGallery = _plantRepo.GetPlantDetailsImages(plantDetails.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
-
-            if (plantGallery.Count > 0)
-            {
-                foreach (var image in plantGallery)
+                foreach (var item in propertyNames)
                 {
-                    plantDetailsVm.PlantDetailsImages.Add(image);
+                    plantDetailsVm.ListGrowthTypes.GrowthTypesNames.Add(item);
+
+                }
+
+                propertyNames.Clear();
+
+                //DestiantionsNames
+
+                propertyNames = GetDestinationsNames(plantDetailsVm.Id);
+
+                plantDetailsVm.ListPlantDestinations = new ListPlantDestinationsVm();
+                plantDetailsVm.ListPlantDestinations.DestinationsNames = new List<string>();
+                foreach (var item in propertyNames)
+                {
+                    plantDetailsVm.ListPlantDestinations.DestinationsNames.Add(item);
+
+                }
+
+                propertyNames.Clear();
+
+                //GrowingSeazonsNames
+
+                propertyNames = GetGrowingSeaznosNames(plantDetailsVm.Id);
+
+                plantDetailsVm.ListGrowingSeazons = new ListGrowingSeazonsVm();
+                plantDetailsVm.ListGrowingSeazons.GrwoingSeazonsNames = new List<string>();
+                foreach (var item in propertyNames)
+                {
+                    plantDetailsVm.ListGrowingSeazons.GrwoingSeazonsNames.Add(item);
+                }
+
+                propertyNames.Clear();
+
+                //PlantGallery
+                var plantGallery = new List<PlantDetailsImagesVm>();
+
+                plantGallery = _plantRepo.GetPlantDetailsImages(plantDetails.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
+
+                if (plantGallery.Count > 0)
+                {
+                    foreach (var image in plantGallery)
+                    {
+                        plantDetailsVm.PlantDetailsImages.Add(image);
+                    }
                 }
             }
+
             //add Opinions in PlantOpinnion after adding logic for users
 
             return plantDetailsVm;
@@ -352,7 +387,7 @@ namespace VFHCatalogMVC.Application.Services
             return sections;
         }
 
-        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int sectionId)
+        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int? sectionId)
         {
             List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
 
@@ -427,6 +462,174 @@ namespace VFHCatalogMVC.Application.Services
             }
 
             return fruitTypeList;
+        }
+
+        public NewPlantVm GetPlantToEdit(int id)
+        {
+            var plant = _plantRepo.GetPlantById(id);
+            var plantVm = _mapper.Map<NewPlantVm>(plant);
+            var plantDetails = _plantRepo.GetPlantDetails(id);
+            var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
+
+            var plantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
+
+            plantVm.PlantDetails = plantDetailsVm;
+            foreach (var image in plantDetailsImages)
+            {
+                plantVm.PlantDetails.PlantDetailsImages.Add(image);
+            }
+
+            var growthTypes = _plantRepo.GetPlantGrowthTypes(plantDetails.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+
+            plantDetailsVm.ListGrowthTypes = new ListGrowthTypesVm();
+            plantDetailsVm.ListGrowthTypes.GrowthTypesIds = new int[growthTypes.Count];
+            for (int i=0;i<growthTypes.Count;i++)
+            {
+                plantDetailsVm.ListGrowthTypes.GrowthTypesIds[i] = growthTypes[i].GrowthTypeId; 
+            }
+           
+            var growingSeazons = _plantRepo.GetPlantGrowingSeazons(plantDetails.Id).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+            plantDetailsVm.ListGrowingSeazons = new ListGrowingSeazonsVm();
+            plantDetailsVm.ListGrowingSeazons.GrowingSeaznosIds = new int[growingSeazons.Count];
+            for (int i = 0; i < growingSeazons.Count; i++)
+            {
+                plantDetailsVm.ListGrowingSeazons.GrowingSeaznosIds[i] = growingSeazons[i].GrowingSeazonId;
+            }
+
+            var destinations = _plantRepo.GetPlantDestinations(plantDetails.Id).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            plantDetailsVm.ListPlantDestinations = new ListPlantDestinationsVm();
+            plantDetailsVm.ListPlantDestinations.DestinationsIds = new int[destinations.Count];
+            for (int i = 0; i < destinations.Count; i++)
+            {
+                plantDetailsVm.ListPlantDestinations.DestinationsIds[i] = destinations[i].DestinationId;
+            }
+
+            return plantVm;
+        }
+
+        public void UpdatePlant(NewPlantVm model)
+        {
+            var getPhotoName = _plantRepo.GetPlantById(model.Id);
+            var PhotoName = getPhotoName.Photo;
+            
+            string direction = null;
+            if (model.Photo != null)
+            {
+
+                direction = "plantGallery/searchPhoto";
+                var fileName = UploadImage(model.Photo, model.FullName, direction);
+                model.PhotoFileName = fileName;
+
+                string imagePath = "plantGallery/searchPhoto/" + PhotoName;
+
+                DeleteImage(imagePath);
+
+            }
+            else
+            {
+                model.PhotoFileName = getPhotoName.Photo;
+            }
+
+            var plant = _mapper.Map<Plant>(model);
+            _plantRepo.UpdatePlant(plant);
+
+            var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
+            _plantRepo.UpdatePlantDetails(plantDetails);
+
+            if (model.PlantDetails.Images.Count > 0)
+            {
+                
+                foreach (var item in model.PlantDetails.Images)
+                {
+                    direction = "plantGallery/plantDetailsGallery";
+                    string fileName = UploadImage(item, model.FullName, direction);
+                    _plantRepo.AddPlantDetailsImages(fileName, plantDetails.Id);
+                }
+            }
+
+            if (model.PlantDetails.PlantDetailsImages.Count > 0)
+            {
+                foreach (var image in model.PlantDetails.PlantDetailsImages)
+                {
+                    if (image.IsChecked == true)
+                    {
+                        string imagePath = direction +"/"+ image.ImageURL;
+                        DeleteImage(imagePath);
+                        _plantRepo.DeleteImageFromGallery(image.Id);
+                    }
+                }
+            }
+
+            //Update Destinations
+            UpdatePlantDestinations(model);
+
+            //Update GrowingSeazons
+            UpdatePlantGrowingSeazons(model);
+
+            //UpdateGrowthTypes
+
+            UpdatePlantGrowthTypes(model);
+            
+        }
+
+        private void UpdatePlantDestinations(NewPlantVm model)
+        {
+            var plantDestinations = new List<PlantDestination>();
+
+            for (int i = 0; i < model.PlantDetails.ListPlantDestinations.DestinationsIds.Length; i++)
+            {
+                plantDestinations.Add(new PlantDestination { DestinationId = model.PlantDetails.ListPlantDestinations.DestinationsIds[i], PlantDetailId = model.PlantDetails.Id });
+            }
+
+            if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length == plantDestinations.Count)
+            {
+                _plantRepo.UpdatePlantDestiantions(plantDestinations);
+            }
+            else
+            {
+                _plantRepo.DeletePlantDestinations(model.PlantDetails.Id);
+                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds,model.PlantDetails.Id);
+            }
+        }
+
+        private void UpdatePlantGrowingSeazons(NewPlantVm model)
+        {
+            var plantGrowingSeaznos = new List<PlantGrowingSeazon>();
+            for (int i = 0; i < model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length; i++)
+            {
+                plantGrowingSeaznos.Add(new PlantGrowingSeazon { GrowingSeazonId = model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds[i], PlantDetailId = model.PlantDetails.Id });
+            }
+
+            if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length == plantGrowingSeaznos.Count)
+            {
+                _plantRepo.UpdatePlantGrowingSeazons(plantGrowingSeaznos);
+            }
+            else
+            {
+                _plantRepo.DeletePlantGrowingSeazons(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id);
+            }
+        }
+
+        private void UpdatePlantGrowthTypes(NewPlantVm model)
+        {
+            var plantGrowthTypes = new List<PlantGrowthType>();
+
+            for (int i = 0; i < model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length; i++)
+            {
+                plantGrowthTypes.Add(new PlantGrowthType { GrowthTypeId = model.PlantDetails.ListGrowthTypes.GrowthTypesIds[i], PlantDetailId = model.PlantDetails.Id });
+            }
+
+            if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length == plantGrowthTypes.Count)
+            {
+                _plantRepo.UpdatePlantGrowthTypes(plantGrowthTypes);
+            }
+            else
+            {
+                _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
+            }
+
         }
     }
 }
