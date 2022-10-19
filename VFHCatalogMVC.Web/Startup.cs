@@ -22,6 +22,8 @@ using FluentValidation.Results;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using static VFHCatalogMVC.Application.ViewModels.Plant.NewPlantVm;
 using static VFHCatalogMVC.Application.ViewModels.Plant.PlantDetailsVm;
+using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Web
 {
@@ -37,9 +39,13 @@ namespace VFHCatalogMVC.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Context>(options =>
+            services.AddDbContext<Context>(options => {
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"));
+                /* options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)*/
+                
+              
+            });
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<Context>();
 

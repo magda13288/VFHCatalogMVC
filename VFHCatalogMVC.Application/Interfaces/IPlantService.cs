@@ -14,7 +14,6 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<PlantGroupsVm> GetPlantGroups(int? typeId);
         List<PlantSectionsVm> GetPlantSections(int? groupId);
         int AddPlant(NewPlantVm model);
-        int EditPlant(EditPlantVm model);
         List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int? sectionId);
         List<DestinationsVm> GetDestinations();
         List<ColorsVm> GetColors();

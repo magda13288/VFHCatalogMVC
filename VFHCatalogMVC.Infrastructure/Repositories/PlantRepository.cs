@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VFHCatalogMVC.Domain.Interface;
@@ -94,11 +95,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         //zwraca juz wynik zpytania, poniewaz nie da się już bardziej przefiltrwac danych/ zwracamy jedne wynik
         public Plant GetPlantById(int plantId)
         {
-            var plant = _context.Plants.FirstOrDefault(p => p.Id == plantId);
+            var plant = _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == plantId);
             return plant;
         }
 
-        public string GetPlantColorName(int id)
+        public string GetPlantColorName(int? id)
         {
             var color = _context.Colors.FirstOrDefault(p => p.Id == id);
             return color.Name;
@@ -208,6 +209,8 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public void UpdatePlant(Plant plant)
         {
+            //_context.Entry(plant).State = EntityState.Detached;
+            //_context.Set<Plant>().Update(plant);
             _context.Attach(plant);
             _context.Entry(plant).Property("FullName").IsModified = true;
             _context.Entry(plant).Property("Photo").IsModified = true;
@@ -222,18 +225,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Entry(plant).Property("FruitTypeId").IsModified = true;
             _context.Entry(plant).Property("Description").IsModified = true;
             _context.Entry(plant).Property("PlantPassportNumber").IsModified = true;
+            _context.Entry(plant).Property("PlantRef").IsModified = false;
             _context.SaveChanges();
-        }
-
-        public void UpdatePlantDestiantions(List<PlantDestination> destinations)
-        {
-            _context.Attach(destinations);
-
-            foreach (var item in destinations)
-            {
-                     _context.Entry(item).Property("DestinationId").IsModified = true;
-                     _context.SaveChanges();               
-            }
+            
         }
         public void DeletePlantDestinations(int id)
         {
@@ -241,29 +235,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.PlantDestinations.RemoveRange(destinations);
             _context.SaveChanges();
         }
-
-        public void UpdatePlantGrowingSeazons(List<PlantGrowingSeazon> growingSeazons)
-        {
-            _context.Attach(growingSeazons);
-
-            foreach (var item in growingSeazons)
-            {
-                _context.Entry(item).Property("GrowingSeazonId").IsModified = true;
-                _context.SaveChanges();             
-            }
-        }
-
-        public void UpdatePlantGrowthTypes(List<PlantGrowthType> growthTypes)
-        {
-            _context.Attach(growthTypes);
-
-            foreach (var item in growthTypes)
-            {
-                _context.Entry(item).Property("GrowthTypeId").IsModified = true;
-                _context.SaveChanges();
-            }
-        }
-
         public void DeletePlantGrowingSeazons(int id)
         {
             var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);

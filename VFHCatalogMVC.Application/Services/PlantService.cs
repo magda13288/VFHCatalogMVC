@@ -48,7 +48,7 @@ namespace VFHCatalogMVC.Application.Services
             if (model.PlantDetails.ColorId == 0)
                 model.PlantDetails.ColorId = null;
             if (model.PlantDetails.FruitSizeId == 0)
-                model.PlantDetails.ColorId = null;
+                model.PlantDetails.FruitSizeId = null;
             if (model.PlantDetails.FruitTypeId == 0)
                 model.PlantDetails.FruitTypeId = null;
 
@@ -56,29 +56,41 @@ namespace VFHCatalogMVC.Application.Services
             var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, id);
 
             //Save to PlantGrowthTypes
-            if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
+            if (model.PlantDetails.ListGrowthTypes != null)
             {
-                _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
+                if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
+                {
+                    _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
+                }
             }
             //Save to PlantDestinations
-            if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
+            if (model.PlantDetails.ListPlantDestinations != null)
             {
-                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
+                if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
+                {
+                    _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
+                }
             }
             //Save to PlantGrowingSeaznos
-            if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
+            if (model.PlantDetails.ListGrowingSeazons != null)
             {
-                _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
+                if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
+                {
+                    _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
+                }
             }
 
-            if (model.PlantDetails.Images.Count > 0)
+            if (model.PlantDetails.Images != null)
             {
-                string direction = "plantGallery/plantDetailsGallery";
-
-                foreach (var item in model.PlantDetails.Images)
+                if (model.PlantDetails.Images.Count > 0)
                 {
-                    string fileName = UploadImage(item,model.FullName,direction);
-                    _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                    string direction = "plantGallery/plantDetailsGallery";
+
+                    foreach (var item in model.PlantDetails.Images)
+                    {
+                        string fileName = UploadImage(item, model.FullName, direction);
+                        _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                    }
                 }
             }
 
@@ -127,11 +139,6 @@ namespace VFHCatalogMVC.Application.Services
 
             }
         }
-        public int EditPlant(EditPlantVm plant)
-        {
-            throw new NotImplementedException();
-        }
-
         public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
         {
             var plants = new List<PlantForListVm>();
@@ -187,7 +194,7 @@ namespace VFHCatalogMVC.Application.Services
             {              
                 var plant = _plantRepo.GetPlantById(id);
                 var plantVm = _mapper.Map<PlantForListVm>(plant);
-                plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.Id);
+                plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.ColorId);
                 plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.FruitSizeId);
                 plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.FruitTypeId);
                 plantDetailsVm.Plant = plantVm;
@@ -466,6 +473,7 @@ namespace VFHCatalogMVC.Application.Services
 
         public NewPlantVm GetPlantToEdit(int id)
         {
+            
             var plant = _plantRepo.GetPlantById(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
             var plantDetails = _plantRepo.GetPlantDetails(id);
@@ -530,103 +538,96 @@ namespace VFHCatalogMVC.Application.Services
                 model.PhotoFileName = getPhotoName.Photo;
             }
 
-            var plant = _mapper.Map<Plant>(model);
-            _plantRepo.UpdatePlant(plant);
-
-            var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
-            _plantRepo.UpdatePlantDetails(plantDetails);
-
-            if (model.PlantDetails.Images.Count > 0)
+            if (model.PlantDetails.Images != null)
             {
-                
-                foreach (var item in model.PlantDetails.Images)
+                if (model.PlantDetails.Images.Count > 0)
                 {
-                    direction = "plantGallery/plantDetailsGallery";
-                    string fileName = UploadImage(item, model.FullName, direction);
-                    _plantRepo.AddPlantDetailsImages(fileName, plantDetails.Id);
-                }
-            }
 
-            if (model.PlantDetails.PlantDetailsImages.Count > 0)
-            {
-                foreach (var image in model.PlantDetails.PlantDetailsImages)
-                {
-                    if (image.IsChecked == true)
+                    foreach (var item in model.PlantDetails.Images)
                     {
-                        string imagePath = direction +"/"+ image.ImageURL;
-                        DeleteImage(imagePath);
-                        _plantRepo.DeleteImageFromGallery(image.Id);
+                        direction = "plantGallery/plantDetailsGallery";
+                        string fileName = UploadImage(item, model.FullName, direction);
+                        _plantRepo.AddPlantDetailsImages(fileName, model.PlantDetails.Id);
                     }
                 }
             }
 
+            if (model.PlantDetails.PlantDetailsImages != null)
+            {
+                if (model.PlantDetails.PlantDetailsImages.Count > 0)
+                {
+                    foreach (var image in model.PlantDetails.PlantDetailsImages)
+                    {
+                        if (image.IsChecked == true)
+                        {
+                            string imagePath = direction + "/" + image.ImageURL;
+                            DeleteImage(imagePath);
+                            _plantRepo.DeleteImageFromGallery(image.Id);
+                        }
+                    }
+                }
+            }
+
+            var plant = _mapper.Map<Plant>(model);          
+            var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
+            _plantRepo.UpdatePlant(plant);
+            _plantRepo.UpdatePlantDetails(plantDetails);
+
             //Update Destinations
-            UpdatePlantDestinations(model);
+            if (model.PlantDetails.ListPlantDestinations != null)        
+                UpdatePlantDestinations(model);
 
             //Update GrowingSeazons
-            UpdatePlantGrowingSeazons(model);
+            if (model.PlantDetails.ListGrowingSeazons != null)
+                UpdatePlantGrowingSeazons(model);
 
             //UpdateGrowthTypes
-
+            if(model.PlantDetails.ListGrowthTypes!=null)
             UpdatePlantGrowthTypes(model);
             
         }
 
         private void UpdatePlantDestinations(NewPlantVm model)
         {
-            var plantDestinations = new List<PlantDestination>();
+            var plantDestinations = _plantRepo.GetPlantDestinations(model.PlantDetails.Id);
 
-            for (int i = 0; i < model.PlantDetails.ListPlantDestinations.DestinationsIds.Length; i++)
+            if (plantDestinations != null)
             {
-                plantDestinations.Add(new PlantDestination { DestinationId = model.PlantDetails.ListPlantDestinations.DestinationsIds[i], PlantDetailId = model.PlantDetails.Id });
-            }
-
-            if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length == plantDestinations.Count)
-            {
-                _plantRepo.UpdatePlantDestiantions(plantDestinations);
+                _plantRepo.DeletePlantDestinations(model.PlantDetails.Id);
+                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id);
             }
             else
             {
-                _plantRepo.DeletePlantDestinations(model.PlantDetails.Id);
-                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds,model.PlantDetails.Id);
+                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id);
             }
         }
 
         private void UpdatePlantGrowingSeazons(NewPlantVm model)
         {
-            var plantGrowingSeaznos = new List<PlantGrowingSeazon>();
-            for (int i = 0; i < model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length; i++)
-            {
-                plantGrowingSeaznos.Add(new PlantGrowingSeazon { GrowingSeazonId = model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds[i], PlantDetailId = model.PlantDetails.Id });
-            }
+            var growingS = _plantRepo.GetPlantGrowingSeazons(model.PlantDetails.Id);
 
-            if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length == plantGrowingSeaznos.Count)
+            if (growingS != null)
             {
-                _plantRepo.UpdatePlantGrowingSeazons(plantGrowingSeaznos);
+                _plantRepo.DeletePlantGrowingSeazons(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id);
             }
             else
             {
-                _plantRepo.DeletePlantGrowingSeazons(model.PlantDetails.Id);
                 _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id);
             }
         }
 
         private void UpdatePlantGrowthTypes(NewPlantVm model)
         {
-            var plantGrowthTypes = new List<PlantGrowthType>();
+            var plantGrowthTypes= _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id);
 
-            for (int i = 0; i < model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length; i++)
+            if (plantGrowthTypes!=null)
             {
-                plantGrowthTypes.Add(new PlantGrowthType { GrowthTypeId = model.PlantDetails.ListGrowthTypes.GrowthTypesIds[i], PlantDetailId = model.PlantDetails.Id });
-            }
-
-            if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length == plantGrowthTypes.Count)
-            {
-                _plantRepo.UpdatePlantGrowthTypes(plantGrowthTypes);
+                _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
             }
             else
             {
-                _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id);
                 _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
             }
 

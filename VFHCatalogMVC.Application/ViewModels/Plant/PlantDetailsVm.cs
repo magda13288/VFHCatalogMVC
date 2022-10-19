@@ -35,11 +35,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public ListGrowingSeazonsVm ListGrowingSeazons { get; set; }
         [NotMapped]         
         public List<PlantDetailsImagesVm> PlantDetailsImages { get; set; }
+        [NotMapped]
         public PlantForListVm Plant { get; set; }
       
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap();
+            profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap()/*.ForMember(p => p.PlantDetailsImages, opt => opt.Ignore())*/;
 
         }
         public class PlantDetailsValidation : AbstractValidator<PlantDetailsVm>

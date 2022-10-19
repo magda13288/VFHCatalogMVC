@@ -26,7 +26,7 @@
         <input class="form-control me-2" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>
                <input type="hidden" name="pageNo" id="pageNo"/>
-       <input type="hidden" name="pageSize" id="pageSize" value="4" />
+       <input type="hidden" name="pageSize" id="pageSize" value="10" />
       </form>
     </div>
   </div>
@@ -91,7 +91,8 @@
                 }
             </tr>
     </table>
-
+    <input type="hidden" name="pageNo" id="pageNo"/>
+       <input type="hidden" name="pageSize" id="pageSize" value="10" />
 </div>
 </form>
 @section Scripts

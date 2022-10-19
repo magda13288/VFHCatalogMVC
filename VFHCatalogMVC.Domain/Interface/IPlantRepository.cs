@@ -14,9 +14,6 @@ namespace VFHCatalogMVC.Domain.Interface
         void UpdatePlant(Plant plant);
         void UpdatePlantDetails(PlantDetail plant); 
         int AddPlantDetails(PlantDetail plant, int plantId);
-        void UpdatePlantDestiantions(List<PlantDestination> destinations);
-        void UpdatePlantGrowingSeazons(List<PlantGrowingSeazon> growingSeazons);
-        void UpdatePlantGrowthTypes(List<PlantGrowthType> growthTypes);
         void DeletePlantDestinations(int id);
         void DeletePlantGrowingSeazons(int id);
         void DeletePlantGrowthTypes(int id);
@@ -27,7 +24,7 @@ namespace VFHCatalogMVC.Domain.Interface
         void DeleteImageFromGallery(int id);
         IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId);
         PlantDetail GetPlantDetails(int id);
-        string GetPlantColorName(int id);
+        string GetPlantColorName(int? id);
         string GetPlantFruitSizeName(int? id);
         string GetPlantFriutTypeName(int? id);
         IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id);

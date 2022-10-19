@@ -36,14 +36,14 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<PlantDetailsImages> PlantDetailsImages { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
+         
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-
             builder.Entity<Plant>(entity =>
-            { 
+            {
                 entity.HasOne(p => p.PlantType)
                 .WithMany(p => p.Plants)
                 .HasForeignKey(p => p.PlantTypeId)
@@ -61,9 +61,8 @@ namespace VFHCatalogMVC.Infrastructure
                .HasForeignKey(p => p.PlantSectionId)
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
-               
 
-            });
+            })/*.HasChangeTrackingStrategy(ChangeTrackingStrategy.Snapshot)*/;
 
             builder.Entity<GrowthType>(entity=>
             {

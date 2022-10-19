@@ -117,6 +117,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
             return View(plantToEdit);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(NewPlantVm plant)

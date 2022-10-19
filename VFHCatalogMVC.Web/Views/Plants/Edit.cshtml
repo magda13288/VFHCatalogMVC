@@ -16,7 +16,9 @@
                <input id="id" type="hidden" asp-for="Id" class="control-label"/> 
                 <input id="typeId" type="hidden" asp-for="TypeId" class="control-label"/>
                 <input id="groupId" type="hidden" asp-for="GroupId" class="form-control" />
-                <input id="sectionId" type="hidden" asp-for="SectionId" class="form-control" />     
+                <input id="sectionId" type="hidden" asp-for="SectionId" class="form-control" /> 
+                <input type="hidden" asp-for="PlantDetails.Id" class="form-control"/>
+                <input type="hidden" asp-for="PlantDetails.PlantRef" class="form-control" />
             <div class="form-group">
                 <label asp-for="FullName" class="control-label">Nazwa</label>
                 <input asp-for="FullName" class="form-control" placeholder="Nazwa" />
