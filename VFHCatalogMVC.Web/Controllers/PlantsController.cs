@@ -20,24 +20,32 @@ namespace VFHCatalogMVC.Web.Controllers
             _plantService = plantService;
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            var model = _plantService.GetAllActivePlantsForList(4, 1, "", null, null, null); //2 elementy na stronie, pierwsza strona, zadnego wyszukiwania
-            var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types,null,null);
+        //[HttpGet]
+        //public IActionResult Index()
+        //{
+        //    var model = _plantService.GetAllActivePlantsForList(4, 1, "", null, null, null); //2 elementy na stronie, pierwsza strona, zadnego wyszukiwania
+        //    var types = _plantService.GetPlantTypes();
+        //    ViewBag.TypesList = FillPropertyList(types,null,null);
+        //    ViewBag.GroupsList = string.Empty;
+        //    ViewBag.SectionsList = string.Empty;
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
+        [HttpPost, HttpGet]
+
         //pageSize okresla ile rekordow bedzie wyswietlanych na stronie 
         //pageNumber okresla na ktorej stronie jestesmy
         public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
+
             var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types,null,null);
-            //jesli rozpocznie nowe wyszukiwanie to ustawia stronę na 1
+            ViewBag.TypesList = FillPropertyList(types, null, null);
+            var groupsList = GetPlantGroupsList(typeId);
+            ViewBag.GroupsList = groupsList.Value;
+            var sectionsList = GetPlantSectionsList(groupId, typeId);
+            ViewBag.SectionsList = sectionsList.Value;
+
             if (!pageNo.HasValue)
             {
                 pageNo = 1;
@@ -46,7 +54,15 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 searchString = string.Empty;
             }
+                if (typeId != 0)
+                    ViewBag.TypeId = typeId;
+                if (groupId != 0)
+                    ViewBag.GroupId = groupId;
+                if (sectionId != 0)
+                    ViewBag.SectionId = sectionId;
+
             var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo, searchString, typeId, groupId, sectionId);
+
             return View(model);
         }
         //wyświetli pusty formularz gotowy do wypełnienia
@@ -104,12 +120,16 @@ namespace VFHCatalogMVC.Web.Controllers
             var plantToEdit = _plantService.GetPlantToEdit(id);
             var colors = _plantService.GetColors();
             ViewBag.ColorsList = FillPropertyList(null, colors, null);
+
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);           
+            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
+           
             var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
             ViewBag.GrowthTypes = growthTypes.Value;
+           
             var destinations = GetDestinations();
             ViewBag.Destinations = destinations.Value;
+
             var fruitTypes = GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
             ViewBag.FruitTypes = fruitTypes.Value;
             var fruitSize = GetFruitSizes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
@@ -128,6 +148,13 @@ namespace VFHCatalogMVC.Web.Controllers
                 return RedirectToAction("Index");
             }
             return View(plant);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+         var plant = _plantService.DeletePlant(id);
+         return RedirectToAction("Index",plant);
         }
 
         [HttpPost]
@@ -170,11 +197,11 @@ namespace VFHCatalogMVC.Web.Controllers
                     }
                 }         
             }
-            else
-            {
-                sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
+            //else
+            //{
+            //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
 
-            }
+            //}
             return Json(sectionsList);
         }
 

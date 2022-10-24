@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\PrivateUser\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\VFHCatalogMVC.Domain\VFHCatalogMVC.Domain.csproj" />
   </ItemGroup>
 

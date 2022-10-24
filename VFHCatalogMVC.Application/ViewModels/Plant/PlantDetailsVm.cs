@@ -37,7 +37,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public List<PlantDetailsImagesVm> PlantDetailsImages { get; set; }
         [NotMapped]
         public PlantForListVm Plant { get; set; }
-      
+        [NotMapped]
+        public List<PlantOpinionsVm> PlantOpinions { get; set; }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap()/*.ForMember(p => p.PlantDetailsImages, opt => opt.Ignore())*/;

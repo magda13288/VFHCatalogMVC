@@ -15,14 +15,17 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public void DeletePlant(int plantId)
+        public void DeletePlant(Plant plant)
         {
-            var plantToDelete = _context.Plants.Find(plantId);
-            if (plantToDelete != null)
-            {
-                _context.Plants.Remove(plantToDelete);
-                _context.SaveChanges();
-            }
+            //var plantToDelete = _context.Plants.Find(id;
+            //if (plantToDelete != null)
+            //{
+            //    _context.Plants.Remove(plantToDelete);
+            //    _context.SaveChanges();
+            //}
+           _context.Attach(plant);
+           _context.Entry(plant).Property("isActive").IsModified = true;
+           _context.SaveChanges();
         }
 
         public int AddPlant(Plant plant)
@@ -255,6 +258,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.PlantDetailsImages.Remove(imageToDelete);
             _context.SaveChanges();
 
+        }
+        public IQueryable<PlantOpinion> GetPlantOpinions(int id)
+        {
+            var plantOpinions = _context.PlantOpinions.Where(p => p.PlantDetailId == id);
+            return plantOpinions;
         }
     }
 }

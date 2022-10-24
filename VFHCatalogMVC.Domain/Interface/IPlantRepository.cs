@@ -8,7 +8,7 @@ namespace VFHCatalogMVC.Domain.Interface
 {
     public interface IPlantRepository
     {
-        void DeletePlant(int plantId);
+        void DeletePlant(Plant plant);
         int AddPlant(Plant plant);
         int EditPlant(Plant plant);
         void UpdatePlant(Plant plant);
@@ -30,10 +30,7 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id);
         IQueryable<PlantDestination> GetPlantDestinations(int id);
         IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id);
-        IQueryable<Plant> GetAllActivePlants(); //zwraca konkretny model bazodanowy (z konkretnej tabeli w bazie)
-        //IQueryable<Plant> GetPlantByTypeId(int typeId);
-        //IQueryable<Plant> GetPlantByGroupId(int groupId);
-        //IQueryable<Plant> GetPlantBySectionId(int sectionId);
+        IQueryable<Plant> GetAllActivePlants(); //zwraca konkretny model bazodanowy (z konkretnej tabeli w bazie)    
         Plant GetPlantById(int plantId);
         IQueryable<PlantType> GetAllTypes();
         IQueryable<PlantGroup> GetAllGroups();
@@ -44,6 +41,7 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<GrowingSeazon> GetGrowingSeazons();
         IQueryable<FruitSize> GetFruitSizes();
         IQueryable<FruitType> GetFruitTypes();
+        IQueryable<PlantOpinion> GetPlantOpinions(int id);
      
     }
 }

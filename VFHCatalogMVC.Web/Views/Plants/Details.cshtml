@@ -86,17 +86,17 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-        @*<tbody>
-@foreach (var item in Model.PlantDetailsImages) {
-        <tr>          
-             <td>
-                @Html.DisplayFor(modelItem => item)
-                <img src="plantGallery/searchPhoto/@item.ImageURL" class="img-fluid" width="120" height="80" asp-append-version="true"/> 
-             </td>
-        </tr>
-}
-   </tbody>*@
     </div>
+    </div>
+    <div class="row">
+         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOponions" aria-expanded="false" aria-controls="collapseOpinions">
+   Opinie
+  </button>
+  <div class="collapse" id="collapseOpinions">
+  <div class="card card-body">
+    Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+  </div>
+</div>
     </div>
 </div>
 <div>

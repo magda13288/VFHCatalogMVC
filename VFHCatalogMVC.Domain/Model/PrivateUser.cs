@@ -13,7 +13,6 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<ContactDetail> ContactDetails { get; set; }
         public ICollection<UserPlantSharing> UserPlantSharings { get; set; }
         public virtual ICollection <PlantOpinion> PlantOpinions { get; set; }
-
         public virtual ICollection<Address> Addresses { get; set; } 
 
     }

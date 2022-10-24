@@ -10,31 +10,26 @@
     <a asp-action="AddPlant">Dodaj nową roślinę</a>
 </p>
 <form asp-action="Index" asp-controller="Plants" method="post">
+    <div class="container-fluid">
+        <div class="row">
      <nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    @*<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-    </button>
+    </button>*@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-      <form class="d-flex" role="search">
          <label asp-for="PlantForList.TypeId" class="control-label me-3">Type</label>
-               <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"))"></select>
+               <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
            <label asp-for="PlantForList.GroupId" class="control-label me-2">Group</label>
-               <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(string.Empty,"Value", "Text","Group"))" ></select>
+               <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
            <label asp-for="PlantForList.SectionId" class="control-label me-2">Section</label>
-               <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(string.Empty,"Value", "Text","Section"))"></select>
-        <input class="form-control me-2" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
+               <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
+               <input class="form-control me-2" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>
-               <input type="hidden" name="pageNo" id="pageNo"/>
-       <input type="hidden" name="pageSize" id="pageSize" value="10" />
-      </form>
-    </div>
-  </div>
+       </div>      
 </nav>
-<p></p>
-<p></p>
+    </div>
 <div class="row">
-<table class="table-striped table-hover table-light">
+<table class="table-striped table-hover table-light" id="plantsTable">
     <thead class="thead-light">
         <tr class="text-center">
             <th>
@@ -64,7 +59,7 @@
             </td>
             <td>
                 @Html.ActionLink("Edytuj", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Sczegóły", "Details", new { id=item.Id }) |
+                @Html.ActionLink("Sczegóły", "Details", new { id=item.Id }) 
                 @Html.ActionLink("Usuń", "Delete", new { id=item.Id })
             </td>
         </tr>
@@ -72,7 +67,7 @@
     </tbody>
 </table>
 </div>
-<div>
+<div class="row">
     <table>
         <tr>
             @for(int i =1;i<Math.Ceiling(Model.Count/(double)Model.PageSize);i++)
@@ -92,20 +87,19 @@
             </tr>
     </table>
     <input type="hidden" name="pageNo" id="pageNo"/>
-       <input type="hidden" name="pageSize" id="pageSize" value="10" />
+    <input type="hidden" name="pageSize" id="pageSize" value="10" />
+</div>
 </div>
 </form>
 @section Scripts
-{
-    <script type="text/javascript">
+{ <script type="text/javascript">
 
         function PagerClick(index)
         {
             document.getElementById("pageNo").value = index;
             document.forms[0].submit();
         }
-        </script>
-<script type="text/javascript">
+
          $(function () {
         $("#ddlType").change(function () {
             $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
@@ -132,6 +126,15 @@
                 })
             })
         })
+
+
+//$(function Delete(id) {
+//    var table = $("#plantsTable")
+//    $.post('@Url.Action("Delete")', { id=id },
+//        table.reload();
+//})
+
+    //document.location.reload();
     </script>
 
 }

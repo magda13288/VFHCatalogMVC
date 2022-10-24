@@ -22,6 +22,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId);
         NewPlantVm GetPlantToEdit(int id);
         void UpdatePlant(NewPlantVm model);
+        PlantForListVm DeletePlant(int id);
 
   
 

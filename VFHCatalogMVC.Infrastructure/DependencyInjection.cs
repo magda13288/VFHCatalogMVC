@@ -9,6 +9,8 @@ namespace VFHCatalogMVC.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<IPlantRepository, PlantRepository>();
+            services.AddTransient<IPrivateUserRepository, PrivateUserRepository>();
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
 
             return services;
         }
