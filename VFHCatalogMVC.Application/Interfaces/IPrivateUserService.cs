@@ -7,6 +7,6 @@ namespace VFHCatalogMVC.Application.Interfaces
 {
     public interface IPrivateUserService
     {
-        PrivateUserVm GetPrivateUser(int id);
+        PrivateUserVm GetPrivateUser(string id);
     }
 }

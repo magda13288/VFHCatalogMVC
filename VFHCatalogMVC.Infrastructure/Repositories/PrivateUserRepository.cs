@@ -16,7 +16,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public PrivateUser GetPrivateUser(int id)
+        public PrivateUser GetPrivateUser(string id)
         {
             var user = _context.PrivateUsers.FirstOrDefault(p => p.Id == id);
             return user;

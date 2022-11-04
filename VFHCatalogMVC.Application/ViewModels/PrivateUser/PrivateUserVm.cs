@@ -9,12 +9,12 @@ namespace VFHCatalogMVC.Application.ViewModels.PrivateUser
 {
     public class PrivateUserVm:IMapFrom<VFHCatalogMVC.Domain.Model.PrivateUser>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool isActive { get; set; }
-        //[NotMapped]
-        //public string LogIn { get; set; }
+        public int AddressId { get; set; }
+        public string AccountName { get; set; }
 
         public void Mapping(Profile profile)
         {

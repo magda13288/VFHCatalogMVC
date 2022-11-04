@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace VFHCatalogMVC.Domain.Model
@@ -9,11 +10,16 @@ namespace VFHCatalogMVC.Domain.Model
         public int Id { get; set; }
         public string Opinion { get; set; }
         public int PlantDetailId { get; set; }
-        public virtual PlantDetail PlantDetail { get; set; }
-        public int? PrivateUserId { get; set; }
-        public PrivateUser PrivateUser { get; set; }
-        public int? CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public virtual PlantDetail PlantDetail { get; set; }  
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        [ForeignKey("PrivateUser")]
+        public string PrivateUserId { get; set; }
+        public virtual PrivateUser PrivateUser { get; set; }
+        [ForeignKey("Customer")]
+        public string CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
 
 
 

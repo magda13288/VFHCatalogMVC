@@ -7,6 +7,6 @@ namespace VFHCatalogMVC.Application.Interfaces
 {
     public interface ICustomerService
     {
-        CustomerVm GetCustomer(int id);
+        CustomerVm GetCustomer(string id);
     }
 }

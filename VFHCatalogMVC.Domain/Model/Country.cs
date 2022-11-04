@@ -10,5 +10,6 @@ namespace VFHCatalogMVC.Domain.Model
         public string Name { get; set; }
 
         public virtual ICollection<Address> Adresses { get; set; }
+        public virtual ICollection<Voivodeship> Voivodeships { get; set; }
     }
 }

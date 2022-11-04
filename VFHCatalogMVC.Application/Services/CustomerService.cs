@@ -19,7 +19,7 @@ namespace VFHCatalogMVC.Application.Services
             _mapper = mapper;
         }
 
-        public CustomerVm GetCustomer(int id)
+        public CustomerVm GetCustomer(string id)
         {
             var customer = _customerRepo.GetCustomer(id);
             var customerVm = _mapper.Map<CustomerVm>(customer);

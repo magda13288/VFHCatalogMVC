@@ -5,10 +5,12 @@
 }
 
 <h1>Welcome in plants catalog</h1>
-
-<p>
-    <a asp-action="AddPlant">Dodaj nową roślinę</a>
-</p>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="AddPlant">Dodaj nową roślinę</a>
+    </p>
+}
 <form asp-action="Index" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
@@ -45,7 +47,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Plants) {
+@foreach (var item in Model.Plants) 
+{
         <tr class="text-center">
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -58,10 +61,27 @@
                 <img src="/plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
             </td>
             <td>
-                @Html.ActionLink("Edytuj", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Sczegóły", "Details", new { id=item.Id }) 
-                @Html.ActionLink("Usuń", "Delete", new { id=item.Id })
-            </td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                @Html.ActionLink("Edytuj", "Edit", new {  id=item.Id })                                          
+                                @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
+                                @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
+                                }
+                                else
+                                {
+                                @if (User.IsInRole("PrivateUser") || User.IsInRole( "Customer"))
+                                {
+                                    @Html.ActionLink("+ Nasiona", "AddSeeds", new {  id=item.Id })         
+                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
+                                    @Html.ActionLink("+ Sadzonka", "AddSeedling", new { id = item.Id })                                  
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
+                                }  
+                                }
+                                                              
+                            </td>
         </tr>
 }
     </tbody>

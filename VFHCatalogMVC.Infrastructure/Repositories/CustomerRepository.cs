@@ -16,9 +16,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public Customer GetCustomer(int customerId)
+        public Customer GetCustomer(string id)
         {
-           var customer = _context.Customers.FirstOrDefault(x => x.Id == customerId);
+           var customer = _context.Customers.FirstOrDefault(x => x.Id == id);
             return customer;
         }
     }

@@ -7,6 +7,6 @@ namespace VFHCatalogMVC.Domain.Interface
 {
     public interface ICustomerRepository
     {
-        Customer GetCustomer(int customerId);
+        Customer GetCustomer(string id);
     }
 }

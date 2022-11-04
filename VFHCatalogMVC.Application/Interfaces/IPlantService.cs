@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VFHCatalogMVC.Application.Interfaces
 {
@@ -23,6 +24,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         NewPlantVm GetPlantToEdit(int id);
         void UpdatePlant(NewPlantVm model);
         PlantForListVm DeletePlant(int id);
+        List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList);
 
   
 

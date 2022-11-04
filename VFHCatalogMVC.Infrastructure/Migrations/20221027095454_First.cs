@@ -89,8 +89,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     NIP = table.Column<string>(nullable: true),
                     REGON = table.Column<string>(nullable: true),
@@ -147,8 +146,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "PrivateUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(nullable: false),
+                    AccountName = table.Column<string>(nullable: true),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     isActive = table.Column<bool>(nullable: false)
@@ -278,6 +277,53 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Voivodeships",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CountryId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Voivodeships", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Voivodeships_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContactDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContactDetailInformation = table.Column<string>(nullable: true),
+                    ContactDetailTypeID = table.Column<int>(nullable: false),
+                    CustomerID = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactDetails_ContactDetailTypes_ContactDetailTypeID",
+                        column: x => x.ContactDetailTypeID,
+                        principalTable: "ContactDetailTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContactDetails_Customers_CustomerID",
+                        column: x => x.CustomerID,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CustomerContactInformation",
                 columns: table => new
                 {
@@ -286,17 +332,17 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Possition = table.Column<string>(nullable: true),
-                    CustomerRef = table.Column<int>(nullable: false)
+                    CustomerId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CustomerContactInformation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CustomerContactInformation_Customers_CustomerRef",
-                        column: x => x.CustomerRef,
+                        name: "FK_CustomerContactInformation_Customers_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -320,74 +366,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addresses",
+                name: "Cities",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Street = table.Column<string>(nullable: true),
-                    BuildingNumber = table.Column<string>(nullable: true),
-                    FlatNumber = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    CountryId = table.Column<string>(nullable: true),
-                    CountryId1 = table.Column<int>(nullable: true),
-                    CustomerId = table.Column<int>(nullable: false),
-                    PrivateUserId = table.Column<int>(nullable: false)
+                    VoivodeshipId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.PrimaryKey("PK_Cities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Addresses_Countries_CountryId1",
-                        column: x => x.CountryId1,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Addresses_PrivateUsers_PrivateUserId",
-                        column: x => x.PrivateUserId,
-                        principalTable: "PrivateUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContactDetails",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ContactDetailInformation = table.Column<string>(nullable: true),
-                    ContactDetailTypeID = table.Column<int>(nullable: false),
-                    CustomerID = table.Column<int>(nullable: false),
-                    PrivateUserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContactDetails", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContactDetails_ContactDetailTypes_ContactDetailTypeID",
-                        column: x => x.ContactDetailTypeID,
-                        principalTable: "ContactDetailTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContactDetails_Customers_CustomerID",
-                        column: x => x.CustomerID,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContactDetails_PrivateUsers_PrivateUserId",
-                        column: x => x.PrivateUserId,
-                        principalTable: "PrivateUsers",
+                        name: "FK_Cities_Voivodeships_VoivodeshipId",
+                        column: x => x.VoivodeshipId,
+                        principalTable: "Voivodeships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -410,6 +403,54 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         principalTable: "PlantGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Street = table.Column<string>(nullable: true),
+                    BuildingNumber = table.Column<string>(nullable: true),
+                    FlatNumber = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    CityId = table.Column<int>(nullable: false),
+                    VoivodeshipId = table.Column<int>(nullable: false),
+                    CountryId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<string>(nullable: true),
+                    PrivateUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Addresses_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Addresses_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Addresses_PrivateUsers_PrivateUserId",
+                        column: x => x.PrivateUserId,
+                        principalTable: "PrivateUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Voivodeships_VoivodeshipId",
+                        column: x => x.VoivodeshipId,
+                        principalTable: "Voivodeships",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -539,30 +580,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerPlantsForSale",
-                columns: table => new
-                {
-                    PlantId = table.Column<int>(nullable: false),
-                    CustomerId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CustomerPlantsForSale", x => new { x.PlantId, x.CustomerId });
-                    table.ForeignKey(
-                        name: "FK_CustomerPlantsForSale_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CustomerPlantsForSale_Plants_PlantId",
-                        column: x => x.PlantId,
-                        principalTable: "Plants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PlantDetails",
                 columns: table => new
                 {
@@ -572,7 +589,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     PlantPassportNumber = table.Column<string>(nullable: true),
                     ColorId = table.Column<int>(nullable: true),
                     FruitSizeId = table.Column<int>(nullable: true),
-                    GrowingSeazonId = table.Column<int>(nullable: true),
                     FruitTypeId = table.Column<int>(nullable: true),
                     PlantRef = table.Column<int>(nullable: false)
                 },
@@ -584,31 +600,95 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         column: x => x.ColorId,
                         principalTable: "Colors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PlantDetails_FruitSizes_FruitSizeId",
                         column: x => x.FruitSizeId,
                         principalTable: "FruitSizes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PlantDetails_FruitTypes_FruitTypeId",
                         column: x => x.FruitTypeId,
                         principalTable: "FruitTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PlantDetails_GrowingSeazons_GrowingSeazonId",
-                        column: x => x.GrowingSeazonId,
-                        principalTable: "GrowingSeazons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PlantDetails_Plants_PlantRef",
                         column: x => x.PlantRef,
                         principalTable: "Plants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlantSeedlings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlantId = table.Column<int>(nullable: false),
+                    Count = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    PrivateUserId = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlantSeedlings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlantSeedlings_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PlantSeedlings_Plants_PlantId",
+                        column: x => x.PlantId,
+                        principalTable: "Plants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlantSeedlings_PrivateUsers_PrivateUserId",
+                        column: x => x.PrivateUserId,
+                        principalTable: "PrivateUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlantSeeds",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlantId = table.Column<int>(nullable: false),
+                    Count = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    PrivateUserId = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlantSeeds", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlantSeeds_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PlantSeeds_Plants_PlantId",
+                        column: x => x.PlantId,
+                        principalTable: "Plants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlantSeeds_PrivateUsers_PrivateUserId",
+                        column: x => x.PrivateUserId,
+                        principalTable: "PrivateUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -641,8 +721,10 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ForSale = table.Column<bool>(nullable: false),
                     ToReplace = table.Column<bool>(nullable: false),
+                    ForFree = table.Column<bool>(nullable: false),
+                    Seed = table.Column<bool>(nullable: false),
+                    Seedling = table.Column<bool>(nullable: false),
                     None = table.Column<bool>(nullable: false),
                     PlantRef = table.Column<int>(nullable: false)
                 },
@@ -653,30 +735,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         name: "FK_TypeOfAvailabilities_Plants_PlantRef",
                         column: x => x.PlantRef,
                         principalTable: "Plants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserPlantSharing",
-                columns: table => new
-                {
-                    PlantId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPlantSharing", x => new { x.PlantId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_UserPlantSharing_Plants_PlantId",
-                        column: x => x.PlantId,
-                        principalTable: "Plants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserPlantSharing_PrivateUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "PrivateUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -699,6 +757,50 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PlantDestinations_PlantDetails_PlantDetailId",
+                        column: x => x.PlantDetailId,
+                        principalTable: "PlantDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlantDetailsImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageURL = table.Column<string>(nullable: true),
+                    PlantDetailId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlantDetailsImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlantDetailsImages_PlantDetails_PlantDetailId",
+                        column: x => x.PlantDetailId,
+                        principalTable: "PlantDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlantGrowingSeazons",
+                columns: table => new
+                {
+                    GrowingSeazonId = table.Column<int>(nullable: false),
+                    PlantDetailId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlantGrowingSeazons", x => new { x.PlantDetailId, x.GrowingSeazonId });
+                    table.ForeignKey(
+                        name: "FK_PlantGrowingSeazons_GrowingSeazons_GrowingSeazonId",
+                        column: x => x.GrowingSeazonId,
+                        principalTable: "GrowingSeazons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlantGrowingSeazons_PlantDetails_PlantDetailId",
                         column: x => x.PlantDetailId,
                         principalTable: "PlantDetails",
                         principalColumn: "Id",
@@ -737,11 +839,18 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Opinion = table.Column<string>(nullable: true),
                     PlantDetailId = table.Column<int>(nullable: false),
-                    PrivateUserId = table.Column<int>(nullable: false)
+                    PrivateUserId = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PlantOpinions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlantOpinions_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PlantOpinions_PlantDetails_PlantDetailId",
                         column: x => x.PlantDetailId,
@@ -753,13 +862,18 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         column: x => x.PrivateUserId,
                         principalTable: "PrivateUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_CountryId1",
+                name: "IX_Addresses_CityId",
                 table: "Addresses",
-                column: "CountryId1");
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_CountryId",
+                table: "Addresses",
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_CustomerId",
@@ -770,6 +884,11 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "IX_Addresses_PrivateUserId",
                 table: "Addresses",
                 column: "PrivateUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_VoivodeshipId",
+                table: "Addresses",
+                column: "VoivodeshipId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -811,6 +930,11 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cities_VoivodeshipId",
+                table: "Cities",
+                column: "VoivodeshipId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContactDetails_ContactDetailTypeID",
                 table: "ContactDetails",
                 column: "ContactDetailTypeID");
@@ -821,20 +945,11 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactDetails_PrivateUserId",
-                table: "ContactDetails",
-                column: "PrivateUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CustomerContactInformation_CustomerRef",
+                name: "IX_CustomerContactInformation_CustomerId",
                 table: "CustomerContactInformation",
-                column: "CustomerRef",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CustomerPlantsForSale_CustomerId",
-                table: "CustomerPlantsForSale",
-                column: "CustomerId");
+                column: "CustomerId",
+                unique: true,
+                filter: "[CustomerId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FruitSizes_PlantGroupId",
@@ -902,15 +1017,15 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 column: "FruitTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlantDetails_GrowingSeazonId",
-                table: "PlantDetails",
-                column: "GrowingSeazonId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PlantDetails_PlantRef",
                 table: "PlantDetails",
                 column: "PlantRef",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantDetailsImages_PlantDetailId",
+                table: "PlantDetailsImages",
+                column: "PlantDetailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlantGroups_PlantTypeId",
@@ -918,9 +1033,19 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 column: "PlantTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlantGrowingSeazons_GrowingSeazonId",
+                table: "PlantGrowingSeazons",
+                column: "GrowingSeazonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlantGrowthTypes_GrowthTypeId",
                 table: "PlantGrowthTypes",
                 column: "GrowthTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantOpinions_CustomerId",
+                table: "PlantOpinions",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlantOpinions_PlantDetailId",
@@ -953,6 +1078,36 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 column: "PlantGroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlantSeedlings_CustomerId",
+                table: "PlantSeedlings",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantSeedlings_PlantId",
+                table: "PlantSeedlings",
+                column: "PlantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantSeedlings_PrivateUserId",
+                table: "PlantSeedlings",
+                column: "PrivateUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantSeeds_CustomerId",
+                table: "PlantSeeds",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantSeeds_PlantId",
+                table: "PlantSeeds",
+                column: "PlantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlantSeeds_PrivateUserId",
+                table: "PlantSeeds",
+                column: "PrivateUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlantTags_TagId",
                 table: "PlantTags",
                 column: "TagId");
@@ -964,9 +1119,9 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPlantSharing_UserId",
-                table: "UserPlantSharing",
-                column: "UserId");
+                name: "IX_Voivodeships_CountryId",
+                table: "Voivodeships",
+                column: "CountryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -996,10 +1151,13 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "CustomerContactInformation");
 
             migrationBuilder.DropTable(
-                name: "CustomerPlantsForSale");
+                name: "PlantDestinations");
 
             migrationBuilder.DropTable(
-                name: "PlantDestinations");
+                name: "PlantDetailsImages");
+
+            migrationBuilder.DropTable(
+                name: "PlantGrowingSeazons");
 
             migrationBuilder.DropTable(
                 name: "PlantGrowthTypes");
@@ -1008,16 +1166,19 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "PlantOpinions");
 
             migrationBuilder.DropTable(
+                name: "PlantSeedlings");
+
+            migrationBuilder.DropTable(
+                name: "PlantSeeds");
+
+            migrationBuilder.DropTable(
                 name: "PlantTags");
 
             migrationBuilder.DropTable(
                 name: "TypeOfAvailabilities");
 
             migrationBuilder.DropTable(
-                name: "UserPlantSharing");
-
-            migrationBuilder.DropTable(
-                name: "Countries");
+                name: "Cities");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -1029,10 +1190,10 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "ContactDetailTypes");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Destinations");
 
             migrationBuilder.DropTable(
-                name: "Destinations");
+                name: "GrowingSeazons");
 
             migrationBuilder.DropTable(
                 name: "GrowthTypes");
@@ -1041,10 +1202,16 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "PlantDetails");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "PrivateUsers");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "Voivodeships");
 
             migrationBuilder.DropTable(
                 name: "Colors");
@@ -1056,10 +1223,10 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "FruitTypes");
 
             migrationBuilder.DropTable(
-                name: "GrowingSeazons");
+                name: "Plants");
 
             migrationBuilder.DropTable(
-                name: "Plants");
+                name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "PlantSections");

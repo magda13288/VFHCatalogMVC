@@ -10,6 +10,7 @@ using VFHCatalogMVC.Domain.Interface;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VFHCatalogMVC.Application.Services
 {
@@ -39,8 +40,8 @@ namespace VFHCatalogMVC.Application.Services
 
             if (model.Photo != null)
             {
-                string direction = "plantGallery/searchPhoto";
-                var fileName = UploadImage(model.Photo,model.FullName,direction);     
+                string _DIR = "plantGallery/searchPhoto";
+                var fileName = UploadImage(model.Photo,model.FullName,_DIR);     
                 newPlant.Photo = fileName;
             }
 
@@ -86,11 +87,11 @@ namespace VFHCatalogMVC.Application.Services
             {
                 if (model.PlantDetails.Images.Count > 0)
                 {
-                    string direction = "plantGallery/plantDetailsGallery";
+                    string _DIR = "plantGallery/plantDetailsGallery";
 
                     foreach (var item in model.PlantDetails.Images)
                     {
-                        string fileName = UploadImage(item, model.FullName, direction);
+                        string fileName = UploadImage(item, model.FullName, _DIR);
                         _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
                     }
                 }
@@ -288,14 +289,26 @@ namespace VFHCatalogMVC.Application.Services
 
                 var plantOpinions = new List<PlantOpinionsVm>();
                 plantOpinions = _plantRepo.GetPlantOpinions(plantDetails.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
+
                 if (plantOpinions != null)
                 {
                     foreach (var item in plantOpinions)
                     {
+                        if (item.PrivateUserId != null)
+                        {
+                            var userInfo = _privateUserService.GetPrivateUser(item.PrivateUserId);
+                            item.UserName = userInfo.FirstName + " " + userInfo.LastName;
+                            item.CustomerName = String.Empty;
+                        }
+                        if (item.CustomerId != null)
+                        {
+                            var customerInfo = _customerService.GetCustomer(item.CustomerId);
+                            item.CustomerName = customerInfo.Name;
+                            item.UserName = String.Empty;
+                        }
                         plantDetailsVm.PlantOpinions.Add(item);
                     }
-                }
-
+                }              
             }
 
             //add Opinions in PlantOpinnion after adding logic for users
@@ -337,7 +350,7 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var i in growthTypesForPlant)
                 {
                     propertyNames.Add(i.Name);
-                    propertyNames.Add(",");
+                    propertyNames.Add(", ");
                 }
                 propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
             }
@@ -378,7 +391,7 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var i in destinationsForPlants)
                 {
                     propertyNames.Add(i.Name);
-                    propertyNames.Add(",");
+                    propertyNames.Add(", ");
                 }
 
                 propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
@@ -418,7 +431,7 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var i in growingSeaznosForPlant)
                 {
                     propertyNames.Add(i.Name);
-                    propertyNames.Add(",");
+                    propertyNames.Add(", ");
                 }
 
                 propertyNames = propertyNames.Take(propertyNames.Count - 1).ToList();
@@ -717,6 +730,45 @@ namespace VFHCatalogMVC.Application.Services
             }
             
             return plantVm;
+        }
+
+        public List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList)
+        {
+            List<SelectListItem> propertyList = new List<SelectListItem>();
+
+            if (list != null)
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in list)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            if (colorList != null)
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in colorList)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            if (seazonList != null)
+            {
+                //propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in seazonList)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            else
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+            }
+
+            return propertyList;
         }
     }
 }

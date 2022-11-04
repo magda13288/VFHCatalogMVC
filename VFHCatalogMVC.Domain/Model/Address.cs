@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace VFHCatalogMVC.Domain.Model
@@ -11,12 +13,20 @@ namespace VFHCatalogMVC.Domain.Model
         public string BuildingNumber { get; set; }
         public string FlatNumber { get; set; }
         public string ZipCode { get; set; }
-        public string City { get; set; }
-        public string CountryId { get; set; }
+        public int CityId { get; set; }
+        public virtual City City { get; set; }
+        public int VoivodeshipId { get; set; }
+        public virtual Voivodeship Voivodeship { get; set; }
+        public int CountryId { get; set; }
         public virtual Country Country { get; set; }
-        public int CustomerId { get; set; }
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        [ForeignKey("Customer")]
+        public string CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
-        public int PrivateUserId { get; set; }       
+        [ForeignKey("PrivateUser")]
+        public string PrivateUserId { get; set; }       
         public virtual PrivateUser PrivateUser { get; set; }
         
 

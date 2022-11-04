@@ -24,6 +24,8 @@ using static VFHCatalogMVC.Application.ViewModels.Plant.NewPlantVm;
 using static VFHCatalogMVC.Application.ViewModels.Plant.PlantDetailsVm;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.ViewModels.Adresses;
+using static VFHCatalogMVC.Application.ViewModels.Adresses.AddressVm;
 
 namespace VFHCatalogMVC.Web
 {
@@ -46,7 +48,7 @@ namespace VFHCatalogMVC.Web
                 
               
             });
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<Context>();
 
             services.AddApplication();
@@ -55,8 +57,29 @@ namespace VFHCatalogMVC.Web
             services.AddControllersWithViews().AddFluentValidation();
             services.AddTransient<IValidator<NewPlantVm>, NewPlantValidation>();
             services.AddTransient<IValidator<PlantDetailsVm>, PlantDetailsValidation>();
+            services.AddTransient<IValidator<AddressVm>, AddressValidation>();
             services.AddControllersWithViews().AddFluentValidation(fv => { });
             services.AddRazorPages();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredUniqueChars = 1;
+
+                options.SignIn.RequireConfirmedEmail = false;
+                options.User.RequireUniqueEmail = true;
+
+            });
+
+            //services.AddAuthentication().AddGoogle(options =>
+            //{
+            //    IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
+            //    options.ClientId = googleAuthNSection["ClientId"];
+            //    options.ClientSecret = googleAuthNSection["ClientSecret"];
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

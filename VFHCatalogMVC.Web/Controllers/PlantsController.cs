@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using VFHCatalogMVC.Application;
 using System.IO;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using System.Linq;
-//using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -15,9 +17,10 @@ namespace VFHCatalogMVC.Web.Controllers
 
         private readonly IPlantService _plantService;
 
-        public PlantsController(IPlantService plantService)
+        public PlantsController(IPlantService plantService/*,RegisterModel registerModel*/)
         {
             _plantService = plantService;
+            // _registerModel = registerModel;
         }
 
         //[HttpGet]
@@ -33,14 +36,14 @@ namespace VFHCatalogMVC.Web.Controllers
         //}
 
         [HttpPost, HttpGet]
-
+        [AllowAnonymous]
         //pageSize okresla ile rekordow bedzie wyswietlanych na stronie 
-        //pageNumber okresla na ktorej stronie jestesmy
+        //pageNumber okresla na ktorej stronie jestesm
         public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
-
+           
             var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types, null, null);
+            ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
             var groupsList = GetPlantGroupsList(typeId);
             ViewBag.GroupsList = groupsList.Value;
             var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -67,21 +70,22 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         //wyświetli pusty formularz gotowy do wypełnienia
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public IActionResult AddPlant()
         {
             var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types,null,null);
+            ViewBag.TypesList = _plantService.FillPropertyList(types,null,null);
             var colors = _plantService.GetColors();
-            ViewBag.ColorsList = FillPropertyList(null, colors, null);
+            ViewBag.ColorsList = _plantService.FillPropertyList(null, colors, null);
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
+            ViewBag.GrowingSeazons =_plantService.FillPropertyList(null, null, growingSeaznos);
 
             return View();
         }      
 
         //zostanie przekazny model plantu.Serwis po odpowiednim przygtowaniu danych do zapisu przekaże je do repozytorium, które zapisze je w bazie danych
         [HttpPost]
-
+        [Authorize(Roles ="Admin")]
         [ValidateAntiForgeryToken] // zabezpiecza przed przesłaniem falszywego widoku dodawania nowego widoku (danych)
         public IActionResult AddPlant(NewPlantVm model)
         {
@@ -93,11 +97,11 @@ namespace VFHCatalogMVC.Web.Controllers
             }
 
             var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = FillPropertyList(types, null, null);
+            ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
             var colors = _plantService.GetColors();
-            ViewBag.ColorsList = FillPropertyList(null, colors, null);
+            ViewBag.ColorsList = _plantService.FillPropertyList(null, colors, null);
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
+            ViewBag.GrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
             return View(model);
         }
 
@@ -115,14 +119,15 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public IActionResult Edit(int id)
         {
             var plantToEdit = _plantService.GetPlantToEdit(id);
             var colors = _plantService.GetColors();
-            ViewBag.ColorsList = FillPropertyList(null, colors, null);
+            ViewBag.ColorsList = _plantService.FillPropertyList(null, colors, null);
 
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons = FillPropertyList(null, null, growingSeaznos);
+            ViewBag.GrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
            
             var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
             ViewBag.GrowthTypes = growthTypes.Value;
@@ -139,6 +144,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(NewPlantVm plant)
         {
@@ -149,8 +155,9 @@ namespace VFHCatalogMVC.Web.Controllers
             }
             return View(plant);
         }
-
+        //Add referesing table after delete plant
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public IActionResult Delete(int id)
         {
          var plant = _plantService.DeletePlant(id);
@@ -297,45 +304,6 @@ namespace VFHCatalogMVC.Web.Controllers
             }
 
             return Json(fruitSizesList);
-        }
-
-        private List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (list != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in list)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (colorList != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in colorList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (seazonList != null)
-            {
-                //propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in seazonList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-
-            return propertyList;
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace VFHCatalogMVC.Domain.Model
 {
     public class Customer
     {
-        public int Id { get; set; }
+        [Key]
+        public string Id { get; set; }
         public string Name { get; set; }
         public string NIP { get; set; }
         public string REGON { get; set; }
@@ -18,7 +20,8 @@ namespace VFHCatalogMVC.Domain.Model
         public CustomerContactInformation CustomerContactInformation { get; set; }
         public virtual ICollection<ContactDetail> ContactDetails { get; set; }
         public virtual ICollection<Address> Adresses { get; set; }
-        public ICollection<CustomerPlantsForSale> CustomerPlantsForSale { get; set; }
+        //public ICollection<CustomerPlant> CustomerPlants { get; set; }
         public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }
+       // public ICollection<PlantHolder> PlantHolders { get; set; }
     }
 }

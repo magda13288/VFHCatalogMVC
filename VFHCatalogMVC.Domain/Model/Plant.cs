@@ -27,8 +27,11 @@ namespace VFHCatalogMVC.Domain.Model
         public PlantDetail PlantDetail { get; set; }
         public TypeOfAvailability TypeOfAvailability { get; set; }
         public ICollection<PlantTag> PlantTags { get; set; }
-        public ICollection<UserPlantSharing> UserPlantSharings { get; set; }
-        public ICollection<CustomerPlantsForSale> CustomerPlantsForSale { get; set; }
-        
+        //public ICollection<PrivateUserPlant> PrivateUserPlants { get; set; }
+        //public ICollection<CustomerPlant> CustomerPlants { get; set; }
+        //public ICollection<PlantHolder> PlantHolders { get; set; }
+        public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
+        public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
+       
     }
 }

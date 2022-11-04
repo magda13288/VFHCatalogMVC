@@ -4,7 +4,7 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Infrastructure
 {
-    public class Context : IdentityDbContext
+    public class Context : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Address> Addresses { get; set; }
         public DbSet<ContactDetail> ContactDetails { get; set; }
@@ -22,8 +22,6 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TypeOfAvailability> TypeOfAvailabilities { get; set; }
         public DbSet<PrivateUser> PrivateUsers { get; set; }
-        public DbSet<CustomerPlantsForSale> CustomerPlantsForSale { get; set; }
-        public DbSet<UserPlantSharing> UserPlantSharing { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<PlantDestination> PlantDestinations { get; set; }
         public DbSet<GrowthType> GrowthTypes { get; set; }
@@ -34,6 +32,11 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<GrowingSeazon> GrowingSeazons { get; set; }
         public DbSet<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
         public DbSet<PlantDetailsImages> PlantDetailsImages { get; set; }
+        public DbSet<Voivodeship> Voivodeships { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<PlantSeed> PlantSeeds { get; set; }
+        public DbSet<PlantSeedling> PlantSeedlings { get; set; }
+  
         public Context(DbContextOptions options) : base(options)
         {
          
@@ -41,6 +44,31 @@ namespace VFHCatalogMVC.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Address>(entity =>
+            {
+                entity.HasOne(p=>p.Country)
+                .WithMany(p=>p.Adresses)
+                .HasForeignKey(p=>p.CountryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(p => p.Voivodeship)
+                .WithMany(p => p.Address)
+                .HasForeignKey(p => p.VoivodeshipId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(p => p.City)
+                .WithMany(p => p.Addresses)
+                .HasForeignKey(p => p.CityId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                entity.Property(p => p.PrivateUserId)
+                .IsRequired(false);
+
+                entity.Property(p => p.CustomerId)
+                .IsRequired(false);
+
+            });
 
             builder.Entity<Plant>(entity =>
             {
@@ -62,8 +90,24 @@ namespace VFHCatalogMVC.Infrastructure
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
 
-            })/*.HasChangeTrackingStrategy(ChangeTrackingStrategy.Snapshot)*/;
+            });
 
+            builder.Entity<PlantSeed>(entity =>
+            {
+                entity.Property(p => p.PrivateUserId)
+                .IsRequired(false);
+                entity.Property(p => p.CustomerId)
+                .IsRequired(false);
+            });
+
+            builder.Entity<PlantSeedling>(entity =>
+            {
+                entity.Property(p => p.PrivateUserId)
+                .IsRequired(false);
+                entity.Property(p => p.CustomerId)
+                .IsRequired(false);
+            });
+                
             builder.Entity<GrowthType>(entity=>
             {
                 entity.HasOne(p => p.PlantType)
@@ -149,7 +193,7 @@ namespace VFHCatalogMVC.Infrastructure
 
             builder.Entity<Customer>()
                 .HasOne(a => a.CustomerContactInformation).WithOne(b => b.Customer)
-                .HasForeignKey<CustomerContactInformation>(e => e.CustomerRef);
+                .HasForeignKey<CustomerContactInformation>(e => e.CustomerId);
 
             builder.Entity<Plant>()
                 .HasOne(a => a.TypeOfAvailability).WithOne(b => b.Plant)
@@ -172,58 +216,37 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(pt => pt.PlantTags)
                 .HasForeignKey(pt => pt.TagId);
 
-            builder.Entity<UserPlantSharing>()
-                .HasKey(ups => new { ups.PlantId, ups.UserId });
+            builder.Entity<PrivateUser>()
+                .HasKey(p => p.Id);
 
-            builder.Entity<UserPlantSharing>()
-                .HasOne<Plant>(ups => ups.Plant)
-                .WithMany(ups => ups.UserPlantSharings)
-                .HasForeignKey(ups => ups.PlantId);
+            builder.Entity<Customer>()
+                .HasKey(p => p.Id);     
 
-            builder.Entity<UserPlantSharing>()
-                .HasOne<PrivateUser>(ups => ups.PrivateUser)
-                .WithMany(ups => ups.UserPlantSharings)
-                .HasForeignKey(ups => ups.UserId);
+            builder.Entity<PlantDestination>(entity => {
 
-            builder.Entity<CustomerPlantsForSale>()
-                .HasKey(cps => new { cps.PlantId, cps.CustomerId });
+                entity.HasKey(pd => new { pd.PlantDetailId, pd.DestinationId });
 
-            builder.Entity<CustomerPlantsForSale>()
-                .HasOne<Plant>(cps => cps.Plant)
-                .WithMany(cps => cps.CustomerPlantsForSale)
-                .HasForeignKey(cps => cps.PlantId);
-
-            builder.Entity<CustomerPlantsForSale>()
-                .HasOne<Customer>(cps => cps.Customer)
-                .WithMany(cps => cps.CustomerPlantsForSale)
-                .HasForeignKey(cps => cps.CustomerId);
-
-
-            builder.Entity<PlantDestination>()
-                .HasKey(pd => new { pd.PlantDetailId, pd.DestinationId });
-
-            builder.Entity<PlantDestination>()
-                .HasOne<PlantDetail>(pd => pd.PlantDetail)
+                entity.HasOne<PlantDetail>(pd => pd.PlantDetail)
                 .WithMany(pd => pd.PlantDestinations)
                 .HasForeignKey(pd => pd.PlantDetailId);
 
-            builder.Entity<PlantDestination>()
-                .HasOne<Destination>(pd => pd.Destinations)
+                entity.HasOne<Destination>(pd => pd.Destinations)
                 .WithMany(pd => pd.PlantDestinations)
                 .HasForeignKey(pd => pd.DestinationId);
+            });
 
-            builder.Entity<PlantGrowthType>()
-                .HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
+            builder.Entity<PlantGrowthType>(entity => {
 
-            builder.Entity<PlantGrowthType>()
-                .HasOne(pg => pg.PlantDetail)
+              entity.HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
+
+              entity.HasOne(pg => pg.PlantDetail)
                 .WithMany(pg => pg.PlantGrowthTypes)
                 .HasForeignKey(pg => pg.PlantDetailId);
 
-            builder.Entity<PlantGrowthType>()
-                .HasOne(pg => pg.GrowthType)
-                .WithMany(pg => pg.PlantGrowthTypes)
-                .HasForeignKey(pg => pg.GrowthTypeId);
+                entity.HasOne(pg => pg.GrowthType)
+                    .WithMany(pg => pg.PlantGrowthTypes)
+                    .HasForeignKey(pg => pg.GrowthTypeId);
+            });                       
 
             builder.Entity<PlantGrowingSeazon>(entity =>
             {
@@ -238,14 +261,14 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(e => e.GrowingSeazonId);
             });
 
-            builder.Entity<PlantOpinion>()
-            .Property(p => p.PrivateUserId)
-            .IsRequired(false);
-
-            builder.Entity<PlantOpinion>()
-                .Property(p => p.CustomerId)
+            builder.Entity<PlantOpinion>(entity =>
+            {
+                entity.Property(p => p.PrivateUserId)
                 .IsRequired(false);
 
+                entity.Property(p => p.CustomerId)
+                .IsRequired(false);
+            });                   
         }
     }
 }
