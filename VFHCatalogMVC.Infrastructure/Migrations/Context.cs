@@ -10,7 +10,6 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<ContactDetail> ContactDetails { get; set; }
         public DbSet<ContactDetailType> ContactDetailTypes { get; set; }
         public DbSet<Country> Countries { get; set; }
-        public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerContactInformation> CustomerContactInformation { get; set; }
         public DbSet<Plant> Plants { get; set; }
         public DbSet<PlantGroup> PlantGroups { get; set; }
@@ -21,7 +20,6 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<PlantOpinion> PlantOpinions { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TypeOfAvailability> TypeOfAvailabilities { get; set; }
-        public DbSet<PrivateUser> PrivateUsers { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<PlantDestination> PlantDestinations { get; set; }
         public DbSet<GrowthType> GrowthTypes { get; set; }
@@ -62,12 +60,6 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(p => p.CityId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-                entity.Property(p => p.PrivateUserId)
-                .IsRequired(false);
-
-                entity.Property(p => p.CustomerId)
-                .IsRequired(false);
-
             });
 
             builder.Entity<Plant>(entity =>
@@ -90,22 +82,6 @@ namespace VFHCatalogMVC.Infrastructure
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
 
-            });
-
-            builder.Entity<PlantSeed>(entity =>
-            {
-                entity.Property(p => p.PrivateUserId)
-                .IsRequired(false);
-                entity.Property(p => p.CustomerId)
-                .IsRequired(false);
-            });
-
-            builder.Entity<PlantSeedling>(entity =>
-            {
-                entity.Property(p => p.PrivateUserId)
-                .IsRequired(false);
-                entity.Property(p => p.CustomerId)
-                .IsRequired(false);
             });
                 
             builder.Entity<GrowthType>(entity=>
@@ -191,10 +167,6 @@ namespace VFHCatalogMVC.Infrastructure
               .IsRequired(false);
             });
 
-            builder.Entity<Customer>()
-                .HasOne(a => a.CustomerContactInformation).WithOne(b => b.Customer)
-                .HasForeignKey<CustomerContactInformation>(e => e.CustomerId);
-
             builder.Entity<Plant>()
                 .HasOne(a => a.TypeOfAvailability).WithOne(b => b.Plant)
                 .HasForeignKey<TypeOfAvailability>(e => e.PlantRef);
@@ -214,13 +186,7 @@ namespace VFHCatalogMVC.Infrastructure
             builder.Entity<PlantTag>()
                 .HasOne<Tag>(pt => pt.Tag)
                 .WithMany(pt => pt.PlantTags)
-                .HasForeignKey(pt => pt.TagId);
-
-            builder.Entity<PrivateUser>()
-                .HasKey(p => p.Id);
-
-            builder.Entity<Customer>()
-                .HasKey(p => p.Id);     
+                .HasForeignKey(pt => pt.TagId);   
 
             builder.Entity<PlantDestination>(entity => {
 
@@ -259,15 +225,6 @@ namespace VFHCatalogMVC.Infrastructure
                 entity.HasOne<GrowingSeazon>(e => e.GrowingSeazon)
                 .WithMany(e => e.PlantGrowingSeazons)
                 .HasForeignKey(e => e.GrowingSeazonId);
-            });
-
-            builder.Entity<PlantOpinion>(entity =>
-            {
-                entity.Property(p => p.PrivateUserId)
-                .IsRequired(false);
-
-                entity.Property(p => p.CustomerId)
-                .IsRequired(false);
             });                   
         }
     }

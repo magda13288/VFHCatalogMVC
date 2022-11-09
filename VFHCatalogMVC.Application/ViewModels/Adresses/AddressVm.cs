@@ -21,12 +21,11 @@ namespace VFHCatalogMVC.Application.ViewModels.Adresses
         public int VoivodeshipId { get; set; }
         [Display(Name = "Kraj")]
         public int CountryId { get; set; }
-        public string CustomerId { get; set; }
-        public string PrivateUserId { get; set; }
+        public string UserId { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.Address, AddressVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.Address, AddressVm>().ReverseMap();
         }
 
         public class AddressValidation:AbstractValidator<AddressVm>

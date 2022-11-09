@@ -14,10 +14,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using VFHCatalogMVC.Application.Interfaces;
-using VFHCatalogMVC.Application.ViewModels.PrivateUser;
+
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.ViewModels.ApplicationUser;
 
 namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 {
@@ -28,7 +29,6 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IPrivateUserService _privateUserService;
         private readonly IAddressService _addressService;
 
 
@@ -36,13 +36,12 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IPrivateUserService privateUserService, IAddressService addressService)
+            IEmailSender emailSender, IAddressService addressService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _privateUserService = privateUserService;
             _addressService = addressService;
         }
 
@@ -70,12 +69,15 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             [Display(Name = /*"Confirm password"*/ "Potwierdź hasło")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
 
+            public string ConfirmPassword { get; set; }
             public bool IsPrivateUser { get; set; }
-            public bool IsCustomer { get; set; }  
-            public string ConfirmPassword { get; set; }          
-            public PrivateUserVm PrivateUserVm { get; set; }
-            [Required]
-            public AddressVm AddressVm { get; set; }           
+            public bool IsCustomer { get; set; }
+
+            public int CountryId { get; set; }
+            public int VoivodeshipId { get; set; }
+            public int CityId { get; set; }
+            public string AccountName { get; set; }
+            public string CompanyName { get; set; }
 
         }
 
@@ -86,28 +88,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 
             var countries =  _addressService.GetCountries();
             var countriesList = _addressService.FillCountryList(countries);
-            ViewData["Country"] = countriesList;
-            
-        }
-        //public JsonResult GetVoivodeships(int id)
-        //{
-        //    var groups = _addressService.GetVoivodeships(id);
-
-        //    List<SelectListItem> groupsList = new List<SelectListItem>();
-
-        //    if (groups.Count > 0)
-        //    {
-
-        //        groupsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-        //        foreach (var group in groups)
-        //        {
-        //            groupsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-        //        }
-        //    }
-
-        //    return Json(groupsList);
-        //}
+            ViewData["Country"] = countriesList;     
+        }   
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -115,13 +97,31 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                //var privateUser = new PrivateUserVm {
-                //    Id = user.Id
-                //};
+                var user = new ApplicationUser();
+                var result = new IdentityResult();
+                var roleResult = new IdentityResult();
+                var address = new AddressVm();
 
-                if (result.Succeeded)
+                if (Input.IsPrivateUser == true)
+                {
+                    user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, AccountName = Input.AccountName, isActive = true };
+                    result = await _userManager.CreateAsync(user, Input.Password);
+                    roleResult = await _userManager.AddToRoleAsync(user, "PRIVATE_USER");
+                    address = new AddressVm() { CountryId = Input.CountryId, VoivodeshipId = Input.VoivodeshipId, CityId = Input.CityId, UserId = user.Id };
+                    _addressService.AddAddress(address);
+                }
+
+                if (Input.IsCustomer == true)
+                {
+                    user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, CompanyName = Input.CompanyName, isActive = true };
+                    result = await _userManager.CreateAsync(user, Input.Password);
+                    roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+                    address = new AddressVm() { CountryId = Input.CountryId, VoivodeshipId = Input.VoivodeshipId, CityId = Input.CityId, UserId = user.Id };
+                    _addressService.AddAddress(address);
+                }
+
+
+                if (result.Succeeded && roleResult.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 

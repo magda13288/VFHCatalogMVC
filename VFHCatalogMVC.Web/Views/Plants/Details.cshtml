@@ -103,12 +103,12 @@
                  @Html.HiddenFor(it=>Model.PlantOpinions[i].Id)
             </td>
              <td>
-                                    @if (Model.PlantOpinions[i].PrivateUserId != null)
+                                    @if (Model.PlantOpinions[i].UserName != null)
                                      {
                                         @Html.DisplayFor(it=>Model.PlantOpinions[i].UserName)
                                         ;
                                     }
-                                    @if (Model.PlantOpinions[i].CustomerId != null)
+                                    @if (Model.PlantOpinions[i].CustomerName != null)
                                     {
                                         @Html.DisplayFor(it=>Model.PlantOpinions[i].CustomerName);
                                     }

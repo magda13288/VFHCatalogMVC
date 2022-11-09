@@ -11,24 +11,24 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace VFHCatalogMVC.Application.Services
 {
     public class PlantService : IPlantService
     {
         private readonly IPlantRepository _plantRepo;
-        private readonly IPrivateUserService _privateUserService;
-        private readonly ICustomerService _customerService;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment, IPrivateUserService privateUserService, ICustomerService customerService)
+        public PlantService(IPlantRepository plantRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
-            _privateUserService = privateUserService;
-            _customerService = customerService;
+            _userManager = userManager;
         }
 
         public int AddPlant(NewPlantVm model)
@@ -47,56 +47,58 @@ namespace VFHCatalogMVC.Application.Services
 
             var id = _plantRepo.AddPlant(newPlant);
 
-            //Save to table PlantDetails
-            if (model.PlantDetails.ColorId == 0)
-                model.PlantDetails.ColorId = null;
-            if (model.PlantDetails.FruitSizeId == 0)
-                model.PlantDetails.FruitSizeId = null;
-            if (model.PlantDetails.FruitTypeId == 0)
-                model.PlantDetails.FruitTypeId = null;
+            //if (id != 0)
+            //{
+                //Save to table PlantDetails
+                if (model.PlantDetails.ColorId == 0)
+                    model.PlantDetails.ColorId = null;
+                if (model.PlantDetails.FruitSizeId == 0)
+                    model.PlantDetails.FruitSizeId = null;
+                if (model.PlantDetails.FruitTypeId == 0)
+                    model.PlantDetails.FruitTypeId = null;
 
-            var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
-            var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, id);
+                var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
+                var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, id);
 
-            //Save to PlantGrowthTypes
-            if (model.PlantDetails.ListGrowthTypes != null)
-            {
-                if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
+                //Save to PlantGrowthTypes
+                if (model.PlantDetails.ListGrowthTypes != null)
                 {
-                    _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
-                }
-            }
-            //Save to PlantDestinations
-            if (model.PlantDetails.ListPlantDestinations != null)
-            {
-                if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
-                {
-                    _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
-                }
-            }
-            //Save to PlantGrowingSeaznos
-            if (model.PlantDetails.ListGrowingSeazons != null)
-            {
-                if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
-                {
-                    _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
-                }
-            }
-
-            if (model.PlantDetails.Images != null)
-            {
-                if (model.PlantDetails.Images.Count > 0)
-                {
-                    string _DIR = "plantGallery/plantDetailsGallery";
-
-                    foreach (var item in model.PlantDetails.Images)
+                    if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
                     {
-                        string fileName = UploadImage(item, model.FullName, _DIR);
-                        _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                        _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
                     }
                 }
-            }
+                //Save to PlantDestinations
+                if (model.PlantDetails.ListPlantDestinations != null)
+                {
+                    if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
+                    {
+                        _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
+                    }
+                }
+                //Save to PlantGrowingSeaznos
+                if (model.PlantDetails.ListGrowingSeazons != null)
+                {
+                    if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
+                    {
+                        _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
+                    }
+                }
 
+                if (model.PlantDetails.Images != null)
+                {
+                    if (model.PlantDetails.Images.Count > 0)
+                    {
+                        string _DIR = "plantGallery/plantDetailsGallery";
+
+                        foreach (var item in model.PlantDetails.Images)
+                        {
+                            string fileName = UploadImage(item, model.FullName, _DIR);
+                            _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                        }
+                    }
+                //}
+            }
             return id;
         }
 
@@ -197,23 +199,23 @@ namespace VFHCatalogMVC.Application.Services
 
             if (plantDetails != null)
             {
-                
+
                 var plant = _plantRepo.GetPlantById(id);
                 var plantVm = _mapper.Map<PlantForListVm>(plant);
 
-                if(plantDetailsVm.ColorId !=null)
-                plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.ColorId);
+                if (plantDetailsVm.ColorId != null)
+                    plantDetailsVm.ColorName = _plantRepo.GetPlantColorName(plantDetailsVm.ColorId);
                 else
-                plantDetailsVm.ColorName = null;
+                    plantDetailsVm.ColorName = null;
 
-                if(plantDetailsVm.FruitSizeId!=null)
-                plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.FruitSizeId);
+                if (plantDetailsVm.FruitSizeId != null)
+                    plantDetailsVm.FruitSizeName = _plantRepo.GetPlantFruitSizeName(plantDetailsVm.FruitSizeId);
                 else
-                    plantDetailsVm.FruitSizeName= null;
+                    plantDetailsVm.FruitSizeName = null;
 
-                if(plantDetailsVm.FruitTypeId!=null)
-                plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.FruitTypeId);
-                else 
+                if (plantDetailsVm.FruitTypeId != null)
+                    plantDetailsVm.FruitTypeName = _plantRepo.GetPlantFriutTypeName(plantDetailsVm.FruitTypeId);
+                else
                     plantDetailsVm.FruitTypeName = null;
 
                 plantDetailsVm.Plant = plantVm;
@@ -226,7 +228,7 @@ namespace VFHCatalogMVC.Application.Services
 
                 if (propertyNames != null)
                 {
-                   
+
                     plantDetailsVm.ListGrowthTypes.GrowthTypesNames = new List<string>();
 
                     foreach (var item in propertyNames)
@@ -294,29 +296,17 @@ namespace VFHCatalogMVC.Application.Services
                 {
                     foreach (var item in plantOpinions)
                     {
-                        if (item.PrivateUserId != null)
-                        {
-                            var userInfo = _privateUserService.GetPrivateUser(item.PrivateUserId);
-                            item.UserName = userInfo.FirstName + " " + userInfo.LastName;
-                            item.CustomerName = String.Empty;
-                        }
-                        if (item.CustomerId != null)
-                        {
-                            var customerInfo = _customerService.GetCustomer(item.CustomerId);
-                            item.CustomerName = customerInfo.Name;
-                            item.UserName = String.Empty;
-                        }
+                        var userInfo = _userManager.FindByIdAsync(item.UserId);
+                        item.UserName = userInfo.Result.UserName;
+                        item.CustomerName = userInfo.Result.CompanyName;
                         plantDetailsVm.PlantOpinions.Add(item);
-                    }
-                }              
+                    }                  
+                }
             }
-
-            //add Opinions in PlantOpinnion after adding logic for users
-
             return plantDetailsVm;
         }
 
-        public List<string> GetGrowthTypesNames(int id)
+            public List<string> GetGrowthTypesNames(int id)
         {
             var plantGrowthTypes = new List<PlantGrowthTypeVm>();
 
@@ -769,6 +759,27 @@ namespace VFHCatalogMVC.Application.Services
             }
 
             return propertyList;
+        }
+
+        public NewPlantSeedVm FillProperties(int id,string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var plantSedd = new NewPlantSeedVm() { PlantId = id,UserId = user.Result.Id};
+            return plantSedd;
+        }
+
+        public void AddPlantSeed(NewPlantSeedVm seed)
+        {
+         
+            if (seed != null)
+            {
+                var plantSeed = _mapper.Map<PlantSeed>(seed);
+                _plantRepo.AddPlantSeed(plantSeed);
+            }
+            else
+            {
+                throw new NullReferenceException(); 
+            }
         }
     }
 }

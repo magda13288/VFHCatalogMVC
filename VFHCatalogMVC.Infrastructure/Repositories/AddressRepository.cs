@@ -15,6 +15,12 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
+        public void AddAddress(Address address)
+        {
+            _context.Addresses.Add(address);
+            _context.SaveChanges();
+        }
+
         public Address GetAddress(int id)
         {
             var address = _context.Addresses.FirstOrDefault(p => p.Id == id);

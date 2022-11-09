@@ -164,6 +164,26 @@ namespace VFHCatalogMVC.Web.Controllers
          return RedirectToAction("Index",plant);
         }
 
+        [HttpGet]
+        public IActionResult AddSeed(int id)
+        {
+            var plantSedd = _plantService.FillProperties(id,User.Identity.Name);
+            return PartialView("AddSeedModalPartial",plantSedd);
+        }
+
+
+        [HttpPost]
+        public IActionResult AddSeed(NewPlantSeedVm plantSeed)
+        {
+            if (ModelState.IsValid)
+            {
+                _plantService.AddPlantSeed(plantSeed);
+                return RedirectToAction("Index");
+            }
+            return PartialView("AddSeedModalPartial", plantSeed);
+        }
+
+
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
         {

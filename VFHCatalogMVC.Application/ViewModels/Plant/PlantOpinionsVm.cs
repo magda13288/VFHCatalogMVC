@@ -12,8 +12,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int Id { get; set; }
         public string Opinion { get; set; }
         public int PlantDetailId { get; set; }
-        public string PrivateUserId { get; set; }
-        public string CustomerId { get; set; }
+        public string UserId { get; set; }
         [NotMapped] 
         public string UserName { get; set; }
         [NotMapped]

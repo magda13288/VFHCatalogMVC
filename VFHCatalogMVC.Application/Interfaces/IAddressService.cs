@@ -14,7 +14,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<CityVm> GetCities(int voivodeshipId);
 
         List<SelectListItem> FillCountryList(List<CountryVm> countries);
-        List<SelectListItem> FillVoivodeshipList(List<VoivodeshipVm> voivodeship);
+        void AddAddress(AddressVm address);
 
 
 

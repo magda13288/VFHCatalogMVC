@@ -16,29 +16,37 @@
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Input.IsPrivateUser">Użytkownik prywatny</label>
-                @Html.CheckBoxFor(m=>Model.Input.IsPrivateUser)     
+                @Html.CheckBoxFor(m=>Model.Input.IsPrivateUser, new { @class = "checkbox" , id="chkPrivateUser",onclick= "EnableDisableTextBoxUser(this)"})   
                 <label asp-for="Input.IsCustomer">Firma</label>
-                @Html.CheckBoxFor(m=>Model.Input.IsCustomer) 
+                @Html.CheckBoxFor(m=>Model.Input.IsCustomer, new { @class = "checkbox", id="chkCustomer",onclick="EnableDisableTextBoxCustomer(this)" }) 
             </div>
             <div class="form-group">
-                <label asp-for="Input.AddressVm.CountryId">Kraj</label>
-                 <select id="ddlCountry" asp-for="Input.AddressVm.CountryId" name="countryId" class="form-control text-center" aria-label="Country" asp-items="@(new SelectList(ViewBag.Country,"Value", "Text"))"></select>
-                 <span asp-validation-for="Input.AddressVm.CountryId" class="text-danger"></span>
+                <label asp-for="Input.CountryId">Kraj</label>
+               @*  <select id="ddlCountry" asp-for="Input.CountryId" name="countryId" class="form-control text-center" aria-label="Country" asp-items="@(new SelectList(ViewBag.Country,"Value", "Text"))"></select>*@
+               @Html.DropDownListFor(model=>model.Input.CountryId, new SelectList(ViewBag.Country,"Value","Text"),  new { @class = "form-control text-center", id="ddlCountry" })
+                 <span asp-validation-for="Input.CountryId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.AddressVm.VoivodeshipId">Województwo</label>
-                 <select id="ddlVoivodeship" asp-for="Input.AddressVm.VoivodeshipId" name="voivodeshipId" class="form-control text-center" aria-label="Voivodeship" asp-items="@(new SelectList(@*ViewBag.Voivodeship*@ string.Empty,"Value", "Text"))"></select>
-                 <span asp-validation-for="Input.AddressVm.VoivodeshipId" class="text-danger"></span>
+                <label asp-for="Input.VoivodeshipId">Województwo</label>
+                 @*<select id="ddlVoivodeship" asp-for="Input.VoivodeshipId" name="voivodeshipId" class="form-control text-center" aria-label="Voivodeship" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
+                  @Html.DropDownListFor(model=>model.Input.VoivodeshipId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center", id="ddlVoivodeship" })
+                 <span asp-validation-for="Input.VoivodeshipId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.AddressVm.CityId">Miasto</label>
-                 <select id="ddlCity" asp-for="Input.AddressVm.CityId" name="CityId" class="form-control text-center" aria-label="City" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>
-                 <span asp-validation-for="Input.AddressVm.CityId" class="text-danger"></span>
+                <label asp-for="Input.CityId">Miasto</label>
+                 @*<select id="ddlCity" asp-for="Input.CityId" name="CityId" class="form-control text-center" aria-label="City" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
+                 @Html.DropDownListFor(model=>model.Input.CityId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center", id="ddlCity" })
+                 <span asp-validation-for="Input.CityId" class="text-danger"></span>
              </div>
-            <div class="form-group" id="privateUserAccount" >
-                <label asp-for="Input.PrivateUserVm.AccountName">Nazwa konta</label>
-                <input asp-for="Input.PrivateUserVm.AccountName" class="form-control"/>
-                <span asp-validation-for="Input.PrivateUserVm.AccountName" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Input.AccountName">Nazwa konta</label>
+                <input asp-for="Input.AccountName" class="form-control" id="txtUser", disabled="disabled"/>
+                <span asp-validation-for="Input.AccountName" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Input.CompanyName">Nazwa firmy</label>
+                <input asp-for="Input.CompanyName" class="form-control" id="txtCustomer" disabled="disabled"/>
+                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
@@ -66,25 +74,25 @@
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
                 {
-                                    <div>
-                                        <p>
-                                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                                            for details on setting up this ASP.NET application to support logging in via external services.
-                                        </p>
-                                    </div>
+                            <div>
+                              <p>
+                                   There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                                   for details on setting up this ASP.NET application to support logging in via external services.
+                              </p>
+                           </div>
                 }
                 else
                 {
-                                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                                        <div>
-                                            <p>
-                                                @foreach (var provider in Model.ExternalLogins)
+                         <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                          <div>
+                              <p>
+                                @foreach (var provider in Model.ExternalLogins)
                                 {
-                                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                 <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
                                 }
-                                            </p>
-                                        </div>
-                                    </form>
+                              </p>
+                         </div>
+                        </form>
                 }
             }
         </section>
@@ -93,6 +101,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script type="text/javascript">
        
      $(function () {
@@ -124,20 +133,33 @@
             })
         })
     })
+
+    function EnableDisableTextBoxUser(chkPrivateUser) {
+        var txtUser = document.getElementById("txtUser");
+        var chkCustomer = document.getElementById("chkCustomer");
+        txtUser.disabled = chkPrivateUser.checked ? false : true;
+        if (!txtUser.disabled) {
+            //txtUser.focus();
+            chkCustomer.disabled = true;
+        }
+        else {
+            chkCustomer.disabled = false;
+        }
+    }
+
+    function EnableDisableTextBoxCustomer(chkCustomer) {
+        var txtCustomer = document.getElementById("txtCustomer");
+        var chkPrivateUser = document.getElementById("chkPrivateUser")
+        txtCustomer.disabled = chkCustomer.checked ? false : true;
+        if (!txtCustomer.disabled) {
+            //txtCustomer.focus();
+            chkPrivateUser.disabled = true;
+        }
+        else {
+        
+            chkPrivateUser.disabled=false;
+        }
+    }
      </script>
      }
-  @*  <script type="text/javascript">
-       $(function () {
-            $("#ddlCountry").on("change", function () {
-                var countryId = $("#ddlCountry").val();
-                $("#ddlVoivodeship").empty();
-                $("#ddlVoivodeship").append("<option value=''>Select Voivodeship</option>");
-                $.getJSON(`?handler=GetVoivodeships=${countryId}`, (data) => {
-                    $.each(data, function (i, item) {
-                        $("#ddlVoivodeship").append(`<option value="${item.id}">${item.name}</option>`);
-                    });
-                });
-            });
-        });
-    </script>*@
-@*}*@
+

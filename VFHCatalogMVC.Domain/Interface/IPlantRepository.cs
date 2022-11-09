@@ -10,6 +10,7 @@ namespace VFHCatalogMVC.Domain.Interface
     {
         void DeletePlant(Plant plant);
         int AddPlant(Plant plant);
+        void AddPlantSeed(PlantSeed seed);
         int EditPlant(Plant plant);
         void UpdatePlant(Plant plant);
         void UpdatePlantDetails(PlantDetail plant); 
@@ -21,6 +22,7 @@ namespace VFHCatalogMVC.Domain.Interface
         void AddPlantDestinations(int[] plantDestinationsIds, int plantDestId);
         void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDestId);
         void AddPlantDetailsImages(string fileName, int plantDetailId);
+
         void DeleteImageFromGallery(int id);
         IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId);
         PlantDetail GetPlantDetails(int id);
@@ -42,6 +44,7 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<FruitSize> GetFruitSizes();
         IQueryable<FruitType> GetFruitTypes();
         IQueryable<PlantOpinion> GetPlantOpinions(int id);
+
      
     }
 }

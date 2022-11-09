@@ -8,6 +8,7 @@ using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Services
 {
@@ -20,6 +21,12 @@ namespace VFHCatalogMVC.Application.Services
         {
             _addressesRepository = addressesRepository;
             _mapper = mapper;
+        }
+
+        public void AddAddress(AddressVm address)
+        {
+            var addressToSave = _mapper.Map<Address>(address);
+            _addressesRepository.AddAddress(addressToSave);
         }
 
         public List<SelectListItem> FillCountryList(List<CountryVm> countries)
@@ -41,26 +48,7 @@ namespace VFHCatalogMVC.Application.Services
                 }
                 return propertyList;
         }
-        public List<SelectListItem> FillVoivodeshipList(List<VoivodeshipVm> voivodeship)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (voivodeship != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in voivodeship)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
-
+       
         public AddressVm GetAddres(int id)
         {
             var address = _addressesRepository.GetAddress(id);

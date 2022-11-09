@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
+<div id="PlaceHolderHere"></div>
 
 <h1>Welcome in plants catalog</h1>
 @if (User.IsInRole("Admin"))
@@ -63,7 +64,7 @@
             <td>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                @Html.ActionLink("Edytuj", "Edit", new {  id=item.Id })                                          
+                                @Html.ActionLink("Edytuj ", "Edit", new {  id=item.Id })                                 
                                 @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
                                 @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
                                 }
@@ -71,9 +72,10 @@
                                 {
                                 @if (User.IsInRole("PrivateUser") || User.IsInRole( "Customer"))
                                 {
-                                    @Html.ActionLink("+ Nasiona", "AddSeeds", new {  id=item.Id })         
-                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
-                                    @Html.ActionLink("+ Sadzonka", "AddSeedling", new { id = item.Id })                                  
+                                   
+                                   <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{item.Id}")" >+Nasiona</button>
+                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })                                    
+                                   <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeedling/{item.Id}")" >+Sadzonki</button>
                                 }
                                 else
                                 {
@@ -146,7 +148,6 @@
                 })
             })
         })
-
 
 //$(function Delete(id) {
 //    var table = $("#plantsTable")

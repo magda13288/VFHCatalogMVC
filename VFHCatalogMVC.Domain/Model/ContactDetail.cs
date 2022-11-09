@@ -13,12 +13,6 @@ namespace VFHCatalogMVC.Domain.Model
         public ContactDetailType ContactDetailType { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
-
-        [ForeignKey("Customer")]
-        public string CustomerID { get; set; }
-        public virtual Customer Customer { get; set; }
-        //public string PrivateUserId { get; set; }
-        //public virtual PrivateUser PrivateUser { get; set; }
        
     }
 }

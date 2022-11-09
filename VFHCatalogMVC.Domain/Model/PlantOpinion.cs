@@ -14,14 +14,5 @@ namespace VFHCatalogMVC.Domain.Model
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
 
-        [ForeignKey("PrivateUser")]
-        public string PrivateUserId { get; set; }
-        public virtual PrivateUser PrivateUser { get; set; }
-        [ForeignKey("Customer")]
-        public string CustomerId { get; set; }
-        public virtual Customer Customer { get; set; }
-
-
-
     }
 }

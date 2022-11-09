@@ -264,5 +264,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var plantOpinions = _context.PlantOpinions.Where(p => p.PlantDetailId == id);
             return plantOpinions;
         }
+
+        public void AddPlantSeed(PlantSeed seed)
+        {
+            _context.PlantSeeds.Add(seed);
+            _context.SaveChanges();
+        }
     }
 }
