@@ -8,7 +8,13 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-
+using System;
+using Microsoft.Extensions.Logging;
+using System.ComponentModel;
+using System.Security.Principal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -16,11 +22,14 @@ namespace VFHCatalogMVC.Web.Controllers
     {
 
         private readonly IPlantService _plantService;
+        private readonly IAddressService _addressService;
+        private readonly ILogger<PlantsController> _logger;
 
-        public PlantsController(IPlantService plantService/*,RegisterModel registerModel*/)
+        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IAddressService addressService)
         {
             _plantService = plantService;
-            // _registerModel = registerModel;
+            _logger = logger;
+            _addressService = addressService;
         }
 
         //[HttpGet]
@@ -41,22 +50,23 @@ namespace VFHCatalogMVC.Web.Controllers
         //pageNumber okresla na ktorej stronie jestesm
         public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
-           
-            var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
-            var groupsList = GetPlantGroupsList(typeId);
-            ViewBag.GroupsList = groupsList.Value;
-            var sectionsList = GetPlantSectionsList(groupId, typeId);
-            ViewBag.SectionsList = sectionsList.Value;
+            try
+            {
+                var types = _plantService.GetPlantTypes();
+                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                var groupsList = GetPlantGroupsList(typeId);
+                ViewBag.GroupsList = groupsList.Value;
+                var sectionsList = GetPlantSectionsList(groupId, typeId);
+                ViewBag.SectionsList = sectionsList.Value;
 
-            if (!pageNo.HasValue)
-            {
-                pageNo = 1;
-            }
-            if (searchString is null)
-            {
-                searchString = string.Empty;
-            }
+                if (!pageNo.HasValue)
+                {
+                    pageNo = 1;
+                }
+                if (searchString is null)
+                {
+                    searchString = string.Empty;
+                }
                 if (typeId != 0)
                     ViewBag.TypeId = typeId;
                 if (groupId != 0)
@@ -64,32 +74,82 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
 
-            var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo, searchString, typeId, groupId, sectionId);
+                var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo, searchString, typeId, groupId, sectionId);
 
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet,HttpPost]
+        public IActionResult IndexSeeds(int id, int countryId, int voivodeshipId, int cityId, int pageSize, int? pageNo)
+        {
+            var countries = _addressService.GetCountries();
+            ViewBag.CountriesList = _addressService.FillCountryList(countries);
+            var voivodeships = _addressService.GetVoivodeships(countryId);
+            ViewBag.VoivodeshipsList = _addressService.FillVoivodeshipList(voivodeships);
+            var cities = _addressService.GetCities(voivodeshipId);
+            ViewBag.CitiesList = _addressService.FillCityList(cities);
+
+            if (!pageNo.HasValue)
+            {
+                pageNo = 1;
+            }
+            if (pageSize == 0)
+            {
+                pageSize = 10;
+            }
+
+            if (countryId != 0)
+            {
+                ViewBag.CountryId = countryId;              
+            }
+            if (voivodeshipId != 0)
+            {
+                ViewBag.VoivodeshipId = voivodeshipId;
+            }
+            if (cityId != 0)
+            {
+                ViewBag.CityId = cityId;
+            }
+
+            var model = _plantService.GetAllPlantSeeds(id, countryId, voivodeshipId, cityId, pageSize, pageNo);
+                                                                 
             return View(model);
+        }
+
+        [HttpGet, HttpPost]
+
+        public IActionResult IndexSeedlings(int id, int? countryId, int? voivodeshipId, int? cityId)
+        {
+            return View();
         }
         //wyświetli pusty formularz gotowy do wypełnienia
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult AddPlant()
         {
             var types = _plantService.GetPlantTypes();
-            ViewBag.TypesList = _plantService.FillPropertyList(types,null,null);
+            ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
             var colors = _plantService.GetColors();
             ViewBag.ColorsList = _plantService.FillPropertyList(null, colors, null);
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            ViewBag.GrowingSeazons =_plantService.FillPropertyList(null, null, growingSeaznos);
+            ViewBag.GrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
 
             return View();
-        }      
+        }
 
         //zostanie przekazny model plantu.Serwis po odpowiednim przygtowaniu danych do zapisu przekaże je do repozytorium, które zapisze je w bazie danych
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken] // zabezpiecza przed przesłaniem falszywego widoku dodawania nowego widoku (danych)
         public IActionResult AddPlant(NewPlantVm model)
         {
-            
+
             if (ModelState.IsValid)
             { //check DataAnnotations
                 var id = _plantService.AddPlant(model);
@@ -119,7 +179,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             var plantToEdit = _plantService.GetPlantToEdit(id);
@@ -128,10 +188,10 @@ namespace VFHCatalogMVC.Web.Controllers
 
             var growingSeaznos = _plantService.GetGrowingSeazons();
             ViewBag.GrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
-           
+
             var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
             ViewBag.GrowthTypes = growthTypes.Value;
-           
+
             var destinations = GetDestinations();
             ViewBag.Destinations = destinations.Value;
 
@@ -144,7 +204,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(NewPlantVm plant)
         {
@@ -157,14 +217,15 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         //Add referesing table after delete plant
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-         var plant = _plantService.DeletePlant(id);
-         return RedirectToAction("Index",plant);
+            var plant = _plantService.DeletePlant(id);
+            return RedirectToAction("Index", plant);
         }
 
         [HttpGet]
+        [Authorize(Roles = "PrivateUser,Customer")]
         public IActionResult AddSeed(int id)
         {
             var plantSedd = _plantService.FillProperties(id,User.Identity.Name);
@@ -173,7 +234,8 @@ namespace VFHCatalogMVC.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult AddSeed(NewPlantSeedVm plantSeed)
+        [Authorize(Roles = "PrivateUser,Customer")]
+        public IActionResult AddSeed(PlantSeedVm plantSeed)
         {
             if (ModelState.IsValid)
             {
@@ -183,6 +245,91 @@ namespace VFHCatalogMVC.Web.Controllers
             return PartialView("AddSeedModalPartial", plantSeed);
         }
 
+        [HttpGet]
+        [Authorize(Roles = "PrivateUser,Customer")]
+        public IActionResult AddSeedling(int id)
+        {
+            var plantSeedling = _plantService.FillPropertiesSeedling(id,User.Identity.Name);
+            return PartialView("AddSeedlingModalPartial",plantSeedling);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "PrivateUser,Customer")]
+        public IActionResult AddSeedling(PlantSeedlingVm plantSeedling)
+        {
+            if (ModelState.IsValid)
+            {
+                _plantService.AddPlantSeedling(plantSeedling);
+                return RedirectToAction("Index");
+
+            }
+            return PartialView("AddSeedlingModalPartial", plantSeedling);
+
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "PrivateUser,Customer")]
+        public IActionResult AddOpinion(int id)
+        {
+            var plantOpinion = _plantService.FillPropertyOpinion(id, User.Identity.Name);
+            return PartialView("AddOpinionModalPartial", plantOpinion);
+        }
+        [HttpPost]
+        [Authorize(Roles = "PrivateUser,Customer")]
+        //Add refereshing page after save opinion on modal popup
+        public IActionResult AddOpinion(PlantOpinionsVm plantOpinion)
+        {
+            if (ModelState.IsValid)
+            {
+                _plantService.AddPlantOpinion(plantOpinion);
+                return RedirectToAction("Details");
+
+            }
+            return PartialView("AddOpinionModalPartial", plantOpinion);
+
+        }
+
+        [HttpPost]
+        public JsonResult GetVoivodesipsList(int countryId)
+        {
+            var voivodeships = _addressService.GetVoivodeships(countryId);
+            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
+
+            if (voivodeships.Count > 0)
+            {
+
+                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var group in voivodeships)
+                {
+                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
+                }
+            }
+
+            return Json(voivodeshipsList);
+
+        }
+
+        [HttpPost]
+        public JsonResult GetCitiesList(int voivodeshipId)
+        {
+            var cities = _addressService.GetVoivodeships(voivodeshipId);
+            List<SelectListItem> citiesList = new List<SelectListItem>();
+
+            if (cities.Count > 0)
+            {
+
+                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var group in cities)
+                {
+                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
+                }
+            }
+
+            return Json(citiesList);
+
+        }
 
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
@@ -324,6 +471,47 @@ namespace VFHCatalogMVC.Web.Controllers
             }
 
             return Json(fruitSizesList);
+        }
+        [HttpPost]
+        public JsonResult GetVoivodeships(int id)
+        {
+            var voivodeships = _addressService.GetVoivodeships(id);
+
+            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
+
+            if (voivodeships.Count > 0)
+            {
+
+                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var group in voivodeships)
+                {
+                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
+                }
+            }
+
+            return Json(voivodeshipsList);
+        }
+
+        [HttpPost]
+        public JsonResult GetCities(int id)
+        {
+            var cities = _addressService.GetCities(id);
+
+            List<SelectListItem> citiesList = new List<SelectListItem>();
+
+            if (cities.Count > 0)
+            {
+
+                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var group in cities)
+                {
+                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
+                }
+            }
+
+            return Json(citiesList);
         }
     }
 }

@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<div id="PlaceHolderHere"></div>
 <h1>@Model.Plant.FullName</h1>
 
 <div class="container-fluid">
@@ -94,6 +94,7 @@
   </button>
   <div class="collapse" id="collapseOpinions">
        <div class="card card-body">
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
        <table class="table-hover" border="0">
     <tbody>
          @for(int i=0;i<Model.PlantOpinions.Count;i++)
@@ -103,18 +104,11 @@
                  @Html.HiddenFor(it=>Model.PlantOpinions[i].Id)
             </td>
              <td>
-                                    @if (Model.PlantOpinions[i].UserName != null)
-                                     {
-                                        @Html.DisplayFor(it=>Model.PlantOpinions[i].UserName)
-                                        ;
-                                    }
-                                    @if (Model.PlantOpinions[i].CustomerName != null)
-                                    {
-                                        @Html.DisplayFor(it=>Model.PlantOpinions[i].CustomerName);
-                                    }
-                                </td>
+              @Html.DisplayFor(it=>Model.PlantOpinions[i].AccountName)
+            </td>
              <td>
-                  @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion);
+              @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion)
+            </td>
                 
         </tr>
 }
@@ -125,6 +119,21 @@
     </div>
 </div>
 <div>
-    @Html.ActionLink("Edytuj", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id }) |
     <a asp-action="Index">Powrót do wyszukiwarki</a>
 </div>
+
+@*@section Scripts
+{
+    <script type="text/javascript">
+       
+        function RefreshMe()
+       {
+var nuovourl = window.location.href + '';
+nuovourl = nuovourl + (nuovourl.indexOf('?') > -1 ? "&refreshme=1" : "?refreshme=1");
+
+window.location.href = nuovourl;
+
+}
+    </script>
+}*@

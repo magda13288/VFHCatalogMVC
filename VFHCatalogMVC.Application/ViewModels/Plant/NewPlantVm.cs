@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
+using VFHCatalogMVC.Application.ViewModels.Adresses;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
@@ -25,6 +26,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         [NotMapped]
         public PlantDetailsVm PlantDetails { get; set; }
+
+        [NotMapped]
+        public AddressVm Address { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -47,8 +51,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
                 RuleFor(x => x.TypeId).NotEmpty().WithMessage("Pole wymagane");
                 RuleFor(x => x.GroupId).NotEmpty().WithMessage("Pole wymagane");
                 RuleFor(x => x.FullName).NotNull().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
-                RuleFor(x => x.isActive).Equals(true);
-                
+                RuleFor(x => x.isActive).Equals(true);            
             }
         }
     }

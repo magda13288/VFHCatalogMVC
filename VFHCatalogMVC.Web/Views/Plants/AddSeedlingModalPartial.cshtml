@@ -1,16 +1,16 @@
-﻿@model VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedVm
+﻿@model VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlingVm
 
-        <div class="modal fade" id="Plant">
+         <div class="modal fade" id="Plant">
             <div class="modal-dialog" >
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="addPlantSeedLabel">Dodaj nasiona</h4>
+                        <h4 class="modal-title" id="addPlantSeedlingLabel">Dodaj sadzonkę</h4>
                         <button type="button" class="close" data-dismiss="modal">
                         <span>x</span>
                         </button>
                     </div>
                     <div class="modal-body">
-        <form action="AddSeed">
+        <form action="AddSeedling">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
              <input type="hidden" id="plantId" asp-for="PlantId" class="control-label"/>
              <input type="hidden" id="userId" asp-for="UserId" class="control-label"/>
@@ -25,18 +25,14 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
         </form>
-        </div>
-
-            <div class="modal-footer">
+    </div>
+           <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
                 <button type="button" class="btn btn-primary" data-save="modal">Zapisz</button>
             </div>
-
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 
-
-
-
+    
 

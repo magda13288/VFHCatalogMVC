@@ -12,5 +12,6 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<Voivodeship> GetVoivodeships(int countryId);
         IQueryable<City> GetCities(int voivodeshipId);
         void AddAddress(Address address);
+        Address GetAddressInfo(string userId);
     }
 }

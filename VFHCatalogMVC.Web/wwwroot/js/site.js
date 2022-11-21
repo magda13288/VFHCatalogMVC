@@ -26,5 +26,6 @@ $(function () {
 
     PlaceHolderElement.on('click', '[data-dismiss="modal"]', function (event) {
         PlaceHolderElement.find('.modal').modal('hide');
+        location.reload();
     })
 })

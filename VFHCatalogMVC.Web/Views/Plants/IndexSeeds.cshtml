@@ -1,0 +1,164 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedsForListVm
+
+@{
+    ViewData["Title"] = "IndexSeeds";
+}
+<div id="PlaceHolderHere"></div>
+
+<h1>Nasiona użytkowników</h1>
+
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
+@*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{}")">+Nasiona</button>*@
+<form asp-action="IndexSeeds" asp-controller="Plants" method="post">
+    <div class="container-fluid">
+        <div class="row">
+     <nav class="navbar navbar-expand-lg bg-light">
+    @*<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>*@
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">     
+         <label asp-for="Address.CountryId" class="control-label me-3">Kraj</label>
+               <select id="ddlCountry" asp-for="Address.CountryId" name="countryId" class="form-control text-center" aria-label="Country" asp-items="@(new SelectList(ViewBag.CountriesList,"Value", "Text", selectedValue: ViewBag.CountryId))"></select>
+           <label asp-for="Address.VoivodeshipId" class="control-label me-2">Województwo</label>
+                    <select id="ddlVoivodeship" asp-for="Address.VoivodeshipId" name="voivodeshipId" class="form-control text-center" aria-label="Voivodeship" asp-items="@(new SelectList(ViewBag.VoivodeshipsList,"Value", "Text", selectedValue: ViewBag.VoivodeshipId))"></select>
+           <label asp-for="Address.CityId" class="control-label me-2">Miasto</label>
+                    <select id="ddlCity" asp-for="Address.CityId" name="CityId" class="form-control  text-center" aria-label="City" asp-items="@(new SelectList(ViewBag.CitiesList,"Value", "Text",selectedValue:ViewBag.CityId))"></select>
+        <button class="btn btn-outline-success" type="submit" id="Submit" onclick="window.location.reload">Szukaj</button>
+       </div>      
+</nav>
+</div>
+        <table class="table-striped table-hover table-light" id="tab">
+            <thead class="thead-light">
+                <tr class="text-center">
+            <th class="col-md-3">
+               Użytkownik
+            </th>
+            <th class="col-md-3">
+               Ilość
+            </th>
+                    <th class="col-md-3">
+               Opis
+            </th>
+                    <th class ="col-md-3">
+               Opinie
+            </th>          
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.PlantSeeds) {
+        <tr class="text-center">
+            <td >
+                @Html.DisplayFor(modelItem => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
+                                Opinie
+                            </button>
+                            <div class="collapse" id="collapseOpinions">
+                                <div class="card card-body">
+                                    <table class="table-hover" border="0">
+                                        <tbody>
+                                            @for (int i = 0; i < item.PlantOpinions.Count; i++)
+                                            {
+                                                <tr class="text-center">
+                                                    <td>
+                                                        @Html.DisplayFor(it=>item.PlantOpinions[i].Opinion)
+                                                    <td/>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+            </td>
+            <td>
+               <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"SendMessage/{item.Id}")">Wyślij wiadomość</button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+        <div class="row">
+            <table>
+                <tr>
+                    @for (int i = 1; i < Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                    {
+                        <td>
+                            @if (i != Model.CurrentPage)
+                            {
+                                <a href="javascript:PagerClick(@i)">@i</a>
+                            }
+                            else
+                            {
+                                <span>@i</span>
+                            }
+                        </td>
+
+                    }
+                </tr>
+            </table>
+            <input type="hidden" name="pageNo" id="pageNo" />
+            <input type="hidden" name="pageSize" id="pageSize" value="10" />
+        </div>
+        </div>
+</form>
+
+@section Scripts
+{
+        <script type="text/javascript">
+
+        function PagerClick(index)
+        {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+
+        $(function () {
+            $("#ddlCountry").change(function () {
+                $.post("@Url.Action("GetVoivodeships","Address")", { id: $("#ddlCountry").val() }, function (d) {
+                    var row = "";
+                    $("#ddlVoivodeship").empty();
+                    $.each(d, function (i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlVoivodeship").html(row);
+                })
+            })
+        })
+        $(function () {
+            $("#ddlVoivodeship").change(function () {
+                $.post('@Url.Action("GetCities","Address")', { id: $("#ddlVoivodeship").val() }, function (d) {
+                    var row = "";
+                    $("#ddlCity").empty();
+                    $.each(d, function (i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlCity").html(row);
+                })
+            })
+        })
+
+        $(function () {
+            $("#ddlV").change(function () {
+                $.post('@Url.Action("GetCities","Address")', { id: $("#ddlVoivodeship").val() }, function (d) {
+                    var row = "";
+                    $("#ddlCity").empty();
+                    $.each(d, function (i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlCity").html(row);
+                })
+            })
+        })
+
+        </script>
+}

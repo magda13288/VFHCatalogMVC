@@ -270,5 +270,31 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.PlantSeeds.Add(seed);
             _context.SaveChanges();
         }
+
+        public int AddPlantSeedling(PlantSeedling seedling)
+        {
+            _context.PlantSeedlings.Add(seedling);
+            var i = _context.SaveChanges();
+            return i;
+        }
+
+        public void AddPlantOpinion(PlantOpinion opinion)
+        {
+            _context.PlantOpinions.Add(opinion);
+            _context.SaveChanges();
+        }
+
+        public IQueryable<PlantSeed> GetPlantSeeds(int id)
+        {
+            var seeds = _context.PlantSeeds.Where(p => p.PlantId == id);
+            return seeds;
+        }
+
+        public int GetPlantDetailId(int id)
+        {
+            var plant = _context.PlantDetails.FirstOrDefault(p => p.PlantRef == id);
+
+            return plant.Id;
+        }
     }
 }

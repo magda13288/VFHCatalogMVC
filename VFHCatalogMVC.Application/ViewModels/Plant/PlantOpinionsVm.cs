@@ -14,13 +14,11 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int PlantDetailId { get; set; }
         public string UserId { get; set; }
         [NotMapped] 
-        public string UserName { get; set; }
-        [NotMapped]
-        public string CustomerName { get; set; }
-
+        public string AccountName { get; set; }
+       
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantOpinion, PlantOpinionsVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantOpinion, PlantOpinionsVm>().ReverseMap();
         }
 
     }

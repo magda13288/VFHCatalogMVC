@@ -27,6 +27,12 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return address;
         }
 
+        public Address GetAddressInfo(string userId)
+        {
+            var address = _context.Addresses.FirstOrDefault(p => p.UserId == userId);
+            return address;
+        }
+
         public IQueryable<City> GetCities(int voivodeshipId)
         {
             var cities = _context.Cities.Where(p => p.VoivodeshipId == voivodeshipId);
@@ -44,5 +50,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
            var voivodeships = _context.Voivodeships.Where(p => p.CountryId == countryId);
             return voivodeships;
         }
+
+
     }
 }

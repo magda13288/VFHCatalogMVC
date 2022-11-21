@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace VFHCatalogMVC.Application.Services
 {
@@ -22,13 +23,15 @@ namespace VFHCatalogMVC.Application.Services
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAddressService _addressService;
 
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager)
+        public PlantService(IPlantRepository plantRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager, IAddressService addressService)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
+            _addressService = addressService;
         }
 
         public int AddPlant(NewPlantVm model)
@@ -191,7 +194,77 @@ namespace VFHCatalogMVC.Application.Services
             return plantsList;
            
         }
+        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int voivodeshipId, int cityId, int pageSize, int? pageNo)
+        {
+            var seeds = new List<PlantSeedVm>();
+            var seedsToShow = new List<PlantSeedVm>();
+            var opinions = new List<PlantOpinionsVm>();
+            var detailId = _plantRepo.GetPlantDetailId(id);
+            seeds = _plantRepo.GetPlantSeeds(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
 
+            if (id != 0 && countryId == 0 && voivodeshipId == 0 && cityId == 0)
+            {               
+                foreach (var item in seeds)
+                {
+                    var user = _userManager.FindByIdAsync(item.UserId);
+                    item.AccountName = user.Result.AccountName;
+                    opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
+                    item.PlantOpinions = new List<PlantOpinionsVm>();
+
+                    foreach (var items in opinions)
+                    {
+                        item.PlantOpinions.Add(items);
+
+                    }
+                }
+
+                seedsToShow = seeds.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+            }
+            else
+            {
+                var filteredSeedsList = new List<PlantSeedVm>();
+
+                var filteredUsersList = _addressService.FilterUsers(countryId, voivodeshipId, cityId, seeds);
+
+                foreach (var item in seeds)
+                {
+                    foreach (var items in filteredUsersList)
+                    {
+                        if (item.UserId == items)
+                        {
+                            filteredSeedsList.Add(item);
+                        }
+                    }
+                }
+                foreach (var item in filteredSeedsList)
+                {
+                    var user = _userManager.FindByIdAsync(item.UserId);
+                    item.AccountName = user.Result.AccountName;
+                    opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
+                    item.PlantOpinions = new List<PlantOpinionsVm>();
+
+                    foreach (var items in opinions)
+                    {
+                        item.PlantOpinions.Add(items);
+
+                    }
+                }
+
+                seedsToShow = filteredSeedsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+            }
+
+
+            var plantSeedsList = new PlantSeedsForListVm()
+            {
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                PlantSeeds = seedsToShow,
+                Count = seeds.Count,
+            };
+
+            return plantSeedsList;
+        }
+  
         public PlantDetailsVm GetPlantDetails(int id)
         {
             var plantDetails = _plantRepo.GetPlantDetails(id);
@@ -297,8 +370,7 @@ namespace VFHCatalogMVC.Application.Services
                     foreach (var item in plantOpinions)
                     {
                         var userInfo = _userManager.FindByIdAsync(item.UserId);
-                        item.UserName = userInfo.Result.UserName;
-                        item.CustomerName = userInfo.Result.CompanyName;
+                        item.AccountName = userInfo.Result.AccountName;
                         plantDetailsVm.PlantOpinions.Add(item);
                     }                  
                 }
@@ -761,14 +833,14 @@ namespace VFHCatalogMVC.Application.Services
             return propertyList;
         }
 
-        public NewPlantSeedVm FillProperties(int id,string userName)
+        public PlantSeedVm FillProperties(int id,string userName)
         {
             var user = _userManager.FindByNameAsync(userName);
-            var plantSedd = new NewPlantSeedVm() { PlantId = id,UserId = user.Result.Id};
+            var plantSedd = new PlantSeedVm() { PlantId = id,UserId = user.Result.Id};
             return plantSedd;
         }
 
-        public void AddPlantSeed(NewPlantSeedVm seed)
+        public void AddPlantSeed(PlantSeedVm seed)
         {
          
             if (seed != null)
@@ -781,5 +853,44 @@ namespace VFHCatalogMVC.Application.Services
                 throw new NullReferenceException(); 
             }
         }
+
+        public void AddPlantSeedling(PlantSeedlingVm seedling)
+        {
+            if (seedling != null)
+            {
+                var plantSeedling = _mapper.Map<PlantSeedling>(seedling);
+                var i = _plantRepo.AddPlantSeedling(plantSeedling);
+
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+        }
+
+        public PlantSeedlingVm FillPropertiesSeedling(int id, string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var plantSeddling = new PlantSeedlingVm() { PlantId = id, UserId = user.Result.Id };
+            return plantSeddling;
+        }
+
+        public void AddPlantOpinion(PlantOpinionsVm opinion)
+        {
+            if (opinion != null)
+            {
+                var plantOpinion = _mapper.Map<PlantOpinion>(opinion);
+                _plantRepo.AddPlantOpinion(plantOpinion);
+            }
+            else { throw new NullReferenceException(); }
+        }
+
+        public PlantOpinionsVm FillPropertyOpinion(int id, string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var plantOpinion = new PlantOpinionsVm() { PlantDetailId = id, UserId = user.Result.Id };
+            return plantOpinion;
+        }
+
     }
 }
