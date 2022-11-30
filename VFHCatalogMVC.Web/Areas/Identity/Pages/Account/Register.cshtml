@@ -27,10 +27,10 @@
                  <span asp-validation-for="Input.CountryId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.VoivodeshipId">Województwo</label>
-                 @*<select id="ddlVoivodeship" asp-for="Input.VoivodeshipId" name="voivodeshipId" class="form-control text-center" aria-label="Voivodeship" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
-                  @Html.DropDownListFor(model=>model.Input.VoivodeshipId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center", id="ddlVoivodeship" })
-                 <span asp-validation-for="Input.VoivodeshipId" class="text-danger"></span>
+                <label asp-for="Input.RegionId">Województwo</label>
+                 @*<select id="ddlRegion" asp-for="Input.RegionId" name="regionId" class="form-control text-center" aria-label="Region" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
+                  @Html.DropDownListFor(model=>model.Input.RegionId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center", id="ddlRegion" })
+                 <span asp-validation-for="Input.RegionId" class="text-danger"></span>
              </div>
             <div class="form-group">
                 <label asp-for="Input.CityId">Miasto</label>
@@ -54,12 +54,12 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.Password"></label>
+                <label asp-for="Input.Password">Hasło</label>
                 <input asp-for="Input.Password" class="form-control" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.ConfirmPassword"></label>
+                <label asp-for="Input.ConfirmPassword">Powtórz hasło</label>
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
@@ -107,23 +107,23 @@
      $(function () {
         $("#ddlCountry").change(function () {
              var countryId = $("#ddlCountry").val();
-            //$.getJSON("GetVoivodeships", id: countryId, function(d) { 
-             $.post("@Url.Action("GetVoivodeships","Address")", { id: countryId }, function (d) {
+            //$.getJSON("GetRegions", id: countryId, function(d) { 
+             $.post("@Url.Action("GetRegions","User")", { id: countryId }, function (d) {
                 var row = "";
-                $("#ddlVoivodeship").empty();
+                $("#ddlRegion").empty();
                 $.each(d, function (i, v) {
                     row += "<option value=" + v.value + ">"+v.text+"</option>";
                 });
-                $("#ddlVoivodeship").html(row);
+                $("#ddlRegion").html(row);
             })
         })
     })
 
      $(function () {
-        $("#ddlVoivodeship").change(function () {
-             var voivodeshipId = $("#ddlVoivodeship").val();
-            //$.getJSON("GetVoivodeships", id: countryId, function(d) { 
-             $.post("@Url.Action("GetCities","Address")", { id: voivodeshipId }, function (d) {
+        $("#ddlRegion").change(function () {
+             var regionId = $("#ddlRegion").val();
+            //$.getJSON("GetRegions", id: countryId, function(d) { 
+             $.post("@Url.Action("GetCities","User")", { id: regionId }, function (d) {
                 var row = "";
                 $("#ddlCity").empty();
                 $.each(d, function (i, v) {

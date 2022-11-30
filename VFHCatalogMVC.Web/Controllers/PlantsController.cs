@@ -22,14 +22,14 @@ namespace VFHCatalogMVC.Web.Controllers
     {
 
         private readonly IPlantService _plantService;
-        private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
         private readonly ILogger<PlantsController> _logger;
 
-        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IAddressService addressService)
+        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserService userService)
         {
             _plantService = plantService;
             _logger = logger;
-            _addressService = addressService;
+            _userService = userService;
         }
 
         //[HttpGet]
@@ -86,48 +86,92 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet,HttpPost]
-        public IActionResult IndexSeeds(int id, int countryId, int voivodeshipId, int cityId, int pageSize, int? pageNo)
+        public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCustomer)
         {
-            var countries = _addressService.GetCountries();
-            ViewBag.CountriesList = _addressService.FillCountryList(countries);
-            var voivodeships = _addressService.GetVoivodeships(countryId);
-            ViewBag.VoivodeshipsList = _addressService.FillVoivodeshipList(voivodeships);
-            var cities = _addressService.GetCities(voivodeshipId);
-            ViewBag.CitiesList = _addressService.FillCityList(cities);
+            try
+            {
+                var countries = _userService.GetCountries();
+                ViewBag.CountriesList = _userService.FillCountryList(countries);
+                var regions = _userService.GetRegions(countryId);
+                ViewBag.RegionsList = _userService.FillRegionList(regions);
+                var cities = _userService.GetCities(regionId);
+                ViewBag.CitiesList = _userService.FillCityList(cities);
 
-            if (!pageNo.HasValue)
-            {
-                pageNo = 1;
-            }
-            if (pageSize == 0)
-            {
-                pageSize = 10;
-            }
+                if (!pageNo.HasValue)
+                {
+                    pageNo = 1;
+                }
+                if (pageSize == 0)
+                {
+                    pageSize = 10;
+                }
+                if (countryId != 0)
+                {
+                    ViewBag.CountryId = countryId;
+                }
+                if (regionId != 0)
+                {
+                    ViewBag.RegionId = regionId;
+                }
+                if (cityId != 0)
+                {
+                    ViewBag.CityId = cityId;
+                }
 
-            if (countryId != 0)
-            {
-                ViewBag.CountryId = countryId;              
+                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCustomer);
+                return View(model);
             }
-            if (voivodeshipId != 0)
+            catch(Exception ex)
             {
-                ViewBag.VoivodeshipId = voivodeshipId;
-            }
-            if (cityId != 0)
-            {
-                ViewBag.CityId = cityId;
-            }
-
-            var model = _plantService.GetAllPlantSeeds(id, countryId, voivodeshipId, cityId, pageSize, pageNo);
-                                                                 
-            return View(model);
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }                                                                      
         }
 
         [HttpGet, HttpPost]
-
-        public IActionResult IndexSeedlings(int id, int? countryId, int? voivodeshipId, int? cityId)
+        public IActionResult IndexSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo,bool isCustomer)
         {
-            return View();
+            try
+            {
+                var countries = _userService.GetCountries();
+                ViewBag.CountriesList = _userService.FillCountryList(countries);
+                var regions = _userService.GetRegions(countryId);
+                ViewBag.RegionsList = _userService.FillRegionList(regions);
+                var cities = _userService.GetCities(regionId);
+                ViewBag.CitiesList = _userService.FillCityList(cities);
+
+                if (!pageNo.HasValue)
+                {
+                    pageNo = 1;
+                }
+                if (pageSize == 0)
+                {
+                    pageSize = 10;
+                }
+                if (countryId != 0)
+                {
+                    ViewBag.CountryId = countryId;
+                }
+                if (regionId != 0)
+                {
+                    ViewBag.RegionId = regionId;
+                }
+                if (cityId != 0)
+                {
+                    ViewBag.CityId = cityId;
+                }
+
+                var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo,isCustomer);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }
+
         }
+
         //wyświetli pusty formularz gotowy do wypełnienia
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -274,6 +318,7 @@ namespace VFHCatalogMVC.Web.Controllers
             var plantOpinion = _plantService.FillPropertyOpinion(id, User.Identity.Name);
             return PartialView("AddOpinionModalPartial", plantOpinion);
         }
+
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Customer")]
         //Add refereshing page after save opinion on modal popup
@@ -286,48 +331,6 @@ namespace VFHCatalogMVC.Web.Controllers
 
             }
             return PartialView("AddOpinionModalPartial", plantOpinion);
-
-        }
-
-        [HttpPost]
-        public JsonResult GetVoivodesipsList(int countryId)
-        {
-            var voivodeships = _addressService.GetVoivodeships(countryId);
-            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
-
-            if (voivodeships.Count > 0)
-            {
-
-                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in voivodeships)
-                {
-                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(voivodeshipsList);
-
-        }
-
-        [HttpPost]
-        public JsonResult GetCitiesList(int voivodeshipId)
-        {
-            var cities = _addressService.GetVoivodeships(voivodeshipId);
-            List<SelectListItem> citiesList = new List<SelectListItem>();
-
-            if (cities.Count > 0)
-            {
-
-                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in cities)
-                {
-                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(citiesList);
 
         }
 
@@ -425,7 +428,6 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-
         public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
             var fruitTypes = _plantService.GetFruitType(typeId, groupId, sectionId);
@@ -450,7 +452,6 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-
         public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId)
         {
             var fruitSiezes = _plantService.GetFruitSize(typeId, groupId, sectionId);
@@ -471,47 +472,6 @@ namespace VFHCatalogMVC.Web.Controllers
             }
 
             return Json(fruitSizesList);
-        }
-        [HttpPost]
-        public JsonResult GetVoivodeships(int id)
-        {
-            var voivodeships = _addressService.GetVoivodeships(id);
-
-            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
-
-            if (voivodeships.Count > 0)
-            {
-
-                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in voivodeships)
-                {
-                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(voivodeshipsList);
-        }
-
-        [HttpPost]
-        public JsonResult GetCities(int id)
-        {
-            var cities = _addressService.GetCities(id);
-
-            List<SelectListItem> citiesList = new List<SelectListItem>();
-
-            if (cities.Count > 0)
-            {
-
-                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in cities)
-                {
-                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(citiesList);
         }
     }
 }

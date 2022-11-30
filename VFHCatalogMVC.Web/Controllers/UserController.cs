@@ -5,28 +5,28 @@ using VFHCatalogMVC.Application.Interfaces;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
-    public class AddressController : Controller
+    public class UserController : Controller
     {
-        private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
 
-        public AddressController(IAddressService addressService)
+        public UserController(IUserService userService)
         {
-            _addressService = addressService;
+            _userService = userService;
         }
 
         [HttpPost]
-        public JsonResult GetVoivodeships(int id)
+        public JsonResult GetRegions(int id)
         {
-            var voivodeships = _addressService.GetVoivodeships(id);
+            var regions = _userService.GetRegions(id);
 
             List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
 
-            if (voivodeships.Count > 0)
+            if (regions.Count > 0)
             {
 
                 voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var group in voivodeships)
+                foreach (var group in regions)
                 {
                     voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
                 }
@@ -38,7 +38,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetCities(int id)
         {
-            var cities = _addressService.GetCities(id);
+            var cities = _userService.GetCities(id);
 
             List<SelectListItem> citiesList = new List<SelectListItem>();
 

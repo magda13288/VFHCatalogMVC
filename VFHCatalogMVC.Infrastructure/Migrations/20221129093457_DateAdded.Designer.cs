@@ -10,8 +10,8 @@ using VFHCatalogMVC.Infrastructure;
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20221027095454_First")]
-    partial class First
+    [Migration("20221129093457_DateAdded")]
+    partial class DateAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,71 +70,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -237,17 +172,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("CountryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("FlatNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PrivateUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
@@ -261,13 +193,106 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("PrivateUserId");
+                    b.HasIndex("UserId");
 
                     b.HasIndex("RegionId");
 
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CEOLastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CEOName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("LogoPic")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("NIP")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("REGON")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.City", b =>
@@ -318,14 +343,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("ContactDetailTypeID")
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomerID")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContactDetailTypeID");
 
-                    b.HasIndex("CustomerID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ContactDetails");
                 });
@@ -360,46 +385,12 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Customer", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CEOLastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CEOName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("LogoPic")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("NIP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("REGON")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
-                });
-
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CustomerContactInformation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -410,11 +401,12 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("Possition")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId")
-                        .IsUnique()
-                        .HasFilter("[CustomerId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("CustomerContactInformation");
                 });
@@ -706,8 +698,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Opinion")
                         .HasColumnType("nvarchar(max)");
@@ -715,16 +707,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("PlantDetailId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PrivateUserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("PlantDetailId");
 
-                    b.HasIndex("PrivateUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("PlantOpinions");
                 });
@@ -759,8 +749,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -768,16 +758,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("PlantId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PrivateUserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("PlantId");
 
-                    b.HasIndex("PrivateUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("PlantSeeds");
                 });
@@ -792,8 +780,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -801,16 +789,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("PlantId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PrivateUserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("PlantId");
 
-                    b.HasIndex("PrivateUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("PlantSeedlings");
                 });
@@ -843,28 +829,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PlantTypes");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PrivateUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AccountName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PrivateUsers");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Tag", b =>
@@ -946,7 +910,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -955,7 +919,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -970,7 +934,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -979,7 +943,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1000,13 +964,9 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
-                        .WithMany("Adresses")
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("VFHCatalogMVC.Domain.Model.PrivateUser", "PrivateUser")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("Addresses")
-                        .HasForeignKey("PrivateUserId");
+                        .HasForeignKey("UserId");
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Region", "Region")
                         .WithMany("Address")
@@ -1032,16 +992,16 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("ContactDetails")
-                        .HasForeignKey("CustomerID");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CustomerContactInformation", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
-                        .WithOne("CustomerContactInformation")
-                        .HasForeignKey("VFHCatalogMVC.Domain.Model.CustomerContactInformation", "CustomerId");
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany("CustomerContactInformation")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitSize", b =>
@@ -1207,19 +1167,15 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantOpinion", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
-                        .WithMany("PlantOpinions")
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantDetail", "PlantDetail")
                         .WithMany("PlantOpinions")
                         .HasForeignKey("PlantDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.PrivateUser", "PrivateUser")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("PlantOpinions")
-                        .HasForeignKey("PrivateUserId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSection", b =>
@@ -1233,36 +1189,28 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSeed", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
                         .WithMany("PlantSeeds")
                         .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.PrivateUser", "PrivateUser")
-                        .WithMany()
-                        .HasForeignKey("PrivateUserId");
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany("PlantSeeds")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSeedling", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
                         .WithMany("PlantSeedlings")
                         .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.PrivateUser", "PrivateUser")
-                        .WithMany()
-                        .HasForeignKey("PrivateUserId");
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany("PlantSeedlings")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantTag", b =>

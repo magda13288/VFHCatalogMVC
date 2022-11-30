@@ -7,17 +7,17 @@ using VFHCatalogMVC.Application.ViewModels.Plant;
 
 namespace VFHCatalogMVC.Application.Interfaces
 {
-    public interface IAddressService
+    public interface IUserService
     {
-        AddressVm GetAddres(int id);
+        AddressVm GetAddress(string userId);
         List<CountryVm> GetCountries();
-        List<VoivodeshipVm> GetVoivodeships(int countryId);
-        List<CityVm> GetCities(int voivodeshipId);
+        List<RegionVm> GetRegions(int countryId);
+        List<CityVm> GetCities(int regionId);
         List<SelectListItem> FillCountryList(List<CountryVm> countries);
-        List<SelectListItem> FillVoivodeshipList(List<VoivodeshipVm> voivodeships);
+        List<SelectListItem> FillRegionList(List<RegionVm> regions);
         List<SelectListItem> FillCityList(List<CityVm> city);
         void AddAddress(AddressVm address);
-        List<string> FilterUsers(int countryId, int voivodeshipId, int cityId, List<PlantSeedVm> seeds);
+        List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds,List<PlantSeedlingVm> seedlings);
 
 
 

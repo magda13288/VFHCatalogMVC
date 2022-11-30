@@ -6,15 +6,15 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Adresses
 {
-    public class VoivodeshipVm:IMapFrom<VFHCatalogMVC.Domain.Model.Voivodeship>
+    public class CityVm:IMapFrom<VFHCatalogMVC.Domain.Model.City>
     {
         public int Id { get; set; }
-        public int CountryId { get; set; }
+        public int RegionId { get; set; }
         public string Name { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.Voivodeship,VoivodeshipVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.City, CityVm>();
         }
     }
 }

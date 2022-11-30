@@ -51,6 +51,7 @@ namespace VFHCatalogMVC.Web
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<Context>();
 
+
             services.AddApplication();
             services.AddInfrastructure();
 

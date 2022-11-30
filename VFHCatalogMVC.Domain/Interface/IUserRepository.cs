@@ -5,12 +5,12 @@ using System.Text;
 using VFHCatalogMVC.Domain.Model;
 namespace VFHCatalogMVC.Domain.Interface
 {
-    public interface IAddressesRepository
+    public interface IUserRepository
     {
         Address GetAddress(int id);
         IQueryable<Country> GetCountries();
-        IQueryable<Voivodeship> GetVoivodeships(int countryId);
-        IQueryable<City> GetCities(int voivodeshipId);
+        IQueryable<Region> GetRegions(int countryId);
+        IQueryable<City> GetCities(int regionId);
         void AddAddress(Address address);
         Address GetAddressInfo(string userId);
     }

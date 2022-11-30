@@ -277,7 +277,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Voivodeships",
+                name: "Regions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -371,7 +371,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VoivodeshipId = table.Column<int>(nullable: false),
+                    RegionId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -379,8 +379,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     table.PrimaryKey("PK_Cities", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Cities_Voivodeships_VoivodeshipId",
-                        column: x => x.VoivodeshipId,
-                        principalTable: "Voivodeships",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -416,7 +416,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     FlatNumber = table.Column<string>(nullable: true),
                     ZipCode = table.Column<string>(nullable: true),
                     CityId = table.Column<int>(nullable: false),
-                    VoivodeshipId = table.Column<int>(nullable: false),
+                    RegionId = table.Column<int>(nullable: false),
                     CountryId = table.Column<int>(nullable: false),
                     CustomerId = table.Column<string>(nullable: true),
                     PrivateUserId = table.Column<string>(nullable: true)
@@ -448,8 +448,8 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Addresses_Voivodeships_VoivodeshipId",
-                        column: x => x.VoivodeshipId,
-                        principalTable: "Voivodeships",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
                         principalColumn: "Id");
                 });
 
@@ -888,7 +888,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_VoivodeshipId",
                 table: "Addresses",
-                column: "VoivodeshipId");
+                column: "RegionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -932,7 +932,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_VoivodeshipId",
                 table: "Cities",
-                column: "VoivodeshipId");
+                column: "RegionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactDetails_ContactDetailTypeID",
@@ -1120,7 +1120,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Voivodeships_CountryId",
-                table: "Voivodeships",
+                table: "Regions",
                 column: "CountryId");
         }
 
@@ -1211,7 +1211,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Voivodeships");
+                name: "Regions");
 
             migrationBuilder.DropTable(
                 name: "Colors");

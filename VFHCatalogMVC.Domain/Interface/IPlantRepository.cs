@@ -47,6 +47,7 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<FruitType> GetFruitTypes();
         IQueryable<PlantOpinion> GetPlantOpinions(int id);
         IQueryable<PlantSeed> GetPlantSeeds(int id);
+        IQueryable<PlantSeedling> GetPlantSeedlings(int id);
 
      
     }

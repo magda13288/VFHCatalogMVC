@@ -5,9 +5,9 @@ using VFHCatalogMVC.Application.ViewModels.Adresses;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
-    public class PlantSeedsForListVm
+    public class PlantSeedlingsForListVm
     {
-        public List<PlantSeedVm> PlantSeeds { get; set; }
+        public List<PlantSeedlingVm> PlantSeedlings { get; set; }
         public int? CurrentPage { get; set; }
         public int PageSize { get; set; }
         public int Count { get; set; }

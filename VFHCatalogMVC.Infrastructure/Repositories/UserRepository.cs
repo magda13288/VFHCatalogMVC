@@ -7,10 +7,10 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Infrastructure.Repositories
 {
-    public class AddressRepository:IAddressesRepository
+    public class UserRepository:IUserRepository
     {
         private Context _context;
-        public AddressRepository(Context context)
+        public UserRepository(Context context)
         {
             _context = context;
         }
@@ -33,9 +33,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return address;
         }
 
-        public IQueryable<City> GetCities(int voivodeshipId)
+        public IQueryable<City> GetCities(int regionId)
         {
-            var cities = _context.Cities.Where(p => p.VoivodeshipId == voivodeshipId);
+            var cities = _context.Cities.Where(p => p.RegionId == regionId);
             return cities;
         }
 
@@ -45,10 +45,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return countries;
         }
 
-        public IQueryable<Voivodeship> GetVoivodeships(int countryId)
+        public IQueryable<Region> GetRegions(int countryId)
         {
-           var voivodeships = _context.Voivodeships.Where(p => p.CountryId == countryId);
-            return voivodeships;
+           var regions = _context.Regions.Where(p => p.CountryId == countryId);
+            return regions;
         }
 
 

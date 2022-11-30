@@ -187,7 +187,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("VoivodeshipId")
+                    b.Property<int>("RegionId")
                         .HasColumnType("int");
 
                     b.Property<string>("ZipCode")
@@ -205,7 +205,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("VoivodeshipId");
+                    b.HasIndex("RegionId");
 
                     b.ToTable("Addresses");
                 });
@@ -315,12 +315,12 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("VoivodeshipId")
+                    b.Property<int>("RegionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VoivodeshipId");
+                    b.HasIndex("RegionId");
 
                     b.ToTable("Cities");
                 });
@@ -975,7 +975,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("TypeOfAvailabilities");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Voivodeship", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Region", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -992,7 +992,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Voivodeships");
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1072,18 +1072,18 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .WithMany("Addresses")
                         .HasForeignKey("UserId");
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Voivodeship", "Voivodeship")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Region", "Region")
                         .WithMany("Address")
-                        .HasForeignKey("VoivodeshipId")
+                        .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.City", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Voivodeship", "Voivodeship")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Region", "Region")
                         .WithMany("Cities")
-                        .HasForeignKey("VoivodeshipId")
+                        .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1373,10 +1373,10 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Voivodeship", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Region", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Country", "Country")
-                        .WithMany("Voivodeships")
+                        .WithMany("Regions")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

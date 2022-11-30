@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class Voivodeship
+    public class Region
     {
         public int Id { get; set; }
         public int CountryId { get; set; }

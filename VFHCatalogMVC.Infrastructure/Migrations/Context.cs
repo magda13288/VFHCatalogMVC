@@ -30,7 +30,7 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<GrowingSeazon> GrowingSeazons { get; set; }
         public DbSet<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
         public DbSet<PlantDetailsImages> PlantDetailsImages { get; set; }
-        public DbSet<Voivodeship> Voivodeships { get; set; }
+        public DbSet<Region> Regions { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<PlantSeed> PlantSeeds { get; set; }
         public DbSet<PlantSeedling> PlantSeedlings { get; set; }
@@ -50,9 +50,9 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(p=>p.CountryId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(p => p.Voivodeship)
+                entity.HasOne(p => p.Region)
                 .WithMany(p => p.Address)
-                .HasForeignKey(p => p.VoivodeshipId)
+                .HasForeignKey(p => p.RegionId)
                 .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(p => p.City)

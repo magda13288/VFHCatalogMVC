@@ -18,7 +18,6 @@ using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VFHCatalogMVC.Domain.Model;
-using VFHCatalogMVC.Application.ViewModels.ApplicationUser;
 
 namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 {
@@ -29,20 +28,20 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
 
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IAddressService addressService)
+            IEmailSender emailSender, IUserService _userRepo)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _addressService = addressService;
+            _userService = _userRepo;
         }
 
         [BindProperty/*(SupportsGet = true)*/]
@@ -74,7 +73,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             public bool IsCustomer { get; set; }
 
             public int CountryId { get; set; }
-            public int VoivodeshipId { get; set; }
+            public int RegionId { get; set; }
             public int CityId { get; set; }
             public string AccountName { get; set; }
             public string CompanyName { get; set; }
@@ -86,8 +85,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var countries =  _addressService.GetCountries();
-            var countriesList = _addressService.FillCountryList(countries);
+            var countries =  _userService.GetCountries();
+            var countriesList = _userService.FillCountryList(countries);
             ViewData["Country"] = countriesList;     
         }   
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -107,8 +106,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, AccountName = Input.AccountName, isActive = true };
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "PRIVATE_USER");
-                    address = new AddressVm() { CountryId = Input.CountryId, VoivodeshipId = Input.VoivodeshipId, CityId = Input.CityId, UserId = user.Id };
-                    _addressService.AddAddress(address);
+                    address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
+                    _userService.AddAddress(address);
                 }
 
                 if (Input.IsCustomer == true)
@@ -116,8 +115,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, CompanyName = Input.CompanyName, isActive = true };
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "Customer");
-                    address = new AddressVm() { CountryId = Input.CountryId, VoivodeshipId = Input.VoivodeshipId, CityId = Input.CityId, UserId = user.Id };
-                    _addressService.AddAddress(address);
+                    address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
+                    _userService.AddAddress(address);
                 }
 
 

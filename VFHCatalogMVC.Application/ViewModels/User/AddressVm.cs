@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,17 +11,26 @@ namespace VFHCatalogMVC.Application.ViewModels.Adresses
 {
     public class AddressVm:IMapFrom<VFHCatalogMVC.Domain.Model.Address>
     {
+        [PersonalData]
         public int Id { get; set; }
+        [PersonalData]
         public string Street { get; set; }
+        [PersonalData]
         public string BuildingNumber { get; set; }
+        [PersonalData]
         public string FlatNumber { get; set; }
+        [PersonalData]
         public string ZipCode { get; set; }
+        [PersonalData]
         [Display(Name ="Miasto")]
         public int CityId { get; set; }
+        [PersonalData]
         [Display(Name = "Województwo")]
-        public int VoivodeshipId { get; set; }
+        public int RegionId { get; set; }
+        [PersonalData]
         [Display(Name = "Kraj")]
         public int CountryId { get; set; }
+        [PersonalData]
         public string UserId { get; set; }
 
         public void Mapping(Profile profile)
@@ -33,7 +43,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Adresses
             public AddressValidation()
             {
                 RuleFor(x => x.CountryId).NotEmpty().WithMessage("Wybierz kraj");
-                RuleFor(x => x.VoivodeshipId).NotEmpty().WithMessage("Wybierz województwo");
+                RuleFor(x => x.RegionId).NotEmpty().WithMessage("Wybierz województwo");
                 RuleFor(x => x.CityId).NotEmpty().WithMessage("Wybierz miasto");
             }
         }

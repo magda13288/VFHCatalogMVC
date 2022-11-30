@@ -296,5 +296,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
             return plant.Id;
         }
+
+        public IQueryable<PlantSeedling> GetPlantSeedlings(int id)
+        {
+            var seedlings = _context.PlantSeedlings.Where(p => p.PlantId == id);
+            return seedlings;
+        }
     }
 }

@@ -1,2 +1,5 @@
 1. Change in pages Login,Register information for client in polish
 2. Xxtension of the user profile for editing function
+3. Add refereshing page after save opinion on modal popup
+4. Add refereshing table in Plant index page after delete plant
+5. Add message module to seeds and seedlings functions (IndexSeed and IndexSeedling)

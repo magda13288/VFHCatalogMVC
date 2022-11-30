@@ -15,18 +15,18 @@
 <form asp-action="Index" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
-     <nav class="navbar navbar-expand-lg bg-light">
+     <nav class="navbar navbar-expand-lg bg-light" @*style="background-color: #e3f2fd;"*@>
     @*<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>*@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
          <label asp-for="PlantForList.TypeId" class="control-label me-3">Typ</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label me-2">Grupa</label>
+           <label asp-for="PlantForList.GroupId" class="control-label me-3">Grupa</label>
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label me-2">Sekcja</label>
+           <label asp-for="PlantForList.SectionId" class="control-label me-3">Sekcja</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
-               <input class="form-control me-2" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
+               <input class="form-control me-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>
        </div>      
 </nav>

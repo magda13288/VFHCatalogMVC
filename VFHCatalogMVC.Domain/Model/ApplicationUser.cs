@@ -8,15 +8,25 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class ApplicationUser:IdentityUser
     {
+        [PersonalData]
         public string AccountName { get; set; }
+        [PersonalData]
         public string FirstName { get; set; }
-        public string LastName { get; set; }     
+        [PersonalData]
+        public string LastName { get; set; }
+        [PersonalData]
         public string CompanyName { get; set; }
+        [PersonalData]
         public string NIP { get; set; }
+        [PersonalData]
         public string REGON { get; set; }
+        [PersonalData]
         public string CEOName { get; set; }
+        [PersonalData]
         public string CEOLastName { get; set; }
+        [PersonalData]
         public byte[] LogoPic { get; set; }
+        [PersonalData]
         public bool isActive { get; set; }
 
         public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }

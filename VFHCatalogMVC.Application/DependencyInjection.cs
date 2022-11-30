@@ -13,7 +13,7 @@ namespace VFHCatalogMVC.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddTransient<IPlantService, PlantService>();
-            services.AddTransient<IAddressService, AddressService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
