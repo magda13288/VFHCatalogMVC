@@ -7,7 +7,7 @@
 
 <h1>Nasiona użytkowników</h1>
 
-<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{Model.Id}")">+Nasiona</button>
+<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{Model.PlantId}")">+Nasiona</button>
 <form asp-action="IndexSeeds" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
@@ -19,8 +19,8 @@
                     <select id="ddlRegion" asp-for="Address.RegionId" name="regionId" class="form-control text-center" aria-label="Region" asp-items="@(new SelectList(ViewBag.RegionsList,"Value", "Text", selectedValue: ViewBag.RegionId))"></select>
            <label asp-for="Address.CityId" class="control-label me-2">Miasto</label>
                     <select id="ddlCity" asp-for="Address.CityId" name="CityId" class="form-control  text-center" aria-label="City" asp-items="@(new SelectList(ViewBag.CitiesList,"Value", "Text",selectedValue:ViewBag.CityId))"></select>              
-           <label asp-for="isCustomer" class="control-label text-md-center">Tylko firmy</label>
-                  @Html.CheckBoxFor(m=>Model.isCustomer, new { @class = "checkbox" , id="isCustomer", name="isCustomer"})                    
+           <label asp-for="isCompany" class="control-label text-md-center">Tylko firmy</label>
+                  @Html.CheckBoxFor(m=>Model.isCompany, new { @class = "checkbox" , id="isCompany", name="isCompany"})                    
         <button class="btn btn-outline-success" type="submit" id="Submit">Szukaj</button>
        </div>      
 </nav>
@@ -41,7 +41,7 @@
                Data dodania
             </th>
             <th class="col-md-3">
-                 Opinie
+               Opinie
             </th>
             <th></th>
         </tr>

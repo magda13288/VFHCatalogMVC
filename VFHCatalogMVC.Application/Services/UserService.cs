@@ -10,6 +10,7 @@ using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -18,14 +19,16 @@ namespace VFHCatalogMVC.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepo;
+        private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager )
+        public UserService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository )
         {
             _userRepo = userRepo;
             _mapper = mapper;
             _userManager = userManager;
+            _plantRepo = plantRepository;
         }
 
         public void AddAddress(AddressVm address)
@@ -34,6 +37,111 @@ namespace VFHCatalogMVC.Application.Services
             _userRepo.AddAddress(addressToSave);
         }
 
+        public UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var seeds = _plantRepo.GetUserPlantSeeds(user.Result.Id).ProjectTo<UserSeedsVm>(_mapper.ConfigurationProvider).ToList();
+            var seedsToList = new List<UserSeedsVm>();
+            var seedsToShow = new List<UserSeedsVm>();
+
+            if (typeId == 0 && searchString == "")
+            {
+                foreach (var item in seeds)
+                {
+                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                    seedsToList.Add(GetSeedsList(plant,item));
+                }
+                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+            }
+            else
+            {
+                if (searchString == "")
+                {
+                    if (typeId != 0 && typeId != null)
+                    {
+                        if (groupId != 0 && groupId != null)
+                        {
+                            //projectTo wykorzystywane przy kolekcjach IQueryable
+                            if (sectionId != 0 && sectionId != null)
+                            {
+                                foreach (var item in seeds)
+                                {
+                                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
+                                    {
+                                        seedsToList.Add(GetSeedsList(plant, item));                         
+                                    }
+                                }
+                                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            }
+                            else
+                            {
+                                foreach (var item in seeds)
+                                {
+                                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
+                                    {
+                                        
+                                        seedsToList.Add(GetSeedsList(plant,item));
+                                    }
+                                }
+                                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in seeds)
+                            {
+                                var plant = _plantRepo.GetPlantById(item.PlantId);
+                                if (plant.PlantTypeId == typeId)
+                                {
+                                   
+                                    seedsToList.Add(GetSeedsList(plant,item));
+                                }
+                            }
+                            seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in seeds)
+                    {
+                        var plant = _plantRepo.GetPlantById(item.PlantId);
+                        if (plant.FullName.StartsWith(searchString))
+                        {
+                            seedsToList.Add(GetSeedsList(plant,item));
+                        }
+                    }
+                    seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                }
+            }
+
+            var plantSeedsList = new UserSeedsForListVm()
+            {
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                UserSeeds = seedsToShow,
+                SearchString = searchString,
+                Count = seeds.Count,              
+            };
+            return plantSeedsList;
+        }
+
+        public UserSeedsVm GetSeedsList(Plant plant, UserSeedsVm item)
+        {
+            item.PlantForList = new PlantForListVm();
+            item.PlantForList.FullName = plant.FullName;
+            item.PlantForList.Photo = plant.Photo;
+            return item;
+        }
+        public UserSeedlingVm GetSeedlingsList(Plant plant, UserSeedlingVm item)
+        {
+            item.PlantForList = new PlantForListVm();
+            item.PlantForList.FullName = plant.FullName;
+            item.PlantForList.Photo = plant.Photo;
+            return item;
+        }
         public List<SelectListItem> FillCountryList(List<CountryVm> countries)
         {        
                 List<SelectListItem> propertyList = new List<SelectListItem>();
@@ -194,6 +302,135 @@ namespace VFHCatalogMVC.Application.Services
             }
 
             return usersList;
+        }
+        public UserSeedsVm GetUserSeedToEdit(int id)
+        {
+            var plantSeed = _userRepo.GetUserSeed(id);
+            var userSedd = _mapper.Map<UserSeedsVm>(plantSeed);
+            return userSedd;
+            
+        }
+        public void UpdateSeed(UserSeedsVm seed)
+        {
+            if (seed != null)
+            {
+                var seedToEdit = _mapper.Map<PlantSeed>(seed);
+                _userRepo.EditUserSeed(seedToEdit);
+            }
+        }
+        public void DeleteSeed(int id)
+        {
+            var seed = _userRepo.GetUserSeed(id);
+            _userRepo.DeleteUserSeed(seed);
+        }
+
+        public UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var seedlings = _plantRepo.GetUserPlantSeedlings(user.Result.Id).ProjectTo<UserSeedlingVm>(_mapper.ConfigurationProvider).ToList();
+            var seedlingsToList = new List<UserSeedlingVm>();
+            var seedlingsToShow = new List<UserSeedlingVm>();
+
+            if (typeId == 0 && searchString == "")
+            {
+                foreach (var item in seedlings)
+                {
+                    var plant = _plantRepo.GetPlantById(item.PlantId);                  
+                    seedlingsToList.Add(GetSeedlingsList(plant,item));
+                }
+                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+            }
+            else
+            {
+                if (searchString == "")
+                {
+                    if (typeId != 0 && typeId != null)
+                    {
+                        if (groupId != 0 && groupId != null)
+                        {
+                            //projectTo wykorzystywane przy kolekcjach IQueryable
+                            if (sectionId != 0 && sectionId != null)
+                            {
+                                foreach (var item in seedlings)
+                                {
+                                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
+                                    {
+                                        seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                    }
+                                }
+                                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            }
+                            else
+                            {
+                                foreach (var item in seedlings)
+                                {
+                                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
+                                    {
+                                        seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                    }
+                                }
+                                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in seedlings)
+                            {
+                                var plant = _plantRepo.GetPlantById(item.PlantId);
+                                if (plant.PlantTypeId == typeId)
+                                {
+                                    seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                }
+                            }
+                            seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in seedlings)
+                    {
+                        var plant = _plantRepo.GetPlantById(item.PlantId);
+                        if (plant.FullName.StartsWith(searchString))
+                        {
+                            seedlingsToList.Add(GetSeedlingsList(plant,item));
+                        }
+                    }
+                    seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                }
+            }
+
+            var plantSeedlingsList = new UserSeedlingsForListVm()
+            {
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                UserSeedlings = seedlingsToShow,
+                SearchString = searchString,
+                Count = seedlings.Count,
+            };
+            return plantSeedlingsList;
+        }
+        public UserSeedlingVm GetUserSeedlingToEdit(int id)
+        {
+            var plantSeedling = _userRepo.GetUserSeedling(id);
+            var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
+
+            return userSeedling;
+        }
+        public void UpdateSeedling(UserSeedlingVm seedling)
+        {
+            if (seedling != null)
+            {
+                var seedlingToEdit = _mapper.Map<PlantSeedling>(seedling);
+                _userRepo.EditUserSeedling(seedlingToEdit);
+            }
+        }
+        public void DeleteSeedling(int id)
+        {
+            var seedling = _userRepo.GetUserSeedling(id);
+           _userRepo.DeleteUserSeedling(seedling);
         }
     }
 }

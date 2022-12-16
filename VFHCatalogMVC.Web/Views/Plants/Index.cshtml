@@ -20,13 +20,13 @@
       <span class="navbar-toggler-icon"></span>
     </button>*@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-         <label asp-for="PlantForList.TypeId" class="control-label me-3">Typ</label>
+         <label asp-for="PlantForList.TypeId" class="control-label md-3">Typ</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label me-3">Grupa</label>
+           <label asp-for="PlantForList.GroupId" class="control-label md-3">Grupa</label>
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label me-3">Sekcja</label>
+           <label asp-for="PlantForList.SectionId" class="control-label md-3">Sekcja</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
-               <input class="form-control me-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
+               <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>
        </div>      
 </nav>
@@ -35,9 +35,9 @@
 <table class="table-striped table-hover table-light" id="plantsTable">
     <thead class="thead-light">
         <tr class="text-center">
-            <th>
+           @* <th>
                 Id
-            </th>
+            </th>*@
             <th>
                 Nazwa
             </th>
@@ -51,9 +51,9 @@
 @foreach (var item in Model.Plants) 
 {
         <tr class="text-center">
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.Id)
-            </td>
+            </td>*@
               <td>
                 @Html.DisplayFor(modelItem => item.FullName)
             </td>
@@ -64,22 +64,22 @@
             <td>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                @Html.ActionLink("Edytuj ", "Edit", new {  id=item.Id })
+                                    @Html.ActionLink("Edytuj ", "Edit", new {  id=item.Id }, new { @class = "btn btn-info" })
                                 <span>|</span>
-                                @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
+                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id }, new { @class = "btn btn-warning" })
                                 <span>|</span>
-                                @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
+                                    @Html.ActionLink("Usuń", "Delete", new { id = item.Id }, new { @class = "btn btn-danger"} )
                                 }
                                 else
                                 {
-                                 @if (User.IsInRole("PrivateUser") || User.IsInRole("Customer"))
+                                 @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
                                     {
 
                                         <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{item.Id}")" >+Nasiona</button>                                       
                                         <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeedling/{item.Id}")" >+Sadzonki</button>
                                         <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeeds", "Plants",new {id=item.Id})'">Nasiona</button>
                                         <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeedlings", "Plants",new {id=item.Id})'">Sadzonki</button>
-                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.Id})'">Szczegóły</button>
+                                        <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.Id})'">Szczegóły</button>
                                     }
                                     else
                                     {
@@ -87,8 +87,8 @@
                                     }
                                 }
                                                                 
-                            </td>
-        </tr>
+            </td>
+           </tr>
 }
     </tbody>
 </table>
@@ -113,7 +113,7 @@
             </tr>
     </table>
     <input type="hidden" name="pageNo" id="pageNo"/>
-    <input type="hidden" name="pageSize" id="pageSize" value="10" />
+    <input type="hidden" name="pageSize" id="pageSize" value="2" />
 </div>
 </div>
 </form>

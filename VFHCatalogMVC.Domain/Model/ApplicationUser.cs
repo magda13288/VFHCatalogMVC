@@ -33,7 +33,7 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
         public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
         public virtual ICollection<ContactDetail> ContactDetails { get; set; }
-        public virtual ICollection<CustomerContactInformation> CustomerContactInformation { get; set; }
+        public virtual ICollection<CompanyContactInformation> CustomerContactInformation { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
 
         } 

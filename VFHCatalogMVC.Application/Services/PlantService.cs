@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Http.Features;
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Options;
+using System.Numerics;
+using System.Drawing;
 
 
 namespace VFHCatalogMVC.Application.Services
@@ -176,6 +178,10 @@ namespace VFHCatalogMVC.Application.Services
 
                         }
                     }
+                    else
+                    {
+                        plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+                    }
                 }
             }
             else
@@ -184,7 +190,7 @@ namespace VFHCatalogMVC.Application.Services
                        .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
             }
 
-            plantsToShow = plants.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+            plantsToShow = plants.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
 
             var plantsList = new ListPlantForListVm()
             {
@@ -198,7 +204,7 @@ namespace VFHCatalogMVC.Application.Services
             return plantsList;
 
         }
-        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCustomer)
+        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             var seeds = new List<PlantSeedVm>();
             var seedsToShow = new List<PlantSeedVm>();
@@ -217,9 +223,9 @@ namespace VFHCatalogMVC.Application.Services
                     var user = _userManager.FindByIdAsync(item.UserId);
                     item.PlantOpinions = new List<PlantOpinionsVm>();
 
-                    if (isCustomer is true)
+                    if (isCompany is true)
                     {
-                        var role = _userManager.IsInRoleAsync(user.Result, "Customer");
+                        var role = _userManager.IsInRoleAsync(user.Result, "Company");
                         if (role.Result == true)
                         {
                             item.AccountName = user.Result.CompanyName;
@@ -258,9 +264,9 @@ namespace VFHCatalogMVC.Application.Services
                     var user = _userManager.FindByIdAsync(item.UserId);
                     item.PlantOpinions = new List<PlantOpinionsVm>();
 
-                    if (isCustomer is true)
+                    if (isCompany is true)
                     {
-                        var role = _userManager.IsInRoleAsync(user.Result, "Customer");
+                        var role = _userManager.IsInRoleAsync(user.Result, "Company");
                         if (role.Result == true)
                         {                        
                             item.AccountName = user.Result.CompanyName;
@@ -288,12 +294,12 @@ namespace VFHCatalogMVC.Application.Services
                 CurrentPage = pageNo,
                 PlantSeeds = seedsToShow,
                 Count = seeds.Count,
-                Id = id,
+                PlantId = id,
             };
 
             return plantSeedsList;
         }        
-        public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCustomer)
+        public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             var seedlings = new List<PlantSeedlingVm>();
             var seedlingsToShow = new List<PlantSeedlingVm>();
@@ -310,9 +316,9 @@ namespace VFHCatalogMVC.Application.Services
                 {
                     item.PlantOpinions = new List<PlantOpinionsVm>();
                     var user = _userManager.FindByIdAsync(item.UserId);
-                    if (isCustomer is true)
+                    if (isCompany is true)
                     {
-                        var role = _userManager.IsInRoleAsync(user.Result, "Customer");
+                        var role = _userManager.IsInRoleAsync(user.Result, "Company");
                         if (role.Result == true)
                         {
                             item.AccountName = user.Result.CompanyName;
@@ -336,9 +342,7 @@ namespace VFHCatalogMVC.Application.Services
 
                         seedlingsToShow = seedlings.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
                     }
-                }
-
-               
+                }             
             }
             else
             {
@@ -350,9 +354,9 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var item in seedlingsList)
                 {
                     var user = _userManager.FindByIdAsync(item.UserId);
-                    if (isCustomer is true)
+                    if (isCompany is true)
                     {
-                        var role = _userManager.IsInRoleAsync(user.Result, "Customer");
+                        var role = _userManager.IsInRoleAsync(user.Result, "Company");
 
                         if (role.Result == true)
                         {
@@ -381,12 +385,11 @@ namespace VFHCatalogMVC.Application.Services
                 CurrentPage = pageNo,
                 PlantSeedlings = seedlingsToShow,
                 Count = seedlings.Count,
-                Id = id,
+                PlantId = id,
             };
 
             return plantSeedlingsList;
         }
-
         public PlantDetailsVm GetPlantDetails(int id)
         {
             var plantDetails = _plantRepo.GetPlantDetails(id);
@@ -730,7 +733,6 @@ namespace VFHCatalogMVC.Application.Services
             var plantDetails = _plantRepo.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
             plantVm.PlantDetails = plantDetailsVm;
-
             if (plantDetails != null)
             {
                 var plantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
@@ -1092,5 +1094,7 @@ namespace VFHCatalogMVC.Application.Services
                 userAccountName = user.Result.CompanyName;
             return userAccountName;
         }
+
+       
     }
 }

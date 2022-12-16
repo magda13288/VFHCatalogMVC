@@ -5,7 +5,7 @@ using System.Text;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class CustomerContactInformation
+    public class CompanyContactInformation
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

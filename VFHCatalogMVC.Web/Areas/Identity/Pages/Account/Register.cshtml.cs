@@ -70,7 +70,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 
             public string ConfirmPassword { get; set; }
             public bool IsPrivateUser { get; set; }
-            public bool IsCustomer { get; set; }
+            public bool IsCompany { get; set; }
 
             public int CountryId { get; set; }
             public int RegionId { get; set; }
@@ -110,11 +110,11 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     _userService.AddAddress(address);
                 }
 
-                if (Input.IsCustomer == true)
+                if (Input.IsCompany == true)
                 {
                     user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, CompanyName = Input.CompanyName, isActive = true };
                     result = await _userManager.CreateAsync(user, Input.Password);
-                    roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+                    roleResult = await _userManager.AddToRoleAsync(user, "Company");
                     address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
                     _userService.AddAddress(address);
                 }

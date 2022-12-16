@@ -21,6 +21,36 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
+        public void DeleteUserSeed(PlantSeed seed)
+        {
+            _context.PlantSeeds.Remove(seed);
+            _context.SaveChanges();
+        }
+
+        public void DeleteUserSeedling(PlantSeedling seedling)
+        {
+           _context.PlantSeedlings.Remove(seedling);
+            _context.SaveChanges();
+        }
+
+        public void EditUserSeed(PlantSeed seed)
+        {
+            _context.Attach(seed);
+            _context.Entry(seed).Property("Count").IsModified = true;
+            _context.Entry(seed).Property("Description").IsModified= true;
+            _context.Entry(seed).Property("DateAdded").IsModified= true;
+            _context.SaveChanges();
+        }
+
+        public void EditUserSeedling(PlantSeedling seedling)
+        {
+            _context.Attach(seedling);
+            _context.Entry(seedling).Property("Count").IsModified = true;
+            _context.Entry(seedling).Property("Description").IsModified = true;
+            _context.Entry(seedling).Property("DateAdded").IsModified = true;
+            _context.SaveChanges();
+        }
+
         public Address GetAddress(int id)
         {
             var address = _context.Addresses.FirstOrDefault(p => p.Id == id);
@@ -51,6 +81,16 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return regions;
         }
 
+        public PlantSeed GetUserSeed(int id)
+        {
+           var seed = _context.PlantSeeds.FirstOrDefault(p => p.Id == id);
+            return seed;
+        }
 
+        public PlantSeedling GetUserSeedling(int id)
+        {
+            var seedling = _context.PlantSeedlings.FirstOrDefault(p => p.Id == id);
+            return seedling;
+        }
     }
 }

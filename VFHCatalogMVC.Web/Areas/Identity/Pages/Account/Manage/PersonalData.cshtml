@@ -36,7 +36,7 @@
                     <input asp-for="Input.LastName" class="form-label" />
                 </div>
             }
-            @if (User.IsInRole("Customer"))
+            @if (User.IsInRole("Company"))
             {
               <div class="form-group">
                     <label asp-for="Input.CompanyName" class="form-control"></label>

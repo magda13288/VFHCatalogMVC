@@ -12,8 +12,8 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int PageSize { get; set; }
         public int Count { get; set; }
         public AddressVm Address { get; set; }
-        public int Id { get; set; }
-        public bool isCustomer { get; set; }
+        public int PlantId { get; set; }
+        public bool isCompany { get; set; }
 
     }
 }

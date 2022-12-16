@@ -302,5 +302,17 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var seedlings = _context.PlantSeedlings.Where(p => p.PlantId == id);
             return seedlings;
         }
+
+        public IQueryable<PlantSeed> GetUserPlantSeeds(string userId)
+        {
+           var seeds = _context.PlantSeeds.Where(p => p.UserId == userId);
+            return seeds;
+        }
+
+        public IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId)
+        {
+          var seedlings = _context.PlantSeedlings.Where(p => p.UserId == userId);
+            return seedlings;
+        }
     }
 }

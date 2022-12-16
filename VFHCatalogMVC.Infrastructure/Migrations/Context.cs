@@ -10,7 +10,7 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<ContactDetail> ContactDetails { get; set; }
         public DbSet<ContactDetailType> ContactDetailTypes { get; set; }
         public DbSet<Country> Countries { get; set; }
-        public DbSet<CustomerContactInformation> CustomerContactInformation { get; set; }
+        public DbSet<CompanyContactInformation> CompanyContactInformations { get; set; }
         public DbSet<Plant> Plants { get; set; }
         public DbSet<PlantGroup> PlantGroups { get; set; }
         public DbSet<PlantSection> PlantSections { get; set; }

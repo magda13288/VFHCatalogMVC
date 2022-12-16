@@ -328,6 +328,32 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("Colors");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CompanyContactInformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Possition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CompanyContactInformations");
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.ContactDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -381,32 +407,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CustomerContactInformation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Possition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CustomerContactInformation");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Destination", b =>
@@ -982,6 +982,13 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CompanyContactInformation", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany("CustomerContactInformation")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.ContactDetail", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.ContactDetailType", "ContactDetailType")
@@ -992,13 +999,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("ContactDetails")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CustomerContactInformation", b =>
-                {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
-                        .WithMany("CustomerContactInformation")
                         .HasForeignKey("UserId");
                 });
 

@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
+using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.Mapping;
-using VFHCatalogMVC.Application.ViewModels.Adresses;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.User
 {
-    public class PlantSeedVm : IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeed>
+    public class UserSeedlingVm : IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeedling>
     {
         public int Id { get; set; }
         public int PlantId { get; set; }
@@ -21,13 +20,10 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public string UserId { get; set; }
 
         [NotMapped]
-        public string AccountName { get; set; }
-       
-        [NotMapped]
-        public List<PlantOpinionsVm> PlantOpinions { get; set; }
+        public PlantForListVm PlantForList { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeed, PlantSeedVm>().ReverseMap();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeedling, UserSeedlingVm>().ReverseMap();
         }
     }
 }

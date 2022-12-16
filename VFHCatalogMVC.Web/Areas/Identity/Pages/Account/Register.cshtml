@@ -17,8 +17,8 @@
             <div class="form-group">
                 <label asp-for="Input.IsPrivateUser">Użytkownik prywatny</label>
                 @Html.CheckBoxFor(m=>Model.Input.IsPrivateUser, new { @class = "checkbox" , id="chkPrivateUser",onclick= "EnableDisableTextBoxUser(this)"})   
-                <label asp-for="Input.IsCustomer">Firma</label>
-                @Html.CheckBoxFor(m=>Model.Input.IsCustomer, new { @class = "checkbox", id="chkCustomer",onclick="EnableDisableTextBoxCustomer(this)" }) 
+                <label asp-for="Input.IsCompany">Firma</label>
+                @Html.CheckBoxFor(m=>Model.Input.IsCompany, new { @class = "checkbox", id="chkCompany",onclick="EnableDisableTextBoxCompany(this)" }) 
             </div>
             <div class="form-group">
                 <label asp-for="Input.CountryId">Kraj</label>
@@ -136,21 +136,21 @@
 
     function EnableDisableTextBoxUser(chkPrivateUser) {
         var txtUser = document.getElementById("txtUser");
-        var chkCustomer = document.getElementById("chkCustomer");
+        var chkCompany = document.getElementById("chkCompany");
         txtUser.disabled = chkPrivateUser.checked ? false : true;
         if (!txtUser.disabled) {
             //txtUser.focus();
-            chkCustomer.disabled = true;
+            chkCompany.disabled = true;
         }
         else {
-            chkCustomer.disabled = false;
+            chkCompany.disabled = false;
         }
     }
 
-    function EnableDisableTextBoxCustomer(chkCustomer) {
+    function EnableDisableTextBoxCompany(chkCompany) {
         var txtCustomer = document.getElementById("txtCustomer");
         var chkPrivateUser = document.getElementById("chkPrivateUser")
-        txtCustomer.disabled = chkCustomer.checked ? false : true;
+        txtCustomer.disabled = chkCompany.checked ? false : true;
         if (!txtCustomer.disabled) {
             //txtCustomer.focus();
             chkPrivateUser.disabled = true;

@@ -1,41 +1,46 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Data;
+using System;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace VFHCatalogMVC.Web.Controllers
+namespace VFHCatalogApi.Controllers
 {
-    public class UserController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
         private readonly IPlantService _plantService;
-       
+
         public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService)
         {
             _userService = userService;
             _logger = logger;
             _plantService = plantService;
-          
+
         }
 
         [HttpGet, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult IndexSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<UserSeedsForListVm> IndexSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
             {
                 var types = _plantService.GetPlantTypes();
-                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
-                ViewBag.GroupsList = groupsList.Value;
+                var viewBagGroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
-                ViewBag.SectionsList = sectionsList.Value;
+                var viewBagSectionsList = sectionsList;
+                int viewBagTypeId, viewBagGroupId;
+                int? viewBagSectionId;
 
                 if (!pageNo.HasValue)
                 {
@@ -50,15 +55,15 @@ namespace VFHCatalogMVC.Web.Controllers
                     pageSize = 10;
                 }
                 if (typeId != 0)
-                    ViewBag.TypeId = typeId;
+                    viewBagTypeId = typeId;
                 if (groupId != 0)
-                    ViewBag.GroupId = groupId;
+                    viewBagGroupId = groupId;
                 if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                    viewBagSectionId = sectionId;
 
                 var model = _userService.GetUserSeeds(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
-                return View(model);
+                return Ok(model);
             }
             catch (Exception ex)
             {
@@ -69,16 +74,18 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult IndexSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<UserSeedlingsForListVm> IndexSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
             {
                 var types = _plantService.GetPlantTypes();
-                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
-                ViewBag.GroupsList = groupsList.Value;
+                var viewBagGroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
-                ViewBag.SectionsList = sectionsList.Value;
+                var viewBagSectionsList = sectionsList;
+                int viewBagTypeId, viewBagGroupId;
+                int? viewBagSectionId;
 
                 if (!pageNo.HasValue)
                 {
@@ -93,15 +100,15 @@ namespace VFHCatalogMVC.Web.Controllers
                     pageSize = 10;
                 }
                 if (typeId != 0)
-                    ViewBag.TypeId = typeId;
+                    viewBagTypeId = typeId;
                 if (groupId != 0)
-                    ViewBag.GroupId = groupId;
+                    viewBagGroupId = groupId;
                 if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                    viewBagSectionId = sectionId;
 
                 var model = _userService.GetUserSeedlings(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
-                return View(model);
+                return Ok(model);
             }
             catch (Exception ex)
             {
@@ -110,15 +117,16 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult EditSeed(int id)
+        public ActionResult<UserSeedsVm> EditSeed(int id)
         {
             try
             {
                 var seed = _userService.GetUserSeedToEdit(id);
 
-                return PartialView("EditSeedModalPartial", seed);
+                //return PartialView("EditSeedModalPartial", seed);
+                return Ok(seed);
             }
             catch (Exception ex)
             {
@@ -136,11 +144,13 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _userService.UpdateSeed(model);
                     //ViewData["JavaScript"] = " window.location.reload()" /*+ Url.Action("IndexSeeds") + "'"*/;
-                    return RedirectToAction("IndexSeeds","User");
+                    // return RedirectToAction("IndexSeeds", "User");
+                    return Ok();
                 }
                 else
                 {
-                    return PartialView("EditSeedModalPartial", model);
+                    //return PartialView("EditSeedModalPartial", model);
+                    return BadRequest(ModelState.ErrorCount);
                 }
             }
             catch (Exception ex)
@@ -150,14 +160,15 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult DeleteSeed(int id)
         {
             try
             {
                 _userService.DeleteSeed(id);
-                return RedirectToAction("IndexSeeds");
+                //return RedirectToAction("IndexSeeds");
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -166,15 +177,17 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult EditSeedling(int id)
+        public ActionResult<UserSeedlingVm> EditSeedling(int id)
         {
             try
             {
                 var seedling = _userService.GetUserSeedlingToEdit(id);
 
-                return PartialView("EditSeedlingModalPartial", seedling);
+                //return PartialView("EditSeedlingModalPartial", seedling);
+                return Ok(seedling);
+
             }
             catch (Exception ex)
             {
@@ -192,11 +205,13 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _userService.UpdateSeedling(model);
-                    return RedirectToAction("IndexSeedlings");
+                    //return RedirectToAction("IndexSeedlings");
+                    return Ok();
                 }
                 else
                 {
-                    return PartialView("EditSeedlingModalPartial", model);
+                    //return PartialView("EditSeedlingModalPartial", model);
+                    return BadRequest(ModelState.ErrorCount);
                 }
             }
             catch (Exception ex)
@@ -206,14 +221,15 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult DeleteSeedling(int id)
         {
             try
             {
                 _userService.DeleteSeedling(id);
-                return RedirectToAction("IndexSeedlings");
+                //return RedirectToAction("IndexSeedlings");
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -223,7 +239,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetRegions(int id)
+        private List<SelectListItem> GetRegions(int id)
         {
             var regions = _userService.GetRegions(id);
 
@@ -240,11 +256,11 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
             }
 
-            return Json(voivodeshipsList);
+            return voivodeshipsList;
         }
 
         [HttpPost]
-        public JsonResult GetCities(int id)
+        private List<SelectListItem> GetCities(int id)
         {
             var cities = _userService.GetCities(id);
 
@@ -261,10 +277,10 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
             }
 
-            return Json(citiesList);
+            return citiesList;
         }
         [HttpPost]
-        public JsonResult GetPlantGroupsList(int typeId)
+        private List<SelectListItem> GetPlantGroupsList(int typeId)
         {
             var groups = _plantService.GetPlantGroups(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
@@ -280,12 +296,12 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
             }
 
-            return Json(groupsList);
+            return groupsList;
 
         }
 
         [HttpPost]
-        public JsonResult GetPlantSectionsList(int groupId, int typeId)
+        private List<SelectListItem> GetPlantSectionsList(int groupId, int typeId)
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
@@ -308,9 +324,8 @@ namespace VFHCatalogMVC.Web.Controllers
             //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
 
             //}
-            return Json(sectionsList);
+            return sectionsList;
         }
-
 
     }
 }

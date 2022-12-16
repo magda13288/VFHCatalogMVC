@@ -400,7 +400,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Customer", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Company", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1060,7 +1060,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithMany("Adresses")
                         .HasForeignKey("CustomerId");
 
@@ -1096,7 +1096,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithMany("ContactDetails")
                         .HasForeignKey("CustomerID");
 
@@ -1107,7 +1107,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CustomerContactInformation", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithOne("CustomerContactInformation")
                         .HasForeignKey("VFHCatalogMVC.Domain.Model.CustomerContactInformation", "CustomerId");
 
@@ -1279,7 +1279,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantOpinion", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithMany("PlantOpinions")
                         .HasForeignKey("CustomerId");
 
@@ -1309,7 +1309,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSeed", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
@@ -1330,7 +1330,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSeedling", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Customer", "Customer")
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
