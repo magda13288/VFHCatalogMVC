@@ -265,17 +265,19 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plantOpinions;
         }
 
-        public void AddPlantSeed(PlantSeed seed)
+        public int AddPlantSeed(PlantSeed seed)
         {
             _context.PlantSeeds.Add(seed);
             _context.SaveChanges();
+
+            return seed.Id;
         }
 
         public int AddPlantSeedling(PlantSeedling seedling)
         {
             _context.PlantSeedlings.Add(seedling);
             var i = _context.SaveChanges();
-            return i;
+            return seedling.Id;
         }
 
         public void AddPlantOpinion(PlantOpinion opinion)
@@ -313,6 +315,30 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
           var seedlings = _context.PlantSeedlings.Where(p => p.UserId == userId);
             return seedlings;
+        }
+
+        public void AddContactDetailsForSeed(ContactDetail contact)
+        {
+            _context.ContactDetails.Add(contact);
+            _context.SaveChanges();
+        }
+
+        public int AddContactDetail(ContactDetail contact)
+        {
+            _context.ContactDetails.Add(contact);
+            _context.SaveChanges();
+            return contact.Id;
+        }
+
+        public void AddContactDetailForSeed(ContactDetailForSeed contact)
+        {
+            _context.ContactDetailForSeeds.Add(contact);
+            _context.SaveChanges();
+        }
+        public void AddContactDetailForSeedling(ContactDetailForSeedling contact)
+        {
+           _context.ContactDetailForSeedlings.Add(contact);
+            _context.SaveChanges();
         }
     }
 }

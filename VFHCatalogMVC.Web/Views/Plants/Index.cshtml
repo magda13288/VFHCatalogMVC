@@ -9,7 +9,7 @@
 @if (User.IsInRole("Admin"))
 {
     <p>
-        <a asp-action="AddPlant">Dodaj nową roślinę</a>
+        <a asp-action="AddPlant" class="btn btn-success">Dodaj nową roślinę</a>
     </p>
 }
 <form asp-action="Index" asp-controller="Plants" method="post">
@@ -35,9 +35,6 @@
 <table class="table-striped table-hover table-light" id="plantsTable">
     <thead class="thead-light">
         <tr class="text-center">
-           @* <th>
-                Id
-            </th>*@
             <th>
                 Nazwa
             </th>
@@ -51,9 +48,6 @@
 @foreach (var item in Model.Plants) 
 {
         <tr class="text-center">
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>*@
               <td>
                 @Html.DisplayFor(modelItem => item.FullName)
             </td>
@@ -83,7 +77,7 @@
                                     }
                                     else
                                     {
-                                        @Html.ActionLink("Sczegóły", "Details", new { id = item.Id })
+                                        @Html.ActionLink("Sczegóły", "Details", new { id = item.Id },new { @class = "btn btn-warning" })
                                     }
                                 }
                                                                 
@@ -96,7 +90,7 @@
 <div class="row">
     <table>
         <tr>
-            @for(int i =1;i<Math.Ceiling(Model.Count/(double)Model.PageSize);i++)
+            @for(int i =1;i<=Math.Ceiling(Model.Count/(double)Model.PageSize);i++)
             {
                     <td>
                         @if (i != Model.CurrentPage)
@@ -113,7 +107,7 @@
             </tr>
     </table>
     <input type="hidden" name="pageNo" id="pageNo"/>
-    <input type="hidden" name="pageSize" id="pageSize" value="2" />
+    <input type="hidden" name="pageSize" id="pageSize" value="10" />
 </div>
 </div>
 </form>

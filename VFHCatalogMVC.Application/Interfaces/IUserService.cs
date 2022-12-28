@@ -30,6 +30,9 @@ namespace VFHCatalogMVC.Application.Interfaces
         UserSeedlingVm GetUserSeedlingToEdit(int id);
         void UpdateSeedling(UserSeedlingVm seedling);
         void DeleteSeedling(int id);
+        ContactDetail GetContactDetail(int id);
+        int GetContactDetailForSeed(int id);
+        int GetContactDetailForSeedling(int id);
 
 
     }

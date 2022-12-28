@@ -432,5 +432,23 @@ namespace VFHCatalogMVC.Application.Services
             var seedling = _userRepo.GetUserSeedling(id);
            _userRepo.DeleteUserSeedling(seedling);
         }
+
+        public ContactDetail GetContactDetail(int id)
+        {
+           var contactDetails = _userRepo.GetContactDetail(id);
+            return contactDetails;
+        }
+
+        public int GetContactDetailForSeed(int id)
+        {
+            var contactId = _userRepo.GetContactDetailForSeed(id);
+            return contactId;
+        }
+
+        public int GetContactDetailForSeedling(int id)
+        {
+            var contactId = _userRepo.GetContactDetailForSeedling(id);
+            return contactId;
+        }
     }
 }

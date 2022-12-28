@@ -69,6 +69,29 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return cities;
         }
 
+        public ContactDetail GetContactDetail(int id)
+        {
+            var contactDetail = _context.ContactDetails.FirstOrDefault(p => p.Id == id);
+            return contactDetail;
+        }
+
+        public int GetContactDetailForSeed(int id)
+        {
+            var contactDetails = _context.ContactDetailForSeeds.FirstOrDefault(p => p.PlantSeedId == id);
+            return contactDetails.ContactDetailId;
+        }
+
+        public int GetContactDetailForSeedling(int id)
+        {
+            var contactDetails = _context.ContactDetailForSeedlings.FirstOrDefault(p => p.PlantSeedlingId == id);
+            return contactDetails.ContactDetailId;
+        }
+
+        //public ContactDetail GetContactDetails(string userId)
+        //{
+        //    var contactDetails = _context.ContactDetails.
+        //}
+
         public IQueryable<Country> GetCountries()
         {
             var countries = _context.Countries;

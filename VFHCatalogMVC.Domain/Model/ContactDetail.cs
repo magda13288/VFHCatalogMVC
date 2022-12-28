@@ -13,6 +13,8 @@ namespace VFHCatalogMVC.Domain.Model
         public ContactDetailType ContactDetailType { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
+        public ICollection<ContactDetailForSeed> ContactDetailForSeeds { get; set; }
+        public ICollection<ContactDetailForSeedling> ContactsForSeedling { get; set; }
        
     }
 }

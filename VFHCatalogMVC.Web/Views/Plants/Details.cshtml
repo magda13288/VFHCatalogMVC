@@ -123,7 +123,10 @@
     </div>
 </div>
 <div>
-    @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id }) |
+    @if(User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
+    }
     <a asp-action="Index">Powrót do wyszukiwarki</a>
 </div>
 

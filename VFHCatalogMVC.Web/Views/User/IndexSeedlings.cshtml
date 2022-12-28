@@ -80,7 +80,7 @@
         <div class="row">
             <table>
                 <tr>
-                    @for (int i = 1; i < Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                    @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
                     {
                         <td>
                             @if (i != Model.CurrentPage)

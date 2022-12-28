@@ -34,6 +34,8 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<City> Cities { get; set; }
         public DbSet<PlantSeed> PlantSeeds { get; set; }
         public DbSet<PlantSeedling> PlantSeedlings { get; set; }
+        public DbSet<ContactDetailForSeed> ContactDetailForSeeds { get; set; }
+        public DbSet<ContactDetailForSeedling> ContactDetailForSeedlings { get; set; }
   
         public Context(DbContextOptions options) : base(options)
         {
@@ -45,9 +47,9 @@ namespace VFHCatalogMVC.Infrastructure
 
             builder.Entity<Address>(entity =>
             {
-                entity.HasOne(p=>p.Country)
-                .WithMany(p=>p.Adresses)
-                .HasForeignKey(p=>p.CountryId)
+                entity.HasOne(p => p.Country)
+                .WithMany(p => p.Adresses)
+                .HasForeignKey(p => p.CountryId)
                 .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(p => p.Region)
@@ -83,8 +85,8 @@ namespace VFHCatalogMVC.Infrastructure
                .IsRequired(false);
 
             });
-                
-            builder.Entity<GrowthType>(entity=>
+
+            builder.Entity<GrowthType>(entity =>
             {
                 entity.HasOne(p => p.PlantType)
                 .WithMany(p => p.GrowthTypes)
@@ -102,7 +104,7 @@ namespace VFHCatalogMVC.Infrastructure
                .WithMany(p => p.GrowthTypes)
                .HasForeignKey(p => p.PlantSectionId)
                .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);        
+               .IsRequired(false);
             });
 
 
@@ -161,10 +163,10 @@ namespace VFHCatalogMVC.Infrastructure
                .HasForeignKey(p => p.FruitSizeId)
                .IsRequired(false);
 
-               entity.HasOne(p => p.FruitType)
-              .WithMany(p => p.PlantDetails)
-              .HasForeignKey(p => p.FruitTypeId)
-              .IsRequired(false);
+                entity.HasOne(p => p.FruitType)
+               .WithMany(p => p.PlantDetails)
+               .HasForeignKey(p => p.FruitTypeId)
+               .IsRequired(false);
             });
 
             builder.Entity<Plant>()
@@ -186,7 +188,7 @@ namespace VFHCatalogMVC.Infrastructure
             builder.Entity<PlantTag>()
                 .HasOne<Tag>(pt => pt.Tag)
                 .WithMany(pt => pt.PlantTags)
-                .HasForeignKey(pt => pt.TagId);   
+                .HasForeignKey(pt => pt.TagId);
 
             builder.Entity<PlantDestination>(entity => {
 
@@ -203,29 +205,55 @@ namespace VFHCatalogMVC.Infrastructure
 
             builder.Entity<PlantGrowthType>(entity => {
 
-              entity.HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
+                entity.HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
 
-              entity.HasOne(pg => pg.PlantDetail)
-                .WithMany(pg => pg.PlantGrowthTypes)
-                .HasForeignKey(pg => pg.PlantDetailId);
+                entity.HasOne(pg => pg.PlantDetail)
+                  .WithMany(pg => pg.PlantGrowthTypes)
+                  .HasForeignKey(pg => pg.PlantDetailId);
 
                 entity.HasOne(pg => pg.GrowthType)
                     .WithMany(pg => pg.PlantGrowthTypes)
                     .HasForeignKey(pg => pg.GrowthTypeId);
-            });                       
+            });
 
             builder.Entity<PlantGrowingSeazon>(entity =>
             {
                 entity.HasKey(e => new { e.PlantDetailId, e.GrowingSeazonId });
 
-                entity.HasOne<PlantDetail>(e=>e.PlantDetail)
-                .WithMany(e=>e.PlantGrowingSeazons)
+                entity.HasOne<PlantDetail>(e => e.PlantDetail)
+                .WithMany(e => e.PlantGrowingSeazons)
                 .HasForeignKey(e => e.PlantDetailId);
 
                 entity.HasOne<GrowingSeazon>(e => e.GrowingSeazon)
                 .WithMany(e => e.PlantGrowingSeazons)
                 .HasForeignKey(e => e.GrowingSeazonId);
-            });                   
+            });
+
+            builder.Entity<ContactDetailForSeed>(entity =>
+            {
+                entity.HasKey(e => new { e.PlantSeedId, e.ContactDetailId });
+
+                entity.HasOne(e => e.PlantSeed)
+                .WithMany(e => e.ContactDetailForSeeds)
+                .HasForeignKey(e => e.PlantSeedId);
+
+                entity.HasOne(e => e.ContactDetail)
+                .WithMany(e => e.ContactDetailForSeeds)
+                .HasForeignKey(e => e.ContactDetailId);
+            });
+
+            builder.Entity<ContactDetailForSeedling>(entity =>
+            {
+                entity.HasKey(e => new { e.PlantSeedlingId, e.ContactDetailId });
+
+                entity.HasOne(e => e.PlantSeedling)
+                .WithMany(e => e.ContactDetailForSeedlings)
+                .HasForeignKey(e => e.PlantSeedlingId);
+
+                entity.HasOne(e => e.ContactDetail)
+                .WithMany(e => e.ContactsForSeedling)
+                .HasForeignKey(e => e.ContactDetailId);
+            });
         }
     }
 }

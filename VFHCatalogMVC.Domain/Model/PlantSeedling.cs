@@ -15,6 +15,6 @@ namespace VFHCatalogMVC.Domain.Model
         public DateTime DateAdded { get; set; }
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
-
+        public ICollection<ContactDetailForSeedling> ContactDetailForSeedlings { get; set; }
     }
 }

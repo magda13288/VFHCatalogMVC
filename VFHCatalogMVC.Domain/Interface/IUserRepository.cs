@@ -20,5 +20,9 @@ namespace VFHCatalogMVC.Domain.Interface
         void EditUserSeedling(PlantSeedling seedling);
         PlantSeedling GetUserSeedling(int id);
         void DeleteUserSeedling(PlantSeedling seedling);
+        ContactDetail GetContactDetail(int id);
+        int GetContactDetailForSeed(int id);
+        int GetContactDetailForSeedling(int id);
+        //ContactDetail GetContactDetails(string userId);
     }
 }

@@ -10,7 +10,10 @@ namespace VFHCatalogMVC.Domain.Interface
     {
         void DeletePlant(Plant plant);
         int AddPlant(Plant plant);
-        void AddPlantSeed(PlantSeed seed);
+        int AddPlantSeed(PlantSeed seed);
+        int AddContactDetail(ContactDetail contact);
+        void AddContactDetailForSeed(ContactDetailForSeed contact);
+        void AddContactDetailForSeedling(ContactDetailForSeedling contact);
         int AddPlantSeedling(PlantSeedling seedling);
         void AddPlantOpinion(PlantOpinion opinion);
         int EditPlant(Plant plant);
@@ -50,6 +53,7 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<PlantSeedling> GetPlantSeedlings(int id);
         IQueryable<PlantSeed> GetUserPlantSeeds(string userId);
         IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId);
+
 
     }
 }

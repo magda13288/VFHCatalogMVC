@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
-using VFHCatalogMVC.Application.ViewModels.Adresses;
+using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.ViewModels.User;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
@@ -21,13 +23,26 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public string UserId { get; set; }
 
         [NotMapped]
+        public string Date { get; set; }
+        [NotMapped]
         public string AccountName { get; set; }
-       
+
+        [NotMapped]
+        public ContactDetailVm ContactDetail { get; set; }
+
         [NotMapped]
         public List<PlantOpinionsVm> PlantOpinions { get; set; }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeed, PlantSeedVm>().ReverseMap();
+        }
+        public class PlantSeedValidation : AbstractValidator<PlantSeedVm>
+        {
+            public PlantSeedValidation()
+            {
+                RuleFor(x => x.ContactDetail.ContactDetailInformation).NotEmpty().WithMessage("Pole wymagane");
+            }
         }
     }
 }

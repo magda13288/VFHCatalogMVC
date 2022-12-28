@@ -31,9 +31,18 @@
             <th class="col-md-3">
                Użytkownik
             </th>
-            <th class="col-md-1">
-               Ilość
-            </th>
+                    @if (Model.isCompany == true)
+                    {
+                        <th class="col-md-1">
+                            Link
+                        </th>
+                    }
+                    else
+                    {
+                        <th class="col-md-1">
+                            Ilość
+                        </th>
+                    }
              <th class="col-md-3">
                Opis
             </th>
@@ -52,14 +61,24 @@
             <td >
                 @Html.DisplayFor(modelItem => item.AccountName)
             </td>
+             @if (Model.isCompany == true)
+            {
             <td>
-                @Html.DisplayFor(modelItem => item.Count)
+              @* @Html.DisplayFor(modelItem => item.ContactDetail.ContactDetailInformation)*@
+               @Html.ActionLink("External link",item.ContactDetail.ContactDetailInformation)
             </td>
+            }
+            else
+            {
+             <td>
+                @Html.DisplayFor(modelItem => item.Count)
+             </td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-            @Html.DisplayFor(modelItem => item.DateAdded)
+                @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
                             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
@@ -96,7 +115,7 @@
         <div class="row">
             <table>
                 <tr>
-                    @for (int i = 1; i < Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                    @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
                     {
                         <td>
                             @if (i != Model.CurrentPage)
