@@ -328,7 +328,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _plantService.AddPlantSeed(plantSeed);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index","Plants");
                 }
                 else
                 {
@@ -367,7 +367,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _plantService.AddPlantSeedling(plantSeedling);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index","Plants");
 
                 }
                 else

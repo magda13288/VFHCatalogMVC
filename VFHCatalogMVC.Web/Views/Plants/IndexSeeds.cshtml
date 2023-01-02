@@ -64,8 +64,7 @@
              @if (Model.isCompany == true)
             {
             <td>
-              @* @Html.DisplayFor(modelItem => item.ContactDetail.ContactDetailInformation)*@
-               @Html.ActionLink("External link",item.ContactDetail.ContactDetailInformation)
+              <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
             </td>
             }
             else
@@ -74,7 +73,7 @@
                 @Html.DisplayFor(modelItem => item.Count)
              </td>
             }
-            <td>
+            <td class="text-wrap">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>

@@ -21,6 +21,7 @@ $(function () {
         var sendData = form.serialize();
         $.post(url, sendData).done(function (data) {
             PlaceHolderElement.find('.modal').modal('hide');
+            location.reload();
         })
     })
 
@@ -49,6 +50,7 @@ $(function () {
         var sendData = form.serialize();
         $.post(url, sendData).done(function (data) {
             PlaceHolderElement.find('.modal').modal('hide');
+            location.reload();
         })
     })
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,13 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void DeleteUserSeedling(PlantSeedling seedling)
         {
            _context.PlantSeedlings.Remove(seedling);
+            _context.SaveChanges();
+        }
+
+        public void EditContactDetails(ContactDetail contact)
+        {
+            _context.Attach(contact);
+            _context.Entry(contact).Property("ContactDetailInformation").IsModified = true;
             _context.SaveChanges();
         }
 
@@ -71,7 +79,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public ContactDetail GetContactDetail(int id)
         {
-            var contactDetail = _context.ContactDetails.FirstOrDefault(p => p.Id == id);
+            var contactDetail = _context.ContactDetails.AsNoTracking().FirstOrDefault(p => p.Id == id);
             return contactDetail;
         }
 

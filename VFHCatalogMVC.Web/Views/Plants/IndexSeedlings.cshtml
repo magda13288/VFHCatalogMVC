@@ -31,9 +31,18 @@
              <th class="col-md-3">
                         Użytkownik
             </th>
-            <th class="col-md-1">
-                        Ilość
-            </th>
+            @if (Model.isCompany == true)
+                    {
+                        <th class="col-md-1">
+                            Link
+                        </th>
+                    }
+                    else
+                    {
+                        <th class="col-md-1">
+                            Ilość
+                        </th>
+                    } 
             <th class="col-md-3">
                         Opis
             </th>
@@ -52,10 +61,19 @@
             <td>
                @Html.DisplayFor(modelItem => item.AccountName)
             </td>
+            @if (Model.isCompany == true)
+            {
             <td>
-              @Html.DisplayFor(modelItem => item.Count)
+              <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
             </td>
-            <td>
+            }
+            else
+            {
+             <td>
+                @Html.DisplayFor(modelItem => item.Count)
+             </td>
+            }
+            <td class="text-wrap">
              @Html.DisplayFor(modelItem => item.Description)
             </td>
              <td>

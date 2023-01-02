@@ -15,7 +15,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
     {
         public int Id { get; set; }
         public int PlantId { get; set; }
-        [RegularExpression("[0-9]", ErrorMessage = "Dopuszczalne tylko liczby")]
+        //[RegularExpression("[0-9]", ErrorMessage = "Dopuszczalne tylko liczby")]
         public int Count { get; set; }
         public string Description { get; set; }
         public DateTime DateAdded { get; set; }

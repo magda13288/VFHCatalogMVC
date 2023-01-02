@@ -23,6 +23,7 @@ namespace VFHCatalogMVC.Domain.Interface
         ContactDetail GetContactDetail(int id);
         int GetContactDetailForSeed(int id);
         int GetContactDetailForSeedling(int id);
+        void EditContactDetails(ContactDetail contact);
         //ContactDetail GetContactDetails(string userId);
     }
 }

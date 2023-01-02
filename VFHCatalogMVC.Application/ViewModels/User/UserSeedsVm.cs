@@ -22,6 +22,8 @@ namespace VFHCatalogMVC.Application.ViewModels.User
 
         [NotMapped]
         public PlantForListVm PlantForList { get; set; }
+        [NotMapped]
+        public ContactDetailVm ContactDetail { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeed, UserSeedsVm>().ReverseMap();

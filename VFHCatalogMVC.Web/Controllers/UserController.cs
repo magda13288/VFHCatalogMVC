@@ -98,7 +98,7 @@ namespace VFHCatalogMVC.Web.Controllers
                     ViewBag.GroupId = groupId;
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
-
+                
                 var model = _userService.GetUserSeedlings(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
                 return View(model);
@@ -136,7 +136,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _userService.UpdateSeed(model);
                     //ViewData["JavaScript"] = " window.location.reload()" /*+ Url.Action("IndexSeeds") + "'"*/;
-                    return RedirectToAction("IndexSeeds","User");
+                    return RedirectToAction("IndexSeeds"/*,"User"*/);
                 }
                 else
                 {
@@ -192,7 +192,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _userService.UpdateSeedling(model);
-                    return RedirectToAction("IndexSeedlings");
+                    return RedirectToAction("IndexSeedlings","User");
                 }
                 else
                 {

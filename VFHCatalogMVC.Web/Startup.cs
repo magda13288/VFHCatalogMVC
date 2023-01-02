@@ -44,6 +44,7 @@ namespace VFHCatalogMVC.Web
             services.AddDbContext<Context>(options => {
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"));
+   
                 /* options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)*/
                 
               

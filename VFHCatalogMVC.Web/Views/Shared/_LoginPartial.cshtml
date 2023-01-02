@@ -9,23 +9,23 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/PersonalData" title="Manage">Witaj @User.Identity.Name!</a>
+        <a  class="nav-link text-dark disabled" asp-area="Identity" asp-page="/Account/Manage/PersonalData" title="Manage">Witaj @User.Identity.Name!</a>
     </li>
         @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
         {
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Moja lista
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeeds">Nasiona</a></li>
+            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeeds">Nasion</a></li>
             <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeedlings">Sadzonek</a></li>
           </ul>
         </li>
         }
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            <button  type="submit" class="nav-link btn btn-link text-dark">Wyloguj</button>
         </form>
     </li>
 }

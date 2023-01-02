@@ -301,7 +301,7 @@ namespace VFHCatalogMVC.Application.Services
                     }
                     else
                     {
-                        var role = _userManager.IsInRoleAsync(user.Result, "PrivateUser");
+                        var role = _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER");
                         if (role.Result == true)
                         {
                             item.AccountName = UserAccountName(user);
@@ -354,6 +354,11 @@ namespace VFHCatalogMVC.Application.Services
                         {
                             item.AccountName = user.Result.CompanyName;
                             item.Date = item.DateAdded.ToShortDateString();
+                            var contactId = _userService.GetContactDetailForSeedling(item.Id);
+                            var contactDetails = _userService.GetContactDetail(contactId);
+                            var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                            item.ContactDetail = new ContactDetailVm();
+                            item.ContactDetail = contactDetailsVm;
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
                             item.PlantOpinions = opinions;
@@ -367,13 +372,21 @@ namespace VFHCatalogMVC.Application.Services
                     }
                     else
                     {
-                        item.AccountName = UserAccountName(user);
-                        item.Date = item.DateAdded.ToShortDateString();
+                        var role = _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER");
+                        if (role.Result == true)
+                        {
+                            item.AccountName = UserAccountName(user);
+                            item.Date = item.DateAdded.ToShortDateString();
 
-                        opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
-                        item.PlantOpinions = opinions;
+                            opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
+                            item.PlantOpinions = opinions;
 
-                        seedlingsToShow = seedlings.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            filteredUsersList.Add(user.Result.Id);
+                            seedlingsList = FilterSeedlingsList(seedlings, filteredUsersList);
+
+
+                            seedlingsToShow = seedlingsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                        }
                     }
                 }             
             }
@@ -383,6 +396,7 @@ namespace VFHCatalogMVC.Application.Services
                 filteredUsersList = _userService.FilterUsers(countryId, regionId, cityId,null,seedlings);
 
                 seedlingsList = FilterSeedlingsList(seedlings, filteredUsersList);
+                var seedlingsListFiltered = new List<PlantSeedlingVm>();
 
                 foreach (var item in seedlingsList)
                 {
@@ -395,22 +409,33 @@ namespace VFHCatalogMVC.Application.Services
                         {
                             item.AccountName = user.Result.CompanyName;
                             item.Date = item.DateAdded.ToShortDateString();
+                            var contactId = _userService.GetContactDetailForSeedling(item.Id);
+                            var contactDetails = _userService.GetContactDetail(contactId);
+                            var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                            item.ContactDetail = new ContactDetailVm();
+                            item.ContactDetail = contactDetailsVm;
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
                            item.PlantOpinions = opinions;
+                           seedlingsListFiltered.Add(item);
                         }
                     }
                     else
                     {
-                        item.AccountName = UserAccountName(user);
-                        item.Date = item.DateAdded.ToShortDateString();
+                        var role = _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER");
+                        if (role.Result == true)
+                        {
+                            item.AccountName = UserAccountName(user);
+                            item.Date = item.DateAdded.ToShortDateString();
 
-                        opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
-                        item.PlantOpinions = opinions;                    
+                            opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
+                            item.PlantOpinions = opinions;
+                            seedlingsListFiltered.Add(item);
+                        }
                     }
                 }
 
-                seedlingsToShow =seedlingsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                seedlingsToShow =seedlingsListFiltered.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
             }
 
 
@@ -1009,7 +1034,7 @@ namespace VFHCatalogMVC.Application.Services
                 var plantSeed = _mapper.Map<PlantSeed>(seed);
                 var seedId = _plantRepo.AddPlantSeed(plantSeed);
 
-                if (seed.ContactDetail.ContactDetailInformation != null)
+                if (seed.ContactDetail != null)
                 {
                     seed.ContactDetail.ContactDetailTypeID = 1;
                     seed.ContactDetail.UserId = seed.UserId;
@@ -1039,7 +1064,7 @@ namespace VFHCatalogMVC.Application.Services
                 var plantSeedling = _mapper.Map<PlantSeedling>(seedling);
                 var seedlingId = _plantRepo.AddPlantSeedling(plantSeedling);
 
-                if (seedling.ContactDetail.ContactDetailInformation != null)
+                if (seedling.ContactDetail != null)
                 {
                     seedling.ContactDetail.ContactDetailTypeID = 1;
                     seedling.ContactDetail.UserId = seedling.UserId;
@@ -1140,7 +1165,7 @@ namespace VFHCatalogMVC.Application.Services
                 }
             }
 
-            if (filteredSeedlings.Count != 0)
+            if (filteredSeedlings.Count > 1)
             {
                 for (int i = 0; i < filteredSeedlings.Count - 1; i++)
                 {
@@ -1153,8 +1178,13 @@ namespace VFHCatalogMVC.Application.Services
                         seedlingsList.Add(filteredSeedlings[i + 1]);
                     }
                 }
+                return seedlingsList;
             }
-            return seedlingsList;
+            else
+            {
+                return filteredSeedlings;
+            }
+            
         }
         public string UserAccountName(Task<ApplicationUser> user)
         {
