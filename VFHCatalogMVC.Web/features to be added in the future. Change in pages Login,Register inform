@@ -3,3 +3,6 @@
 3. Add refereshing page after save opinion on modal popup
 4. Add refereshing table in Plant index page after delete plant
 5. Add message module to seeds and seedlings functions (IndexSeed and IndexSeedling)
+6. Checking that userName, accountName and CustomerName are unique
+7. More filters in catalog for search section.
+8.In AddPlant when the name exist and data are load again select list must have remembered selectedvalue

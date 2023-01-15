@@ -64,7 +64,15 @@
              @if (Model.isCompany == true)
             {
             <td>
-              <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
+                @if (item.ContactDetail.ContactDetailInformation != "")
+                 {
+                 <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
+                 }
+                else
+                {
+                <label></label>
+                }
+              
             </td>
             }
             else

@@ -6,7 +6,7 @@
 <div id="PlaceHolderHere"></div>
 
 <h1>Witaj w katalogu roślin uprawnych</h1>
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Admin") || User.IsInRole("PrivateUser") || User.IsInRole("Company"))
 {
     <p>
         <a asp-action="AddPlant" class="btn btn-success">Dodaj nową roślinę</a>
@@ -15,10 +15,7 @@
 <form asp-action="Index" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
-     <nav class="navbar navbar-expand-lg bg-light" @*style="background-color: #e3f2fd;"*@>
-    @*<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>*@
+     <nav class="navbar navbar-expand-lg bg-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
          <label asp-for="PlantForList.TypeId" class="control-label md-3">Typ</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
@@ -109,8 +106,9 @@
     <input type="hidden" name="pageNo" id="pageNo"/>
     <input type="hidden" name="pageSize" id="pageSize" value="10" />
 </div>
-</div>
+    </div>
 </form>
+
 @section Scripts
 { <script type="text/javascript">
 

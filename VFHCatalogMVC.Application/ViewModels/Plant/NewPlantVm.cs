@@ -23,6 +23,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public string PhotoFileName { get; set; }
         public IFormFile Photo { get; set; }
         public bool isActive { get; set; }
+        public bool isNew { get; set; }
 
         [NotMapped]
         public PlantDetailsVm PlantDetails { get; set; }
@@ -47,11 +48,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         {
             public NewPlantValidation()
             {
-                //RuleFor(x => x.Id).NotEmpty();
                 RuleFor(x => x.TypeId).NotEmpty().WithMessage("Pole wymagane");
                 RuleFor(x => x.GroupId).NotEmpty().WithMessage("Pole wymagane");
                 RuleFor(x => x.FullName).NotNull().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
-                RuleFor(x => x.isActive).Equals(true);            
             }
         }
     }

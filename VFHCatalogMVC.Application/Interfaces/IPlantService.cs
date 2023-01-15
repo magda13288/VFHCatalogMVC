@@ -16,7 +16,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<PlantTypesVm> GetPlantTypes();
         List<PlantGroupsVm> GetPlantGroups(int? typeId);
         List<PlantSectionsVm> GetPlantSections(int? groupId);
-        int AddPlant(NewPlantVm model);
+        int AddPlant(NewPlantVm model, string user);
         void AddPlantSeed(PlantSeedVm seed);
         void AddPlantSeedling(PlantSeedlingVm seedling);
         void AddPlantOpinion(PlantOpinionsVm opinion);
@@ -37,5 +37,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo,bool isCompany);
         List<PlantSeedVm> FilterSeedsList(List<PlantSeedVm> seeds, List<string> filteredUsersList);
         List<PlantSeedlingVm> FilterSeedlingsList(List<PlantSeedlingVm> seedlings, List<string> filteredUsersList);
+        void ActivatePlant(int id);
+        //List<string> Fill<T>(List<T> list) where T : class;
     }
 }

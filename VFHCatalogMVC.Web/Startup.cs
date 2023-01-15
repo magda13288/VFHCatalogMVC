@@ -26,6 +26,13 @@ using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using static VFHCatalogMVC.Application.ViewModels.Adresses.AddressVm;
+using System.Reflection;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlingVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantOpinionsVm;
+using VFHCatalogMVC.Application.ViewModels.User;
+using static VFHCatalogMVC.Application.ViewModels.User.UserSeedVm;
+using static VFHCatalogMVC.Application.ViewModels.User.UserSeedlingVm;
 
 namespace VFHCatalogMVC.Web
 {
@@ -39,6 +46,7 @@ namespace VFHCatalogMVC.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Context>(options => {
@@ -56,11 +64,27 @@ namespace VFHCatalogMVC.Web
             services.AddApplication();
             services.AddInfrastructure();
 
-            services.AddControllersWithViews().AddFluentValidation();
+            services.AddControllersWithViews().AddFluentValidation(options =>
+            {
+                // Validate child properties and root collection elements
+                options.ImplicitlyValidateChildProperties = true;
+                options.ImplicitlyValidateRootCollectionElements = true;
+                options.AutomaticValidationEnabled = true;
+                // Automatic registration of validators in assembly
+                options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            });
+
+            //services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+
             services.AddTransient<IValidator<NewPlantVm>, NewPlantValidation>();
             services.AddTransient<IValidator<PlantDetailsVm>, PlantDetailsValidation>();
             services.AddTransient<IValidator<AddressVm>, AddressValidation>();
-            services.AddControllersWithViews().AddFluentValidation(fv => { });
+            services.AddTransient<IValidator<PlantSeedVm>,PlantSeedValidation>();
+            services.AddTransient<IValidator<PlantSeedlingVm>, PlantSeedlingValidation>();
+            services.AddTransient<IValidator<PlantOpinionsVm>, PlantOpinionValidation>();
+            services.AddTransient<IValidator<UserSeedVm>, UserSeedValidation>();
+            services.AddTransient<IValidator<UserSeedlingVm>, UserSeedlingValidation>();
+            
             services.AddRazorPages();
 
             services.Configure<IdentityOptions>(options =>

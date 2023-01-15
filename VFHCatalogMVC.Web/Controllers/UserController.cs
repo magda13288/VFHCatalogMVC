@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.Services;
+using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Application.ViewModels.User;
 
 namespace VFHCatalogMVC.Web.Controllers
@@ -15,12 +17,14 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
         private readonly IPlantService _plantService;
+        private readonly IMessageService _messageService;
        
-        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService)
+        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService, IMessageService messageService)
         {
             _userService = userService;
             _logger = logger;
             _plantService = plantService;
+            _messageService = messageService;
           
         }
 
@@ -110,7 +114,52 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+
+        [HttpGet, HttpPost]
+        [Authorize(Roles = "PrivateUser,Company,Admin")]
+        public IActionResult IndexNewPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll)
+        {
+            try
+            {
+                var types = _plantService.GetPlantTypes();
+                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                var groupsList = GetPlantGroupsList(typeId);
+                ViewBag.GroupsList = groupsList.Value;
+                var sectionsList = GetPlantSectionsList(groupId, typeId);
+                ViewBag.SectionsList = sectionsList.Value;
+
+                if (!pageNo.HasValue)
+                {
+                    pageNo = 1;
+                }
+                if (searchString is null)
+                {
+                    searchString = string.Empty;
+                }
+                if (pageSize == 0)
+                {
+                    pageSize = 10;
+                }
+                if (typeId != 0)
+                    ViewBag.TypeId = typeId;
+                if (groupId != 0)
+                    ViewBag.GroupId = groupId;
+                if (sectionId != 0)
+                    ViewBag.SectionId = sectionId;
+
+                var model = _userService.GetNewUserPlants(pageSize, pageNo, searchString, typeId, groupId, sectionId, viewAll, User.Identity.Name);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }
+
+        }
+
+            [HttpGet]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult EditSeed(int id)
         {
@@ -128,20 +177,21 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult EditSeed(UserSeedsVm model)
+        public IActionResult EditSeed(UserSeedVm model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     _userService.UpdateSeed(model);
+                    ViewBag.Message = "Zapisano";
                     //ViewData["JavaScript"] = " window.location.reload()" /*+ Url.Action("IndexSeeds") + "'"*/;
-                    return RedirectToAction("IndexSeeds"/*,"User"*/);
+                    //return RedirectToAction("IndexSeeds"/*,"User"*/);
                 }
-                else
-                {
+                //else
+                //{
                     return PartialView("EditSeedModalPartial", model);
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -192,12 +242,13 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _userService.UpdateSeedling(model);
-                    return RedirectToAction("IndexSeedlings","User");
+                    ViewBag.Message = "Zapisano";
+                    //return RedirectToAction("IndexSeedlings","User");
                 }
-                else
-                {
+                //else
+                //{
                     return PartialView("EditSeedlingModalPartial", model);
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -221,6 +272,66 @@ namespace VFHCatalogMVC.Web.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+
+        public IActionResult SendMessageToAdmin(int id)
+        {
+            var message = _messageService.FillMessageProperties(id, User.Identity.Name);
+
+            return PartialView("SendMessageToAdminModal", message);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+
+        public IActionResult SendMessageToAdmin(MessageVm message)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _messageService.SendMessageToAdmin(message);
+                    ViewBag.Message = "Zapisano";
+                    //return PartialView("SendMessageToAdminModal", message);
+                }
+                //else
+                //{
+                return PartialView("SendMessageToAdminModal", message);
+                //}
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        public IActionResult PlantMessagesFromAdmin(int id, int pageSize, int? pageNo)
+        {
+            if (!pageNo.HasValue)
+            {
+                pageNo = 1;
+            }
+            if (pageSize == 0)
+            {
+                pageSize = 10;
+            }
+            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo);
+            return PartialView("PlantMessagesFromAdminModal", messages);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        public IActionResult PlantMessagesFromAdmin(MessageVm message)
+        {
+            return View();
+        }
+
+
 
         [HttpPost]
         public JsonResult GetRegions(int id)

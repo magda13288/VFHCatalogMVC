@@ -10,8 +10,16 @@
                         </button>
                     </div>
                     <div class="modal-body">
+         @Html.AntiForgeryToken()
+          <div class="row">
+                @if (ViewBag.Message != null)
+                {
+                    <span class="text-success">@ViewBag.Message</span>
+                }
+                </div>
         <form action="AddSeedling">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label class="text-danger">@ViewBag.Message</label>
              <input type="hidden" id="plantId" asp-for="PlantId" class="control-label"/>
              <input type="hidden" id="userId" asp-for="UserId" class="control-label"/>
                     @if (User.IsInRole("PrivateUser"))

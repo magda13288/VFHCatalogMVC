@@ -22,6 +22,12 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
+        public void AddNewUserPlant(NewUserPlant plant)
+        {
+            _context.NewUserPlants.Add(plant);
+            _context.SaveChanges();
+        }
+
         public void DeleteUserSeed(PlantSeed seed)
         {
             _context.PlantSeeds.Remove(seed);
@@ -77,29 +83,29 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return cities;
         }
 
-        public ContactDetail GetContactDetail(int id)
+        public ContactDetail GetContactDetail(int? id)
         {
             var contactDetail = _context.ContactDetails.AsNoTracking().FirstOrDefault(p => p.Id == id);
             return contactDetail;
         }
 
-        public int GetContactDetailForSeed(int id)
+        public int? GetContactDetailForSeed(int id)
         {
             var contactDetails = _context.ContactDetailForSeeds.FirstOrDefault(p => p.PlantSeedId == id);
+            if (contactDetails == null)
+                return null;
+            else
             return contactDetails.ContactDetailId;
         }
 
-        public int GetContactDetailForSeedling(int id)
+        public int? GetContactDetailForSeedling(int id)
         {
             var contactDetails = _context.ContactDetailForSeedlings.FirstOrDefault(p => p.PlantSeedlingId == id);
-            return contactDetails.ContactDetailId;
+            if (contactDetails == null)
+                return null;
+            else
+                return contactDetails.ContactDetailId;
         }
-
-        //public ContactDetail GetContactDetails(string userId)
-        //{
-        //    var contactDetails = _context.ContactDetails.
-        //}
-
         public IQueryable<Country> GetCountries()
         {
             var countries = _context.Countries;
@@ -122,6 +128,30 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             var seedling = _context.PlantSeedlings.FirstOrDefault(p => p.Id == id);
             return seedling;
+        }
+
+        public IQueryable<PlantSeed> GetUserPlantSeeds(string userId)
+        {
+            var seeds = _context.PlantSeeds.Where(p => p.UserId == userId);
+            return seeds;
+        }
+
+        public IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId)
+        {
+            var seedlings = _context.PlantSeedlings.Where(p => p.UserId == userId);
+            return seedlings;
+        }
+
+        public IQueryable<NewUserPlant> GetNewUserPlants(string userId)
+        {
+            var plants = _context.NewUserPlants.Where(p => p.UserId == userId);
+            return plants;
+        }
+
+        public IQueryable<NewUserPlant> GetAllNewUserPlants()
+        {
+            var plants = _context.NewUserPlants;
+            return plants;
         }
     }
 }

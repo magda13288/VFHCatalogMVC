@@ -18,6 +18,7 @@ namespace VFHCatalogMVC.Domain.Model
         public string FullName { get; set; }
         public string Photo { get; set; }
         public bool isActive { get; set; }
+        public bool isNew { get; set; }
 
 
         // TypeId,GroupId, NameId, AvailabilityId jeden do wielu - jeden typ może być przypisany do wielu plantów     
@@ -32,6 +33,8 @@ namespace VFHCatalogMVC.Domain.Model
         //public ICollection<PlantHolder> PlantHolders { get; set; }
         public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
         public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
+        public virtual ICollection<NewUserPlant> NewUserPlants { get; set; }
+        public virtual ICollection<NewUserPlantMessage> NewUserPlantMessages { get; set; }
        
     }
 }

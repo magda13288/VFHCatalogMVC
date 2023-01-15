@@ -1,0 +1,39 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Message.MessageVm
+
+<div class="modal fade" id="Message" tabindex="-1" role="dialog" aria-labelledby="MessageLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="MessageLabel">Wiadomość</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>x</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    @if (ViewBag.Message != null)
+                    {
+                        <span class="text-success">@ViewBag.Message</span>
+                    }
+                </div>
+                <form action="SendMessageToAdmin">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <input type="hidden" asp-for="AddedDate" class="form-control" />
+                    <input type="hidden" asp-for="UserId" class="form-control" />  
+                    <input type="hidden" asp-for="PlantId" class="form-control" />
+                  <div class="form-group">
+                    <label asp-for="MessageContent" class="control-label">Wiadomość</label>
+                    <textarea asp-for="MessageContent" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="MessageContent" class="text-danger"></span>
+                  </div>       
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
+                        <button type="submit" class="btn btn-primary" data-save="modal">Zapisz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

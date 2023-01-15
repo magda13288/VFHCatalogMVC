@@ -1,0 +1,74 @@
+﻿
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Domain.Model;
+
+namespace VFHCatalogMVC.Application.Services
+{
+    public class HelperService : IHelperService
+    {
+        private readonly IPlantService _plantService;
+        private readonly IUserService _userService;
+        public HelperService(IPlantService plantService, IUserService userService)
+        {
+            _plantService = plantService;
+            _userService = userService;
+        }
+
+        public List<SelectListItem> Cities(int regionId)
+        {
+            var cities = _userService.GetCities(regionId);
+            var list = _userService.FillCityList(cities);
+            return list;
+        }
+
+        public List<SelectListItem> Countries()
+        {
+            var countries = _userService.GetCountries();
+            var list = _userService.FillCountryList(countries);
+            return list;
+        }
+
+        public List<SelectListItem> PlantColors()
+        {
+            var colors = _plantService.GetColors();
+            var colorsList = _plantService.FillPropertyList(null, colors, null);
+            return colorsList;
+        }
+
+        public List<SelectListItem> PlantGrowingSeaznos()
+        {
+            var growingSeaznos = _plantService.GetGrowingSeazons();
+            var list = _plantService.FillPropertyList(null, null, growingSeaznos);
+            return list;
+        }
+
+        public List<SelectListItem> PlantTypes()
+        {
+            var types = _plantService.GetPlantTypes();
+            var plantTypes = _plantService.FillPropertyList(types, null, null);
+            return plantTypes;
+        }
+
+        public List<SelectListItem> Regions(int countryId)
+        {
+            var regions = _userService.GetRegions(countryId);
+            var list = _userService.FillRegionList(regions);
+            return list;
+        }
+        public string UserAccountName(Task<ApplicationUser> user)
+        {
+            string userAccountName = null;
+
+            if (user.Result.AccountName != null)
+                userAccountName = user.Result.AccountName;
+            if (user.Result.CompanyName != null)
+                userAccountName = user.Result.CompanyName;
+            return userAccountName;
+        }
+    }
+}

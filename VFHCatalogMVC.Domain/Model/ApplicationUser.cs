@@ -35,8 +35,11 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<ContactDetail> ContactDetails { get; set; }
         public virtual ICollection<CompanyContactInformation> CustomerContactInformation { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<MessageReceiver> MessageReceivers { get; set; }
+        public virtual ICollection<NewUserPlant> NewUserPlants { get; set; }
 
-        } 
+    } 
          
     }
 

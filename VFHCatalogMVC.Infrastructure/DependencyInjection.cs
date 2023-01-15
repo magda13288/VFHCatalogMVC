@@ -10,6 +10,7 @@ namespace VFHCatalogMVC.Infrastructure
         {
             services.AddTransient<IPlantRepository, PlantRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IMessageRepository, MessageRepository>();
 
             return services;
         }

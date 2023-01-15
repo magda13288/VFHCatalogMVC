@@ -1,4 +1,4 @@
-﻿@model VFHCatalogMVC.Application.ViewModels.User.UserSeedsVm
+﻿@model VFHCatalogMVC.Application.ViewModels.User.UserSeedVm
 
 <div class="modal fade" id="User">
             <div class="modal-dialog" >
@@ -10,6 +10,13 @@
                         </button>
                     </div>
          <div class="modal-body">
+             @Html.AntiForgeryToken()
+                <div class="row">
+                @if (ViewBag.Message != null)
+                {
+                    <span class="text-success">@ViewBag.Message</span>
+                }
+                </div>
         <form action="EditSeed">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>          
                 <input type="hidden" asp-for="Id" class="form-control" />

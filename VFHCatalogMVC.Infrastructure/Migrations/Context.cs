@@ -36,6 +36,11 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<PlantSeedling> PlantSeedlings { get; set; }
         public DbSet<ContactDetailForSeed> ContactDetailForSeeds { get; set; }
         public DbSet<ContactDetailForSeedling> ContactDetailForSeedlings { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageReceiver> MessageReceivers { get; set; }
+        public DbSet<MessageThread> MessageThreads { get; set; }
+        public DbSet<NewUserPlant> NewUserPlants { get; set; }
+        public DbSet<NewUserPlantMessage> NewUserPlantMessages { get; set; }
   
         public Context(DbContextOptions options) : base(options)
         {
@@ -253,6 +258,47 @@ namespace VFHCatalogMVC.Infrastructure
                 entity.HasOne(e => e.ContactDetail)
                 .WithMany(e => e.ContactsForSeedling)
                 .HasForeignKey(e => e.ContactDetailId);
+            });
+
+            builder.Entity<MessageThread>(entity =>
+            {
+                entity.HasKey(e => new { e.MessageId, e.ReceiverMessageId });
+
+                entity.HasOne(e => e.Message)
+                .WithMany(e => e.MessageThreads)
+                .HasForeignKey(e => e.MessageId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.MessageReceiver)
+               .WithMany(e => e.MessageThreads)
+               .HasForeignKey(e => e.ReceiverMessageId)
+               .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            builder.Entity<NewUserPlant>(entity =>
+            {
+                entity.HasKey(e => new { e.PlantId, e.UserId });
+
+                entity.HasOne(e => e.Plant)
+                .WithMany(e => e.NewUserPlants)
+                .HasForeignKey(e => e.PlantId);
+
+                entity.HasOne(e => e.User)
+                .WithMany(e => e.NewUserPlants)
+                .HasForeignKey(e => e.UserId);
+            });
+
+            builder.Entity<NewUserPlantMessage>(entity =>
+            {
+                entity.HasKey(e => new { e.PlantId, e.MessageId });
+
+                entity.HasOne(e => e.Plant)
+                .WithMany(e => e.NewUserPlantMessages)
+                .HasForeignKey(e => e.PlantId);
+
+                entity.HasOne(e=>e.Message)
+                .WithMany(e=>e.NewUserPlantMessages)
+                .HasForeignKey(e => e.MessageId);
             });
         }
     }

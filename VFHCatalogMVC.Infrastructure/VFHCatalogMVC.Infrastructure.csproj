@@ -11,6 +11,10 @@
     <Compile Remove="Migrations\20220824160434_InitialDatabase.Designer.cs" />
     <Compile Remove="Migrations\20220929094718_FirstInitial.cs" />
     <Compile Remove="Migrations\20220929094718_FirstInitial.Designer.cs" />
+    <Compile Remove="Migrations\20230109155116_MessageTables.cs" />
+    <Compile Remove="Migrations\20230109155116_MessageTables.Designer.cs" />
+    <Compile Remove="Migrations\20230109160302_MessageTables2.cs" />
+    <Compile Remove="Migrations\20230109160302_MessageTables2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

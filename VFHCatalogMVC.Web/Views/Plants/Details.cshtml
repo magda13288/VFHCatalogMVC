@@ -110,7 +110,7 @@
               @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion)
             </td>
              <td>
-              @Html.DisplayFor(it=>Model.PlantOpinions[i].DateAdded)
+              @Html.DisplayFor(it=>Model.PlantOpinions[i].Date)
              </td>
 
                 
@@ -127,7 +127,7 @@
     {
         @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
     }
-    <a asp-action="Index">Powrót do wyszukiwarki</a>
+    <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
 </div>
 
 @*@section Scripts

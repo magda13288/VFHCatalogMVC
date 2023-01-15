@@ -20,10 +20,25 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeeds">Nasion</a></li>
             <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeedlings">Sadzonek</a></li>
+            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Roślin zgłoszonych do katalogu</a></li>
           </ul>
         </li>
         }
-    <li class="nav-item">
+        @if (User.IsInRole("Admin"))
+        {
+         <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Moja lista
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Nowe rośliny</a></li>
+            @*<li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeedlings">Sadzonek</a></li>
+            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Roślin zgłoszonych do katalogu</a></li>*@
+          </ul>
+        </li>
+          
+        }
+        <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button  type="submit" class="nav-link btn btn-link text-dark">Wyloguj</button>
         </form>

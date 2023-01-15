@@ -39,8 +39,10 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         {
             public PlantSeedlingValidation()
             {
-                RuleFor(x => x.ContactDetail.ContactDetailInformation).NotEmpty().WithMessage("Pole wymagane");
+                RuleFor(x => x.Count).NotNull().GreaterThan(0).WithMessage("Liczba nasion nie może być mniejsza bądź równa 0");
+                RuleFor(x => x.Description).NotNull().WithMessage("Pole wymagane");
             }
+
         }
     }
 }

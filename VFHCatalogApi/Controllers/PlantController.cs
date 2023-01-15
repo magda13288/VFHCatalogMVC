@@ -31,7 +31,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpPost, HttpGet]
         [AllowAnonymous]
-        public ActionResult<ListPlantForListVm> Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<ListPlantForListVm> Index([FromBody]int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
             {
@@ -70,9 +70,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}"), HttpPost]
+        [HttpGet/*("{id}")*/, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<PlantSeedsForListVm> IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public ActionResult<PlantSeedsForListVm> IndexSeeds([FromBody]int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult IndexSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public IActionResult IndexSeedlings([FromBody] int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult AddPlant(NewPlantVm model)
+        public IActionResult AddPlant([FromBody]NewPlantVm model)
         {
             if (ModelState.IsValid)
             {
@@ -198,8 +198,8 @@ namespace VFHCatalogApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public ActionResult<PlantDetailsVm> Details(int id)
+        [HttpGet/*("{id}")*/]
+        public ActionResult<PlantDetailsVm> Details([FromBody] int id)
         {
             var plantDetails = _plantService.GetPlantDetails(id);
 
@@ -214,9 +214,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "Admin")]
-        public ActionResult<NewPlantVm> Edit(int id)
+        public ActionResult<NewPlantVm> Edit([FromBody] int id)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(NewPlantVm plant)
+        public IActionResult Edit([FromBody] NewPlantVm plant)
         {
             try
             {
@@ -271,9 +271,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete/*("{id}")*/]
         [Authorize(Roles = "Admin")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromBody] int id)
         {
             try
             {
@@ -288,9 +288,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<PlantSeedVm> AddSeed(int id)
+        public ActionResult<PlantSeedVm> AddSeed([FromBody] int id)
         {
             try
             {
@@ -307,7 +307,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult AddSeed(PlantSeedVm plantSeed)
+        public IActionResult AddSeed([FromBody] PlantSeedVm plantSeed)
         {
             try
             {
@@ -331,9 +331,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<PlantSeedlingVm> AddSeedling(int id)
+        public ActionResult<PlantSeedlingVm> AddSeedling([FromBody] int id)
         {
             try
             {
@@ -350,7 +350,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult AddSeedling(PlantSeedlingVm plantSeedling)
+        public IActionResult AddSeedling([FromBody] PlantSeedlingVm plantSeedling)
         {
             try
             {
@@ -375,9 +375,9 @@ namespace VFHCatalogApi.Controllers
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<PlantOpinionsVm> AddOpinion(int id)
+        public ActionResult<PlantOpinionsVm> AddOpinion([FromBody]int id)
         {
             try
             {
@@ -395,7 +395,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
         //Add refereshing page after save opinion on modal popup
-        public IActionResult AddOpinion(PlantOpinionsVm plantOpinion)
+        public IActionResult AddOpinion([FromBody] PlantOpinionsVm plantOpinion)
         {
             try
             {
@@ -421,7 +421,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetPlantGroupsList(int typeId)
+        private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
         {
             var groups = _plantService.GetPlantGroups(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
@@ -441,7 +441,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetPlantSectionsList(int groupId, int typeId)
+        private List<SelectListItem> GetPlantSectionsList([FromBody] int groupId, int typeId)
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
@@ -468,7 +468,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetGrowthTypes(int typeId, int groupId, int? sectionId)
+        private List<SelectListItem> GetGrowthTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var list = _plantService.GetGrowthTypes(typeId, groupId, sectionId);
 
@@ -513,7 +513,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId)
+        private List<SelectListItem> GetFruitTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var fruitTypes = _plantService.GetFruitType(typeId, groupId, sectionId);
 
@@ -537,7 +537,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetFruitSizes(int typeId, int groupId, int? sectionId)
+        private List<SelectListItem> GetFruitSizes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var fruitSiezes = _plantService.GetFruitSize(typeId, groupId, sectionId);
 

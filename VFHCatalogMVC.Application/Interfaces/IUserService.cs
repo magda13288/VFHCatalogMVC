@@ -22,17 +22,19 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds,List<PlantSeedlingVm> seedlings);
         UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedlingsForListVm GetUserSeedlings (int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
-        UserSeedsVm GetSeedsList(Plant plant, UserSeedsVm item);
+        UserSeedVm GetSeedsList(Plant plant, UserSeedVm item);
         UserSeedlingVm GetSeedlingsList(Plant plant, UserSeedlingVm item);
-        UserSeedsVm GetUserSeedToEdit(int id);
-        void UpdateSeed(UserSeedsVm seed);
+        UserSeedVm GetUserSeedToEdit(int id);
+        void UpdateSeed(UserSeedVm seed);
         void DeleteSeed(int id);
         UserSeedlingVm GetUserSeedlingToEdit(int id);
         void UpdateSeedling(UserSeedlingVm seedling);
         void DeleteSeedling(int id);
-        ContactDetail GetContactDetail(int id);
-        int GetContactDetailForSeed(int id);
-        int GetContactDetailForSeedling(int id);
+        ContactDetail GetContactDetail(int? id);
+        int? GetContactDetailForSeed(int id);
+        int? GetContactDetailForSeedling(int id);
+        void AddNewUserPlant(int plantId,string userId);
+        NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
 
 
     }

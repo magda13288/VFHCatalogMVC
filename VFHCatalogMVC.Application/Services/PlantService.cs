@@ -27,132 +27,122 @@ namespace VFHCatalogMVC.Application.Services
     {
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserService _userService;
+        private readonly IImageService _imageService;
 
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager, IUserService userService)
+        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserService userService, IImageService imageService)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
             _userService = userService;
+            _imageService = imageService;
         }
 
-        public int AddPlant(NewPlantVm model)
+        public int AddPlant(NewPlantVm model, string user)
         {
+            int id = 0;
+
             if (model.SectionId == 0)
                 model.SectionId = null;
-            //Save to table Plant
-            var newPlant = _mapper.Map<Plant>(model);
+            var plantList = GetAllActivePlantsForList(1, 10, model.FullName,null,null,null);
 
-            if (model.Photo != null)
+            if (plantList.Count == 0)
             {
-                string _DIR = "plantGallery/searchPhoto";
-                var fileName = UploadImage(model.Photo, model.FullName, _DIR);
-                newPlant.Photo = fileName;
-            }
+                //Save to table Plant
+                var newPlant = _mapper.Map<Plant>(model);
 
-            var id = _plantRepo.AddPlant(newPlant);
-
-            //if (id != 0)
-            //{
-            //Save to table PlantDetails
-            if (model.PlantDetails.ColorId == 0)
-                model.PlantDetails.ColorId = null;
-            if (model.PlantDetails.FruitSizeId == 0)
-                model.PlantDetails.FruitSizeId = null;
-            if (model.PlantDetails.FruitTypeId == 0)
-                model.PlantDetails.FruitTypeId = null;
-
-            var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
-            var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, id);
-
-            //Save to PlantGrowthTypes
-            if (model.PlantDetails.ListGrowthTypes != null)
-            {
-                if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
+                if (model.Photo != null)
                 {
-                    _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
+                    string _DIR = "plantGallery/searchPhoto";
+                    var fileName = _imageService.UploadImage(model.Photo, model.FullName, _DIR);
+                    newPlant.Photo = fileName;
                 }
-            }
-            //Save to PlantDestinations
-            if (model.PlantDetails.ListPlantDestinations != null)
-            {
-                if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
-                {
-                    _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
-                }
-            }
-            //Save to PlantGrowingSeaznos
-            if (model.PlantDetails.ListGrowingSeazons != null)
-            {
-                if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
-                {
-                    _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
-                }
-            }
 
-            if (model.PlantDetails.Images != null)
-            {
-                if (model.PlantDetails.Images.Count > 0)
-                {
-                    string _DIR = "plantGallery/plantDetailsGallery";
+                var userInfo = _userManager.FindByNameAsync(user);
+                //_userManager.Dispose();
+                var userRole = _userManager.IsInRoleAsync(userInfo.Result, "Admin");
 
-                    foreach (var item in model.PlantDetails.Images)
+                if (userRole.Result is true)
+                {
+                    newPlant.isActive = true;
+                    newPlant.isNew = false;
+                    id = _plantRepo.AddPlant(newPlant);
+                }
+                else
+                {
+                    newPlant.isActive = false;
+                    newPlant.isNew = true;
+
+                    id = _plantRepo.AddPlant(newPlant);
+
+                    _userService.AddNewUserPlant(id, userInfo.Result.Id);
+                }
+                
+                if (id != 0)
+                {
+                    //Save to table PlantDetails
+                    if (model.PlantDetails.ColorId == 0)
+                        model.PlantDetails.ColorId = null;
+                    if (model.PlantDetails.FruitSizeId == 0)
+                        model.PlantDetails.FruitSizeId = null;
+                    if (model.PlantDetails.FruitTypeId == 0)
+                        model.PlantDetails.FruitTypeId = null;
+
+                    var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
+                    var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, id);
+
+                    //Save to PlantGrowthTypes
+                    if (model.PlantDetails.ListGrowthTypes != null)
                     {
-                        string fileName = UploadImage(item, model.FullName, _DIR);
-                        _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                        if (model.PlantDetails.ListGrowthTypes.GrowthTypesIds.Length > 0)
+                        {
+                            _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, plantDetailId);
+                        }
+                    }
+                    //Save to PlantDestinations
+                    if (model.PlantDetails.ListPlantDestinations != null)
+                    {
+                        if (model.PlantDetails.ListPlantDestinations.DestinationsIds.Length > 0)
+                        {
+                            _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, plantDetailId);
+                        }
+                    }
+                    //Save to PlantGrowingSeaznos
+                    if (model.PlantDetails.ListGrowingSeazons != null)
+                    {
+                        if (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds.Length > 0)
+                        {
+                            _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, plantDetailId);
+                        }
+                    }
+
+                    if (model.PlantDetails.Images != null)
+                    {
+                        if (model.PlantDetails.Images.Count > 0)
+                        {
+                            string _DIR = "plantGallery/plantDetailsGallery";
+
+                            foreach (var item in model.PlantDetails.Images)
+                            {
+                                string fileName = _imageService.UploadImage(item, model.FullName, _DIR);
+                                _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                            }
+                        }
                     }
                 }
+                //else
+                //{
+                //    return id;
                 //}
+                return id;
             }
-            return id;
-        }
-
-        private string UploadImage(IFormFile file, string name, string path)
-        {
-            string fileName = null;
-
-            if (file != null)
+            else
             {
-                try
-                {
-                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, path);
-                    string extension = Path.GetExtension(file.FileName);
-                    fileName = Guid.NewGuid().ToString() + "-" + name + extension;
-                    string filePath = Path.Combine(uploadDir, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                
             }
-
-            return fileName;
-        }
-
-        private void DeleteImage(string path)
-        {
-            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
-
-            if (System.IO.File.Exists(imagePath))
-            {
-                try
-                {
-                    System.IO.File.Delete(imagePath);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-
-            }
+            return 0;
         }
         public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
         {
@@ -230,12 +220,22 @@ namespace VFHCatalogMVC.Application.Services
                         {
                             item.AccountName = user.Result.CompanyName;
                             item.Date = item.DateAdded.ToShortDateString();
-
                             var contactId = _userService.GetContactDetailForSeed(item.Id);
-                            var contactDetails = _userService.GetContactDetail(contactId);
-                            var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                            item.ContactDetail = new ContactDetailVm();
-                            item.ContactDetail = contactDetailsVm;
+
+                            if (contactId != null)
+                            {
+                                var contactDetails = _userService.GetContactDetail(contactId);
+                                var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                                item.ContactDetail = new ContactDetailVm();
+                                item.ContactDetail = contactDetailsVm;
+                            }
+                            else
+                            {
+                                item.ContactDetail = new ContactDetailVm();
+                                item.ContactDetail.ContactDetailInformation = "";
+                            }
+                           
+                          
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
                             item.PlantOpinions = opinions;
@@ -253,7 +253,7 @@ namespace VFHCatalogMVC.Application.Services
                         var role = _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER");
                         if (role.Result == true)
                         {
-                            item.AccountName = UserAccountName(user);
+                            item.AccountName =UserAccountName(user);
                             item.Date = item.DateAdded.ToShortDateString();
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
@@ -556,6 +556,7 @@ namespace VFHCatalogMVC.Application.Services
                     foreach (var item in plantOpinions)
                     {
                         var userInfo = _userManager.FindByIdAsync(item.UserId);
+                        item.Date = item.DateAdded.ToShortDateString();
                         item.AccountName = userInfo.Result.AccountName;
                         plantDetailsVm.PlantOpinions.Add(item);
                     }                  
@@ -687,7 +688,6 @@ namespace VFHCatalogMVC.Application.Services
 
             return propertyNames;
         }
-
         public List<PlantGroupsVm> GetPlantGroups(int? typeId)
         {
             var groups = _plantRepo.GetAllGroups().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
@@ -853,12 +853,12 @@ namespace VFHCatalogMVC.Application.Services
             {
 
                 direction = "plantGallery/searchPhoto";
-                var fileName = UploadImage(model.Photo, model.FullName, direction);
+                var fileName = _imageService.UploadImage(model.Photo, model.FullName, direction);
                 model.PhotoFileName = fileName;
 
                 string imagePath = "plantGallery/searchPhoto/" + PhotoName;
 
-                DeleteImage(imagePath);
+                _imageService.DeleteImage(imagePath);
 
             }
             else
@@ -874,7 +874,7 @@ namespace VFHCatalogMVC.Application.Services
                     foreach (var item in model.PlantDetails.Images)
                     {
                         direction = "plantGallery/plantDetailsGallery";
-                        string fileName = UploadImage(item, model.FullName, direction);
+                        string fileName = _imageService.UploadImage(item, model.FullName, direction);
                         _plantRepo.AddPlantDetailsImages(fileName, model.PlantDetails.Id);
                     }
                 }
@@ -889,14 +889,22 @@ namespace VFHCatalogMVC.Application.Services
                         if (image.IsChecked == true)
                         {
                             string imagePath = direction + "/" + image.ImageURL;
-                            DeleteImage(imagePath);
+                            _imageService.DeleteImage(imagePath);
                             _plantRepo.DeleteImageFromGallery(image.Id);
                         }
                     }
                 }
             }
 
-            var plant = _mapper.Map<Plant>(model);          
+            var plant = _mapper.Map<Plant>(model);
+
+            if (model.PlantDetails.ColorId == 0)
+                model.PlantDetails.ColorId = null;
+            if(model.PlantDetails.FruitSizeId==0)
+                model.PlantDetails.FruitSizeId= null;
+            if(model.PlantDetails.FruitTypeId==0)
+                model.PlantDetails.FruitTypeId= null;
+
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
             _plantRepo.UpdatePlant(plant);
             _plantRepo.UpdatePlantDetails(plantDetails);
@@ -1034,10 +1042,12 @@ namespace VFHCatalogMVC.Application.Services
                 var plantSeed = _mapper.Map<PlantSeed>(seed);
                 var seedId = _plantRepo.AddPlantSeed(plantSeed);
 
-                if (seed.ContactDetail != null)
+                //if (seed.ContactDetail != null)
+                if(seed.Link!=null)
                 {
                     seed.ContactDetail.ContactDetailTypeID = 1;
                     seed.ContactDetail.UserId = seed.UserId;
+                    seed.ContactDetail.ContactDetailInformation = seed.Link;
                     var contactDetails = _mapper.Map<ContactDetail>(seed.ContactDetail);
                     var contactId = _plantRepo.AddContactDetail(contactDetails);
 
@@ -1197,6 +1207,17 @@ namespace VFHCatalogMVC.Application.Services
             return userAccountName;
         }
 
-       
+        public void ActivatePlant(int id)
+        {
+            var plant = _plantRepo.GetPlantToActivate(id);
+            var plantVm = _mapper.Map<NewPlantVm>(plant);
+
+            plantVm.isActive= true;
+            plantVm.isNew = false;
+
+            var plantToSave = _mapper.Map<Plant>(plantVm);
+
+            _plantRepo.ActivatePlant(plantToSave);
+        }
     }
 }

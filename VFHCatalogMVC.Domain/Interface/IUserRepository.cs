@@ -20,10 +20,15 @@ namespace VFHCatalogMVC.Domain.Interface
         void EditUserSeedling(PlantSeedling seedling);
         PlantSeedling GetUserSeedling(int id);
         void DeleteUserSeedling(PlantSeedling seedling);
-        ContactDetail GetContactDetail(int id);
-        int GetContactDetailForSeed(int id);
-        int GetContactDetailForSeedling(int id);
+        ContactDetail GetContactDetail(int? id);
+        int? GetContactDetailForSeed(int id);
+        int? GetContactDetailForSeedling(int id);
         void EditContactDetails(ContactDetail contact);
+        void AddNewUserPlant(NewUserPlant plant);
+        IQueryable<PlantSeed> GetUserPlantSeeds(string userId);
+        IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId);
+        IQueryable<NewUserPlant> GetNewUserPlants(string userId);
+        IQueryable<NewUserPlant> GetAllNewUserPlants();
         //ContactDetail GetContactDetails(string userId);
     }
 }

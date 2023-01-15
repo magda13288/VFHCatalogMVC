@@ -14,6 +14,9 @@ namespace VFHCatalogMVC.Application
         {
             services.AddTransient<IPlantService, PlantService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IHelperService, HelperService>();
+            services.AddTransient<IMessageService, MessageService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

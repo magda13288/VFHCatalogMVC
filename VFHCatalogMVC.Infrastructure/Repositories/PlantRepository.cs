@@ -304,19 +304,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var seedlings = _context.PlantSeedlings.Where(p => p.PlantId == id);
             return seedlings;
         }
-
-        public IQueryable<PlantSeed> GetUserPlantSeeds(string userId)
-        {
-           var seeds = _context.PlantSeeds.Where(p => p.UserId == userId);
-            return seeds;
-        }
-
-        public IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId)
-        {
-          var seedlings = _context.PlantSeedlings.Where(p => p.UserId == userId);
-            return seedlings;
-        }
-
         public void AddContactDetailsForSeed(ContactDetail contact)
         {
             _context.ContactDetails.Add(contact);
@@ -338,6 +325,20 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void AddContactDetailForSeedling(ContactDetailForSeedling contact)
         {
            _context.ContactDetailForSeedlings.Add(contact);
+            _context.SaveChanges();
+        }
+
+        public Plant GetPlantToActivate(int id)
+        {
+            var plant = _context.Plants.FirstOrDefault(e => e.Id == id);
+            return plant;
+        }
+
+        public void ActivatePlant(Plant plant)
+        {
+            _context.Attach(plant);
+            _context.Entry(plant).Property("isActive").IsModified = true;
+            _context.Entry(plant).Property("isNew").IsModified = true;
             _context.SaveChanges();
         }
     }

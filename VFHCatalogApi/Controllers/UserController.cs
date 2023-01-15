@@ -29,7 +29,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<UserSeedsForListVm> IndexSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<UserSeedsForListVm> IndexSeeds([FromBody] int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<UserSeedlingsForListVm> IndexSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<UserSeedlingsForListVm> IndexSeedlings([FromBody] int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
             {
@@ -117,9 +117,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<UserSeedsVm> EditSeed(int id)
+        public ActionResult<UserSeedVm> EditSeed([FromBody] int id)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace VFHCatalogApi.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult EditSeed(UserSeedsVm model)
+        public IActionResult EditSeed([FromBody] UserSeedVm model)
         {
             try
             {
@@ -160,9 +160,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult DeleteSeed(int id)
+        public IActionResult DeleteSeed([FromBody] int id)
         {
             try
             {
@@ -177,9 +177,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<UserSeedlingVm> EditSeedling(int id)
+        public ActionResult<UserSeedlingVm> EditSeedling([FromBody]int id)
         {
             try
             {
@@ -198,7 +198,7 @@ namespace VFHCatalogApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult EditSeedling(UserSeedlingVm model)
+        public IActionResult EditSeedling([FromBody] UserSeedlingVm model)
         {
             try
             {
@@ -221,9 +221,9 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete/*("{id}")*/]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult DeleteSeedling(int id)
+        public IActionResult DeleteSeedling([FromBody] int id)
         {
             try
             {
@@ -239,7 +239,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetRegions(int id)
+        private List<SelectListItem> GetRegions([FromBody]int id)
         {
             var regions = _userService.GetRegions(id);
 
@@ -260,7 +260,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetCities(int id)
+        private List<SelectListItem> GetCities([FromBody] int id)
         {
             var cities = _userService.GetCities(id);
 
@@ -280,7 +280,7 @@ namespace VFHCatalogApi.Controllers
             return citiesList;
         }
         [HttpPost]
-        private List<SelectListItem> GetPlantGroupsList(int typeId)
+        private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
         {
             var groups = _plantService.GetPlantGroups(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
@@ -301,7 +301,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [HttpPost]
-        private List<SelectListItem> GetPlantSectionsList(int groupId, int typeId)
+        private List<SelectListItem> GetPlantSectionsList([FromBody] int groupId, int typeId)
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
