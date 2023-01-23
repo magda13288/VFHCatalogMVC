@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +15,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public string UserId { get; set; }
         public string MessageContent { get; set; }
         public DateTime AddedDate { get; set; }
-
+        public bool isAnswer { get; set; }
+        [NotMapped]
+        public int messageIdisAnswer { get; set; }
         [NotMapped]
         public int PlantId { get; set; }
         [NotMapped]
@@ -27,6 +30,14 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public void Mapping(Profile profile)
         {
             profile.CreateMap<VFHCatalogMVC.Domain.Model.Message, MessageVm>().ReverseMap();
+        }
+
+        public class MessageValidation : AbstractValidator<MessageVm>
+        {
+            public MessageValidation()
+            {
+                RuleFor(e => e.MessageContent).NotEmpty().WithMessage("Wiadomość nie może być pusta");
+            }
         }
     }
 }

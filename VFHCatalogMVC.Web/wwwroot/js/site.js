@@ -10,7 +10,7 @@ $(function () {
         var decodeUrl = decodeURIComponent(url);
         $.get(decodeUrl).done(function (data) {
             PlaceHolderElement.html(data);
-            PlaceHolderElement.find('.modal').modal('show');
+            PlaceHolderElement.find('.modal').modal('show')
 
         })
     })

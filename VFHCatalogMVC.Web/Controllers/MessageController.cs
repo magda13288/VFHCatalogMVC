@@ -57,7 +57,7 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _messageService.SendMessageToAdmin(message);
+                    _messageService.SendNewPlantMessage(message);
                     ViewBag.Message = "Zapisano";
                     //return PartialView("SendMessageToAdminModal", message);
                 }

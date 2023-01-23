@@ -17,12 +17,13 @@
                         <span class="text-success">@ViewBag.Message</span>
                     }
                 </div>
-                <form action="SendMessageToAdmin">
+                <form action="SendNewPlantUserMessage">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <input type="hidden" asp-for="AddedDate" class="form-control" />
                     <input type="hidden" asp-for="UserId" class="form-control" />
                     <input type="hidden" asp-for="PlantId" class="form-control" />
+                    <input type="hidden" asp-for="messageIdisAnswer" class="form-control"/>
                     <div class="form-group">
                         <label asp-for="MessageContent" class="control-label">Wiadomość</label>
                         <textarea asp-for="MessageContent" class="form-control" rows="5"></textarea>
@@ -30,7 +31,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
-                        <button type="submit" class="btn btn-primary" data-save="modal">Zapisz</button>
+                        <button type="button" class="btn btn-primary" data-save="modal">Zapisz</button>
                     </div>
                 </form>
             </div>

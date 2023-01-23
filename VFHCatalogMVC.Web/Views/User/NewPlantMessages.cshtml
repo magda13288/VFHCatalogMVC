@@ -1,0 +1,96 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Message.MessageForListVm
+
+@{
+    ViewData["Title"] = "NewPlantMessages";
+}
+
+<h1>Wiadomości</h1>
+<div id="UserPlaceHolderHere"></div>
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
+<div class="row">
+    <table class="table-striped table-hover table-light">
+        <thead class="thead-light">
+            <tr class="text-center text-wrap">
+            <th>
+                Nadawca
+            </th>
+            @*     <th>
+            Odbiorca
+            </th>*@
+            <th class="text-center text-wrap">
+                Wiadomość
+            </th>
+            <th>
+                Data wysłania
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Message)
+        {
+                <tr class="text-center text-wrap">
+                <td>
+                    @if(item.AccountName == null)
+                    @Html.DisplayFor(modelItem => item.UserName)
+                    else
+                    @Html.DisplayFor(modelItem => item.AccountName)
+                </td>
+                @*   <td>
+            @Html.DisplayFor(modelItem => item.MessageReceiver.UserId)
+            </td>*@
+                <td class="text-wrap text-break">
+                    @Html.DisplayFor(modelItem => item.MessageContent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AddedDate)
+                </td>
+                <td>
+                    @if (item.UserName != User.Identity.Name && item.isAnswer == false)
+                    {
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendNewPlantUserMessage/{item.Id}"@*,"Message"*@)">Odpowiedz</button>                          
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+<div class="row">
+    <table>
+        <tr>
+            @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+            {
+               <td>
+                    @if (i != Model.CurrentPage)
+                    {
+                    <a href="javascript:PagerClick(@i)">@i</a>
+                    }
+                    else
+                    {
+                       <span>@i</span>   
+                    }
+              </td>
+
+            }
+            </tr>
+    </table>
+    <input type="hidden" name="pageNo" id="pageNo"/>
+    <input type="hidden" name="pageSize" id="pageSize" value="10" />
+</div>
+<a asp-action="IndexNewPlants" class="btn btn-dark">Wstecz</a>
+
+@section Scripts
+{
+         <script type="text/javascript">
+
+        function PagerClick(index) {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+        </script>
+}
+
+

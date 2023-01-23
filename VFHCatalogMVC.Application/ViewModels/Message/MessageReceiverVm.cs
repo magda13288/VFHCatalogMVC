@@ -12,8 +12,6 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public int Id { get; set; }
         public string UserId { get; set; }
         public int MessageId { get; set; }
-        public bool isRead { get; set; }
-        public bool isAnsweared { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -86,10 +86,10 @@
 </div>
 <div class="row">
     <table>
-        <tr>
+        <tr class="text-left">
             @for(int i =1;i<=Math.Ceiling(Model.Count/(double)Model.PageSize);i++)
             {
-                    <td>
+                    <td class="text-left">
                         @if (i != Model.CurrentPage)
                         {
                             <a href="javascript:PagerClick(@i)">@i</a>

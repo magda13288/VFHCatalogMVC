@@ -14,7 +14,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<MessageThreadVm, VFHCatalogMVC.Domain.Model.MessageReceiver>().ReverseMap();
+            profile.CreateMap<MessageThreadVm, VFHCatalogMVC.Domain.Model.MessageThread>().ReverseMap();
         }
     }
 }

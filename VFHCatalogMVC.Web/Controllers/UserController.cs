@@ -159,7 +159,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         }
 
-            [HttpGet]
+        [HttpGet]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult EditSeed(int id)
         {
@@ -276,29 +276,29 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendMessageToAdmin(int id)
+        public IActionResult SendNewPlantUserMessage(int id)
         {
             var message = _messageService.FillMessageProperties(id, User.Identity.Name);
 
-            return PartialView("SendMessageToAdminModal", message);
+            return PartialView("SendNewPlantUserMessageModal", message);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendMessageToAdmin(MessageVm message)
+        public IActionResult SendNewPlantUserMessage(MessageVm message)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _messageService.SendMessageToAdmin(message);
+                    _messageService.SendNewPlantMessage(message);
                     ViewBag.Message = "Zapisano";
                     //return PartialView("SendMessageToAdminModal", message);
                 }
                 //else
                 //{
-                return PartialView("SendMessageToAdminModal", message);
+                return PartialView("SendNewPlantUserMessageModal", message);
                 //}
             }
             catch (Exception ex)
@@ -310,7 +310,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult PlantMessagesFromAdmin(int id, int pageSize, int? pageNo)
+        public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo)
         {
             if (!pageNo.HasValue)
             {
@@ -321,16 +321,42 @@ namespace VFHCatalogMVC.Web.Controllers
                 pageSize = 10;
             }
             var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo);
-            return PartialView("PlantMessagesFromAdminModal", messages);
+            // return PartialView("PlantMessagesFromAdminModal",messages);
+            return View(messages);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult PlantMessagesFromAdmin(MessageVm message)
+        public IActionResult NewPlantMessages(MessageVm message)
         {
             return View();
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+
+        public IActionResult SendMessageFromAdmin(int id)
+        {
+
+            return View();
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+
+        public IActionResult SendMessageFromAdmin(MessageVm message)
+        {
+
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+
+        public IActionResult SendNewPlantsAnswer(int messageId)
+        {
+
+            return View();
+        }
 
 
         [HttpPost]

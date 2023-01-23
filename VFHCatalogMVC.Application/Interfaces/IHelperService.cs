@@ -16,6 +16,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<SelectListItem> Regions(int countryId);
         List<SelectListItem> Cities(int regionId);
         string UserAccountName(Task<ApplicationUser> user);
+        
 
     }
 }

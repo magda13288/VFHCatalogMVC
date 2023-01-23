@@ -1,10 +1,13 @@
 ﻿
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.ViewModels.Message;
+using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Services
@@ -13,10 +16,14 @@ namespace VFHCatalogMVC.Application.Services
     {
         private readonly IPlantService _plantService;
         private readonly IUserService _userService;
-        public HelperService(IPlantService plantService, IUserService userService)
+        private readonly IMessageRepository _messageRepo;
+        private readonly IMapper _mapper;
+        public HelperService(IPlantService plantService, IUserService userService, IMessageRepository messageRepo, IMapper mapper)
         {
             _plantService = plantService;
             _userService = userService;
+            _messageRepo= messageRepo;
+            _mapper = mapper;
         }
 
         public List<SelectListItem> Cities(int regionId)

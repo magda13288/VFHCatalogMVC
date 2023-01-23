@@ -13,5 +13,12 @@ namespace VFHCatalogMVC.Domain.Interface
         void AddNewUserPlantMessage(NewUserPlantMessage plantMessage);
         IQueryable<NewUserPlantMessage> GetMessagesForNewUserPlant(int plantId);
         Message GetMessageById (int id);
+        string GetPlantOwnerId(int plantId);
+        int GetPlantId(int id);
+        void UpdateMassageStatusIsAnswer(Message message);
+        void AddMessageThread(MessageThread message);
+
+
+
     }
 }
