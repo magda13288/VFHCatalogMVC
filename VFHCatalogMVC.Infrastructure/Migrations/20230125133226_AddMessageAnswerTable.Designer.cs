@@ -10,8 +10,8 @@ using VFHCatalogMVC.Infrastructure;
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230109160423_MessageTables")]
-    partial class MessageTables
+    [Migration("20230125133226_AddMessageAnswerTable")]
+    partial class AddMessageAnswerTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -577,39 +577,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("isAnswer")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isAnsweared")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isRead")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("MessageReceivers");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
@@ -625,6 +600,61 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("MessageReceiverId");
 
                     b.ToTable("MessageAnswers");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MessageReceivers");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlant", b =>
+                {
+                    b.Property<int>("PlantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PlantId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("NewUserPlants");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
+                {
+                    b.Property<int>("PlantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlantId", "MessageId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("NewUserPlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Plant", b =>
@@ -1197,6 +1227,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("MessageAnswers")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.MessageReceiver", "MessageReceiver")
+                        .WithMany("MessageAnswers")
+                        .HasForeignKey("MessageReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
@@ -1210,18 +1255,33 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlant", b =>
                 {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("MessageAnswers")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
+                        .WithMany("NewUserPlants")
+                        .HasForeignKey("PlantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VFHCatalogMVC.Domain.Model.MessageReceiver", "MessageReceiver")
-                        .WithMany("MessageAnswers")
-                        .HasForeignKey("MessageReceiverId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany("NewUserPlants")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("NewUserPlantMessages")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
+                        .WithMany("NewUserPlantMessages")
+                        .HasForeignKey("PlantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

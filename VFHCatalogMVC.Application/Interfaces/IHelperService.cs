@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces
@@ -16,7 +17,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<SelectListItem> Regions(int countryId);
         List<SelectListItem> Cities(int regionId);
         string UserAccountName(Task<ApplicationUser> user);
-        
+        MessageDisplay MessagesToView(int type);
 
     }
 }

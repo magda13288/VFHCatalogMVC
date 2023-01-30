@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Application.ViewModels.User;
@@ -53,10 +54,26 @@ namespace VFHCatalogMVC.Application.Services
             return message;
         }
 
-        public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo)
+        public MessageVm GetMessageById(int id)
         {
+            var message = _messageRepo.GetMessageById(id);
+            var messageVm = _mapper.Map<MessageVm>(message);
+            
+            var user = _userManager.FindByIdAsync(messageVm.UserId);
+            messageVm.AccountName = user.Result.AccountName;
+            messageVm.UserName = user.Result.UserName;
+
+
+            return messageVm;
+        }
+
+        public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, string userName)
+        {
+     
             var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<NewUserPlantMessageVm>(_mapper.ConfigurationProvider).ToList();
             var messagesDetails = new List<MessageVm>();
+            var receivedMessages = new List<MessageVm>();
+            var sentMessages = new List<MessageVm>();   
             var messagesToShow = new List<MessageVm>();
 
             if (messagesList != null)
@@ -66,19 +83,51 @@ namespace VFHCatalogMVC.Application.Services
                     var message = _messageRepo.GetMessageById(item.MessageId);
                     var messageVm = _mapper.Map<MessageVm>(message);
 
-                    var userInfo = _userManager.FindByIdAsync(messageVm.UserId);
-                    messageVm.UserName = userInfo.Result.UserName;
-                    messageVm.AccountName = userInfo.Result.AccountName;
+                    var user = _userManager.FindByIdAsync(messageVm.UserId);
+                    messageVm.UserName = user.Result.UserName;
+                    messageVm.AccountName = user.Result.AccountName;
                     messageVm.PlantId= plantId;
 
                     messagesDetails.Add(messageVm);
-
-                    //var messageReceiver = new MessageReceiverVm() { };
-
-                    //messageThread obsługa by wyśiwtlić odpowiedź
                 }
 
-                messagesToShow = messagesDetails.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                var userInfo = _userManager.FindByNameAsync(userName);
+
+                if (messageDisplay.Received == true)
+                {
+                    foreach (var item in messagesDetails)
+                    {
+                        if (item.UserId != userInfo.Result.Id)
+                        {
+                            receivedMessages.Add(item);
+                        }
+                    }
+                    receivedMessages.OrderByDescending(x => x.AddedDate);
+                    messagesToShow = receivedMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                }
+                else
+                {
+                    if (messageDisplay.Sent == true)
+                    {
+                        foreach (var item in messagesDetails)
+                        {
+                            if (item.UserId == userInfo.Result.Id)
+                            {
+                                sentMessages.Add(item);
+                            }
+                        }
+                        sentMessages.OrderByDescending(x => x.AddedDate);
+                        messagesToShow = sentMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                    }
+                    else
+                    {
+                        if (messageDisplay.ViewAll == true)
+                        {
+                            messagesDetails.OrderByDescending(x => x.AddedDate);
+                            messagesToShow = messagesDetails.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                        }
+                    }
+                }
             }
 
             var messagesNewPlantsList = new MessageForListVm()
@@ -93,11 +142,11 @@ namespace VFHCatalogMVC.Application.Services
             return messagesNewPlantsList;
         }
 
-        //public int GetPlantIdForMessage(int id)
-        //{
-        //    var plantId = _messageRepo.GetPlantId(id);
-        //    return plantId;
-        //}
+        public int GetPlantIdForMessage(int id)
+        {
+            var plantId = _messageRepo.GetPlantId(id);
+            return plantId;
+        }
 
         public void SendNewPlantMessage(MessageVm message)
         {
@@ -110,12 +159,14 @@ namespace VFHCatalogMVC.Application.Services
                 messageInfo.isAnswer = true;
                 _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);
 
-                var messageThreadVm = new MessageThreadVm() { MessageId = message.messageIdisAnswer, ReceiverMessageId = messageId };
-                var messageThread = _mapper.Map<MessageThread>(messageThreadVm);
-                _messageRepo.AddMessageThread(messageThread);
+                SendNewPlantUserMessage(messageId, message.PlantId, messageInfo.UserId);
+
+                var messageAnswerVm = new MessageAnswerVm() { MessageId = message.messageIdisAnswer, MessageAnswerId = messageId };
+                var messageAnswer = _mapper.Map<MessageAnswer>(messageAnswerVm);
+                _messageRepo.AddMessageAnswer(messageAnswer);
             }
 
-            if (messageId != 0)
+            if (messageId != 0 && message.messageIdisAnswer == 0)
             {
                 var user = _userManager.FindByIdAsync(message.UserId);
                 var userRole = _userManager.IsInRoleAsync(user.Result, "Admin");

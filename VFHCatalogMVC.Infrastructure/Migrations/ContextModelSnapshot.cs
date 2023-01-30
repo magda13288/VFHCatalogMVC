@@ -575,11 +575,29 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("isAnswer")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageAnswerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessageId", "MessageAnswerId");
+
+                    b.HasIndex("MessageAnswerId");
+
+                    b.ToTable("MessageAnswers");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
@@ -595,12 +613,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("isAnsweared")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isRead")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MessageId");
@@ -608,21 +620,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MessageReceivers");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageThread", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReceiverMessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MessageId", "ReceiverMessageId");
-
-                    b.HasIndex("ReceiverMessageId");
-
-                    b.ToTable("MessageThreads");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlant", b =>
@@ -1228,6 +1225,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("MessageAnswers")
+                        .HasForeignKey("MessageAnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "AnswerMessage")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
@@ -1239,21 +1251,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("MessageReceivers")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageThread", b =>
-                {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("MessageThreads")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("VFHCatalogMVC.Domain.Model.MessageReceiver", "MessageReceiver")
-                        .WithMany("MessageThreads")
-                        .HasForeignKey("ReceiverMessageId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlant", b =>

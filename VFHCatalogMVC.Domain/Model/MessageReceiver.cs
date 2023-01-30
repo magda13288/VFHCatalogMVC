@@ -11,6 +11,6 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ApplicationUser User { get; set; }
         public int MessageId { get; set; }
         public virtual Message Message { get; set; }
-        public virtual ICollection<MessageThread> MessageThreads { get; set; }
+        //public virtual ICollection<MessageAnswer> MessageAnswers { get; set; }
     }
 }

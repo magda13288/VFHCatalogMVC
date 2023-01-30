@@ -6,9 +6,14 @@
 
 <h1>Wiadomości</h1>
 <div id="UserPlaceHolderHere"></div>
-@*<p>
-    <a asp-action="Create">Create New</a>
-</p>*@
+
+<div class="row">
+ <div class="col">
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "User",new {type=0})'">Wszystkie wiadomości</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "User",new {type=1})'">Odebrane</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "User",new {type=2})'">Wysłane</button>
+  </div>
+</div>
 <div class="row">
     <table class="table-striped table-hover table-light">
         <thead class="thead-light">
@@ -16,9 +21,6 @@
             <th>
                 Nadawca
             </th>
-            @*     <th>
-            Odbiorca
-            </th>*@
             <th class="text-center text-wrap">
                 Wiadomość
             </th>
@@ -38,9 +40,6 @@
                     else
                     @Html.DisplayFor(modelItem => item.AccountName)
                 </td>
-                @*   <td>
-            @Html.DisplayFor(modelItem => item.MessageReceiver.UserId)
-            </td>*@
                 <td class="text-wrap text-break">
                     @Html.DisplayFor(modelItem => item.MessageContent)
                 </td>
@@ -52,6 +51,11 @@
                     {
                             <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendNewPlantUserMessage/{item.Id}"@*,"Message"*@)">Odpowiedz</button>                          
                     }
+                  @*  @if (item.UserName == User.Identity.Name && item.isAnswer == true)*@
+                    @*{
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"GetMessage/{item.Id}")">Odpowiedź</button>
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendNewPlantUserMessage/{item.Id}")">Odpowiedz</button>
+                    }*@
                 </td>
             </tr>
         }

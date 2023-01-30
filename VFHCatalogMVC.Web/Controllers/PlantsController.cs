@@ -340,15 +340,15 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _plantService.AddPlantSeed(plantSeed);
                     ViewBag.Message = "Zapisano";
-
-
+                    ModelState.Clear();
                     //return RedirectToAction("Index", "Plants");
                 }
-                //else
-                //{
-                    return View("AddSeedModal", plantSeed);
-                //}
-                //return RedirectToAction("AddSeed",plantSeed.PlantId);
+                else
+                {
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                }
+                return View("AddSeedModal", plantSeed);
+
 
             }
             catch (Exception ex)
@@ -384,13 +384,17 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _plantService.AddPlantSeedling(plantSeedling);
                     ViewBag.Message = "Zapisano";
-                   // return RedirectToAction("Index","Plants");
+                    ModelState.Clear();
+                    // return RedirectToAction("Index","Plants");
 
                 }
-                //else
-                //{
-                    return PartialView("AddSeedlingModalPartial", plantSeedling);
-                //}
+                else
+                {
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                }
+      
+                return PartialView("AddSeedlingModalPartial", plantSeedling);
+
             }
             catch (Exception ex)
             {
@@ -427,13 +431,17 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _plantService.AddPlantOpinion(plantOpinion);
                     ViewBag.Message = "Zapisano";
-                    return RedirectToAction("Details");
+                    ModelState.Clear();
+                   // return RedirectToAction("Details");
 
                 }
                 else
                 {
-                    return PartialView("AddOpinionModalPartial", plantOpinion);
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
                 }
+                   
+                return PartialView("AddOpinionModalPartial", plantOpinion);
+               
             }
             catch (Exception ex)
             {

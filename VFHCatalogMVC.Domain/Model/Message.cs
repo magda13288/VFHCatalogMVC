@@ -12,7 +12,7 @@ namespace VFHCatalogMVC.Domain.Model
         public string MessageContent { get; set; }
         public DateTime AddedDate { get; set; }
         public bool isAnswer { get; set; }
-        public virtual ICollection<MessageThread> MessageThreads { get; set; }
+        public virtual ICollection<MessageAnswer> MessageAnswers { get; set; }
         public virtual ICollection<NewUserPlantMessage> NewUserPlantMessages { get; set; }
     }
 }

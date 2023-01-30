@@ -16,9 +16,8 @@ namespace VFHCatalogMVC.Domain.Interface
         string GetPlantOwnerId(int plantId);
         int GetPlantId(int id);
         void UpdateMassageStatusIsAnswer(Message message);
-        void AddMessageThread(MessageThread message);
-
-
+        void AddMessageAnswer(MessageAnswer message);
+        int GetMessageAnswerIdById(int id);
 
     }
 }

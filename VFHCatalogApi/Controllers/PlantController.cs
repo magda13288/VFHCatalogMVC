@@ -181,7 +181,7 @@ namespace VFHCatalogApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var id = _plantService.AddPlant(model);
+                var id = _plantService.AddPlant(model, User.Identity.Name);
                 return Created("Index", model);
             }
             else

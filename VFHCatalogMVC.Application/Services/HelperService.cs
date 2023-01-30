@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Domain.Interface;
@@ -38,6 +39,36 @@ namespace VFHCatalogMVC.Application.Services
             var countries = _userService.GetCountries();
             var list = _userService.FillCountryList(countries);
             return list;
+        }
+
+        public MessageDisplay MessagesToView(int type)
+        {
+            var messageDisplay = new MessageDisplay();
+
+            if (type == 0)
+            {
+                messageDisplay.Received = false;
+                messageDisplay.Sent = false;
+                messageDisplay.ViewAll = true;
+            }
+            else
+            {
+                if (type == 1)
+                {
+                    messageDisplay.Received = true;
+                    messageDisplay.Sent = false;
+                    messageDisplay.ViewAll = false;
+                }
+                else
+                {
+                    messageDisplay.Received = false;
+                    messageDisplay.Sent = true;
+                    messageDisplay.ViewAll = false;
+                }
+       
+            }
+
+            return messageDisplay;
         }
 
         public List<SelectListItem> PlantColors()

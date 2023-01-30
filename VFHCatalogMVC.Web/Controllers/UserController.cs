@@ -18,14 +18,15 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IPlantService _plantService;
         private readonly IMessageService _messageService;
-       
-        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService, IMessageService messageService)
+        private readonly IHelperService _helperService;
+
+        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService, IMessageService messageService, IHelperService helperService)
         {
             _userService = userService;
             _logger = logger;
             _plantService = plantService;
             _messageService = messageService;
-          
+            _helperService = helperService;
         }
 
         [HttpGet, HttpPost]
@@ -102,7 +103,7 @@ namespace VFHCatalogMVC.Web.Controllers
                     ViewBag.GroupId = groupId;
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
-                
+
                 var model = _userService.GetUserSeedlings(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
                 return View(model);
@@ -185,13 +186,16 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _userService.UpdateSeed(model);
                     ViewBag.Message = "Zapisano";
+                    ModelState.Clear();
                     //ViewData["JavaScript"] = " window.location.reload()" /*+ Url.Action("IndexSeeds") + "'"*/;
                     //return RedirectToAction("IndexSeeds"/*,"User"*/);
                 }
-                //else
-                //{
-                    return PartialView("EditSeedModalPartial", model);
-                //}
+                else
+                {
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                }
+                return PartialView("EditSeedModalPartial", model);
+
             }
             catch (Exception ex)
             {
@@ -243,12 +247,16 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _userService.UpdateSeedling(model);
                     ViewBag.Message = "Zapisano";
+                    ModelState.Clear();
                     //return RedirectToAction("IndexSeedlings","User");
                 }
-                //else
-                //{
-                    return PartialView("EditSeedlingModalPartial", model);
-                //}
+                else
+                {
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                }
+
+                return PartialView("EditSeedlingModalPartial", model);
+
             }
             catch (Exception ex)
             {
@@ -294,12 +302,15 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     _messageService.SendNewPlantMessage(message);
                     ViewBag.Message = "Zapisano";
+                    ModelState.Clear();
                     //return PartialView("SendMessageToAdminModal", message);
                 }
-                //else
-                //{
+                else
+                {
+                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                }
                 return PartialView("SendNewPlantUserMessageModal", message);
-                //}
+                
             }
             catch (Exception ex)
             {
@@ -310,8 +321,9 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo)
-        {
+        public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
+        {          
+
             if (!pageNo.HasValue)
             {
                 pageNo = 1;
@@ -320,44 +332,22 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 pageSize = 10;
             }
-            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo);
+
+            var messageDisplay = _helperService.MessagesToView(type);
+
+            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay ,User.Identity.Name);
             // return PartialView("PlantMessagesFromAdminModal",messages);
             return View(messages);
         }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult NewPlantMessages(MessageVm message)
-        {
-            return View();
-        }
+   
 
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-
-        public IActionResult SendMessageFromAdmin(int id)
+        public IActionResult GetMessage(int id)
         {
-
-            return View();
+            var message = _messageService.GetMessageById(id);
+            return View(message);
         }
-        [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-
-        public IActionResult SendMessageFromAdmin(MessageVm message)
-        {
-
-            return View();
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-
-        public IActionResult SendNewPlantsAnswer(int messageId)
-        {
-
-            return View();
-        }
-
 
         [HttpPost]
         public JsonResult GetRegions(int id)

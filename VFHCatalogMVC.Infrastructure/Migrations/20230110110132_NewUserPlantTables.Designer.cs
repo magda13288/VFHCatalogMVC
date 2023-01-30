@@ -612,19 +612,19 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("MessageReceivers");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageThread", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
                 {
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReceiverMessageId")
+                    b.Property<int>("MessageReceiverId")
                         .HasColumnType("int");
 
-                    b.HasKey("MessageId", "ReceiverMessageId");
+                    b.HasKey("MessageId", "MessageReceiverId");
 
-                    b.HasIndex("ReceiverMessageId");
+                    b.HasIndex("MessageReceiverId");
 
-                    b.ToTable("MessageThreads");
+                    b.ToTable("MessageAnswers");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlant", b =>
@@ -1243,17 +1243,17 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageThread", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("MessageThreads")
+                        .WithMany("MessageAnswers")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.MessageReceiver", "MessageReceiver")
-                        .WithMany("MessageThreads")
-                        .HasForeignKey("ReceiverMessageId")
+                        .WithMany("MessageAnswers")
+                        .HasForeignKey("MessageReceiverId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

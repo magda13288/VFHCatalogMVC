@@ -63,23 +63,23 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MessageThreads",
+                name: "MessageAnswers",
                 columns: table => new
                 {
                     MessageId = table.Column<int>(nullable: false),
-                    ReceiverMessageId = table.Column<int>(nullable: false)
+                    MessageReceiverId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MessageThreads", x => new { x.MessageId, x.ReceiverMessageId });
+                    table.PrimaryKey("PK_MessageAnswers", x => new { x.MessageId, x.MessageReceiverId });
                     table.ForeignKey(
-                        name: "FK_MessageThreads_Messages_MessageId",
+                        name: "FK_MessageAnswers_Messages_MessageId",
                         column: x => x.MessageId,
                         principalTable: "Messages",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_MessageThreads_MessageReceivers_ReceiverMessageId",
-                        column: x => x.ReceiverMessageId,
+                        name: "FK_MessageAnswers_MessageReceivers_MessageReceiverId",
+                        column: x => x.MessageReceiverId,
                         principalTable: "MessageReceivers",
                         principalColumn: "Id");
                 });
@@ -100,15 +100,15 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MessageThreads_ReceiverMessageId",
-                table: "MessageThreads",
-                column: "ReceiverMessageId");
+                name: "IX_MessageAnswer_MessageReceiverId",
+                table: "MessageAnswers",
+                column: "MessageReceiverId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "MessageThreads");
+                name: "MessageAnswers");
 
             migrationBuilder.DropTable(
                 name: "MessageReceivers");

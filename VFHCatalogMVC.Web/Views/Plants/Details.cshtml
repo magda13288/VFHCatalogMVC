@@ -92,7 +92,7 @@
          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
    Opinie
   </button>
-  <div class="collapse" id="collapseOpinions">
+  <div class="collapse" id="collapseOpinions" onscroll="true">
        <div class="card card-body">
             <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
        <table class="table-hover" border="0">
@@ -111,11 +111,9 @@
             </td>
              <td>
               @Html.DisplayFor(it=>Model.PlantOpinions[i].Date)
-             </td>
-
-                
+             </td>                
         </tr>
-}
+         }
     </tbody>
 </table>         
            </div>

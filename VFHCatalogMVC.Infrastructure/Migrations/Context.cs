@@ -38,7 +38,7 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<ContactDetailForSeedling> ContactDetailForSeedlings { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceiver> MessageReceivers { get; set; }
-        public DbSet<MessageThread> MessageThreads { get; set; }
+        public DbSet<MessageAnswer> MessageAnswers { get; set; }
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
         public DbSet<NewUserPlantMessage> NewUserPlantMessages { get; set; }
   
@@ -260,18 +260,18 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(e => e.ContactDetailId);
             });
 
-            builder.Entity<MessageThread>(entity =>
+            builder.Entity<MessageAnswer>(entity =>
             {
-                entity.HasKey(e => new { e.MessageId, e.ReceiverMessageId });
+                entity.HasKey(e => new { e.MessageId, e.MessageAnswerId });
 
                 entity.HasOne(e => e.Message)
-                .WithMany(e => e.MessageThreads)
+                .WithMany(e => e.MessageAnswers)
                 .HasForeignKey(e => e.MessageId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(e => e.MessageReceiver)
-               .WithMany(e => e.MessageThreads)
-               .HasForeignKey(e => e.ReceiverMessageId)
+                entity.HasOne(e => e.Message)
+               .WithMany(e => e.MessageAnswers)
+               .HasForeignKey(e => e.MessageAnswerId)
                .OnDelete(DeleteBehavior.NoAction);
             });
 

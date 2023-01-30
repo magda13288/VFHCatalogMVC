@@ -65,10 +65,16 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void AddMessageThread(MessageThread message)
+        public void AddMessageAnswer(MessageAnswer message)
         {
-            _context.MessageThreads.Add(message);
+            _context.MessageAnswers.Add(message);
             _context.SaveChanges();
+        }
+        public int GetMessageAnswerIdById(int id)
+        {
+            var message = _context.MessageAnswers.FirstOrDefault(e => e.MessageId == id);
+            return message.MessageAnswerId;
+
         }
     }
 }

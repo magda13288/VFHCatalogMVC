@@ -7,14 +7,14 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.ViewModels.Message
 {
-    public class MessageThreadVm:IMapFrom<VFHCatalogMVC.Domain.Model.MessageThread>
+    public class MessageAnswerVm : IMapFrom<VFHCatalogMVC.Domain.Model.MessageAnswer>
     {
         public int MessageId { get; set; }
-        public int ReceiverMessageId { get; set; }
+        public int MessageAnswerId { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<MessageThreadVm, VFHCatalogMVC.Domain.Model.MessageThread>().ReverseMap();
+            profile.CreateMap<MessageAnswerVm, VFHCatalogMVC.Domain.Model.MessageAnswer>().ReverseMap();
         }
     }
 }

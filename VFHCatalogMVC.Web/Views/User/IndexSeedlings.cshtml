@@ -7,9 +7,6 @@
 <div id="UserPlaceHolderHere"></div>
 <h1>Twoja lista sadzonek</h1>
 
-<p class="disabled">
-    <a asp-action="Messages" class="btn btn-success disabled">Wiadmości</a>
-</p>
 <form asp-action="IndexSeedlings" asp-controller="User" method="post">
     <div class="container-fluid">
         <div class="row">
@@ -87,8 +84,9 @@
                                 <img src="/plantGallery/searchPhoto/@item.PlantForList.Photo" class="img-fluid" width="120" height="80" asp-append-version="true" />\
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeedling/{item.Id}")">Edytuj</button>
+                                <button type="button" class="btn btn-info" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeedling/{item.Id}")">Edytuj</button>
                                 <button type="button" class="btn btn-danger" onclick="window.location= '@Url.Action( "DeleteSeedling", "User",new {id=item.Id})'">Usuń</button>
+                                <button type="button" class="btn btn-primary disabled" onclick="window.location= '@Url.Action( "Messages", "User",new {id=item.Id})'">Wiadomości</button>
                             </td>
                         </tr>
                     }
