@@ -10,8 +10,8 @@ using VFHCatalogMVC.Infrastructure;
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230125132749_DeleteMessageAnswerTable")]
-    partial class DeleteMessageAnswerTable
+    [Migration("20230130180845_PlantMessagesChanges")]
+    partial class PlantMessagesChanges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -587,6 +587,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageAnswerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessageId", "MessageAnswerId");
+
+                    b.HasIndex("MessageAnswerId");
+
+                    b.ToTable("MessageAnswers");
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
                 {
                     b.Property<int>("Id")
@@ -625,21 +640,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("NewUserPlants");
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
-                {
-                    b.Property<int>("PlantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlantId", "MessageId");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("PlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Plant", b =>
@@ -803,6 +803,30 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("GrowthTypeId");
 
                     b.ToTable("PlantGrowthTypes");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantMessage", b =>
+                {
+                    b.Property<int>("PlantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isNewPlant")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSeed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSeedling")
+                        .HasColumnType("bit");
+
+                    b.HasKey("PlantId", "MessageId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("PlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantOpinion", b =>
@@ -1212,6 +1236,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageAnswer", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("MessageAnswers")
+                        .HasForeignKey("MessageAnswerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "AnswerMessage")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.MessageReceiver", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
@@ -1236,21 +1275,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("NewUserPlants")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
-                {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("PlantMessages")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
-                        .WithMany("PlantMessages")
-                        .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1355,6 +1379,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantDetail", "PlantDetail")
                         .WithMany("PlantGrowthTypes")
                         .HasForeignKey("PlantDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantMessage", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("PlantMessages")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
+                        .WithMany("PlantMessages")
+                        .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -33,7 +33,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewUserPlantMessage(NewUserPlantMessageVm message)
+        public IActionResult SendNewUserPlantMessage(PlantMessageVm message)
         {
             return View(message);
         }

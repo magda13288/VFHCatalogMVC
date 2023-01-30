@@ -40,7 +40,7 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<MessageReceiver> MessageReceivers { get; set; }
         public DbSet<MessageAnswer> MessageAnswers { get; set; }
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
-        public DbSet<NewUserPlantMessage> NewUserPlantMessages { get; set; }
+        public DbSet<PlantMessage> PlantMessages { get; set; }
   
         public Context(DbContextOptions options) : base(options)
         {
@@ -288,16 +288,16 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(e => e.UserId);
             });
 
-            builder.Entity<NewUserPlantMessage>(entity =>
+            builder.Entity<PlantMessage>(entity =>
             {
                 entity.HasKey(e => new { e.PlantId, e.MessageId });
 
                 entity.HasOne(e => e.Plant)
-                .WithMany(e => e.NewUserPlantMessages)
+                .WithMany(e => e.PlantMessages)
                 .HasForeignKey(e => e.PlantId);
 
                 entity.HasOne(e=>e.Message)
-                .WithMany(e=>e.NewUserPlantMessages)
+                .WithMany(e=>e.PlantMessages)
                 .HasForeignKey(e => e.MessageId);
             });
         }

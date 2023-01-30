@@ -284,8 +284,9 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewPlantUserMessage(int id)
+        public IActionResult SendNewPlantUserMessage(int id, bool seeds,bool seedlings, bool newPlant)
         {
+            var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
             var message = _messageService.FillMessageProperties(id, User.Identity.Name);
 
             return PartialView("SendNewPlantUserMessageModal", message);
@@ -334,8 +335,9 @@ namespace VFHCatalogMVC.Web.Controllers
             }
 
             var messageDisplay = _helperService.MessagesToView(type);
+            var index = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
 
-            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay ,User.Identity.Name);
+            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay, index, User.Identity.Name);
             // return PartialView("PlantMessagesFromAdminModal",messages);
             return View(messages);
         }

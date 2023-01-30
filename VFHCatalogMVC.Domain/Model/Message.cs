@@ -13,6 +13,6 @@ namespace VFHCatalogMVC.Domain.Model
         public DateTime AddedDate { get; set; }
         public bool isAnswer { get; set; }
         public virtual ICollection<MessageAnswer> MessageAnswers { get; set; }
-        public virtual ICollection<NewUserPlantMessage> NewUserPlantMessages { get; set; }
+        public virtual ICollection<PlantMessage> PlantMessages { get; set; }
     }
 }

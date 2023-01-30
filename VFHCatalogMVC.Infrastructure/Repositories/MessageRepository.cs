@@ -21,9 +21,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void AddNewUserPlantMessage(NewUserPlantMessage plantMessage)
+        public void AddNewUserPlantMessage(PlantMessage plantMessage)
         {
-            _context.NewUserPlantMessages.Add(plantMessage);
+            _context.PlantMessages.Add(plantMessage);
             _context.SaveChanges();
         }
 
@@ -34,9 +34,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return message.Id;
         }
 
-        public IQueryable<NewUserPlantMessage> GetMessagesForNewUserPlant(int plantId)
+        public IQueryable<PlantMessage> GetMessagesForNewUserPlant(int plantId)
         {
-            var messagesList = _context.NewUserPlantMessages.Where(m => m.PlantId == plantId);
+            var messagesList = _context.PlantMessages.Where(m => m.PlantId == plantId);
             return messagesList;
         }
 
@@ -54,7 +54,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public int GetPlantId(int id)
         {
-            var message = _context.NewUserPlantMessages.FirstOrDefault(e => e.MessageId == id);
+            var message = _context.PlantMessages.FirstOrDefault(e => e.MessageId == id);
+            if (message == null)
+                return 0;
+            else
             return message.PlantId;
         }
 

@@ -18,6 +18,6 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<SelectListItem> Cities(int regionId);
         string UserAccountName(Task<ApplicationUser> user);
         MessageDisplay MessagesToView(int type);
-
+        IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant);
     }
 }

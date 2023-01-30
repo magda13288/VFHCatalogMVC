@@ -30,7 +30,7 @@ namespace VFHCatalogMVC.Application.Services
             _helperService = helperService;
         }
 
-        public MessageVm FillMessageProperties(int id, string user)
+        public MessageVm FillMessageProperties(int id, string user, IndexPlantType index)
         {
             var plantIdForMessage = _messageRepo.GetPlantId(id);
             var userInfo = _userManager.FindByNameAsync(user);
@@ -42,6 +42,9 @@ namespace VFHCatalogMVC.Application.Services
                 message.AddedDate = DateTime.Now;
                 message.PlantId = plantIdForMessage;
                 message.messageIdisAnswer = id;
+                message.isSeed = index.seeds;
+                message.isSeedling = index.seedlings;
+                message.isNewPlant = index.newPlant;
 
             }
             else
@@ -49,6 +52,9 @@ namespace VFHCatalogMVC.Application.Services
                 message.UserId = userInfo.Result.Id;
                 message.AddedDate = DateTime.Now;
                 message.PlantId = id;
+                message.isSeed = index.seeds;
+                message.isSeedling = index.seedlings;
+                message.isNewPlant = index.newPlant;
             }
 
             return message;
@@ -67,10 +73,29 @@ namespace VFHCatalogMVC.Application.Services
             return messageVm;
         }
 
-        public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, string userName)
+        public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, IndexPlantType index, string userName)
         {
-     
-            var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<NewUserPlantMessageVm>(_mapper.ConfigurationProvider).ToList();
+
+            var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<PlantMessageVm>(_mapper.ConfigurationProvider).ToList();
+            if (index.seeds == true)
+            {
+                messagesList = messagesList.Where(x => x.isSeed == true).ToList();
+            }
+            else
+            {
+                if (index.seedlings == true)
+                {
+                    messagesList = messagesList.Where(x => x.isSeedling == true).ToList();
+                }
+                else
+                {
+                    if (index.newPlant)
+                    {
+                        messagesList = messagesList.Where(x => x.isNewPlant == true).ToList();
+                    }
+                }
+            }
+
             var messagesDetails = new List<MessageVm>();
             var receivedMessages = new List<MessageVm>();
             var sentMessages = new List<MessageVm>();   
@@ -196,9 +221,9 @@ namespace VFHCatalogMVC.Application.Services
 
             _messageRepo.AddMessageReceiver(_mapper.Map<MessageReceiver>(messageReceiver));
 
-            var newUserPlantMessage = new NewUserPlantMessageVm() { PlantId = plantId, MessageId = messageId };
+            var newUserPlantMessage = new PlantMessageVm() { PlantId = plantId, MessageId = messageId };
 
-            _messageRepo.AddNewUserPlantMessage(_mapper.Map<NewUserPlantMessage>(newUserPlantMessage));
+            _messageRepo.AddNewUserPlantMessage(_mapper.Map<PlantMessage>(newUserPlantMessage));
         }
     }
 }

@@ -640,21 +640,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("NewUserPlants");
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
-                {
-                    b.Property<int>("PlantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlantId", "MessageId");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("NewUserPlantMessages");
-                });
-
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Plant", b =>
                 {
                     b.Property<int>("Id")
@@ -816,6 +801,30 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("GrowthTypeId");
 
                     b.ToTable("PlantGrowthTypes");
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantMessage", b =>
+                {
+                    b.Property<int>("PlantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isNewPlant")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSeed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isSeedling")
+                        .HasColumnType("bit");
+
+                    b.HasKey("PlantId", "MessageId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("PlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantOpinion", b =>
@@ -1230,7 +1239,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
                         .WithMany("MessageAnswers")
                         .HasForeignKey("MessageAnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "AnswerMessage")
@@ -1264,21 +1273,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
                         .WithMany("NewUserPlants")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
-                {
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("NewUserPlantMessages")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
-                        .WithMany("NewUserPlantMessages")
-                        .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1383,6 +1377,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantDetail", "PlantDetail")
                         .WithMany("PlantGrowthTypes")
                         .HasForeignKey("PlantDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantMessage", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
+                        .WithMany("PlantMessages")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
+                        .WithMany("PlantMessages")
+                        .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

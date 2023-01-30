@@ -26,6 +26,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public string UserName { get; set; }
         [NotMapped]
         public string AccountName { get; set; }
+        [NotMapped]
+        public bool isSeed { get; set; }
+        [NotMapped]
+        public bool isSeedling { get; set; }
+        [NotMapped]
+        public bool isNewPlant { get; set; }
 
         public void Mapping(Profile profile)
         {

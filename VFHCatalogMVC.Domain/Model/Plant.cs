@@ -34,7 +34,7 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
         public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
         public virtual ICollection<NewUserPlant> NewUserPlants { get; set; }
-        public virtual ICollection<NewUserPlantMessage> NewUserPlantMessages { get; set; }
+        public virtual ICollection<PlantMessage> PlantMessages { get; set; }
        
     }
 }

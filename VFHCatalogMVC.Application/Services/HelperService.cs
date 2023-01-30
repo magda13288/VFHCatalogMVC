@@ -41,6 +41,13 @@ namespace VFHCatalogMVC.Application.Services
             return list;
         }
 
+        public IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant)
+        {
+           var index = new IndexPlantType() {seeds = seeds, seedlings = seedlings, newPlant = newPlant };
+
+            return index;        
+        }
+
         public MessageDisplay MessagesToView(int type)
         {
             var messageDisplay = new MessageDisplay();

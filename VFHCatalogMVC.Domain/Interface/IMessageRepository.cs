@@ -10,8 +10,8 @@ namespace VFHCatalogMVC.Domain.Interface
     {
         int AddMessage(Message message);
         void AddMessageReceiver(MessageReceiver receiver);
-        void AddNewUserPlantMessage(NewUserPlantMessage plantMessage);
-        IQueryable<NewUserPlantMessage> GetMessagesForNewUserPlant(int plantId);
+        void AddNewUserPlantMessage(PlantMessage plantMessage);
+        IQueryable<PlantMessage> GetMessagesForNewUserPlant(int plantId);
         Message GetMessageById (int id);
         string GetPlantOwnerId(int plantId);
         int GetPlantId(int id);
