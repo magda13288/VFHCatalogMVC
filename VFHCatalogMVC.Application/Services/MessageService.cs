@@ -77,6 +77,7 @@ namespace VFHCatalogMVC.Application.Services
         {
 
             var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<PlantMessageVm>(_mapper.ConfigurationProvider).ToList();
+
             if (index.seeds == true)
             {
                 messagesList = messagesList.Where(x => x.isSeed == true).ToList();
@@ -177,14 +178,15 @@ namespace VFHCatalogMVC.Application.Services
         {
             var sendMessage = _mapper.Map<Message>(message);
             var messageId = _messageRepo.AddMessage(sendMessage);
+            var indexPlant = new IndexPlantType() { seeds = message.isSeed, seedlings = message.isSeedling, newPlant = message.isNewPlant };
 
             if (message.messageIdisAnswer != 0)
             {
                 var messageInfo = _messageRepo.GetMessageById(message.messageIdisAnswer);
                 messageInfo.isAnswer = true;
-                _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);
+                _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);           
 
-                SendNewPlantUserMessage(messageId, message.PlantId, messageInfo.UserId);
+                SendNewPlantUserMessage(messageId, message.PlantId, messageInfo.UserId, indexPlant);
 
                 var messageAnswerVm = new MessageAnswerVm() { MessageId = message.messageIdisAnswer, MessageAnswerId = messageId };
                 var messageAnswer = _mapper.Map<MessageAnswer>(messageAnswerVm);
@@ -201,29 +203,29 @@ namespace VFHCatalogMVC.Application.Services
                     var admin = _userManager.GetUsersInRoleAsync("Admin");
                     var adminUser = admin.Result.FirstOrDefault(e => e.UserName.StartsWith("admin"));
 
-                    SendNewPlantUserMessage(messageId, message.PlantId, adminUser.Id);
+                    SendNewPlantUserMessage(messageId, message.PlantId, adminUser.Id, indexPlant);
                   
                 }
                 else
                 {
                     var userReceiver = _messageRepo.GetPlantOwnerId(message.PlantId);
 
-                    SendNewPlantUserMessage(messageId, message.PlantId, userReceiver);
+                    SendNewPlantUserMessage(messageId, message.PlantId, userReceiver,indexPlant);
                   
                 }
 
             }
 
         }
-        public void SendNewPlantUserMessage(int messageId, int plantId, string userId)
+        public void SendNewPlantUserMessage(int messageId, int plantId, string userId, IndexPlantType index)
         {
             var messageReceiver = new MessageReceiverVm() { MessageId = messageId, UserId = userId };
 
             _messageRepo.AddMessageReceiver(_mapper.Map<MessageReceiver>(messageReceiver));
 
-            var newUserPlantMessage = new PlantMessageVm() { PlantId = plantId, MessageId = messageId };
+            var plantMessage = new PlantMessageVm() { PlantId = plantId, MessageId = messageId ,isSeed = index.seeds, isSeedling = index.seedlings, isNewPlant = index.newPlant };
 
-            _messageRepo.AddNewUserPlantMessage(_mapper.Map<PlantMessage>(newUserPlantMessage));
+            _messageRepo.AddNewUserPlantMessage(_mapper.Map<PlantMessage>(plantMessage));
         }
     }
 }

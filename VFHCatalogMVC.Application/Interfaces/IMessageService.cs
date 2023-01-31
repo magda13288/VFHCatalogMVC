@@ -9,10 +9,10 @@ namespace VFHCatalogMVC.Application.Interfaces
     public interface IMessageService
     {
         //id = plantId || id = messageId
-        MessageVm FillMessageProperties(int id, string user);
+        MessageVm FillMessageProperties(int id, string user, IndexPlantType index);
         void SendNewPlantMessage(MessageVm message);
         MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, IndexPlantType index, string userName);
-        void SendNewPlantUserMessage(int messageId, int plantId, string userId);
+        void SendNewPlantUserMessage(int messageId, int plantId, string userId, IndexPlantType index);
         int GetPlantIdForMessage(int id);
         MessageVm GetMessageById(int id);
     }

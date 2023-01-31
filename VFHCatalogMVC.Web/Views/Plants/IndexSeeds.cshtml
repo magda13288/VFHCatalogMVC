@@ -113,7 +113,8 @@
                             </div>
             </td>
             <td>
-                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action("SendNewPlantUserMessage",new {id=item.Id,seeds=true})">Wyślij wiadomość</button>
+
+                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendNewPlantUserMessage","Message",new {id=item.PlantId,seeds=true})">Wyślij wiadomość</button>
             </td>
         </tr>
 }

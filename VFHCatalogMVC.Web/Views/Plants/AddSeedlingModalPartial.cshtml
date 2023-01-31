@@ -20,8 +20,9 @@
         <form action="AddSeedling">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <label class="text-danger">@ViewBag.Message</label>
-             <input type="hidden" id="plantId" asp-for="PlantId" class="control-label"/>
-             <input type="hidden" id="userId" asp-for="UserId" class="control-label"/>
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                   <input type="hidden" id="plantId" asp-for="PlantId" class="control-label"/>
+                   <input type="hidden" id="userId" asp-for="UserId" class="control-label"/>
                     @if (User.IsInRole("PrivateUser"))
                     {
                         <div class="form-group">
@@ -49,10 +50,10 @@
                         </div>
                     }
                 </form>
-    </div>
+            </div>
            <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
-                <button type="button" class="btn btn-primary" data-save="modal">Zapisz</button>
+                <button type="button" class="btn btn-primary" data-url="/Plants/" data-save="modal">Zapisz</button>
             </div>
       </div>
     </div>

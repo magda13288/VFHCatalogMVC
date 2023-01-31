@@ -281,75 +281,75 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        //[HttpGet]
+        //[Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewPlantUserMessage(int id, bool seeds,bool seedlings, bool newPlant)
-        {
-            var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
-            var message = _messageService.FillMessageProperties(id, User.Identity.Name);
+        //public IActionResult SendNewPlantUserMessage(int id, bool seeds,bool seedlings, bool newPlant)
+        //{
+        //    var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
+        //    var message = _messageService.FillMessageProperties(id, User.Identity.Name, indexPlant);
 
-            return PartialView("SendNewPlantUserMessageModal", message);
-        }
+        //    return PartialView("SendNewPlantUserMessageModal", message);
+        //}
 
-        [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        //[HttpPost]
+        //[Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewPlantUserMessage(MessageVm message)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    _messageService.SendNewPlantMessage(message);
-                    ViewBag.Message = "Zapisano";
-                    ModelState.Clear();
-                    //return PartialView("SendMessageToAdminModal", message);
-                }
-                else
-                {
-                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
-                }
-                return PartialView("SendNewPlantUserMessageModal", message);
-                
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500);
-            }
-        }
+        //public IActionResult SendNewPlantUserMessage(MessageVm message)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            _messageService.SendNewPlantMessage(message);
+        //            ViewBag.Message = "Zapisano";
+        //            ModelState.Clear();
+        //            return PartialView("SendNewPlantUserMessageModal");
+        //            //return PartialView("SendMessageToAdminModal", message);
+        //        }
+        //        else
+        //        {
+        //            ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+        //            return PartialView("SendNewPlantUserMessageModal", message);
+        //        }                              
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.Message, ex);
+        //        return StatusCode(500);
+        //    }
+        //}
 
-        [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
-        {          
+        //[HttpGet]
+        //[Authorize(Roles = "Admin,PrivateUser,Company")]
+        //public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
+        //{          
 
-            if (!pageNo.HasValue)
-            {
-                pageNo = 1;
-            }
-            if (pageSize == 0)
-            {
-                pageSize = 10;
-            }
+        //    if (!pageNo.HasValue)
+        //    {
+        //        pageNo = 1;
+        //    }
+        //    if (pageSize == 0)
+        //    {
+        //        pageSize = 10;
+        //    }
 
-            var messageDisplay = _helperService.MessagesToView(type);
-            var index = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
+        //    var messageDisplay = _helperService.MessagesToView(type);
+        //    var index = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
 
-            var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay, index, User.Identity.Name);
-            // return PartialView("PlantMessagesFromAdminModal",messages);
-            return View(messages);
-        }
+        //    var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay, index, User.Identity.Name);
+        //    // return PartialView("PlantMessagesFromAdminModal",messages);
+        //    return View(messages);
+        //}
    
 
-        [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult GetMessage(int id)
-        {
-            var message = _messageService.GetMessageById(id);
-            return View(message);
-        }
+        //[HttpGet]
+        //[Authorize(Roles = "Admin,PrivateUser,Company")]
+        //public IActionResult GetMessage(int id)
+        //{
+        //    var message = _messageService.GetMessageById(id);
+        //    return View(message);
+        //}
 
         [HttpPost]
         public JsonResult GetRegions(int id)
