@@ -24,33 +24,33 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewPlantUserMessage(int id, bool seeds, bool seedlings, bool newPlant)
+        public IActionResult SendPlantMessage(int id, bool seeds, bool seedlings, bool newPlant)
         {
             var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
             var message = _messageService.FillMessageProperties(id, User.Identity.Name, indexPlant);
 
-            return PartialView("SendNewPlantUserMessageModal", message);
+            return PartialView("SendPlantMessageModal", message);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
 
-        public IActionResult SendNewPlantUserMessage(MessageVm message)
+        public IActionResult SendPlantMessage(MessageVm message)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _messageService.SendNewPlantMessage(message);
+                    _messageService.SendMessage(message);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
-                    return PartialView("SendNewPlantUserMessageModal");
+                    return PartialView("SendPlantMessageModal");
                     //return PartialView("SendMessageToAdminModal", message);
                 }
                 else
                 {
                     ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
-                    return PartialView("SendNewPlantUserMessageModal", message);
+                    return PartialView("SendPlantMessageModal", message);
                 }
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult NewPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
+        public IActionResult IndexPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
         {
 
             if (!pageNo.HasValue)

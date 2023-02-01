@@ -194,7 +194,7 @@ namespace VFHCatalogMVC.Application.Services
             return plantsList;
 
         }
-        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName)
         {
             var seeds = new List<PlantSeedVm>();
             var seedsToShow = new List<PlantSeedVm>();
@@ -318,6 +318,14 @@ namespace VFHCatalogMVC.Application.Services
                 seedsToShow = seedsListFiltered.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
             }
 
+            string userId = null;
+
+            if (userName != null)
+            {
+               var userInfo = _userManager.FindByNameAsync(userName);
+               userId = userInfo.Result.Id;
+            }
+
             var plantSeedsList = new PlantSeedsForListVm()
             {
                 PageSize = pageSize,
@@ -325,7 +333,9 @@ namespace VFHCatalogMVC.Application.Services
                 PlantSeeds = seedsToShow,
                 Count = seeds.Count,
                 PlantId = id,
-                isCompany = isCompany
+                isCompany = isCompany,
+                LoggedUserName = userId
+                
             };
 
             return plantSeedsList;

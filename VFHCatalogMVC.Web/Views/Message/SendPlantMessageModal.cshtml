@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body">
                 @Html.AntiForgeryToken()             
-                <form action="SendNewPlantUserMessage">
+                <form action="SendPlantMessage">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <input type="hidden" asp-for="AddedDate" class="form-control" />

@@ -1,8 +1,11 @@
 1. Change in pages Login,Register information for client in polish
-2. Xxtension of the user profile for editing function
-3. Add refereshing page after save opinion on modal popup
-4. Add refereshing table in Plant index page after delete plant
-5. Add message module to seeds and seedlings functions (IndexSeed and IndexSeedling)
+2. Extension of the user profile for editing function
+3. Add refereshing page after save opinion on modal popup - done
+4. Add refereshing table in Plant index page after delete plant - must check is done
+5. Add message module to seeds and seedlings functions (IndexSeed and IndexSeedling) - done
 6. Checking that userName, accountName and CustomerName are unique
 7. More filters in catalog for search section.
 8.In AddPlant when the name exist and data are load again select list must have remembered selectedvalue
+9. Add option to load images in method Plant/AddSeedling
+10. Add chat with using SingalR
+11. Add function which check that has there been any new messages(display info by button "Wiadomoœci" in sections IndexSeed,IndexSeedling,IndexNewPlant ->UserController)

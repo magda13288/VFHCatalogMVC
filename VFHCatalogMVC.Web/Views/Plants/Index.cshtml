@@ -74,7 +74,9 @@
                                     }
                                     else
                                     {
-                                        @Html.ActionLink("Sczegóły", "Details", new { id = item.Id },new { @class = "btn btn-warning" })
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeeds", "Plants",new {id=item.Id})'">Nasiona</button>
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeedlings", "Plants",new {id=item.Id})'">Sadzonki</button>
+                                         @Html.ActionLink("Sczegóły", "Details", new { id = item.Id },new { @class = "btn btn-warning" })
                                     }
                                 }
                                                                 

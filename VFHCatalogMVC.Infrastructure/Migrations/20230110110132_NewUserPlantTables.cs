@@ -7,7 +7,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PlantMessages",
+                name: "IndexPlantMessages",
                 columns: table => new
                 {
                     PlantId = table.Column<int>(nullable: false),
@@ -57,7 +57,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_NewUserPlantMessages_MessageId",
-                table: "PlantMessages",
+                table: "IndexPlantMessages",
                 column: "MessageId");
 
             migrationBuilder.CreateIndex(
@@ -69,7 +69,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PlantMessages");
+                name: "IndexPlantMessages");
 
             migrationBuilder.DropTable(
                 name: "NewUserPlants");

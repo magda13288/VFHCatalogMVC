@@ -94,6 +94,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet,HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
+        [AllowAnonymous]
         public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             try
@@ -123,7 +124,7 @@ namespace VFHCatalogMVC.Web.Controllers
                     ViewBag.CityId = cityId;
                 }
 
-                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany);
+                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
             }
             catch(Exception ex)
@@ -134,7 +135,8 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet, HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        //[Authorize(Roles = "PrivateUser,Company")]
+        [AllowAnonymous]
         public IActionResult IndexSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo,bool isCompany)
         {
             try

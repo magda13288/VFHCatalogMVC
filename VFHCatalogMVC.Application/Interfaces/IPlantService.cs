@@ -33,7 +33,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         PlantSeedVm FillProperties(int id,string userName);
         PlantSeedlingVm FillPropertiesSeedling(int id, string userName);
         PlantOpinionsVm FillPropertyOpinion(int id, string userName);
-        PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
+        PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
         PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo,bool isCompany);
         List<PlantSeedVm> FilterSeedsList(List<PlantSeedVm> seeds, List<string> filteredUsersList);
         List<PlantSeedlingVm> FilterSeedlingsList(List<PlantSeedlingVm> seedlings, List<string> filteredUsersList);

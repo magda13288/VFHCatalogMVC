@@ -1,7 +1,7 @@
 ﻿@model VFHCatalogMVC.Application.ViewModels.Message.MessageForListVm
 
 @{
-    ViewData["Title"] = "NewPlantMessages";
+    ViewData["Title"] = "IndexPlantMessages";
 }
 
 <h1>Wiadomości</h1>
@@ -9,9 +9,9 @@
 
 <div class="row">
  <div class="col">
-        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "Message",new {type=0})'">Wszystkie wiadomości</button>
-        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "Message",new {type=1})'">Odebrane</button>
-        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "NewPlantMessages", "Message",new {type=2})'">Wysłane</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=0})'">Wszystkie wiadomości</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=1})'">Odebrane</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=2})'">Wysłane</button>
   </div>
 </div>
 <div class="row">
@@ -49,12 +49,12 @@
                 <td>
                     @if (item.UserName != User.Identity.Name && item.isAnswer == false)
                     {
-                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action($"SendNewPlantUserMessage/{item.Id}")">Odpowiedz</button>                          
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Odpowiedz</button>                          
                     }
                   @*  @if (item.UserName == User.Identity.Name && item.isAnswer == true)*@
                     @*{
                             <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"GetMessage/{item.Id}")">Odpowiedź</button>
-                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendNewPlantUserMessage/{item.Id}")">Odpowiedz</button>
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Odpowiedz</button>
                     }*@
                 </td>
             </tr>

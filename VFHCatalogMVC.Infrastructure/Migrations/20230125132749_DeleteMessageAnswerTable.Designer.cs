@@ -639,7 +639,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasIndex("MessageId");
 
-                    b.ToTable("PlantMessages");
+                    b.ToTable("IndexPlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Plant", b =>
@@ -1243,13 +1243,13 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.NewUserPlantMessage", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("PlantMessages")
+                        .WithMany("IndexPlantMessages")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
-                        .WithMany("PlantMessages")
+                        .WithMany("IndexPlantMessages")
                         .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

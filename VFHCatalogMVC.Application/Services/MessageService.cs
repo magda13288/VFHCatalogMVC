@@ -75,6 +75,10 @@ namespace VFHCatalogMVC.Application.Services
 
         public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, IndexPlantType index, string userName)
         {
+            if (plantId == 0)
+            {
+                
+            }
 
             var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<PlantMessageVm>(_mapper.ConfigurationProvider).ToList();
 
@@ -174,7 +178,7 @@ namespace VFHCatalogMVC.Application.Services
             return plantId;
         }
 
-        public void SendNewPlantMessage(MessageVm message)
+        public void SendMessage(MessageVm message)
         {
             var sendMessage = _mapper.Map<Message>(message);
             var messageId = _messageRepo.AddMessage(sendMessage);
@@ -186,7 +190,7 @@ namespace VFHCatalogMVC.Application.Services
                 messageInfo.isAnswer = true;
                 _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);           
 
-                SendNewPlantUserMessage(messageId, message.PlantId, messageInfo.UserId, indexPlant);
+                SendPlantMessage(messageId, message.PlantId, messageInfo.UserId, indexPlant);
 
                 var messageAnswerVm = new MessageAnswerVm() { MessageId = message.messageIdisAnswer, MessageAnswerId = messageId };
                 var messageAnswer = _mapper.Map<MessageAnswer>(messageAnswerVm);
@@ -203,21 +207,21 @@ namespace VFHCatalogMVC.Application.Services
                     var admin = _userManager.GetUsersInRoleAsync("Admin");
                     var adminUser = admin.Result.FirstOrDefault(e => e.UserName.StartsWith("admin"));
 
-                    SendNewPlantUserMessage(messageId, message.PlantId, adminUser.Id, indexPlant);
+                    SendPlantMessage(messageId, message.PlantId, adminUser.Id, indexPlant);
                   
                 }
                 else
                 {
                     var userReceiver = _messageRepo.GetPlantOwnerId(message.PlantId);
 
-                    SendNewPlantUserMessage(messageId, message.PlantId, userReceiver,indexPlant);
+                    SendPlantMessage(messageId, message.PlantId, userReceiver,indexPlant);
                   
                 }
 
             }
 
         }
-        public void SendNewPlantUserMessage(int messageId, int plantId, string userId, IndexPlantType index)
+        public void SendPlantMessage(int messageId, int plantId, string userId, IndexPlantType index)
         {
             var messageReceiver = new MessageReceiverVm() { MessageId = messageId, UserId = userId };
 
