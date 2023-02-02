@@ -109,7 +109,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 if (pageSize == 0)
                 {
-                    pageSize = 10;
+                    pageSize = 30;
                 }
                 if (countryId != 0)
                 {
@@ -151,7 +151,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 if (pageSize == 0)
                 {
-                    pageSize = 10;
+                    pageSize = 30;
                 }
                 if (countryId != 0)
                 {

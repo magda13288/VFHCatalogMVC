@@ -18,6 +18,9 @@ namespace VFHCatalogMVC.Domain.Interface
         void UpdateMassageStatusIsAnswer(Message message);
         void AddMessageAnswer(MessageAnswer message);
         int GetMessageAnswerIdById(int id);
-
+        IQueryable<Message> GetSentMessages(string userId);
+        IQueryable<MessageReceiver> GetReceivedMessages(string userId);
+        MessageReceiver GetMessageReceiverByMessageId(int id);
+              
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -52,7 +53,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 if (pageSize == 0)
                 {
-                    pageSize = 10;
+                    pageSize = 30;
                 }
                 if (typeId != 0)
                     ViewBag.TypeId = typeId;
@@ -95,7 +96,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 if (pageSize == 0)
                 {
-                    pageSize = 10;
+                    pageSize = 30;
                 }
                 if (typeId != 0)
                     ViewBag.TypeId = typeId;
@@ -139,7 +140,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 if (pageSize == 0)
                 {
-                    pageSize = 10;
+                    pageSize = 30;
                 }
                 if (typeId != 0)
                     ViewBag.TypeId = typeId;

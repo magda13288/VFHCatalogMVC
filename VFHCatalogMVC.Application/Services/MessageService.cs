@@ -30,7 +30,7 @@ namespace VFHCatalogMVC.Application.Services
             _helperService = helperService;
         }
 
-        public MessageVm FillMessageProperties(int id, string user, IndexPlantType index)
+        public MessageVm FillMessageProperties(/*int plantId, */int id, string user, IndexPlantType index, string ownerId)
         {
             var plantIdForMessage = _messageRepo.GetPlantId(id);
             var userInfo = _userManager.FindByNameAsync(user);
@@ -41,7 +41,7 @@ namespace VFHCatalogMVC.Application.Services
                 message.UserId = userInfo.Result.Id;
                 message.AddedDate = DateTime.Now;
                 message.PlantId = plantIdForMessage;
-                message.messageIdisAnswer = id;
+                message.MessageIdisAnswer = id;
                 message.isSeed = index.seeds;
                 message.isSeedling = index.seedlings;
                 message.isNewPlant = index.newPlant;
@@ -55,6 +55,7 @@ namespace VFHCatalogMVC.Application.Services
                 message.isSeed = index.seeds;
                 message.isSeedling = index.seedlings;
                 message.isNewPlant = index.newPlant;
+                message.OwnerId = ownerId;
             }
 
             return message;
@@ -73,12 +74,74 @@ namespace VFHCatalogMVC.Application.Services
             return messageVm;
         }
 
+        public MessageForListVm GetMessages(int pageSize, int? pageNo, MessageDisplay messageDisplay, string userName)
+        {
+            var userInfo = _userManager.FindByNameAsync(userName);
+          
+            var messages = new List<MessageReceiverVm>();
+            var sentMessages = new List<MessageVm>();
+            var receivedMessages = new List<MessageVm>();
+            var messagesToShow = new List<MessageVm>();
+            int messagesCount = 0;
+
+            if (messageDisplay.Sent == true)
+            {
+                sentMessages = _messageRepo.GetSentMessages(userInfo.Result.Id).ProjectTo<MessageVm>(_mapper.ConfigurationProvider).ToList();
+
+                foreach (var item in sentMessages)
+                {
+                    var user = _userManager.FindByIdAsync(item.UserId);
+                    item.UserName = user.Result.UserName;
+                    item.AccountName = user.Result.AccountName;
+
+                    var messageReveiver = _messageRepo.GetMessageReceiverByMessageId(item.Id);
+                    var messageReceiverVm = _mapper.Map<MessageReceiverVm>(messageReveiver);
+                    var receiverUserInfo = _userManager.FindByIdAsync(messageReceiverVm.UserId);
+                    messageReceiverVm.UserName = receiverUserInfo.Result.UserName;
+                    messageReceiverVm.AccountName = receiverUserInfo.Result.AccountName;
+
+                    item.MessageReceiver = messageReceiverVm;
+                }
+                messagesToShow = sentMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                messagesCount = sentMessages.Count;
+            }
+            else
+            {
+                if(messageDisplay.Received == true) 
+                {
+                    messages = _messageRepo.GetReceivedMessages(userInfo.Result.Id).ProjectTo<MessageReceiverVm>(_mapper.ConfigurationProvider).ToList();
+
+                    foreach (var item in messages)
+                    {
+                       var messageInfo = _messageRepo.GetMessageById(item.Id);
+                       var messageVm = _mapper.Map<MessageVm>(messageInfo);
+                       var user = _userManager.FindByIdAsync(item.UserId);
+                       messageVm.UserName = user.Result.UserName;
+                       messageVm.AccountName = user.Result.AccountName;
+                       receivedMessages.Add(messageVm);
+                       
+                    }
+
+                    messagesCount = receivedMessages.Count;
+                    messagesToShow = receivedMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                }
+            }
+
+            var messagesNewPlantsList = new MessageForListVm()
+            {
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                Message = messagesToShow,
+                Count = messagesCount
+
+            };
+
+            return messagesNewPlantsList;
+
+        }
+
         public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, IndexPlantType index, string userName)
         {
-            if (plantId == 0)
-            {
-                
-            }
 
             var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<PlantMessageVm>(_mapper.ConfigurationProvider).ToList();
 
@@ -184,40 +247,46 @@ namespace VFHCatalogMVC.Application.Services
             var messageId = _messageRepo.AddMessage(sendMessage);
             var indexPlant = new IndexPlantType() { seeds = message.isSeed, seedlings = message.isSeedling, newPlant = message.isNewPlant };
 
-            if (message.messageIdisAnswer != 0)
+            if (message.MessageIdisAnswer != 0)
             {
-                var messageInfo = _messageRepo.GetMessageById(message.messageIdisAnswer);
+                var messageInfo = _messageRepo.GetMessageById(message.MessageIdisAnswer);
                 messageInfo.isAnswer = true;
                 _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);           
 
                 SendPlantMessage(messageId, message.PlantId, messageInfo.UserId, indexPlant);
 
-                var messageAnswerVm = new MessageAnswerVm() { MessageId = message.messageIdisAnswer, MessageAnswerId = messageId };
+                var messageAnswerVm = new MessageAnswerVm() { MessageId = message.MessageIdisAnswer, MessageAnswerId = messageId };
                 var messageAnswer = _mapper.Map<MessageAnswer>(messageAnswerVm);
                 _messageRepo.AddMessageAnswer(messageAnswer);
             }
-
-            if (messageId != 0 && message.messageIdisAnswer == 0)
+            
+            if(message.isSeed == false && message.isSeedling == false)
             {
-                var user = _userManager.FindByIdAsync(message.UserId);
-                var userRole = _userManager.IsInRoleAsync(user.Result, "Admin");
-                //warunek dla private user 
-                if (userRole.Result == false)
+                if (messageId != 0 && message.MessageIdisAnswer == 0)
                 {
-                    var admin = _userManager.GetUsersInRoleAsync("Admin");
-                    var adminUser = admin.Result.FirstOrDefault(e => e.UserName.StartsWith("admin"));
+                    var user = _userManager.FindByIdAsync(message.UserId);
+                    var userRole = _userManager.IsInRoleAsync(user.Result, "Admin");
+                    //warunek dla private user 
+                    if (userRole.Result == false)
+                    {
+                        var admin = _userManager.GetUsersInRoleAsync("Admin");
+                        var adminUser = admin.Result.FirstOrDefault(e => e.UserName.StartsWith("admin"));
 
-                    SendPlantMessage(messageId, message.PlantId, adminUser.Id, indexPlant);
-                  
-                }
-                else
-                {
-                    var userReceiver = _messageRepo.GetPlantOwnerId(message.PlantId);
+                        SendPlantMessage(messageId, message.PlantId, adminUser.Id, indexPlant);
 
-                    SendPlantMessage(messageId, message.PlantId, userReceiver,indexPlant);
-                  
-                }
+                    }
+                    else
+                    {
+                        var userReceiver = _messageRepo.GetPlantOwnerId(message.PlantId);
 
+                        SendPlantMessage(messageId, message.PlantId, userReceiver, indexPlant);
+
+                    }
+                }           
+            }
+            else
+            {
+                SendPlantMessage(messageId, message.PlantId, message.OwnerId, indexPlant);
             }
 
         }

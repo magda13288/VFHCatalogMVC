@@ -79,5 +79,23 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return message.MessageAnswerId;
 
         }
+
+        public IQueryable<Message> GetSentMessages(string userId)
+        {
+           var messages = _context.Messages.Where(e => e.UserId == userId);
+            return messages;
+        }
+
+        public IQueryable<MessageReceiver> GetReceivedMessages(string userId)
+        {
+           var messages = _context.MessageReceivers.Where(e => e.UserId == userId);
+           return messages;
+        }
+
+        public MessageReceiver GetMessageReceiverByMessageId(int id)
+        {
+            var message = _context.MessageReceivers.FirstOrDefault(e=>e.MessageId== id);
+            return message;
+        }
     }
 }

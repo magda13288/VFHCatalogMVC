@@ -23,6 +23,12 @@
             <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Roślin zgłoszonych do katalogu</a></li>
           </ul>
         </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="IndexMessages">Wiadomości</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark disabled" asp-area="" asp-controller="Shopping" asp-action="GoToShoppingCart">Koszyk</a>
+            </li>
         }
         @if (User.IsInRole("Admin"))
         {
@@ -32,11 +38,11 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Nowe rośliny</a></li>
-            @*<li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexSeedlings">Sadzonek</a></li>
-            <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="IndexNewPlants">Roślin zgłoszonych do katalogu</a></li>*@
           </ul>
-        </li>
-          
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="IndexMessages">Wiadomości</a>
+            </li>
+        </li>        
         }
         <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

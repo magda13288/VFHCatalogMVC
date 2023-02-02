@@ -59,8 +59,8 @@
             <button type="button" class="btn btn-info" onclick="window.location= '@Url.Action( "Edit", "Plants",new {id=item.PlantId})'">Edytuj</button>
             <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.PlantId})'">Szczegóły</button>
             <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId,newPlant=true})'">Wiadomości</button>
-            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.PlantId,newPlant=true})">Wyślij wiadomość</button> 
-            @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendPlantMessage/{item.PlantId}")">Wyślij wiadomość</button>*@
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.PlantId, newPlant=true})">Wyślij wiadomość</button>
+             @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendPlantMessage/{item.PlantId}")">Wyślij wiadomość</button>*@
              @if (User.IsInRole("Admin"))
               {
                <button type="button" class="btn btn-success" onclick="window.location= '@Url.Action( "ActivatePlant", "Plants",new {id=item.PlantId})'">Aktywuj</button>
@@ -91,7 +91,7 @@
                 </tr>
             </table>
             <input type="hidden" name="pageNo" id="pageNo" />
-            <input type="hidden" name="pageSize" id="pageSize" value="10" />
+            <input type="hidden" name="pageSize" id="pageSize" value="30" />
         </div>
     </div>
 </form>

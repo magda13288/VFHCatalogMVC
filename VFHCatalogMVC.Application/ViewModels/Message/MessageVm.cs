@@ -17,11 +17,11 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public DateTime AddedDate { get; set; }
         public bool isAnswer { get; set; }
         [NotMapped]
-        public int messageIdisAnswer { get; set; }
+        public int MessageIdisAnswer { get; set; }
         [NotMapped]
         public int PlantId { get; set; }
         [NotMapped]
-        public MessageReceiver MessageReceiver { get; set; }
+        public MessageReceiverVm MessageReceiver { get; set; }
         [NotMapped]
         public string UserName { get; set; }
         [NotMapped]
@@ -32,6 +32,8 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public bool isSeedling { get; set; }
         [NotMapped]
         public bool isNewPlant { get; set; }
+        [NotMapped]
+        public string OwnerId { get; set; }
 
         public void Mapping(Profile profile)
         {

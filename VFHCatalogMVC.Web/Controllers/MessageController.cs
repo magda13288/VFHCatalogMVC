@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Message;
@@ -23,11 +24,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
-
-        public IActionResult SendPlantMessage(int id, bool seeds, bool seedlings, bool newPlant)
+        //id -> PlantSeedId or PlantSeedlindId
+        public IActionResult SendPlantMessage(/*int plantId, */int id, bool seeds, bool seedlings, bool newPlant,string ownerId)
         {
             var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
-            var message = _messageService.FillMessageProperties(id, User.Identity.Name, indexPlant);
+            var message = _messageService.FillMessageProperties(/*plantId,*/id, User.Identity.Name, indexPlant, ownerId);
 
             return PartialView("SendPlantMessageModal", message);
         }
@@ -60,7 +61,7 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet,HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
         public IActionResult IndexPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
         {
@@ -71,7 +72,7 @@ namespace VFHCatalogMVC.Web.Controllers
             }
             if (pageSize == 0)
             {
-                pageSize = 10;
+                pageSize = 30;
             }
 
             var messageDisplay = _helperService.MessagesToView(type);
@@ -79,6 +80,26 @@ namespace VFHCatalogMVC.Web.Controllers
 
             var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay, index, User.Identity.Name);
             // return PartialView("PlantMessagesFromAdminModal",messages);
+            return View(messages);
+        }
+
+        [HttpGet,HttpPost]
+        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        public IActionResult IndexMessages(int pageSize, int? pageNo, int type, /*IndexPlantType index,*/ string userName)
+        {
+            if (!pageNo.HasValue)
+            {
+                pageNo = 1;
+            }
+            if (pageSize == 0)
+            {
+                pageSize = 30;
+            }
+
+            var messageDisplay = _helperService.MessagesToView(type);
+
+            var messages = _messageService.GetMessages(pageSize, pageNo, messageDisplay, User.Identity.Name);
+
             return View(messages);
         }
     }

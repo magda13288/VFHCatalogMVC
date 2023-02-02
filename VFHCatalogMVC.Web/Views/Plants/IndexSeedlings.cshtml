@@ -114,7 +114,7 @@
             <td>
                 @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
                 {
-                  <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.Id,seedlings=true})">Wyślij wiadomość</button>
+                                <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.PlantId, ownerId =item.UserId, seedlings=true})">Wyślij wiadomość</button>
                 }
             </td>
         </tr>
@@ -141,7 +141,7 @@
                 </tr>
             </table>
             <input type="hidden" name="pageNo" id="pageNo" />
-            <input type="hidden" name="pageSize" id="pageSize" value="10" />
+            <input type="hidden" name="pageSize" id="pageSize" value="30" />
         </div>
         </div>
 </form>
