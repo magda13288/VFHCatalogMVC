@@ -30,7 +30,7 @@ namespace VFHCatalogMVC.Application.Services
             _helperService = helperService;
         }
 
-        public MessageVm FillMessageProperties(/*int plantId, */int id, string user, IndexPlantType index, string ownerId)
+        public MessageVm FillMessageProperties(int id, string user, IndexPlantType index, string ownerId)
         {
             var plantIdForMessage = _messageRepo.GetPlantId(id);
             var userInfo = _userManager.FindByNameAsync(user);

@@ -19,8 +19,16 @@
                     <select id="ddlRegion" asp-for="Address.RegionId" name="regionId" class="form-control text-center" aria-label="Region" asp-items="@(new SelectList(ViewBag.RegionsList,"Value", "Text", selectedValue: ViewBag.RegionId))"></select>
            <label asp-for="Address.CityId" class="control-label me-2">Miasto</label>
                     <select id="ddlCity" asp-for="Address.CityId" name="CityId" class="form-control  text-center" aria-label="City" asp-items="@(new SelectList(ViewBag.CitiesList,"Value", "Text",selectedValue:ViewBag.CityId))"></select>
-            <label asp-for="isCompany" class="control-label text-md-center">Tylko firmy</label>
-                    @Html.CheckBoxFor(m=>Model.isCompany, new { @class = "checkbox" , id="isCompany", name="isCompany"})
+                    @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
+                    {
+                        <label asp-for="isCompany" class="control-label text-md-center">Tylko firmy</label>
+                        @Html.CheckBoxFor(m=>Model.isCompany, new { @class = "checkbox" , id="isCompany", name="isCompany"})
+                    }
+                    else
+                    {
+                        <label asp-for="isCompany" class="control-label text-md-center">Tylko firmy</label>
+                        @Html.CheckBoxFor(m=>Model.isCompany, new { @class = "checkbox" , id="isCompany", name="isCompany", disabled="disabled"})
+                    }
             <button class="btn btn-outline-success" type="submit" id="Submit">Szukaj</button>
        </div>      
 </nav>
@@ -28,7 +36,7 @@
 <table class="table-striped table-hover table-light">
             <thead class ="thead-light">
         <tr class="text-center">
-             <th class="col-md-3">
+             <th class="col-md-2">
                         Użytkownik
             </th>
             @if (Model.isCompany == true)
@@ -52,6 +60,10 @@
               <th class="col-md-3">
                      Opinie
             </th>
+                    <th class="col-md-1">
+                        Cena
+                    </th>
+                    <th></th>
             <th></th>
         </tr>
     </thead>
@@ -111,6 +123,9 @@
                                 </div>
                             </div>
             </td>
+                        <td>
+                            @Html.DisplayFor(modelItem=> item.Price)
+                        </td>
             <td>
                 @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
                 {

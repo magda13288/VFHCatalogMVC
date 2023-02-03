@@ -40,6 +40,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         [NotMapped]
         public List<PlantOpinionsVm> PlantOpinions { get; set; }
 
+        [NotMapped]
+        public int Price { get; set; }
+
         public void Mapping(Profile profile)
         {
             profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeed, PlantSeedVm>().ReverseMap();
