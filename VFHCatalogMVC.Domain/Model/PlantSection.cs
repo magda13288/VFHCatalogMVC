@@ -14,6 +14,7 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual ICollection<GrowthType> GrowthTypes { get; set; }
         public virtual ICollection<FruitSize> FruitSizes { get; set; }
         public virtual ICollection<FruitType> FruitTypes { get; set; }
+        public virtual ICollection<Filters> Filters { get; set; }
     }
 }
 

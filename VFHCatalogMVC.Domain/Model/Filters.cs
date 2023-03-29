@@ -4,11 +4,15 @@ using System.Text;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantDetail
+    public class Filters
     {
-        public int Id { get; set; }       
-        public string Description { get; set; }
-        public string PlantPassportNumber { get; set; }
+        public int Id { get; set; }
+        public int PlantTypeId { get; set; }
+        public virtual PlantType PlantType { get; set; }
+        public int? PlantGroupId { get; set; }
+        public virtual PlantGroup PlantGroup { get; set; }
+        public int? PlantSectionId { get; set; }
+        public virtual PlantSection PlantSection { get; set; }
         public int? ColorId { get; set; }
         public virtual Color Color { get; set; }
         public int? DestinationId { get; set; }
@@ -29,16 +33,7 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual Position Position { get; set; }
         public int? AdditionalFeaturesId { get; set; }
         public virtual AdditionalFeatures AdditionalFeatures { get; set; }
-
-        public int PlantRef { get; set; }
-        public Plant Plant { get; set; }
-
-        public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; }
-        public ICollection<PlantDestination> PlantDestinations { get; set; }
-        public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }
-        public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
-        public virtual ICollection<PlantDetailsImages> PlantDetailsImages { get; set; }
-        public ICollection<PlantPosition> PlantPositions { get; set; } 
+   
 
     }
 }

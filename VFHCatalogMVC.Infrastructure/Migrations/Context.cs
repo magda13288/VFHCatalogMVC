@@ -41,6 +41,12 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<MessageAnswer> MessageAnswers { get; set; }
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
         public DbSet<PlantMessage> PlantMessages { get; set; }
+        public DbSet<PlantPosition> PlantPositions { get; set; }
+        public DbSet<Height> Heights { get; set; }
+        public DbSet<AdditionalFeatures> AdditionalFeatures { get; set; }
+        public DbSet<Position> Positions { get; set; }
+        public DbSet<Pollination> Pollinations { get; set; }
+        public DbSet<Filters> Filters { get; set; }
   
         public Context(DbContextOptions options) : base(options)
         {
@@ -300,6 +306,45 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(e=>e.PlantMessages)
                 .HasForeignKey(e => e.MessageId);
             });
+
+            builder.Entity<PlantPosition>(entity =>
+            {
+                entity.HasKey(e => new { e.PlantDetailId, e.PositionId });
+
+                entity.HasOne(e => e.PlantDetail)
+                .WithMany(e => e.PlantPositions)
+                .HasForeignKey(e => e.PlantDetailId);
+
+                entity.HasOne(e => e.Position)
+                .WithMany(e=> e.PlantPositions)
+                .HasForeignKey(e=>e.PositionId);
+               
+            });
+
+            //builder.Entity<Position>().HasData(
+
+            //    new Position {Name = "Słoneczne"},
+            //    new Position {Name = "Półcień" },
+            //    new Position {Name = "Cień" }
+            //    );
+
+            //builder.Entity<Height>().HasData(
+
+            //    new Height {Name = "0,7m - 1,2m" },
+            //    new Height {Name = "0,8m - 1,3m" },
+            //    new Height {Name = "1m - 1,8m" },
+            //    new Height {Name = "1,2m - 1,6m" },
+            //    new Height {Name = "1,5m - 2,5m" },
+            //    new Height {Name = "powyżej 2m" }
+            //    );
+
+            //builder.Entity<AdditionalFeatures>().HasData(
+
+            //    new AdditionalFeatures { Name = "F1" },
+            //    new AdditionalFeatures { Name = "Mrozoodpornośc" },
+            //    new AdditionalFeatures { Name = "Bezpieczne dla zwierząt" },
+            //    new AdditionalFeatures { Name = "Nasiona na taśmie" }
+            //    );
         }
     }
 }
