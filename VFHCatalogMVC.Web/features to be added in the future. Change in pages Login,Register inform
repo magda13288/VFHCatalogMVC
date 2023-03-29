@@ -9,3 +9,11 @@
 9. Add option to load images in method Plant/AddSeedling
 10. Add chat with using SingalR
 11. Add function which check that has there been any new messages(display info by button "Wiadomoœci" in sections IndexSeed,IndexSeedling,IndexNewPlant ->UserController)
+12. More filters for plants. For example for tamatos will be available filters: 
+
+* destination: dropDownlist-> 1)ground
+							  2) under cowers
+							  3)pots
+* seeds: 1)F1
+         2)traditional 
+

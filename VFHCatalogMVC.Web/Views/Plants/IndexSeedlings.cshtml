@@ -7,7 +7,10 @@
 
 <h1>Sadzonki użytkowników</h1>
 
-<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeedling/{Model.PlantId}")">+Sadzonki</button>
+@if (User.IsInRole("PrivateUser") || User.IsInRole("Admin"))
+{
+    <button type="button" class="btn btn-success" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeedling/{Model.PlantId}")">+Sadzonki</button>
+}
 <form asp-action="IndexSeedlings" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">

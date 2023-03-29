@@ -86,7 +86,7 @@
                             <td>
                                 <button type="button" class="btn btn-info" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeedling/{item.Id}")">Edytuj</button>
                                 <button type="button" class="btn btn-danger" onclick="window.location= '@Url.Action( "DeleteSeedling", "User",new {id=item.Id})'">Usuń</button>
-                                <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "SendPlantMessage", "Message",new {id=item.Id,seedlings=true})'">Wiadomości</button>
+                                <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId,seedlings=true})'">Wiadomości</button>
                             </td>
                         </tr>
                     }

@@ -7,7 +7,10 @@
 
 <h1>Nasiona użytkowników</h1>
 
-<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{Model.PlantId}")">+Nasiona</button>
+@if (User.IsInRole("PrivateUser") || User.IsInRole("Admin"))
+{
+    <button type="button" class="btn btn-success" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{Model.PlantId}")">+Nasiona</button>
+}
 <form asp-action="IndexSeeds" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
@@ -55,14 +58,14 @@
                Opis
             </th>
              <th class ="col-md-2">
-               Data dodania
-            </th>
+                        <a asp-action="IndexSeeds" asp-route-sortOrder="@ViewData["DateSortParam"]">Data dodania</a>
+                    </th>
             <th class="col-md-3">
                Opinie
             </th>
              <th class="col-md-1">
-                Cena
-            </th>
+                        <a asp-action="IndexSeeds" asp-route-sortOrder="@ViewData["PriceSortParam"]">Cena</a>
+                    </th>
             <th></th>
         </tr>
     </thead>

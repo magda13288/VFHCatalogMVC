@@ -6,6 +6,7 @@
 <div id="PlaceHolderHere"></div>
 
 <h1>Witaj w katalogu roślin uprawnych</h1>
+
 @if (User.IsInRole("Admin") || User.IsInRole("PrivateUser") || User.IsInRole("Company"))
 {
     <p>
@@ -106,7 +107,7 @@
             </tr>
     </table>
     <input type="hidden" name="pageNo" id="pageNo"/>
-    <input type="hidden" name="pageSize" id="pageSize" value="30" />
+    <input type="hidden" name="pageSize" id="pageSize" value="3" />
 </div>
     </div>
 </form>
@@ -119,8 +120,8 @@
             document.getElementById("pageNo").value = index;
             document.forms[0].submit();
         }
-
-         $(function () {
+        
+        $(function () {
         $("#ddlType").change(function () {
             $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
                 var row = "";

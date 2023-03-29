@@ -94,11 +94,7 @@ namespace VFHCatalogMVC.Application.Services
                     item.UserName = user.Result.UserName;
                     item.AccountName = user.Result.AccountName;
 
-                    var messageReveiver = _messageRepo.GetMessageReceiverByMessageId(item.Id);
-                    var messageReceiverVm = _mapper.Map<MessageReceiverVm>(messageReveiver);
-                    var receiverUserInfo = _userManager.FindByIdAsync(messageReceiverVm.UserId);
-                    messageReceiverVm.UserName = receiverUserInfo.Result.UserName;
-                    messageReceiverVm.AccountName = receiverUserInfo.Result.AccountName;
+                    var messageReceiverVm = GetMessageReceiverInfo(item.Id);
 
                     item.MessageReceiver = messageReceiverVm;
                 }
@@ -113,11 +109,12 @@ namespace VFHCatalogMVC.Application.Services
 
                     foreach (var item in messages)
                     {
-                       var messageInfo = _messageRepo.GetMessageById(item.Id);
+                       var messageInfo = _messageRepo.GetMessageById(item.MessageId);
                        var messageVm = _mapper.Map<MessageVm>(messageInfo);
-                       var user = _userManager.FindByIdAsync(item.UserId);
+                       var user = _userManager.FindByIdAsync(messageVm.UserId);
                        messageVm.UserName = user.Result.UserName;
                        messageVm.AccountName = user.Result.AccountName;
+                       
                        receivedMessages.Add(messageVm);
                        
                     }
@@ -168,6 +165,7 @@ namespace VFHCatalogMVC.Application.Services
             var receivedMessages = new List<MessageVm>();
             var sentMessages = new List<MessageVm>();   
             var messagesToShow = new List<MessageVm>();
+            var allMessages = new List<MessageVm>();
 
             if (messagesList != null)
             {
@@ -192,6 +190,7 @@ namespace VFHCatalogMVC.Application.Services
                     {
                         if (item.UserId != userInfo.Result.Id)
                         {
+                            
                             receivedMessages.Add(item);
                         }
                     }
@@ -206,6 +205,9 @@ namespace VFHCatalogMVC.Application.Services
                         {
                             if (item.UserId == userInfo.Result.Id)
                             {
+                                var messageReceiverVm = GetMessageReceiverInfo(item.Id);
+
+                                item.MessageReceiver = messageReceiverVm;
                                 sentMessages.Add(item);
                             }
                         }
@@ -216,8 +218,23 @@ namespace VFHCatalogMVC.Application.Services
                     {
                         if (messageDisplay.ViewAll == true)
                         {
-                            messagesDetails.OrderByDescending(x => x.AddedDate);
-                            messagesToShow = messagesDetails.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            foreach (var item in messagesDetails)
+                            {
+                                if (item.UserId == userInfo.Result.Id)
+                                {
+                                    var messageReceiverVm = GetMessageReceiverInfo(item.Id);
+
+                                    item.MessageReceiver = messageReceiverVm;
+                                    allMessages.Add(item);
+                                }
+                                else
+                                {
+                                    allMessages.Add(item);
+                                }
+                            }
+
+                            allMessages.OrderByDescending(x => x.AddedDate);
+                            messagesToShow = allMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
                         }
                     }
                 }
@@ -235,6 +252,16 @@ namespace VFHCatalogMVC.Application.Services
             return messagesNewPlantsList;
         }
 
+        public MessageReceiverVm GetMessageReceiverInfo(int messageId)
+        {
+            var messageReveiver = _messageRepo.GetMessageReceiverByMessageId(messageId);
+            var messageReceiverVm = _mapper.Map<MessageReceiverVm>(messageReveiver);
+            var receiverUserInfo = _userManager.FindByIdAsync(messageReceiverVm.UserId);
+            messageReceiverVm.UserName = receiverUserInfo.Result.UserName;
+            messageReceiverVm.AccountName = receiverUserInfo.Result.AccountName;
+
+            return messageReceiverVm;
+        }
         public int GetPlantIdForMessage(int id)
         {
             var plantId = _messageRepo.GetPlantId(id);

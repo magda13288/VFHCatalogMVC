@@ -26,9 +26,9 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="IndexMessages">Wiadomości</a>
             </li>
-            <li class="nav-item">
+           @* <li class="nav-item">
                 <a class="nav-link text-dark disabled" asp-area="" asp-controller="Shopping" asp-action="GoToShoppingCart">Koszyk</a>
-            </li>
+            </li>*@
         }
         @if (User.IsInRole("Admin"))
         {

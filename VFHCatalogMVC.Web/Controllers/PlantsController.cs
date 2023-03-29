@@ -58,7 +58,7 @@ namespace VFHCatalogMVC.Web.Controllers
         public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
-            {
+            {        
                 var types = _plantService.GetPlantTypes();
                 ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
@@ -95,10 +95,12 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet,HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string sortOrder)
         {
             try
             {
+                ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
+                ViewData["PriceSortParam"] = sortOrder == "Price" ? "price_desc" : "";
                 ViewBag.CountriesList = _helperService.Countries();
                 ViewBag.RegionsList = _helperService.Regions(countryId);
                 ViewBag.CitiesList = _helperService.Cities(regionId);

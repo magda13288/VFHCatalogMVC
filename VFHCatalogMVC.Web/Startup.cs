@@ -33,6 +33,8 @@ using static VFHCatalogMVC.Application.ViewModels.Plant.PlantOpinionsVm;
 using VFHCatalogMVC.Application.ViewModels.User;
 using static VFHCatalogMVC.Application.ViewModels.User.UserSeedVm;
 using static VFHCatalogMVC.Application.ViewModels.User.UserSeedlingVm;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace VFHCatalogMVC.Web
 {
@@ -60,9 +62,25 @@ namespace VFHCatalogMVC.Web
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<Context>();
 
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            //{
+            //    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true, //waliduje cykl ¿ycia tokenu, za kazdym razem jak bedzie tworzony token to bede wskazywac na jak dlugo bedzie on wystarczal
+            //        ValidateIssuerSigningKey = true, //podpis elektroniczny 
+            //        //sprawdza czy klient pochodzi z odpowiedniej strony 
+            //        ValidIssuer = Configuration["Jwt:Issuer"],
+            //        ValidAudience = Configuration["Jwt:Issuer"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //tworzy podpis elektroniczny klienta
+            //    };
+
+            //});
 
             services.AddApplication();
             services.AddInfrastructure();
+           
 
             services.AddControllersWithViews().AddFluentValidation(options =>
             {

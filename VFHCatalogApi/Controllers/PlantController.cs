@@ -105,7 +105,7 @@ namespace VFHCatalogApi.Controllers
                     viewBagCityId = cityId;
                 }
 
-                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany);
+                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return Ok(model);
             }
             catch (Exception ex)
