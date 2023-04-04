@@ -161,6 +161,45 @@ namespace VFHCatalogMVC.Web.Controllers
 
         }
 
+        [HttpGet, HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult IndexAdminFilters(int pageSize, int? pageNo, int typeId, int? groupId, int? sectionId)
+        {
+            try
+            {
+                var types = _plantService.GetPlantTypes();
+                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                var groupsList = GetPlantGroupsList(typeId);
+                ViewBag.GroupsList = groupsList.Value;
+                var sectionsList = GetPlantSectionsList(groupId, typeId);
+                ViewBag.SectionsList = sectionsList.Value;
+
+                if (!pageNo.HasValue)
+                {
+                    pageNo = 1;
+                }
+                if (pageSize == 0)
+                {
+                    pageSize = 30;
+                }
+                if (typeId != 0)
+                    ViewBag.TypeId = typeId;
+                if (groupId != 0)
+                    ViewBag.GroupId = groupId;
+                if (sectionId != 0)
+                    ViewBag.SectionId = sectionId;
+
+                var model = _userService.GetAllFilters(pageSize, pageNo, typeId, groupId, sectionId);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult EditSeed(int id)
@@ -345,7 +384,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetPlantSectionsList(int groupId, int typeId)
+        public JsonResult GetPlantSectionsList(int? groupId, int typeId)
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();

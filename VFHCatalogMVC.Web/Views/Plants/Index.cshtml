@@ -24,11 +24,23 @@
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
            <label asp-for="PlantForList.SectionId" class="control-label md-3">Sekcja</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
-               <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Szukaj</button>
+               <input class="form-control md-3" asp-for="SearchString"  name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
+                    <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top" type="submit">Szukaj</button>
        </div>      
 </nav>
     </div>
+    <p></p>
+    <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                Filtry
+            </a>
+     </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    Filtry
+                </div>
+            </div>   
+
 <div class="row">
 <table class="table-striped table-hover table-light" id="plantsTable">
     <thead class="thead-light">

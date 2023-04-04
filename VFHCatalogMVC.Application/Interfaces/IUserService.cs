@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
+using VFHCatalogMVC.Application.ViewModels.Filters;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Model;
@@ -35,7 +36,6 @@ namespace VFHCatalogMVC.Application.Interfaces
         int? GetContactDetailForSeedling(int id);
         void AddNewUserPlant(int plantId,string userId);
         NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
-
-
+        List<FiltersListToShowVm> GetAllFilters(int pageSize, int? pageNo, int typeId, int? groupId, int? sectionId);
     }
 }

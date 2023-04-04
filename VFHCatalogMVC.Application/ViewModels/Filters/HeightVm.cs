@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Filters
 {
-    public class GrowingSeazonVm:IMapFrom<VFHCatalogMVC.Domain.Model.GrowingSeazon>
+    public class HeightVm:IMapFrom<VFHCatalogMVC.Domain.Model.Height>
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.GrowingSeazon, GrowingSeazonVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.Height, HeightVm>();
         }
     }
 }

@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Web.Mvc;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
+using VFHCatalogMVC.Application.ViewModels.Filters;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
@@ -681,5 +683,70 @@ namespace VFHCatalogMVC.Application.Services
 
             return newUserPlantsForList;
         }
+
+        public List<FiltersListToShowVm> GetAllFilters(int pageSize, int? pageNo, int typeId, int? groupId, int? sectionId)
+        {
+            if (groupId == 0)
+                groupId = null;
+            if (sectionId == 0)
+                sectionId = null;
+
+            var filters = _userRepo.GetAllFilters(typeId, groupId, sectionId).ProjectTo<FiltersVm>(_mapper.ConfigurationProvider).ToList();
+            var filtersValue = new List<FiltersValuesVm>();
+
+            foreach (var filter in filters)
+            {
+                
+             
+            }
+
+
+            throw new NotImplementedException();
+        }
+        //* - select all records from table
+        public List<FiltersValuesVm> GetFiltersValues(List<FiltersVm> filters)
+        {
+            var filtersValue = new List<FiltersValuesVm>();
+            
+          
+                foreach (var filter in filters)
+                {
+                    filter.FiltersValues.Id = filter.Id;
+                    filter.FiltersValues.Color = "*";
+                    filter.FiltersValues.Destination = "*";
+                    filter.FiltersValues.Position = "*";
+                    filter.FiltersValues.AdditionalFeatures = "*";
+
+                    if (filter.FruitSizeId != null)
+                    {
+                        filter.FiltersValues.Color = _userRepo.GetFruitSizeValue(filter.FruitSizeId.Value);
+                    }
+                    if (filter.FruitTypeId != null)
+                    {
+                        filter.FiltersValues.FruitType = _userRepo.GetFruitTypeValue(filter.FruitTypeId.Value);
+                    }
+                    if (filter.GrowingSeazonId != null)
+                    {
+                        filter.FiltersValues.GrowingSeazon = _userRepo.GetGrowingSezaonValue(filter.GrowingSeazonId.Value);
+                    }
+                    if (filter.GrowthTypeId != null)
+                    {
+                        filter.FiltersValues.GrowthType = _userRepo.GetGrowthTypeValue(filter.GrowthTypeId.Value);
+                    }
+                    if (filter.HeightId != null)
+                    {
+                        filter.FiltersValues.Height = _userRepo.GetHeightValue(filter.HeightId.Value);
+                    }
+                    if (filter.PollinationId != null)
+                    {
+                        filter.FiltersValues.Pollination = _userRepo.GetPollinationValue(filter.PollinationId.Value);
+                    }
+
+                filtersValue.Add(filter.FiltersValues);
+                }
+
+            return filtersValue;
+        }    
+
     }
 }

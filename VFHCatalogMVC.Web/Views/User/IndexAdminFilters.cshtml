@@ -1,0 +1,85 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Filters.FiltersListToShowVm
+
+@{
+    ViewData["Title"] = "IndexAdminFilters";
+}
+
+<h1>IndexAdminFilters</h1>
+
+<p>
+    <a asp-action="AddFilter" class="btn btn-success">Dodaj filtr</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               Kolor
+            </th>
+            <th>
+               Przeznaczenie
+             </th>
+            <th>
+               Wilkość owocu
+            </th>
+            <th>
+                Typ owocu
+            </th>
+            <th>
+                Okres wegetacji
+            </th>
+            <th>
+                Wysokość
+            </th>
+            <th>
+                Zapylenie
+            </th>
+            <th>
+               Lokalizacja
+            </th>
+            <th>
+                Dodatkowe cechy
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Filters) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Color)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Destination)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.FruitSize)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FruitType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GrowingSeazon)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GrowthType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Height)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pollination)
+                </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.Position)
+                </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.AdditionalFeatures)
+                </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {  id=item.Id }, new { @class = "btn btn-info" }) |
+                @Html.ActionLink("Delete", "Delete",  new { id = item.Id }, new { @class = "btn btn-danger"})
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Filters
 {
-    public class ColorsVm:IMapFrom<VFHCatalogMVC.Domain.Model.Color>
+    public class PositionVm:IMapFrom<VFHCatalogMVC.Domain.Model.Position>
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.Color, ColorsVm>();
+            profile.CreateMap<VFHCatalogMVC.Domain.Model.Position, PositionVm>();
         }
-
     }
 }

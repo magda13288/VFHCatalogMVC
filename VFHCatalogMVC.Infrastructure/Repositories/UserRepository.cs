@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using VFHCatalogMVC.Domain.Interface;
@@ -152,6 +153,50 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             var plants = _context.NewUserPlants;
             return plants;
+        }
+
+        public IQueryable<Filters> GetAllFilters(int typeId, int? groupId, int? sectionId)
+        {
+            var filters = _context.Filters.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+
+            return filters;
+        }
+
+        public string GetFruitSizeValue(int id)
+        {
+            var value = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
+            return value.Name;
+        }
+
+        public string GetFruitTypeValue(int id)
+        {
+            var value = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
+            return value.Name;
+
+        }
+
+        public string GetGrowingSezaonValue(int id)
+        {
+            var value = _context.GrowingSeazons.FirstOrDefault(p => p.Id == id);
+            return value.Name;
+        }
+
+        public string GetGrowthTypeValue(int     id)
+        {
+            var value = _context.GrowthTypes.FirstOrDefault(p => p.Id == id);
+            return value.Name;
+        }
+
+        public string GetHeightValue(int id)
+        {
+            var value = _context.Heights.FirstOrDefault(p => p.Id == id);
+            return value.Name;
+        }
+
+        public string GetPollinationValue(int id)
+        {
+            var value = _context.Pollinations.FirstOrDefault(p => p.Id == id);
+            return value.Name;
         }
     }
 }

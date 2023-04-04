@@ -29,6 +29,13 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId);
         IQueryable<NewUserPlant> GetNewUserPlants(string userId);
         IQueryable<NewUserPlant> GetAllNewUserPlants();
+        IQueryable<Filters> GetAllFilters(int typeId, int? groupId, int? sectionId);
+        string GetFruitSizeValue(int id);
+        string GetFruitTypeValue(int id);
+        string GetGrowingSezaonValue(int id);
+        string GetGrowthTypeValue(int id);
+        string GetHeightValue(int id);
+        string GetPollinationValue(int id);
         //ContactDetail GetContactDetails(string userId);
     }
 }

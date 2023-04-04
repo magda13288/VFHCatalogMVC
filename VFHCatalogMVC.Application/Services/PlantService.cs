@@ -20,6 +20,7 @@ using Microsoft.Extensions.Options;
 using System.Numerics;
 using System.Drawing;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Application.ViewModels.Filters;
 
 namespace VFHCatalogMVC.Application.Services
 {

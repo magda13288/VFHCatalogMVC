@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VFHCatalogMVC.Infrastructure;
 
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20230403150001_ChangesInFiltersTable")]
+    partial class ChangesInFiltersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -476,10 +478,10 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("AdditionalFeatures")
+                    b.Property<bool>("AdditionalFeaturesId")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("AdditionalFeaturesId")
+                    b.Property<int?>("AdditionalFeaturesId1")
                         .HasColumnType("int");
 
                     b.Property<bool>("Color")
@@ -547,7 +549,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdditionalFeaturesId");
+                    b.HasIndex("AdditionalFeaturesId1");
 
                     b.HasIndex("ColorId");
 
@@ -1391,7 +1393,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.AdditionalFeatures", null)
                         .WithMany("Filters")
-                        .HasForeignKey("AdditionalFeaturesId");
+                        .HasForeignKey("AdditionalFeaturesId1");
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Color", null)
                         .WithMany("Filters")

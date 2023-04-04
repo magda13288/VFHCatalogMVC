@@ -5,6 +5,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
+using VFHCatalogMVC.Application.ViewModels.Filters;
 
 namespace VFHCatalogMVC.Application.Interfaces
 {
