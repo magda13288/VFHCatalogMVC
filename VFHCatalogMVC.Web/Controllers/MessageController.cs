@@ -13,13 +13,15 @@ namespace VFHCatalogMVC.Web.Controllers
     {
         private readonly IMessageService _messageService;
         private readonly ILogger<MessageController> _logger;
-        private readonly IHelperService _helperService;
+        private readonly IHelperPlantService _helperPlantService;
+        private readonly IHelperUserService _helperUserService;
 
-        public MessageController(IMessageService messageService, ILogger<MessageController> logger, IHelperService helperService)
+        public MessageController(IMessageService messageService, ILogger<MessageController> logger, IHelperPlantService helperPlantService, IHelperUserService helperUserService)
         {
             _messageService = messageService;
             _logger = logger;
-            _helperService = helperService;
+            _helperPlantService = helperPlantService;
+            _helperUserService = helperUserService;
         }
 
         [HttpGet]
@@ -27,7 +29,7 @@ namespace VFHCatalogMVC.Web.Controllers
         //id -> PlantSeedId or PlantSeedlindId
         public IActionResult SendPlantMessage(/*int plantId, */int id, bool seeds, bool seedlings, bool newPlant,string ownerId)
         {
-            var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
+            var indexPlant = _helperPlantService.GetIndexPlantType(seeds, seedlings, newPlant);
             var message = _messageService.FillMessageProperties(/*plantId,*/id, User.Identity.Name, indexPlant, ownerId);
 
             return PartialView("SendPlantMessageModal", message);
@@ -75,8 +77,8 @@ namespace VFHCatalogMVC.Web.Controllers
                 pageSize = 30;
             }
 
-            var messageDisplay = _helperService.MessagesToView(type);
-            var index = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
+            var messageDisplay = _helperUserService.MessagesToView(type);
+            var index = _helperPlantService.GetIndexPlantType(seeds, seedlings, newPlant);
 
             var messages = _messageService.GetMessagesForPlant(id, pageSize, pageNo, messageDisplay, index, User.Identity.Name);
             // return PartialView("PlantMessagesFromAdminModal",messages);
@@ -96,7 +98,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 pageSize = 30;
             }
 
-            var messageDisplay = _helperService.MessagesToView(type);
+            var messageDisplay = _helperUserService.MessagesToView(type);
 
             var messages = _messageService.GetMessages(pageSize, pageNo, messageDisplay, User.Identity.Name);
 

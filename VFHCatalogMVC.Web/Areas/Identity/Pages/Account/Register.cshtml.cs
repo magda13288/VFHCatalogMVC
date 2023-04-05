@@ -28,6 +28,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IHelperUserService _helperService;
         private readonly IUserService _userService;
 
 
@@ -35,13 +36,14 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IUserService _userRepo)
+            IEmailSender emailSender,IHelperUserService helperService, IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _userService = _userRepo;
+            _helperService = helperService;
+            _userService = userService;
         }
 
         [BindProperty/*(SupportsGet = true)*/]
@@ -85,8 +87,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var countries =  _userService.GetCountries();
-            var countriesList = _userService.FillCountryList(countries);
+            var countries =  _helperService.GetCountries();
+            var countriesList = _helperService.FillCountryList(countries);
             ViewData["Country"] = countriesList;     
         }   
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)

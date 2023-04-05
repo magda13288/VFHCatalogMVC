@@ -45,6 +45,8 @@ namespace VFHCatalogMVC.Domain.Interface
         IQueryable<GrowthType> GetGrowthTypes();
         IQueryable<Destination> GetDestinations();
         IQueryable<Color> GetColors();
+        IQueryable<Position> GetPosition();
+        IQueryable<AdditionalFeatures> GetAdditionalFeatures();
         IQueryable<GrowingSeazon> GetGrowingSeazons();
         IQueryable<FruitSize> GetFruitSizes();
         IQueryable<FruitType> GetFruitTypes();

@@ -18,13 +18,16 @@ namespace VFHCatalogApi.Controllers
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
         private readonly IPlantService _plantService;
+        private readonly IHelperPlantService _helperPlantService;
+        private readonly IHelperUserService _helperUserService;
 
-        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService)
+        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService, IHelperPlantService helperPlantService, IHelperUserService helperUserService)
         {
             _userService = userService;
             _logger = logger;
             _plantService = plantService;
-
+            _helperPlantService = helperPlantService;
+            _helperUserService = helperUserService;
         }
 
         [HttpGet, HttpPost]
@@ -241,7 +244,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetRegions([FromBody]int id)
         {
-            var regions = _userService.GetRegions(id);
+            var regions = _helperService.GetRegions(id);
 
             List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
 
@@ -262,7 +265,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetCities([FromBody] int id)
         {
-            var cities = _userService.GetCities(id);
+            var cities = _helperService.GetCities(id);
 
             List<SelectListItem> citiesList = new List<SelectListItem>();
 

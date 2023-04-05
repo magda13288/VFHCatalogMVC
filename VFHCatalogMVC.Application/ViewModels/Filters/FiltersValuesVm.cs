@@ -7,6 +7,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Filters
     public class FiltersValuesVm
     {
         public int Id { get; set; }
+        public int PlantTypeId { get; set; }
+        public int? PlantGroupId { get; set; }
+        public int? PlantSectionId { get; set; }
         public string Color { get; set; }
         public string Destination { get; set; }
         public string FruitSize { get; set; }

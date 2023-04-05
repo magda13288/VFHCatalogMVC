@@ -341,5 +341,17 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Entry(plant).Property("isNew").IsModified = true;
             _context.SaveChanges();
         }
+
+        public IQueryable<Position> GetPosition()
+        {
+            var positions = _context.Positions;
+            return positions;
+        }
+
+        public IQueryable<AdditionalFeatures> GetAdditionalFeatures()
+        {
+            var list = _context.AdditionalFeatures;
+            return list;
+        }
     }
 }

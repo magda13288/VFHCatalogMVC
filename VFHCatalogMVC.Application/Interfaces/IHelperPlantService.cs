@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using VFHCatalogMVC.Application.HelperClasses;
+using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces
 {
-    public interface IHelperService
+    public interface IHelperPlantService
     {
         List<SelectListItem> PlantTypes();
         List<SelectListItem> PlantColors();
         List<SelectListItem> PlantGrowingSeaznos();
-        List<SelectListItem> Countries();
-        List<SelectListItem> Regions(int countryId);
-        List<SelectListItem> Cities(int regionId);
-        string UserAccountName(Task<ApplicationUser> user);
-        MessageDisplay MessagesToView(int type);
+        List<SelectListItem> PlantDestinations();
+        List<SelectListItem> PlantPositions();
+        List<SelectListItem> PlantAdditionalFeatures();        
         IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant);
+       
     }
 }

@@ -998,7 +998,7 @@ namespace VFHCatalogMVC.Application.Services
             return plantVm;
         }
 
-        public List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList)
+        public List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList,List<DestinationsVm> destinationsList, List<PositionVm> positionsList, List<AdditionalFeaturesVm> additionalFeaturesList)
         {
             List<SelectListItem> propertyList = new List<SelectListItem>();
 
@@ -1025,6 +1025,33 @@ namespace VFHCatalogMVC.Application.Services
                 //propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
                 foreach (var type in seazonList)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            if (destinationsList != null)
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in destinationsList)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            if (positionsList != null)
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in positionsList)
+                {
+                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+                }
+            }
+            if (additionalFeaturesList != null)
+            {
+                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+
+                foreach (var type in additionalFeaturesList)
                 {
                     propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
                 }
@@ -1229,6 +1256,21 @@ namespace VFHCatalogMVC.Application.Services
             var plantToSave = _mapper.Map<Plant>(plantVm);
 
             _plantRepo.ActivatePlant(plantToSave);
+        }
+
+        public List<PositionVm> GetPositions()
+        {
+
+            var positionList = _plantRepo.GetPosition().ProjectTo<PositionVm>(_mapper.ConfigurationProvider).ToList();
+            return positionList;
+        }
+
+        public List<AdditionalFeaturesVm> GetAdditionalFeatures()
+        {
+
+           var additionalFeatures = _plantRepo.GetAdditionalFeatures().ProjectTo<AdditionalFeaturesVm>(_mapper.ConfigurationProvider).ToList();
+            
+            return additionalFeatures;
         }
     }
 }

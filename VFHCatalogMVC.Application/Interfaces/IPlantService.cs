@@ -24,13 +24,15 @@ namespace VFHCatalogMVC.Application.Interfaces
         List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int? sectionId);
         List<DestinationsVm> GetDestinations();
         List<ColorsVm> GetColors();
+        List<PositionVm> GetPositions();
+        List<AdditionalFeaturesVm> GetAdditionalFeatures();
         List<GrowingSeazonVm> GetGrowingSeazons();
         List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId);
         List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId);
         NewPlantVm GetPlantToEdit(int id);
         void UpdatePlant(NewPlantVm model);
         PlantForListVm DeletePlant(int id);
-        List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList);
+        List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList, List<DestinationsVm> destinationsList, List<PositionVm> positionsList, List<AdditionalFeaturesVm> additionalFeaturesList);
         PlantSeedVm FillProperties(int id,string userName);
         PlantSeedlingVm FillPropertiesSeedling(int id, string userName);
         PlantOpinionsVm FillPropertyOpinion(int id, string userName);

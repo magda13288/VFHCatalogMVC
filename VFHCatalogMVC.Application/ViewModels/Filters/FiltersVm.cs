@@ -19,8 +19,8 @@ namespace VFHCatalogMVC.Application.ViewModels.Filters
         public int? FruitSizeId { get; set; }
         public bool FruitTypeVisible { get; set; }
         public int? FruitTypeId { get; set; }
-        public bool GrowingSeazonVisible { get; set; }
-        public int? GrowingSeazonId { get; set; }
+        public bool GrowingSeazon { get; set; }
+        //public int? GrowingSeazonId { get; set; }
         public bool GrowthTypeVisible { get; set; }
         public int? GrowthTypeId { get; set; }
         public bool HeightVisible { get; set; }

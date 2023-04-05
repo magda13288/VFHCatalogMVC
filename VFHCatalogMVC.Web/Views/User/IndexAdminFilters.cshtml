@@ -9,7 +9,24 @@
 <p>
     <a asp-action="AddFilter" class="btn btn-success">Dodaj filtr</a>
 </p>
-<table class="table">
+<form asp-action="IndexAdminFilters" asp-controller="User" method="post">
+    <div class="container-fluid">
+        <div class="row">
+     <nav class="navbar navbar-expand-lg bg-light">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">     
+         <label asp-for="FilterValues.PlantTypeId" class="control-label md-3">Typ</label>
+               <select id="ddlType" asp-for="FilterValues.PlantTypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
+           <label asp-for="FilterValues.PlantGroupId" class="control-label md-3">Grupa</label>
+               <select id="ddlGroup" asp-for="FilterValues.PlantGroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
+           <label asp-for="FilterValues.PlantSectionId" class="control-label md-3">Sekcja</label>
+               <select id="ddlSection" asp-for="FilterValues.PlantSectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
+                    <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top" type="submit">Szukaj</button>
+       </div>      
+</nav>
+    </div>
+    <p></p>
+<div class="row">
+ <table class="table-striped table-hover table-light">
     <thead>
         <tr>
             <th>
@@ -83,3 +100,67 @@
 }
     </tbody>
 </table>
+        </div>
+<div class="row">
+        <table>
+        <tr class="text-left">
+                    @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                    {
+                        <td class="text-left">
+                            @if (i != Model.CurrentPage)
+                            {
+                                    <a href="javascript:PagerClick(@i)">@i</a>
+                            }
+                            else
+                            {
+                                 <span>@i</span>   
+                            }
+                        </td>
+
+                    }
+            </tr>
+    </table>
+    <input type="hidden" name="pageNo" id="pageNo"/>
+    <input type="hidden" name="pageSize" id="pageSize" value="30" />
+</div>
+</div>
+</form>
+
+@section Scripts
+    {
+     <script type="text/javascript">
+
+          function PagerClick(index) {
+              document.getElementById("pageNo").value = index;
+              document.forms[0].submit();
+          }
+
+          $(function () {
+              $("#ddlType").change(function () {
+                  $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
+                      var row = "";
+                      $("#ddlGroup").empty();
+                      $.each(d, function (i, v) {
+                          row += "<option value=" + v.value + ">" + v.text + "</option>";
+                      });
+                      $("#ddlGroup").html(row);
+                  })
+              })
+          })
+          $(function () {
+              $("#ddlGroup").change(function () {
+                  var tId = $("#ddlType").val();
+                  var gId = $("#ddlGroup").val();
+                  $.post('@Url.Action("GetPlantSectionsList")', { groupId: gId, typeId: tId }, function (d) {
+                      var row = "";
+                      $("#ddlSection").empty();
+                      $.each(d, function (i, v) {
+                          row += "<option value=" + v.value + ">" + v.text + "</option>";
+                      });
+                      $("#ddlSection").html(row);
+                  })
+              })
+          })
+    </script>
+
+}

@@ -28,14 +28,16 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly IPlantService _plantService;
         private readonly IUserService _userService;
         private readonly ILogger<PlantsController> _logger;
-        private readonly IHelperService _helperService;
+        private readonly IHelperPlantService _helperPlantService;
+        private readonly IHelperUserService _helperUserService;
 
-        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserService userService, IHelperService helperService)
+        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserService userService, IHelperPlantService helperPlantService, IHelperUserService helperUserService)
         {
             _plantService = plantService;
             _logger = logger;
             _userService = userService;
-            _helperService = helperService;
+            _helperPlantService = helperPlantService;
+            _helperUserService = helperUserService;
         }
 
         //[HttpGet]
@@ -101,9 +103,9 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
                 ViewData["PriceSortParam"] = sortOrder == "Price" ? "price_desc" : "";
-                ViewBag.CountriesList = _helperService.Countries();
-                ViewBag.RegionsList = _helperService.Regions(countryId);
-                ViewBag.CitiesList = _helperService.Cities(regionId);
+                ViewBag.CountriesList = _helperUserService.Countries();
+                ViewBag.RegionsList = _helperUserService.Regions(countryId);
+                ViewBag.CitiesList = _helperUserService.Cities(regionId);
 
                 if (!pageNo.HasValue)
                 {
@@ -143,9 +145,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.CountriesList = _helperService.Countries();
-                ViewBag.RegionsList = _helperService.Regions(countryId);
-                ViewBag.CitiesList = _helperService.Cities(regionId);
+                ViewBag.CountriesList = _helperUserService.Countries();
+                ViewBag.RegionsList = _helperUserService.Regions(countryId);
+                ViewBag.CitiesList = _helperUserService.Cities(regionId);
 
                 if (!pageNo.HasValue)
                 {
@@ -184,9 +186,9 @@ namespace VFHCatalogMVC.Web.Controllers
         [Authorize(Roles = "Admin, PrivateUser, Company")]
         public IActionResult AddPlant()
         {
-            ViewBag.TypesList = _helperService.PlantTypes();
-            ViewBag.ColorsList = _helperService.PlantColors();
-            ViewBag.GrowingSeazons = _helperService.PlantGrowingSeaznos();
+            ViewBag.TypesList = _helperPlantService.PlantTypes();
+            ViewBag.ColorsList = _helperPlantService.PlantColors();
+            ViewBag.GrowingSeazons = _helperPlantService.PlantGrowingSeaznos();
 
             return View();
         }
@@ -206,9 +208,9 @@ namespace VFHCatalogMVC.Web.Controllers
                     if (id == 0)
                     {
                         ViewBag.Message = "Podana nazwa już istnieje";                      
-                        ViewBag.TypesList = _helperService.PlantTypes();
-                        ViewBag.ColorsList = _helperService.PlantColors();
-                        ViewBag.GrowingSeazons = _helperService.PlantGrowingSeaznos();
+                        ViewBag.TypesList = _helperPlantService.PlantTypes();
+                        ViewBag.ColorsList = _helperPlantService.PlantColors();
+                        ViewBag.GrowingSeazons = _helperPlantService.PlantGrowingSeaznos();
                         return View(model);
                     }
                     else
@@ -216,9 +218,9 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.TypesList = _helperService.PlantTypes();
-                    ViewBag.ColorsList = _helperService.PlantColors();
-                    ViewBag.GrowingSeazons = _helperService.PlantGrowingSeaznos();
+                    ViewBag.TypesList = _helperPlantService.PlantTypes();
+                    ViewBag.ColorsList = _helperPlantService.PlantColors();
+                    ViewBag.GrowingSeazons = _helperPlantService.PlantGrowingSeaznos();
                     return View(model);
                 }
             }
@@ -252,9 +254,9 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
-                ViewBag.ColorsList = _helperService.PlantColors();
+                ViewBag.ColorsList = _helperPlantService.PlantColors();
 
-                ViewBag.GrowingSeazons = _helperService.PlantGrowingSeaznos();
+                ViewBag.GrowingSeazons = _helperPlantService.PlantGrowingSeaznos();
 
                 var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                 ViewBag.GrowthTypes = growthTypes.Value;

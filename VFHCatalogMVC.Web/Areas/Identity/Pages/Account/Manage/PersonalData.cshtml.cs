@@ -18,18 +18,20 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IHelperUserService _helperUserService;
         private readonly IUserService _userService;
         private readonly ILogger<PersonalDataModel> _logger;
 
         public PersonalDataModel(
             UserManager<ApplicationUser> userManager,
             ILogger<PersonalDataModel> logger,
-            SignInManager<ApplicationUser> signInManager, IUserService _userRepo)
+            SignInManager<ApplicationUser> signInManager, IHelperUserService helperUserService, IUserService userService)
         {
             _userManager = userManager;
             _logger = logger;
             _signInManager = signInManager;
-            _userService= _userRepo;
+            _helperUserService = helperUserService;
+            _userService = userService;
         }
         public string Username { get; set; }
 
@@ -107,12 +109,12 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
 
             await LoadAsync(user);
 
-            var countries = _userService.GetCountries();
-            ViewData["Country"] = _userService.FillCountryList(countries);
-            var regions = _userService.GetRegions(Input.Address.CountryId);
-            ViewData["Region"] = _userService.FillRegionList(regions);
-            var cities = _userService.GetCities(Input.Address.RegionId);
-            ViewData["City"] = _userService.FillCityList(cities);
+            var countries = _helperUserService.GetCountries();
+            ViewData["Country"] = _helperUserService.FillCountryList(countries);
+            var regions = _helperUserService.GetRegions(Input.Address.CountryId);
+            ViewData["Region"] = _helperUserService.FillRegionList(regions);
+            var cities = _helperUserService.GetCities(Input.Address.RegionId);
+            ViewData["City"] = _helperUserService.FillCityList(cities);
 
             if (Input.Address.CountryId != 0)
             {

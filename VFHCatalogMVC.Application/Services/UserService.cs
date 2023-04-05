@@ -22,15 +22,21 @@ namespace VFHCatalogMVC.Application.Services
     {
         private readonly IUserRepository _userRepo;
         private readonly IPlantRepository _plantRepo;
+        private readonly IHelperUserRepository _helperUserRepo;
+        private readonly IHelperPlantRepository _helperPlantRepo;
         private readonly IMapper _mapper;
+        private readonly ClientMessagesService _clientMessagesService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository )
+        public UserService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository, IHelperUserRepository helperUserRepository, ClientMessagesService clientMessagesService, IHelperPlantRepository helperPlantRepo)
         {
             _userRepo = userRepo;
             _mapper = mapper;
             _userManager = userManager;
             _plantRepo = plantRepository;
+            _helperUserRepo = helperUserRepository;
+            _clientMessagesService = clientMessagesService;
+            _helperPlantRepo = helperPlantRepo;
         }
 
         public void AddAddress(AddressVm address)
@@ -170,65 +176,6 @@ namespace VFHCatalogMVC.Application.Services
             item.Date = item.DateAdded.ToShortDateString();
             return item;
         }
-        public List<SelectListItem> FillCountryList(List<CountryVm> countries)
-        {        
-                List<SelectListItem> propertyList = new List<SelectListItem>();
-
-                if (countries != null)
-                {
-                    propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                    foreach (var type in countries)
-                    {
-                        propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                    }
-                }
-                else
-                {
-                    propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-                }
-                return propertyList;
-        }
-
-        public List<SelectListItem> FillRegionList(List<RegionVm> regions)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (regions != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in regions)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
-
-        public List<SelectListItem> FillCityList(List<CityVm> city)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (city != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in city)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
         public AddressVm GetAddress(string userId)
         {
             var address = _userRepo.GetAddressInfo(userId);
@@ -236,25 +183,6 @@ namespace VFHCatalogMVC.Application.Services
 
             return addressVm;
         }
-
-        public List<CityVm> GetCities(int regionId)
-        {
-            var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-            return cities;
-        }
-
-        public List<CountryVm> GetCountries()
-        {
-            var countries = _userRepo.GetCountries().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-            return countries;
-        }
-
-        public List<RegionVm> GetRegions(int countryId)
-        {
-            var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-            return regions;
-        }
-
         public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings)
         {
             var usersList = new List<string>();
@@ -684,69 +612,75 @@ namespace VFHCatalogMVC.Application.Services
             return newUserPlantsForList;
         }
 
-        public List<FiltersListToShowVm> GetAllFilters(int pageSize, int? pageNo, int typeId, int? groupId, int? sectionId)
+        public FiltersListToShowVm GetAllFilters(int pageSize, int? pageNo, int typeId, int? groupId, int? sectionId)
         {
             if (groupId == 0)
                 groupId = null;
             if (sectionId == 0)
                 sectionId = null;
 
-            var filters = _userRepo.GetAllFilters(typeId, groupId, sectionId).ProjectTo<FiltersVm>(_mapper.ConfigurationProvider).ToList();
-            var filtersValue = new List<FiltersValuesVm>();
+            var filters = _helperUserRepo.GetAllFilters(typeId, groupId, sectionId).ProjectTo<FiltersVm>(_mapper.ConfigurationProvider).ToList();
 
-            foreach (var filter in filters)
+            var filtersValue = GetFiltersValues(filters);
+
+            var filtersToShow = filtersValue.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+
+            var filtersListToShow = new FiltersListToShowVm()
             {
-                
-             
-            }
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                Filters = filtersToShow,
+                Count = filters.Count,
 
+            };
 
-            throw new NotImplementedException();
+            return filtersListToShow;
+      
         }
         //* - select all records from table
         public List<FiltersValuesVm> GetFiltersValues(List<FiltersVm> filters)
         {
             var filtersValue = new List<FiltersValuesVm>();
-            
-          
+
                 foreach (var filter in filters)
                 {
-                    filter.FiltersValues.Id = filter.Id;
-                    filter.FiltersValues.Color = "*";
-                    filter.FiltersValues.Destination = "*";
-                    filter.FiltersValues.Position = "*";
-                    filter.FiltersValues.AdditionalFeatures = "*";
+                    filter.FiltersValues = new FiltersValuesVm();
 
+                    filter.FiltersValues.Id = filter.Id;
+                    filter.FiltersValues.Color = _clientMessagesService._GET_ALL_FILTERS_FROM_TABLE;
+                    filter.FiltersValues.Destination = _clientMessagesService._GET_ALL_FILTERS_FROM_TABLE;
+                    filter.FiltersValues.Position = _clientMessagesService._GET_ALL_FILTERS_FROM_TABLE;
+                    filter.FiltersValues.AdditionalFeatures = _clientMessagesService._GET_ALL_FILTERS_FROM_TABLE;
+                    filter.FiltersValues.GrowingSeazon = _clientMessagesService._GET_ALL_FILTERS_FROM_TABLE;
+                    filter.FiltersValues.PlantTypeId = filter.PlantTypeId;
+                    filter.FiltersValues.PlantGroupId = filter.PlantGroupId;
+                    filter.FiltersValues.PlantSectionId= filter.PlantSectionId;
+                                      
                     if (filter.FruitSizeId != null)
                     {
-                        filter.FiltersValues.Color = _userRepo.GetFruitSizeValue(filter.FruitSizeId.Value);
+                        filter.FiltersValues.Color = _helperPlantRepo.GetFruitSizeValue(filter.FruitSizeId.Value);
                     }
                     if (filter.FruitTypeId != null)
                     {
-                        filter.FiltersValues.FruitType = _userRepo.GetFruitTypeValue(filter.FruitTypeId.Value);
-                    }
-                    if (filter.GrowingSeazonId != null)
-                    {
-                        filter.FiltersValues.GrowingSeazon = _userRepo.GetGrowingSezaonValue(filter.GrowingSeazonId.Value);
+                        filter.FiltersValues.FruitType = _helperPlantRepo.GetFruitTypeValue(filter.FruitTypeId.Value);
                     }
                     if (filter.GrowthTypeId != null)
                     {
-                        filter.FiltersValues.GrowthType = _userRepo.GetGrowthTypeValue(filter.GrowthTypeId.Value);
+                        filter.FiltersValues.GrowthType = _helperPlantRepo.GetGrowthTypeValue(filter.GrowthTypeId.Value);
                     }
                     if (filter.HeightId != null)
                     {
-                        filter.FiltersValues.Height = _userRepo.GetHeightValue(filter.HeightId.Value);
+                        filter.FiltersValues.Height = _helperPlantRepo.GetHeightValue(filter.HeightId.Value);
                     }
                     if (filter.PollinationId != null)
                     {
-                        filter.FiltersValues.Pollination = _userRepo.GetPollinationValue(filter.PollinationId.Value);
+                        filter.FiltersValues.Pollination = _helperPlantRepo.GetPollinationValue(filter.PollinationId.Value);
                     }
 
                 filtersValue.Add(filter.FiltersValues);
                 }
 
             return filtersValue;
-        }    
-
+        }
     }
 }

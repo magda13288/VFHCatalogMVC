@@ -21,9 +21,10 @@ namespace VFHCatalogMVC.Domain.Model
         public bool FruitTypeVisible { get; set; }
         public int? FruitTypeId { get; set; }
         public virtual FruitType FruitType { get; set; }
-        public bool GrowingSeazonVisible { get; set; }
-        public int? GrowingSeazonId { get; set; }
-        public virtual GrowingSeazon GrowingSeazon { get; set; }
+        public bool GrowingSeazon { get; set; }
+        //public bool GrowingSeazonVisible { get; set; }
+        //public int? GrowingSeazonId { get; set; }
+        //public virtual GrowingSeazon GrowingSeazon { get; set; }
         public bool GrowthTypeVisible { get; set; }
         public int? GrowthTypeId { get; set; }
         public virtual GrowthType GrowthType { get; set; }

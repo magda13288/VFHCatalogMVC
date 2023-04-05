@@ -20,9 +20,9 @@ namespace VFHCatalogMVC.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMessageRepository _messageRepo;
         private readonly IMapper _mapper;
-        private readonly IHelperService _helperService;
+        private readonly IHelperPlantService _helperService;
 
-        public MessageService(UserManager<ApplicationUser> userManager, IMessageRepository messageRepository,IMapper mapper, IHelperService helperService)
+        public MessageService(UserManager<ApplicationUser> userManager, IMessageRepository messageRepository,IMapper mapper, IHelperPlantService helperService)
         {
             _userManager = userManager;
             _messageRepo = messageRepository;

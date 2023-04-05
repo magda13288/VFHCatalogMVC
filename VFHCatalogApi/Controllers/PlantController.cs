@@ -21,12 +21,16 @@ namespace VFHCatalogApi.Controllers
         private readonly IPlantService _plantService;
         private readonly IUserService _userService;
         private readonly ILogger<PlantController> _logger;
+        private readonly IHelperPlantService _helperPlantService;
+        private readonly IHelperUserService _helperUserService;
 
-        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserService userService)
+        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserService userService, IHelperPlantService helperPlantService, IHelperUserService helperUserService)
         {
             _plantService = plantService;
             _logger = logger;
             _userService = userService;
+            _helperPlantService = helperPlantService;
+            _helperUserService = helperUserService;
         }
 
         [HttpPost, HttpGet]
@@ -76,12 +80,12 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userService.GetCountries();
-                var viewBagCountriesList = _userService.FillCountryList(countries);
-                var regions = _userService.GetRegions(countryId);
-                var viewBagRegionsList = _userService.FillRegionList(regions);
-                var cities = _userService.GetCities(regionId);
-                var viewBagCitiesList = _userService.FillCityList(cities);
+                var countries = _helperUserService.GetCountries();
+                var viewBagCountriesList = _helperUserService.FillCountryList(countries);
+                var regions = _helperUserService.GetRegions(countryId);
+                var viewBagRegionsList = _helperUserService.FillRegionList(regions);
+                var cities = _helperUserService.GetCities(regionId);
+                var viewBagCitiesList = _helperUserService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
                 if (!pageNo.HasValue)
@@ -121,12 +125,12 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userService.GetCountries();
-                var viewBagCountriesList = _userService.FillCountryList(countries);
-                var regions = _userService.GetRegions(countryId);
-                var viewBagRegionsList = _userService.FillRegionList(regions);
-                var cities = _userService.GetCities(regionId);
-                var viewBagCitiesList = _userService.FillCityList(cities);
+                var countries = _helperUserService.GetCountries();
+                var viewBagCountriesList = _helperUserService.FillCountryList(countries);
+                var regions = _helperUserService.GetRegions(countryId);
+                var viewBagRegionsList = _helperUserService.FillRegionList(regions);
+                var cities = _helperUserService.GetCities(regionId);
+                var viewBagCitiesList = _helperUserService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
                 if (!pageNo.HasValue)

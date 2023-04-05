@@ -77,13 +77,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var address = _context.Addresses.FirstOrDefault(p => p.UserId == userId);
             return address;
         }
-
-        public IQueryable<City> GetCities(int regionId)
-        {
-            var cities = _context.Cities.Where(p => p.RegionId == regionId);
-            return cities;
-        }
-
         public ContactDetail GetContactDetail(int? id)
         {
             var contactDetail = _context.ContactDetails.AsNoTracking().FirstOrDefault(p => p.Id == id);
@@ -107,18 +100,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             else
                 return contactDetails.ContactDetailId;
         }
-        public IQueryable<Country> GetCountries()
-        {
-            var countries = _context.Countries;
-            return countries;
-        }
-
-        public IQueryable<Region> GetRegions(int countryId)
-        {
-           var regions = _context.Regions.Where(p => p.CountryId == countryId);
-            return regions;
-        }
-
         public PlantSeed GetUserSeed(int id)
         {
            var seed = _context.PlantSeeds.FirstOrDefault(p => p.Id == id);
@@ -153,50 +134,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             var plants = _context.NewUserPlants;
             return plants;
-        }
-
-        public IQueryable<Filters> GetAllFilters(int typeId, int? groupId, int? sectionId)
-        {
-            var filters = _context.Filters.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
-
-            return filters;
-        }
-
-        public string GetFruitSizeValue(int id)
-        {
-            var value = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
-            return value.Name;
-        }
-
-        public string GetFruitTypeValue(int id)
-        {
-            var value = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
-            return value.Name;
-
-        }
-
-        public string GetGrowingSezaonValue(int id)
-        {
-            var value = _context.GrowingSeazons.FirstOrDefault(p => p.Id == id);
-            return value.Name;
-        }
-
-        public string GetGrowthTypeValue(int     id)
-        {
-            var value = _context.GrowthTypes.FirstOrDefault(p => p.Id == id);
-            return value.Name;
-        }
-
-        public string GetHeightValue(int id)
-        {
-            var value = _context.Heights.FirstOrDefault(p => p.Id == id);
-            return value.Name;
-        }
-
-        public string GetPollinationValue(int id)
-        {
-            var value = _context.Pollinations.FirstOrDefault(p => p.Id == id);
-            return value.Name;
         }
     }
 }
