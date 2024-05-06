@@ -15,10 +15,11 @@ Roles:
 
 Milestones:
 - Better frontend (using for example blazor)
-- Adding advanced filters adapted to the plant species, type and subtype
-- Adding catalog of other garden products with filtration
-- Creation of all functionality enabling shopping in stores
-- Creating a module for companies that allows them to add sales offers for gardening products from the catalog
+- Implementation of tests
+- Implementation advanced filters adapted to the plant species, type and subtype
+- Add catalog of other garden products with filtration
+- Implementation of all functionality enabling shopping in stores
+- Create a module for companies that allows them to add sales offers for gardening products from the catalog
 
 
 
