@@ -21,5 +21,19 @@ Milestones:
 - Implementation of all functionality enabling shopping in stores
 - Create a module for companies that allows them to add sales offers for gardening products from the catalog
 
+Login data:
+
+Role - Private user
+email: kinga123@gmail.com
+pass: Kinga1_123
+
+Admin: 
+
+email: admin@gmail.com
+pass: Admin1_1
+
+
+
+
 
 
