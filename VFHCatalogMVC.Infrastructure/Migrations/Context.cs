@@ -42,12 +42,16 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
         public DbSet<PlantMessage> PlantMessages { get; set; }
         public DbSet<PlantPosition> PlantPositions { get; set; }
+        public DbSet<PlantProducers> PlantProducers { get; set; }
+        public DbSet<PlantSoilPh> PlantSoilPhs { get; set; }
         public DbSet<Height> Heights { get; set; }
         public DbSet<AdditionalFeatures> AdditionalFeatures { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<Pollination> Pollinations { get; set; }
         public DbSet<Filters> Filters { get; set; }
-  
+        public DbSet<Producer> Producers { get; set; }
+        public DbSet<SoilPh> SoilPhs { get; set; }
+
         public Context(DbContextOptions options) : base(options)
         {
          
@@ -320,6 +324,36 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(e=>e.PositionId);
                
             });
+
+            builder.Entity<PlantProducers>(entity =>
+            {
+                entity.HasKey(e => new { e.ProducerId, e.PlantDetailId });
+
+                entity.HasOne(e => e.PlantDetail)
+                .WithMany(e => e.PlantProducers)
+                .HasForeignKey(e => e.PlantDetailId);
+
+                entity.HasOne(e => e.Producer)
+                .WithMany(e => e.PlantProducers)
+                .HasForeignKey(e => e.ProducerId);
+
+            });
+
+            builder.Entity<PlantSoilPh>(entity =>
+            {
+                entity.HasKey(e => new { e.SoilPhId, e.PlantDetailId });
+
+                entity.HasOne(e => e.PlantDetail)
+                .WithMany(e => e.PlantSoilPhs)
+                .HasForeignKey(e => e.PlantDetailId);
+
+                entity.HasOne(e => e.SoilPh)
+                 .WithMany(e => e.PlantSoilPhs)
+                 .HasForeignKey(e => e.SoilPhId);
+                           
+            });
+
+           
 
             //builder.Entity<Position>().HasData(
 

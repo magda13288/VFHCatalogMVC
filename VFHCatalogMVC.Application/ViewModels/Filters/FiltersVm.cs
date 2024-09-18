@@ -29,6 +29,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Filters
         public int? PollinationId { get; set; }
         public bool Position { get; set; }
         public bool AdditionalFeatures { get; set; }
+        public bool Producers { get; set; }
+        public bool SoilPh { get; set; }
+
         public FiltersValuesVm FiltersValues { get; set; }
         
 

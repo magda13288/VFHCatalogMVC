@@ -204,6 +204,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         [HttpGet]
         [Authorize(Roles ="Admin")]
+        [ValidateAntiForgeryToken]
         public IActionResult AddFilter()
         {
             ViewBag.TypesList = _helperPlantService.PlantTypes();

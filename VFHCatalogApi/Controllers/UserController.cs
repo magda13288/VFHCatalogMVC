@@ -37,7 +37,7 @@ namespace VFHCatalogApi.Controllers
             try
             {
                 var types = _plantService.GetPlantTypes();
-                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantService.FillPropertyList(types, null, null, null, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
                 var viewBagGroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -82,7 +82,7 @@ namespace VFHCatalogApi.Controllers
             try
             {
                 var types = _plantService.GetPlantTypes();
-                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantService.FillPropertyList(types, null, null, null, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
                 var viewBagGroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -244,7 +244,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetRegions([FromBody]int id)
         {
-            var regions = _helperService.GetRegions(id);
+            var regions = _helperUserService.GetRegions(id);
 
             List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
 
@@ -265,7 +265,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetCities([FromBody] int id)
         {
-            var cities = _helperService.GetCities(id);
+            var cities = _helperUserService.GetCities(id);
 
             List<SelectListItem> citiesList = new List<SelectListItem>();
 

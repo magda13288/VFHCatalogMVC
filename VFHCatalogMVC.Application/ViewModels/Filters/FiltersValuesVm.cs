@@ -21,5 +21,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Filters
         public string Position { get; set; }
         public string AdditionalFeatures { get; set; }
 
+        //add producers and soilPh
+
     }
 }

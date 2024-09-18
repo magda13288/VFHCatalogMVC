@@ -62,7 +62,7 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {        
                 var types = _plantService.GetPlantTypes();
-                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
+                ViewBag.TypesList = _plantService.FillPropertyList(types, null, null,null,null,null);
                 var groupsList = GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -337,6 +337,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
+        [ValidateAntiForgeryToken]
     
         public IActionResult AddSeed(PlantSeedVm plantSeed)
         {
@@ -383,6 +384,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = "PrivateUser,Company")]
+        [ValidateAntiForgeryToken]
         public IActionResult AddSeedling(PlantSeedlingVm plantSeedling)
         {
             try

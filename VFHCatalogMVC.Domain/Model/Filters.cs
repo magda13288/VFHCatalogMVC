@@ -36,6 +36,8 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual Pollination Pollination { get; set; }
         public bool Position { get; set; }
         public bool AdditionalFeatures { get; set; }
+        public bool Producer { get; set; }
+        public bool SoilPh { get; set; }
 
     }
 }

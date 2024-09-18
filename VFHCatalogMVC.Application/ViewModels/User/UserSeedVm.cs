@@ -24,6 +24,7 @@ namespace VFHCatalogMVC.Application.ViewModels.User
         [NotMapped]
         public string Date { get; set; }
         public string UserId { get; set; }
+        public IFormFile Photo { get; set; }
 
         [NotMapped]
         public PlantForListVm PlantForList { get; set; }

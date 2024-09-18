@@ -40,7 +40,7 @@ namespace VFHCatalogApi.Controllers
             try
             {
                 var types = _plantService.GetPlantTypes();
-                var viewBagtypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagtypesList = _plantService.FillPropertyList(types, null, null,null,null,null);
                 var groupsList = GetPlantGroupsList(typeId);
                 var viewBaggroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -169,11 +169,11 @@ namespace VFHCatalogApi.Controllers
         public IActionResult AddPlant()
         {
             var types = _plantService.GetPlantTypes();
-            var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
+            var viewBagTypesList = _plantService.FillPropertyList(types, null, null,null,null, null);
             var colors = _plantService.GetColors();
-            var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
+            var viewBagColorsList = _plantService.FillPropertyList(null, colors, null,null,null,null);
             var growingSeaznos = _plantService.GetGrowingSeazons();
-            var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+            var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos,null,null,null);
 
             return NoContent();
         }
@@ -191,11 +191,11 @@ namespace VFHCatalogApi.Controllers
             else
             {
                 var types = _plantService.GetPlantTypes();
-                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantService.FillPropertyList(types, null, null, null, null, null);
                 var colors = _plantService.GetColors();
-                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
+                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null, null, null, null);
                 var growingSeaznos = _plantService.GetGrowingSeazons();
-                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos, null, null, null);
                 //return RedirectToAction("AddPlant", model);
                 return BadRequest(ModelState.ErrorCount);
             }
@@ -226,10 +226,10 @@ namespace VFHCatalogApi.Controllers
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
                 var colors = _plantService.GetColors();
-                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
+                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null, null, null, null);
 
                 var growingSeaznos = _plantService.GetGrowingSeazons();
-                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos, null, null, null);
 
                 var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                 var viewBagGrowthTypes = growthTypes;

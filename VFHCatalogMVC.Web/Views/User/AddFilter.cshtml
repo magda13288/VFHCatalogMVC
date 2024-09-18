@@ -1,0 +1,120 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Filters.FiltersVm
+
+@{
+    ViewData["Title"] = "AddFilter";
+}
+
+<h1>AddFilter</h1>
+
+<h4>FiltersVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddFilter">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantTypeId" class="control-label"></label>
+                <input asp-for="PlantTypeId" class="form-control" />
+                <span asp-validation-for="PlantTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantGroupId" class="control-label"></label>
+                <input asp-for="PlantGroupId" class="form-control" />
+                <span asp-validation-for="PlantGroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantSectionId" class="control-label"></label>
+                <input asp-for="PlantSectionId" class="form-control" />
+                <span asp-validation-for="PlantSectionId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Color" /> @Html.DisplayNameFor(model => model.Color)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Destination" /> @Html.DisplayNameFor(model => model.Destination)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="FruitSizeVisible" /> @Html.DisplayNameFor(model => model.FruitSizeVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="FruitSizeId" class="control-label"></label>
+                <input asp-for="FruitSizeId" class="form-control" />
+                <span asp-validation-for="FruitSizeId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="FruitTypeVisible" /> @Html.DisplayNameFor(model => model.FruitTypeVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="FruitTypeId" class="control-label"></label>
+                <input asp-for="FruitTypeId" class="form-control" />
+                <span asp-validation-for="FruitTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="GrowingSeazon" /> @Html.DisplayNameFor(model => model.GrowingSeazon)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="GrowthTypeVisible" /> @Html.DisplayNameFor(model => model.GrowthTypeVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="GrowthTypeId" class="control-label"></label>
+                <input asp-for="GrowthTypeId" class="form-control" />
+                <span asp-validation-for="GrowthTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="HeightVisible" /> @Html.DisplayNameFor(model => model.HeightVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="HeightId" class="control-label"></label>
+                <input asp-for="HeightId" class="form-control" />
+                <span asp-validation-for="HeightId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PollinationVisible" /> @Html.DisplayNameFor(model => model.PollinationVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="PollinationId" class="control-label"></label>
+                <input asp-for="PollinationId" class="form-control" />
+                <span asp-validation-for="PollinationId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Position" /> @Html.DisplayNameFor(model => model.Position)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="AdditionalFeatures" /> @Html.DisplayNameFor(model => model.AdditionalFeatures)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

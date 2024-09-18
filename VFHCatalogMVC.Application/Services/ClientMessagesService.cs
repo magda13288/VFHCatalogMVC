@@ -8,6 +8,7 @@ namespace VFHCatalogMVC.Application.Services
     {
         public string _GET_ALL_FILTERS_FROM_TABLE = "*";
         public string _NO_FILTERS = "-";
+        public string _SAVE = "Zapisano";
        
     }
 }

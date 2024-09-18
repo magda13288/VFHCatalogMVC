@@ -29,6 +29,8 @@ namespace VFHCatalogMVC.Domain.Model
         public virtual Position Position { get; set; }
         public int? AdditionalFeaturesId { get; set; }
         public virtual AdditionalFeatures AdditionalFeatures { get; set; }
+        public int? ProducerId { get; set; }
+        public virtual Producer Producer { get; set; }
 
         public int PlantRef { get; set; }
         public Plant Plant { get; set; }
@@ -39,6 +41,7 @@ namespace VFHCatalogMVC.Domain.Model
         public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
         public virtual ICollection<PlantDetailsImages> PlantDetailsImages { get; set; }
         public ICollection<PlantPosition> PlantPositions { get; set; } 
-
+        public ICollection<PlantProducers> PlantProducers { get; set; }
+        public ICollection<PlantSoilPh> PlantSoilPhs { get; set; } 
     }
 }
