@@ -32,6 +32,20 @@ Admin:
 email: admin@gmail.com
 pass: Admin1_1
 
+For the correct operation of drop-down lists it is necessary to add default values to table in databse. Execute queries on branch "Queries" in the following order:
+- PlantTypesPL
+- PlantGroupsPL
+- PlantSectionsPL
+- GrowthTypesPL
+- FruitTypesPL
+- FruitSizesPL
+- GrowingSeazonsPL
+- DestinationsPL
+- ColorsTable
+
+  
+
+
 
 
 
