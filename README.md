@@ -32,7 +32,9 @@ Admin:
 email: admin@gmail.com
 pass: Admin1_1
 
-You nedd to add default values to table in databse. Execute Queries on branch "Query"
+You nedd to add default values to table in databse. Execute queries on branch "Queries" in the following order:
+
+
 
 
 
