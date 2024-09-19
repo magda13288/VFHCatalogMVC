@@ -20,6 +20,7 @@ Milestones:
 - Add catalog of other garden products with filtration
 - Implementation of all functionality enabling shopping in stores
 - Create a module for companies that allows them to add sales offers for gardening products from the catalog
+- Safety
 
 Login data:
 
