@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Diagnostics.Tracing;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Infrastructure
@@ -59,6 +64,109 @@ namespace VFHCatalogMVC.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            //builder.Entity<PlantType>().HasData(new List<PlantType>()
+            //{
+            //   new PlantType{Name= "Warzywo"},
+            //   new PlantType{Name = "Owoc"},
+            //   new PlantType{Name = "Zioło" },
+            //   new PlantType{Name = "Kwiat" }
+
+            //});
+
+            //builder.Entity<PlantGroup>().HasData(new List<PlantGroup>()
+            //{
+            //    new PlantGroup{PlantTypeId = 1, Name = "Psianka" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Dyniowate" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Strączkowe" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Kapustne" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Liściaste" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Cebulowe" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Korzeniowe" },
+            //    new PlantGroup{PlantTypeId = 1, Name = "Rzepowate" },
+            //    new PlantGroup{PlantTypeId = 2, Name = "Pestkowe" },
+            //    new PlantGroup{PlantTypeId = 2, Name = "Jagodowe" },
+            //    new PlantGroup{PlantTypeId = 2, Name = "Ziarnkowe" },
+            //    new PlantGroup{PlantTypeId = 2, Name = "Cytrusowe" },
+            //    new PlantGroup{PlantTypeId = 2, Name = "Egzotyczne" },
+            //    new PlantGroup{PlantTypeId = 3, Name = "Lecznicze" },
+            //    new PlantGroup{PlantTypeId = 3, Name = "Przyprawowe" },
+            //    new PlantGroup{PlantTypeId = 3, Name = "Olejkodajne" },
+            //    new PlantGroup{PlantTypeId = 4, Name = "Zewnętrzne" },
+            //    new PlantGroup{PlantTypeId = 4, Name = "Domowe" },
+            //    new PlantGroup{PlantTypeId = 6, Name = "Tradycyjne" },
+            //    new PlantGroup{PlantTypeId = 6, Name = "Ozdobne" }
+
+            //});
+
+            //builder.Entity<PlantSection>().HasData(new List<PlantSection>()
+            //{
+            //    new PlantSection{Name="Pomidor", Id=1 },
+            //    new PlantSection{Name="Paparyka",Id=1 },
+            //    new PlantSection{Name="Ziemniak",Id=1},
+            //    new PlantSection{Name="Bakłażan",Id=1},
+            //    new PlantSection{Name="Inne",Id=1},
+            //    new PlantSection{Name="Ogórek",Id=2},
+            //    new PlantSection{Name="Cukinia",Id=2},
+            //    new PlantSection{Name="Dynia",Id=2},
+            //    new PlantSection{Name="Patison",Id=2},
+            //    new PlantSection{Name="Inne",Id=2},
+            //    new PlantSection{Name="Fasolka",Id=3},
+            //    new PlantSection{Name="Groszek",Id=3},
+            //    new PlantSection{Name="Soczewica",Id=3},
+            //    new PlantSection{Name="Bób",Id=3},
+            //     new PlantSection{Name="Inne",Id=3},
+            //     new PlantSection{Name="Kapusta",Id=4},
+            //     new PlantSection{Name="Brukselka",Id=4},
+            //     new PlantSection{Name="Brokuł",Id=4},
+            //     new PlantSection{Name="Kalafior",Id=4},
+            //     new PlantSection{Name="Kalarepa",Id=4},
+            //     new PlantSection{Name="Inne",Id=4},
+            //     new PlantSection{Name="Sałata",Id=5},
+            //     new PlantSection{Name="Szpinak",Id=5},
+            //     new PlantSection{Name="Natka pietruszki",Id=5},
+            //     new PlantSection{Name="Inne",Id=5},
+            //     new PlantSection{Name="Cebula",Id=6},
+            //     new PlantSection{Name="Czosnek",Id=6},
+            //     new PlantSection{Name="Por",Id=6},
+            //     new PlantSection{Name="Inne",Id=6},
+            //     new PlantSection{Name="Marchewka",Id=7},
+            //     new PlantSection{Name="Pietruszka",Id=7},
+            //     new PlantSection{Name="Burak",Id=7},
+            //     new PlantSection{Name="Seler",Id= 7},
+            //     new PlantSection{Name="Inne",Id= 7},
+            //     new PlantSection{Name="Rzodkiewka",Id= 8},
+            //     new PlantSection{Name="Brukiew",Id= 8},
+            //     new PlantSection{Name="Rzepa",Id= 8},
+            //     new PlantSection{Name="Inne",Id= 8},
+            //     new PlantSection{Name="Wiśnia",Id= 9},
+            //     new PlantSection{Name="Brzoskiwnia",Id= 9},
+            //     new PlantSection{Name="Śliwka",Id= 9},
+            //     new PlantSection{Name="Morela",Id= 9},
+            //     new PlantSection{Name="Inne",Id= 9},
+            //     new PlantSection{Name="Truskawka",Id= 10},
+            //     new PlantSection{Name="Jeżyna",Id= 10},
+            //     new PlantSection{Name="Jagoda",Id= 10},
+            //     new PlantSection{Name="Malina",Id= 10},
+            //     new PlantSection{Name="Porzeczka",Id= 10},
+            //     new PlantSection{Name="Inne",Id= 10},
+            //     new PlantSection{Name="Jabłko",Id= 11},
+            //     new PlantSection{Name="Gruszka",Id= 11},
+            //     new PlantSection{Name="Pigwa",Id= 11},
+            //     new PlantSection{Name="Granat ",Id= 11},
+            //     new PlantSection{Name="Inne",Id= 11},
+            //     new PlantSection{Name="Cytryna",Id= 12},
+            //     new PlantSection{Name="Mandarynka",Id= 12},
+            //     new PlantSection{Name="Pomarańcza",Id= 12},
+            //     new PlantSection{Name="Grejfrut",Id= 12},
+            //     new PlantSection{Name="Inne",Id= 12},
+            //     new PlantSection{Name="Banan",Id= 13},
+            //     new PlantSection{Name="Ananas",Id= 13},
+            //     new PlantSection{Name="Liczi",Id= 13},
+            //     new PlantSection{Name="Inne",Id= 13}
+
+            //});
+
 
             builder.Entity<Address>(entity =>
             {
@@ -120,9 +228,24 @@ namespace VFHCatalogMVC.Infrastructure
                .HasForeignKey(p => p.PlantSectionId)
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
+
+               // entity.HasData(new List<GrowthType>()
+               // {
+               //     new GrowthType{Name="Wysoko rosnący", PlantTypeId =1, PlantGroupId=1,PlantSectionId=1},
+               //      new GrowthType{Name="Karłowy",PlantTypeId =1,PlantGroupId=1,PlantSectionId=1},
+               //      new GrowthType{Name="Doniczkowy",PlantTypeId =1,PlantGroupId=1,PlantSectionId=1},
+               //      new GrowthType{Name="Samokończący",PlantTypeId =1,PlantGroupId=1,PlantSectionId=1},
+               //      new GrowthType{Name="Krzak",PlantTypeId =2,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Drzewo",PlantTypeId =2,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Roślina pnąca",PlantTypeId =2,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Roślina zwisająca",PlantTypeId =2,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Krzew",PlantTypeId =3,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Winorośl",PlantTypeId =3,PlantGroupId=null,PlantSectionId=null},
+               //      new GrowthType{Name="Korzeń",PlantTypeId =3,PlantGroupId=null,PlantSectionId=null}
+
+               //});
             });
-
-
+            
             builder.Entity<FruitSize>(entity =>
             {
                 entity.HasOne(p => p.PlantType)
@@ -142,6 +265,14 @@ namespace VFHCatalogMVC.Infrastructure
                .HasForeignKey(p => p.PlantSectionId)
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
+
+                //entity.HasData(new List<FruitSize>
+                //{
+                //    new FruitSize{Name="Małe",PlantTypeId=1,PlantGroupId=1,PlantSectionId=1 },
+                //    new FruitSize{Name="Typu Cherry",PlantTypeId=1,PlantGroupId=1,PlantSectionId=1},
+                //    new FruitSize{Name="Wielkoowocowe",PlantTypeId=1,PlantGroupId=1,PlantSectionId=1},
+                //    new FruitSize{Name="Srednioowocowe",PlantTypeId=1,PlantGroupId=1,PlantSectionId=1}
+                //});
             });
 
 
@@ -164,6 +295,16 @@ namespace VFHCatalogMVC.Infrastructure
                .HasForeignKey(p => p.PlantSectionId)
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired(false);
+
+
+                //entity.HasData(new List<FruitType>
+                //{ 
+                //    new FruitType{Name="Mięsiste",PlantTypeId=1,PlantGroupId=1,PlantSectionId=1 },
+                //    new FruitType{Name="Wielokomorowe",PlantTypeId=1,PlantGroupId=1, PlantSectionId=1},
+                //    new FruitType{Name="Ostre",PlantTypeId=1,PlantGroupId=1,PlantSectionId= 2},
+                //    new FruitType{Name="Słodkie",PlantTypeId=1,PlantGroupId=1,PlantSectionId= 2}
+
+                //});
             });
 
             builder.Entity<PlantDetail>(entity =>
@@ -216,6 +357,7 @@ namespace VFHCatalogMVC.Infrastructure
                 entity.HasOne<Destination>(pd => pd.Destinations)
                 .WithMany(pd => pd.PlantDestinations)
                 .HasForeignKey(pd => pd.DestinationId);
+
             });
 
             builder.Entity<PlantGrowthType>(entity => {
@@ -306,8 +448,8 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(e => e.PlantMessages)
                 .HasForeignKey(e => e.PlantId);
 
-                entity.HasOne(e=>e.Message)
-                .WithMany(e=>e.PlantMessages)
+                entity.HasOne(e => e.Message)
+                .WithMany(e => e.PlantMessages)
                 .HasForeignKey(e => e.MessageId);
             });
 
@@ -320,9 +462,9 @@ namespace VFHCatalogMVC.Infrastructure
                 .HasForeignKey(e => e.PlantDetailId);
 
                 entity.HasOne(e => e.Position)
-                .WithMany(e=> e.PlantPositions)
-                .HasForeignKey(e=>e.PositionId);
-               
+                .WithMany(e => e.PlantPositions)
+                .HasForeignKey(e => e.PositionId);
+
             });
 
             builder.Entity<PlantProducers>(entity =>
@@ -350,17 +492,58 @@ namespace VFHCatalogMVC.Infrastructure
                 entity.HasOne(e => e.SoilPh)
                  .WithMany(e => e.PlantSoilPhs)
                  .HasForeignKey(e => e.SoilPhId);
-                           
+
             });
 
-           
+            //builder.Entity<Destination>().HasData(new List<Destination>
+            //{              
+            //    new Destination{Name= "Grunt"},
+            //    new Destination{Name="Pod osłony"},
+            //    new Destination{Name="Doniczka"}
+            //});
 
-            //builder.Entity<Position>().HasData(
+            //builder.Entity<GrowingSeazon>().HasData(new List<GrowingSeazon>
+            //{
+            //    new GrowingSeazon{Name ="Późne"},
+            //    new GrowingSeazon{Name="Wczesne"},
+            //    new GrowingSeazon{Name="Średniopóźne"},
+            //    new GrowingSeazon{Name="Średniowczesne"},
+            //    new GrowingSeazon{Name="Jednoroczne"},
+            //    new GrowingSeazon{Name="Wieloletnie"}
+            //});
 
-            //    new Position {Name = "Słoneczne"},
-            //    new Position {Name = "Półcień" },
-            //    new Position {Name = "Cień" }
-            //    );
+            //builder.Entity<Color>().HasData(new List<Color>
+            //{
+            //     new Color{Name ="Biały"},
+            //    new Color{Name="Czarny"},
+            //    new Color{Name="Czerwony"},
+            //    new Color{Name="Indigo"},
+            //    new Color{Name="Pomarańczowy"},
+            //    new Color{Name="Różowy"},
+            //    new Color{Name="Wielokolorowy"},
+            //    new Color{Name="Zielony"},
+            //    new Color{Name="Żółty"}
+
+
+            //    //new Color{Name ="Biały", Id = (int)DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Czarny",Id = (int)DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Czerwony",Id = (int)DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Indigo", Id =(int) DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Pomarańczowy", Id = (int)DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Różowy", Id =(int) DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Wielokolorowy", Id =(int) DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Zielony", Id = (int)DatabaseGeneratedOption.Identity},
+            //    //new Color{Name="Żółty", Id =(int) DatabaseGeneratedOption.Identity}
+
+            //});
+
+            //builder.Entity<Position>().HasData(new List<Position>() 
+            //{
+
+            //    new Position { Name = "Słoneczne" },
+            //    new Position { Name = "Półcień" },
+            //    new Position { Name = "Cień" }
+            //    });
 
             //builder.Entity<Height>().HasData(
 
@@ -380,5 +563,6 @@ namespace VFHCatalogMVC.Infrastructure
             //    new AdditionalFeatures { Name = "Nasiona na taśmie" }
             //    );
         }
+
     }
 }
