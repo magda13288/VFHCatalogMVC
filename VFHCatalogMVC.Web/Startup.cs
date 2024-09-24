@@ -36,6 +36,7 @@ using static VFHCatalogMVC.Application.ViewModels.User.UserSeedlingVm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
+
 namespace VFHCatalogMVC.Web
 {
     public class Startup
@@ -141,6 +142,7 @@ namespace VFHCatalogMVC.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -148,6 +150,7 @@ namespace VFHCatalogMVC.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {
@@ -156,6 +159,13 @@ namespace VFHCatalogMVC.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            //Content Security Policy(CSP) arzêdzie, które pomaga zapobiegaæ atakom XSS, ograniczaj¹c, jakie zasoby mog¹ byæ ³adowane i uruchamiane na stronie.
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self';");
+            //    await next();
+            //});
         }
     }
 }
