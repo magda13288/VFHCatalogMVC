@@ -24,7 +24,8 @@ Milestones:
 
 Login data:
 
-Role - Private user
+Private user:
+
 email: kinga123@gmail.com
 pass: Kinga1_123
 
