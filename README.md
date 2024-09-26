@@ -2,48 +2,60 @@ Plant Seeder is a web application based on MVC pattern. The application allows y
 You can see photos, description, list of online shops and gardener in your neighborhood who have seeds or seddlings of plants what you looking for. 
 You can find gardener by localization (now searching is basing on drop down lists - in futer I want to use gps localization). If user want to exchange with other user seeds or seedlings can send messages to him.
 
-<b>Used packages:</b>
-- Entity framework
-- AutoMapper
-- FluentValidation
-- DependencyInjection
+<h3>Used packages</h3>
+<ul>
+  <li> Entity framework</li>
+  <li>AutoMapper</li>
+  <li>FluentValidation</li>
+  <li>DependencyInjection</li>
+ </ul>
+
   
-<b>Roles:</b>
-- Admin (can: add new plants to catalog, delete plants, edit plants, send messages to users, activate and deactivate plants)
-- Private user (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant), send messages to other users)
-- Company (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant))
+<h3>Roles</h3>
+<ul>
+  <li>Admin (can: add new plants to catalog, delete plants, edit plants, send messages to users, activate and deactivate plants)</li>
+  <li> Private user (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant), send messages to other users)</li>
+  <li>Company (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant))  </li>
+</ul>
+<h3>Development</h3>
+<ul>
+<li>Better frontend (using for example blazor)</li>
+<li>Implementation of tests</li>
+<li>Implementation advanced filters adapted to the plant species, type and subtype</li>
+<li>Add catalog of other garden products with filtration</li>
+<li>Implementation of all functionality enabling shopping in stores</li>
+<li>Create a module for companies that allows them to add sales offers for gardening products from the catalog</li>Create a module for companies that allows them to add sales offers for gardening products from the catalog
+<li>Safety</li>
+</ul>
 
-<b>Development:</b>
-- Better frontend (using for example blazor)
-- Implementation of tests
-- Implementation advanced filters adapted to the plant species, type and subtype
-- Add catalog of other garden products with filtration
-- Implementation of all functionality enabling shopping in stores
-- Create a module for companies that allows them to add sales offers for gardening products from the catalog
-- Safety
-
-<b>Login data:</b>
+<h3>Login data</h3>
 <p></p>
-<i>Private user:</i>
+<dl>
+  <dt>Private user:</dt>
+    <dd>email: kinga123@gmail.com</dd>
+    <dd>pass: Kinga1_123</dd>
+</dl>
 <p></p>
-email: kinga123@gmail.com<p></p>
-pass: Kinga1_123<p></p>
-
-<i>Admin: </i>
-
-email: admin@gmail.com<p></p>
-pass: Admin1_1<p></p>
-
+<dl>
+  <dt>Admin:</dt>
+    <dd>email: admin@gmail.com</dd>
+    <dd>pass: Admin1_1</dd>
+</dl>
+<h3>Configuration</h3>
 For the correct operation of drop-down lists it is necessary to add default values to table in databse. Execute queries on branch "Queries" in the following order:
-- PlantTypesPL
-- PlantGroupsPL
-- PlantSectionsPL
-- GrowthTypesPL
-- FruitTypesPL
-- FruitSizesPL
-- GrowingSeazonsPL
-- DestinationsPL
-- ColorsTable
+<ul>
+  <li>PlantTypesPL</li>
+  <li>PlantGroupsPL</li>
+  <li>PlantSectionsPL</li>
+  <li>GrowthTypesPL</li>
+  <li>FruitTypesPL</li>
+  <li>FruitSizesPL</li>
+  <li>GrowingSeazonsPL</li>
+  <li>DestinationsPL</li>
+  <li>ColorsTable</li>
+</ul>
+<h3>Screenshots</h3>
+<img src>
 
   
 
