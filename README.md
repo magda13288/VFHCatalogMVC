@@ -65,9 +65,18 @@ For the correct operation of drop-down lists it is necessary to add default valu
   <li>ColorsTable</li>
 </ul>
 <h3>Screenshots</h3>
-<h5>Strona główna</h5>
+<h5>Home Page</h5>
 <img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Strona główna" title="Strona główna">
-
+<h5>Home page for PrivateUser</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexPrivateUser.png">
+<h5>Home page for admin</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexAdmin.png">  
+<h5>User seeds list</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
+<h5>Add seeds for choosen plant (PrivateUser)</h5>
+<img src="/VFHCatalogMVC.Web/Screens/PlantUsersList.png">
+<h5>User messages (PrivateUser)</h5>
+<img src="/VFHCatalogMVC.Web/Screens/UserMessages.png">
   
 
 
