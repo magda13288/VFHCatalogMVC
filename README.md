@@ -27,6 +27,7 @@ You can find gardener by localization (now searching is basing on drop down list
   <li> Private user (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant), send messages to other users)</li>
   <li>Company (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant))  </li>
 </ul>
+
 <h3>Development</h3>
 <ul>
 <li>Better frontend (using for example blazor)</li>
@@ -51,6 +52,7 @@ You can find gardener by localization (now searching is basing on drop down list
     <dd>email: admin@gmail.com</dd>
     <dd>pass: Admin1_1</dd>
 </dl>
+
 <h3>Configuration</h3>
 For the correct operation of drop-down lists it is necessary to add default values to table in databse. Execute queries on branch "Queries" in the following order:
 <ul>
@@ -64,19 +66,39 @@ For the correct operation of drop-down lists it is necessary to add default valu
   <li>DestinationsPL</li>
   <li>ColorsTable</li>
 </ul>
+
 <h3>Screenshots</h3>
+<br>
 <h5>Home Page</h5>
 <img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Strona główna" title="Strona główna">
-<h5>Home page for PrivateUser</h5>
-<img src="/VFHCatalogMVC.Web/Screens/IndexPrivateUser.png">
-<h5>Home page for admin</h5>
-<img src="/VFHCatalogMVC.Web/Screens/IndexAdmin.png">  
+<br>
 <h5>User seeds list</h5>
 <img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
-<h5>Add seeds for choosen plant (PrivateUser)</h5>
+<br>
+<h5>Plant details</h5>
+<img src="/VFHCatalogMVC.Web/Screens/PlantDetails.png">
+<br>
+<h5>Home page for PrivateUser</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexPrivateUser.png">
+<br>
+<h5>Add seeds/seedlings for choosen plant (PrivateUser)</h5>
 <img src="/VFHCatalogMVC.Web/Screens/PlantUsersList.png">
-<h5>User messages (PrivateUser)</h5>
+<br>
+<h5>Home page for admin</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexAdmin.png">  
+<br>
+<h5>Add new plant</h5>
+<img src="/VFHCatalogMVC.Web/Screens/AdminAddNewPlant.png">  
+<br>
+<h5>Edit Plant</h5>
+<img src="/VFHCatalogMVC.Web/Screens/AdminEditPlant.png">  
+<br>
+<h5>User messages</h5>
 <img src="/VFHCatalogMVC.Web/Screens/UserMessages.png">
+<br>
+<h5>Registration</h5>
+<img src="/VFHCatalogMVC.Web/Screens/Register.png">
+
   
 
 
