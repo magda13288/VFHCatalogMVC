@@ -5,7 +5,7 @@
 }
 <div id="PlaceHolderHere"></div>
 
-<h1>Witaj w katalogu roślin uprawnych</h1>
+<h3 class="text-center">Witaj w katalogu roślin uprawnych</h3>
 
 @if (User.IsInRole("Admin") || User.IsInRole("PrivateUser") || User.IsInRole("Company"))
 {
@@ -107,7 +107,7 @@
             </tr>
     </table>
     <input type="hidden" name="pageNo" id="pageNo"/>
-    <input type="hidden" name="pageSize" id="pageSize" value="3" />
+    <input type="hidden" name="pageSize" id="pageSize" value="10" />
 </div>
     </div>
 </form>
