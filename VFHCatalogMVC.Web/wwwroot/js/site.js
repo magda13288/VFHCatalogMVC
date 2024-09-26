@@ -33,6 +33,8 @@ $(function () {
                 location.reload();
             }
         });
+
+
         //$.post(url, sendData).done(function (data) {
         //    //PlaceHolderElement.find('.modal').modal('hide');
         //    //location.reload();

@@ -4,10 +4,12 @@
     ViewData["Title"] = "IndexSeeds";
 }
 <div id="PlaceHolderHere"></div>
-
+@* <head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head> *@
 @*<h1>Nasiona użytkowników</h1>*@
-
-@if (User.IsInRole("PrivateUser") || User.IsInRole("Admin"))
+@* <body>
+ *@@if (User.IsInRole("PrivateUser") || User.IsInRole("Admin"))
 {
     <button type="button" class="btn btn-success" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{Model.PlantId}")">+Nasiona</button>
 }
@@ -184,6 +186,7 @@
         </div>
         </div>
 </form>
+@* </body> *@
 
 @section Scripts
 {
