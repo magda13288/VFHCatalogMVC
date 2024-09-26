@@ -2,14 +2,24 @@ Plant Seeder is a web application based on MVC pattern. The application allows y
 You can see photos, description, list of online shops and gardener in your neighborhood who have seeds or seddlings of plants what you looking for. 
 You can find gardener by localization (now searching is basing on drop down lists - in futer I want to use gps localization). If user want to exchange with other user seeds or seedlings can send messages to him.
 
-<h3>Used packages</h3>
+<h3>Technology stack</h3>
+<p><strong>Back-end</strong> </p>
 <ul>
+  <li>ASP.NET Core MVC</li>
+  <li>SQL</li>
   <li> Entity framework</li>
   <li>AutoMapper</li>
   <li>FluentValidation</li>
   <li>DependencyInjection</li>
+  <li>JavaScript - cascading DropDownList and modal pop-up functionality</li>
+  <li>Google OAuth2.0</li>
+  <li>Clean Architecture</li>
  </ul>
-
+ 
+<p><strong>Front-end</strong> </p>
+<ul>
+  <li>Bootstrap</li>
+ </ul>
   
 <h3>Roles</h3>
 <ul>
