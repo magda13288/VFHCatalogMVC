@@ -55,7 +55,8 @@ For the correct operation of drop-down lists it is necessary to add default valu
   <li>ColorsTable</li>
 </ul>
 <h3>Screenshots</h3>
-<img src>
+<h5>Strona główna</h5>
+<img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Strona główna" title="Strona główna">
 
   
 
