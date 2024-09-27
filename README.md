@@ -72,9 +72,6 @@ For the correct operation of drop-down lists it is necessary to add default valu
 <h5>Home Page</h5>
 <img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Strona główna" title="Strona główna">
 <br>
-<h5>User seeds list</h5>
-<img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
-<br>
 <h5>Plant details</h5>
 <img src="/VFHCatalogMVC.Web/Screens/PlantDetails.png">
 <br>
@@ -82,7 +79,10 @@ For the correct operation of drop-down lists it is necessary to add default valu
 <img src="/VFHCatalogMVC.Web/Screens/IndexPrivateUser.png">
 <br>
 <h5>Add seeds/seedlings for choosen plant (PrivateUser)</h5>
-<img src="/VFHCatalogMVC.Web/Screens/PlantUsersList.png">
+<img src="/VFHCatalogMVC.Web/Screens/PrivateUserAddSeeds.png">
+<br>
+<h5>User seeds or seedlings list</h5>
+<img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
 <br>
 <h5>Home page for admin</h5>
 <img src="/VFHCatalogMVC.Web/Screens/IndexAdmin.png">  
@@ -92,6 +92,9 @@ For the correct operation of drop-down lists it is necessary to add default valu
 <br>
 <h5>Edit Plant</h5>
 <img src="/VFHCatalogMVC.Web/Screens/AdminEditPlant.png">  
+<br>
+<h5>List of new plant added by users</h5>
+<img src="/VFHCatalogMVC.Web/Screens/NewAddedPlantsByUsersIndexAdmin.png">  
 <br>
 <h5>User messages</h5>
 <img src="/VFHCatalogMVC.Web/Screens/UserMessages.png">
