@@ -14,6 +14,8 @@ namespace VFHCatalogMVC.Application.ViewModels.User
         public int PlantId { get; set; }
         public string UserId { get; set; }
         public string Comment { get; set; }
+        [NotMapped]
+        public string UserName { get; set; }
 
         [NotMapped]
         public string Status { get; set; }

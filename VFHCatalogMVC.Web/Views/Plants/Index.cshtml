@@ -18,11 +18,11 @@
         <div class="row">
      <nav class="navbar navbar-expand-lg bg-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-         <label asp-for="PlantForList.TypeId" class="control-label md-3">Typ</label>
+         <label asp-for="PlantForList.TypeId" class="control-label md-3 p-2">Typ</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label md-3">Grupa</label>
+           <label asp-for="PlantForList.GroupId" class="control-label md-3 p-2">Grupa</label>
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label md-3">Sekcja</label>
+           <label asp-for="PlantForList.SectionId" class="control-label md-3 p-2">Sekcja</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
                <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>

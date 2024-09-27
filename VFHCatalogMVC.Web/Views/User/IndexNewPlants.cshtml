@@ -14,11 +14,11 @@
         <div class="row">
      <nav class="navbar navbar-expand-lg bg-light" @*style="background-color: #e3f2fd;"*@>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-         <label asp-for="PlantForList.TypeId" class="control-label md-3">Typ</label>
+         <label asp-for="PlantForList.TypeId" class="control-label md-3 p-2">Typ</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label md-3">Grupa</label>
+           <label asp-for="PlantForList.GroupId" class="control-label md-3 p-2">Grupa</label>
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label md-3">Sekcja</label>
+           <label asp-for="PlantForList.SectionId" class="control-label md-3 p-2">Sekcja</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
                     <label asp-for="ViewAll" class="control-label text-md-center">Wyświetl wszystko</label>
                     @Html.CheckBoxFor(m=>Model.ViewAll, new { @class = "checkbox" , id="viewAll", name="viewAll"})
@@ -36,9 +36,13 @@
             <th>
                 Zdjęcie
             </th>
+              <th>
+               Użytkownik
+              </th>
             <th>
                Uwagi
             </th>
+               
             <th></th>
         </tr>
     </thead>
@@ -52,9 +56,14 @@
                 @Html.DisplayFor(modelItem => item.PlantForList.Image)
                 <img src="/plantGallery/searchPhoto/@item.PlantForList.Photo" class="img-fluid" width="120" height="80" asp-append-version="true" />
             </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UserName)
+                            </td>
+                                     
             <td>
                 @Html.DisplayFor(modelItem => item.Comment)
             </td>
+                            
             <td>
             <button type="button" class="btn btn-info" onclick="window.location= '@Url.Action( "Edit", "Plants",new {id=item.PlantId})'">Edytuj</button>
             <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.PlantId})'">Szczegóły</button>

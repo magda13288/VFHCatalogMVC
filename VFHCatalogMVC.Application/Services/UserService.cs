@@ -603,6 +603,12 @@ namespace VFHCatalogMVC.Application.Services
             if (userRole.Result.Count > 0 && userRole.Result.Contains("Admin") == true)
             {
                 plants = _userRepo.GetAllNewUserPlants().ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
+
+                foreach (var plant in plants)
+                {
+                    var userInfo = _userManager.FindByIdAsync(plant.UserId);
+                    plant.UserName = userInfo.Result.AccountName;
+                }
             }
             else
             {
