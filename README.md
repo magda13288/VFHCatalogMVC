@@ -35,7 +35,7 @@ You can find gardener by localization (now searching is basing on drop down list
 <li>Implementation advanced filters adapted to the plant species, type and subtype</li>
 <li>Add catalog of other garden products with filtration</li>
 <li>Implementation of all functionality enabling shopping in stores</li>
-<li>Create a module for companies that allows them to add sales offers for gardening products from the catalog</li>Create a module for companies that allows them to add sales offers for gardening products from the catalog
+<li>Create a module for companies that allows them to add sales offers for gardening products from the catalog</li>
 <li>Safety</li>
 </ul>
 
