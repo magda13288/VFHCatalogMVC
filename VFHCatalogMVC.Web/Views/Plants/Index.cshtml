@@ -1,11 +1,14 @@
 ﻿@model VFHCatalogMVC.Application.ViewModels.Plant.ListPlantForListVm
 
-@{
-    ViewData["Title"] = "Index";
-}
-<div id="PlaceHolderHere"></div>
+ @{
+  ViewData["Title"] = "Index";
+ }
 
-<h3 class="text-center">Witaj w katalogu roślin uprawnych</h3>
+
+<body>
+    @* <body style="background-image: url('/images/16243.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat;"> *@
+  <div id="PlaceHolderHere"></div>
+  <h3 class="text-center">Witaj w katalogu roślin uprawnych</h3>
 
 @if (User.IsInRole("Admin") || User.IsInRole("PrivateUser") || User.IsInRole("Company"))
 {
@@ -16,19 +19,25 @@
 <form asp-action="Index" asp-controller="Plants" method="post">
     <div class="container-fluid">
         <div class="row">
-     <nav class="navbar navbar-expand-lg bg-light">
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-         <label asp-for="PlantForList.TypeId" class="control-label md-3 p-2">Typ</label>
-               <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label md-3 p-2">Grupa</label>
-               <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label md-3 p-2">Sekcja</label>
-               <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
-               <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Szukaj</button>
-       </div>      
-</nav>
-<p></p>
+            <nav class="navbar navbar-expand-lg" id="selectNav">
+                 <div class="collapse navbar-collapse" id="navbarSupportedContent">     
+                     <label asp-for="PlantForList.TypeId" class="control-label">Typ</label>
+                     <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control 
+                            aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", 
+                            selectedValue: ViewBag.TypeId))"></select>
+                     <label asp-for="PlantForList.GroupId" class="control-label">Grupa</label>
+                     <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control"
+                            aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", 
+                            selectedValue: ViewBag.GroupId))" ></select>
+                     <label asp-for="PlantForList.SectionId" class="control-label">Sekcja</label>
+                     <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control" 
+                            aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",
+                            selectedValue:ViewBag.SectionId))"></select>
+                     <input class="form-control" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
+                     <button class="btn btn-outline-success" type="submit" id="Submit">Szukaj</button>
+                 </div>      
+            </nav>
+            <p></p>
             <p>
                 <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     Filtry
@@ -39,32 +48,32 @@
                     Filtry dostosowane do rośliny.
                 </div>
             </div>
-    </div>
-<div class="row">
-<table class="table-striped table-hover table-light" id="plantsTable">
-    <thead class="thead-light">
-        <tr class="text-center">
-            <th>
-                Nazwa
-            </th>
-            <th>
-                Zdjęcie
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Plants) 
-{
-        <tr class="text-center">
-              <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-             <td>
-                @Html.DisplayFor(modelItem => item.Image)
-                <img src="/plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
-            </td>
-            <td>
+        </div>
+        <div class="row">
+            <table class="table-striped table-hover" id="plantsTable">
+                <thead class="thead-light">
+                    <tr class="text-center">
+                        <th>
+                            Nazwa
+                        </th>
+                        <th>
+                            Zdjęcie
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Plants) 
+                    {
+                    <tr class="text-center">
+                          <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Image)
+                            <img src="/plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
+                         </td>
+                         <td>
                                 @if (User.IsInRole("Admin"))
                                 {
                                     @Html.ActionLink("Edytuj ", "Edit", new {  id=item.Id }, new { @class = "btn btn-info" })
@@ -92,12 +101,12 @@
                                     }
                                 }
                                                                 
-            </td>
-           </tr>
-}
-    </tbody>
-</table>
-</div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 <div class="row">
     <table>
         <tr class="text-left">
@@ -122,6 +131,7 @@
 </div>
     </div>
 </form>
+</body>
 
 @section Scripts
 { <script type="text/javascript">

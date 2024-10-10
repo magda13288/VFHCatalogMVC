@@ -4,7 +4,8 @@
     ViewData["Title"] = "IndexPlantMessages";
 }
 
-<h1>Wiadomości</h1>
+<body>
+<h3>Wiadomości</h3>
 <div id="PlaceHolderHere"></div>
 
 <div class="row">
@@ -16,7 +17,7 @@
 </div>
 <p></p>
 <div class="row">
-    <table class="table-striped table-hover table-light">
+    <table class="table-striped table-hover">
         <thead class="thead-light text-center">
             <tr>
             <th>
@@ -100,6 +101,7 @@
     <input type="hidden" name="pageSize" id="pageSize" value="30" />
 </div>
 @*<a asp-action="IndexNewPlants" asp-controller="User" class="btn btn-dark">Wstecz</a>*@
+</body>
 
 @section Scripts
 {

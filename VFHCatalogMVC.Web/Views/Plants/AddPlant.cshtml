@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "AddPlant";
 }
+
+<body>
 <div id="PlaceHolderHere"></div>
 <h1>Dodawanie nowej rośliny</h1>
 
@@ -15,17 +17,17 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TypeId" class="control-label">Typ</label>
-               <select id="ddlType" asp-for="TypeId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"@*,selectedValue:Model.TypeId*@))"></select>
+               <select id="ddlType" asp-for="TypeId" class="form-control m-0" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"@*,selectedValue:Model.TypeId*@))"></select>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GroupId" class="control-label">Grupa</label>           
-               <select id="ddlGroup" asp-for="GroupId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.GroupId*@))"></select>
+               <select id="ddlGroup" asp-for="GroupId" class="form-control m-0" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.GroupId*@))"></select>
                 <span asp-validation-for="GroupId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SectionId" class="control-label">Sekcja</label>              
-                <select id="ddlSection" asp-for="SectionId" class="form-control btn btn-outline-dark dropdown-toggle" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.SectionId*@))"></select>
+                <select id="ddlSection" asp-for="SectionId" class="form-control m-0" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.SectionId*@))"></select>
                 <span asp-validation-for="SectionId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,31 +38,31 @@
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple= true,id="ddlGrowthTypes"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control m-0", multiple= true,id="ddlGrowthTypes"})
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control btn btn-outline-dark dropdown-toggle", multiple= true,id="ddlDestinations"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control m-0", multiple= true,id="ddlDestinations"})
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ColorId, new SelectList(ViewBag.ColorsList,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlColors" })
+                @Html.DropDownListFor(model=>model.PlantDetails.ColorId, new SelectList(ViewBag.ColorsList,"Value","Text"),  new { @class = "form-control m-0", id="ddlColors" })
                 <span asp-validation-for="PlantDetails.ColorId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", multiple = true, id="ddlGrowingSeazons" })
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control m-0", multiple = true, id="ddlGrowingSeazons" })
                 <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
             </div>
               <div class="form-group">
                 <label asp-for="PlantDetails.FruitTypeId" class="control-label">Typ owocu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlFruitType" })
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control m-0", id="ddlFruitType" })
                @* <select id="ddlColor" asp-for="ColorId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>*@
                 <span asp-validation-for="PlantDetails.FruitTypeId" class="text-danger"></span>
             </div>
               <div class="form-group">
                 <label asp-for="PlantDetails.FruitSizeId" class="control-label">Wielkość owocu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control btn btn-outline-dark dropdown-toggle", id="ddlFruitSize" })
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control m-0", id="ddlFruitSize" })
                 <span asp-validation-for="PlantDetails.FruitSizeId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -93,11 +95,7 @@
 <div>
     <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
 </div>
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <link href="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-    <script src="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/js/bootstrap-multiselect.js" type="text/javascript"></script>*@
+</body>
 
 @section Scripts
 {

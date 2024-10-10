@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Details";
 }
+<body>
 <div id="PlaceHolderHere"></div>
 <h1>@Model.Plant.FullName</h1>
 
@@ -69,56 +70,56 @@
                         <li data-target="#carouselControls" data-slide-to="@i" class="@(i==0 ? "active" : "")"></li>
                     }
             </ol>
-       <div class="carousel-inner">
-          @for (int i=0;i<Model.PlantDetailsImages.Count;i++) 
-         {
-         <div class="@(i==0 ? "carousel-item active" : "carousel-item")">             
-           <img class="d-block w-100" src="/plantGallery/plantDetailsGallery/@Model.PlantDetailsImages[i].ImageURL"  alt="" asp-append-version="true"/>         
+          <div class="carousel-inner">
+              @for (int i=0;i<Model.PlantDetailsImages.Count;i++) 
+             {
+                 <div class="@(i==0 ? "carousel-item active" : "carousel-item")">             
+                   <img class="d-block w-100" src="/plantGallery/plantDetailsGallery/@Model.PlantDetailsImages[i].ImageURL"  alt="" asp-append-version="true"/>         
+                </div>
+             }
+         </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
-        }
-      </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
     </div>
     </div>
     <p></p>
     <div class="row">
-         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
-   Opinie
-  </button>
-  <div class="collapse" id="collapseOpinions" onscroll="true">
-       <div class="card card-body">
-            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
-       <table class="table-hover" border="0">
-    <tbody>
-         @for(int i=0;i<Model.PlantOpinions.Count;i++)
-         {
-        <tr class="text-center">
-             <td>
-                 @Html.HiddenFor(it=>Model.PlantOpinions[i].Id)
-            </td>
-             <td>
-              @Html.DisplayFor(it=>Model.PlantOpinions[i].AccountName)
-            </td>
-             <td>
-              @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion)
-            </td>
-             <td>
-              @Html.DisplayFor(it=>Model.PlantOpinions[i].Date)
-             </td>                
-        </tr>
-         }
-    </tbody>
-</table>         
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
+       Opinie
+      </button>
+        <div class="collapse" id="collapseOpinions" onscroll="true" >
+            <div class="card card-body" style="background-color: transparent">
+                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
+                <table class="table-hover" border="0">
+                    <tbody>
+                 @for(int i=0;i<Model.PlantOpinions.Count;i++)
+                 {
+                <tr class="text-center">
+                     <td>
+                         @Html.HiddenFor(it=>Model.PlantOpinions[i].Id)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].AccountName)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].Date)
+                     </td>                
+                </tr>
+                 }
+            </tbody>
+           </table>         
            </div>
-</div>
+      </div>
     </div>
 </div>
 <div>
@@ -129,6 +130,7 @@
     <p></p>
     <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
 </div>
+    </body>
 
 @*@section Scripts
 {

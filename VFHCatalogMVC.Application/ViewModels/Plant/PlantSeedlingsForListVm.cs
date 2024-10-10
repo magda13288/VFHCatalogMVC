@@ -14,6 +14,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public AddressVm Address { get; set; }
         public int PlantId { get; set; }
         public bool isCompany { get; set; }
+        public string LoggedUserName { get; set; }
 
     }
 }
