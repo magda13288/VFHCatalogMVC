@@ -70,7 +70,7 @@ For the correct operation of drop-down lists it is necessary to add default valu
 <h3>Screenshots</h3>
 <br>
 <h5>Home Page</h5>
-<img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Strona główna" title="Strona główna">
+<img src="/VFHCatalogMVC.Web/Screens/Index.png" alt="Home Page" title="Home Page">
 <br>
 <h5>Plant details</h5>
 <img src="/VFHCatalogMVC.Web/Screens/PlantDetails.png">
@@ -89,6 +89,9 @@ For the correct operation of drop-down lists it is necessary to add default valu
 <br>
 <h5>Add new plant</h5>
 <img src="/VFHCatalogMVC.Web/Screens/AdminAddNewPlant.png">  
+<br>
+<h5>Add new plant validation</h5>
+<img src="/VFHCatalogMVC.Web/Screens/AdminAddNewPlantValidation.png">  
 <br>
 <h5>Edit Plant</h5>
 <img src="/VFHCatalogMVC.Web/Screens/AdminEditPlant.png">  
