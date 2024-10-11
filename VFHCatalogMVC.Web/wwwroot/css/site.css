@@ -122,8 +122,12 @@ table {
     padding-right: 50px;
 }
 
-#modalPopUp {
+.modal-content {
     background-color: rgb(33, 37, 41);
     color: white;
     border-block-color: aliceblue;
+}
+
+.close span {
+    color: red;
 }
