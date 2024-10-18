@@ -129,7 +129,7 @@ table {
 .modal-content {
     background-color: rgb(33, 37, 41);
     color: white;
-    border-block-color: aliceblue;
+    border-color: aliceblue;
 }
 
 .close span {

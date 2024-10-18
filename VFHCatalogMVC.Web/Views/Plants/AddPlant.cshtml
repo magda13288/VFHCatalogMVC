@@ -38,11 +38,11 @@
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control m-0", multiple= true,id="ddlGrowthTypes"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control", multiple= true,id="ddlGrowthTypes"})
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control m-0", multiple= true,id="ddlDestinations"})
+                @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control", multiple= true,id="ddlDestinations"})
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
@@ -51,18 +51,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control m-0", multiple = true, id="ddlGrowingSeazons" })
+                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control", multiple = true, id="ddlGrowingSeazons" })
                 <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
             </div>
               <div class="form-group">
                 <label asp-for="PlantDetails.FruitTypeId" class="control-label">Typ owocu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control m-0", id="ddlFruitType" })
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control", id="ddlFruitType" })
                @* <select id="ddlColor" asp-for="ColorId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>*@
                 <span asp-validation-for="PlantDetails.FruitTypeId" class="text-danger"></span>
             </div>
               <div class="form-group">
                 <label asp-for="PlantDetails.FruitSizeId" class="control-label">Wielkość owocu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control m-0", id="ddlFruitSize" })
+                @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control", id="ddlFruitSize" })
                 <span asp-validation-for="PlantDetails.FruitSizeId" class="text-danger"></span>
             </div>
             <div class="form-group">

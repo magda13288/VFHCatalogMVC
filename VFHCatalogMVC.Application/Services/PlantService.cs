@@ -31,6 +31,10 @@ namespace VFHCatalogMVC.Application.Services
         private readonly IUserService _userService;
         private readonly IImageService _imageService;
 
+        public PlantService()
+        {
+                
+        }
         public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserService userService, IImageService imageService)
         {
             _plantRepo = plantRepo;
@@ -46,6 +50,9 @@ namespace VFHCatalogMVC.Application.Services
 
             if (model.SectionId == 0)
                 model.SectionId = null;
+
+            //check if adding plant does't exist in database
+
             var plantList = GetAllActivePlantsForList(1, 10, model.FullName,null,null,null);
 
             if (plantList.Count == 0)
@@ -140,9 +147,9 @@ namespace VFHCatalogMVC.Application.Services
             }
             else
             {
-                
+                return 0;
             }
-            return 0;
+            
         }
         public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
         {
