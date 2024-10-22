@@ -48,9 +48,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         {
             public NewPlantValidation()
             {
-                RuleFor(x => x.TypeId).NotEmpty().WithMessage("Pole wymagane");
-                RuleFor(x => x.GroupId).NotEmpty().WithMessage("Pole wymagane");
-                RuleFor(x => x.FullName).NotNull().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
+                RuleFor(x => x.Id).GreaterThan(0);
+                RuleFor(x => x.TypeId).NotEmpty().GreaterThan(0).WithMessage("Pole wymagane");
+                RuleFor(x => x.GroupId).NotEmpty().GreaterThan(0).WithMessage("Pole wymagane");
+                RuleFor(x => x.FullName).NotEmpty().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
+                RuleFor(x => x.PhotoFileName).NotEmpty();
+                             
             }
         }
     }

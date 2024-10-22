@@ -9,7 +9,7 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Adresses
 {
-    public class AddressVm:IMapFrom<VFHCatalogMVC.Domain.Model.Address>
+    public class AddressVm : IMapFrom<VFHCatalogMVC.Domain.Model.Address>
     {
         [PersonalData]
         public int Id { get; set; }
@@ -42,9 +42,13 @@ namespace VFHCatalogMVC.Application.ViewModels.Adresses
         {
             public AddressValidation()
             {
+                RuleFor(x => x.Id).GreaterThan(0);
                 RuleFor(x => x.CountryId).NotEmpty().WithMessage("Wybierz kraj");
                 RuleFor(x => x.RegionId).NotEmpty().WithMessage("Wybierz województwo");
                 RuleFor(x => x.CityId).NotEmpty().WithMessage("Wybierz miasto");
+                RuleFor(x => x.Street).NotEmpty().WithMessage("*");
+                RuleFor(x => x.BuildingNumber).NotEmpty().WithMessage("*");
+                RuleFor(x => x.ZipCode).NotEmpty().WithMessage("*").Matches(@"^\d{2}-\d{3}$").WithMessage("Niepoprawny format");
             }
         }
 

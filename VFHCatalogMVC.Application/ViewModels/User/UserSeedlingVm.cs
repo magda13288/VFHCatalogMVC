@@ -35,9 +35,12 @@ namespace VFHCatalogMVC.Application.ViewModels.User
         {
             public UserSeedlingValidation()
             {
-                RuleFor(x => x.Count).NotNull().GreaterThan(0).WithMessage("Liczba nasion nie może być mniejsza bądź równa 0");
+                RuleFor(x => x.Id).GreaterThan(0);
+                RuleFor(x => x.PlantId).GreaterThan(0);
+                RuleFor(x => x.Count).NotNull().GreaterThan(0).WithMessage("Liczba sadzonek nie może być mniejsza bądź równa 0");
                 RuleFor(x => x.Description).NotEmpty().WithMessage("Pole wymagane");
-                //RuleFor(x => x.ContactDetail.ContactDetailInformation).Must(BeAValidWebAddress).WithMessage("Niepoprawny format adresu strony");
+                //RuleFor(x => x.ContactDetail.ContactDetailInformation).Must(BeAValidWebAddress).WithMessage("Niepoprawny format adresu strony");               
+                RuleFor(x => x.UserId).NotEmpty();
             }
 
             private bool BeAValidWebAddress(string webAddress)

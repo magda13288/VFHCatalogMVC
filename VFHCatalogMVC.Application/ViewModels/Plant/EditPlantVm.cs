@@ -14,5 +14,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public string Description { get; set; }
         public string Opinion { get; set; }
         public byte[] Photo { get; set; }
+
+
     }
 }
