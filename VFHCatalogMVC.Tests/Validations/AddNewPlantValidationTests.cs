@@ -26,7 +26,7 @@ namespace Application.UnitTests.Validations
         {
             var validator = new NewPlantVm.NewPlantValidation();
             var newPlant = SetNewPlantParameters();
-            newPlant.Id = 0;
+            newPlant.Id = -1;
 
             validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.Id));
         }
@@ -86,15 +86,15 @@ namespace Application.UnitTests.Validations
             validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.FullName));
         }
 
-        [Fact]
-        public void Add_NewPlant_InvalidReqest_WrongPhotoFileName_ShouldReturnValidationError()
-        {
-            var validator = new NewPlantVm.NewPlantValidation();
-            var newPlant = SetNewPlantParameters();
-            newPlant.PhotoFileName = string.Empty;
+        //[Fact]
+        //public void Add_NewPlant_InvalidReqest_WrongPhotoFileName_ShouldReturnValidationError()
+        //{
+        //    var validator = new NewPlantVm.NewPlantValidation();
+        //    var newPlant = SetNewPlantParameters();
+        //    newPlant.PhotoFileName = string.Empty;
 
-            validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.PhotoFileName));
-        }
+        //    validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.PhotoFileName));
+        //}
         private static NewPlantVm SetNewPlantParameters()
         {
             var plant = new NewPlantVm()

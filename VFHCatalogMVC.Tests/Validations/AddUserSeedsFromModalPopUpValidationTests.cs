@@ -31,7 +31,7 @@ namespace Application.UnitTests.Validations
             var validator = new UserSeedVm.UserSeedValidation();
             var newSeed = new UserSeedVm
             {
-                Id = 0,
+                Id = -1,
                
             };
 
