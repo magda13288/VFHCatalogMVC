@@ -27,24 +27,26 @@ namespace Application.UnitTests.Common
             //assures us that the database has been created
             context.Database.EnsureCreated();
 
-            var plantType = new PlantType
+            var plantType = new List<PlantType>
             {
-                Id = 1,
-                Name = "test",
+                new PlantType {Id = 1, Name = "test1" },
+                new PlantType {Id = 2, Name = "test2" },
+
             };
             context.Add(plantType);
 
-            var plantGroup = new PlantGroup
+            var plantGroup = new List<PlantGroup>
             {
-                Id=1,
-                Name ="test",
+               new PlantGroup { Id=1, PlantTypeId =1, Name ="test1" },
+               new PlantGroup { Id=2, PlantTypeId =2, Name ="test2" },
             };
             context.Add(plantGroup);
 
-            var plantSection = new PlantSection
+            var plantSection = new List<PlantSection>
             {
-                Id=1,
-                Name="test",
+               new PlantSection{Id=1, PlantGroupId= 1, Name="test1"},
+               new PlantSection{Id=2, PlantGroupId = 2, Name="test2"},
+
             };
             context.Add(plantSection);
 
@@ -69,26 +71,34 @@ namespace Application.UnitTests.Common
             };
             context.Add(fruitType);
 
-            //var growthTypes = new List<GrowthType>
-            //{
-            //   new GrowthType {Id=1,Name="test" },
-            //   new GrowthType{Id=2,Name="test"},
-            //};
-            //context.Add(growthTypes);
+            var growthTypes = new List<GrowthType>
+            {
+               new GrowthType {Id=1,PlantTypeId=1, Name="test" },
+               new GrowthType {Id=2,PlantTypeId=1,Name="test" },
+               new GrowthType{Id=3,PlantTypeId=2, Name="test"},
+               new GrowthType{Id=4,PlantTypeId=2, Name="test"},
+               //new GrowthType{Id=5,Name="test"},
+               //new GrowthType{Id=6,Name="test"},
+            };
+            context.Add(growthTypes);
 
-            //var growingSeazons = new List<GrowingSeazon>
-            //{
-            //   new GrowingSeazon {Id=1,Name="test" },
-            //   new GrowingSeazon{Id=2,Name="test"},
-            //};
-            //context.Add(growingSeazons);
+            var growingSeazons = new List<GrowingSeazon>
+            {
+               new GrowingSeazon {Id=1,Name="test" },
+               new GrowingSeazon {Id=2,Name="test" },
+               new GrowingSeazon{Id=3,Name="test"},
+               new GrowingSeazon{Id=4,Name="test"},
+            };
+            context.Add(growingSeazons);
 
-            //var destinations = new List<Destination>
-            //{
-            //   new Destination {Id=1,Name="test" },
-            //   new Destination {Id=2,Name="test"},
-            //};
-            //context.Add(destinations);
+            var destinations = new List<Destination>
+            {
+               new Destination {Id=1,Name="test" },
+               new Destination {Id=2,Name="test" },
+               new Destination {Id=3,Name="test"},
+               new Destination {Id=4,Name="test"},
+            };
+            context.Add(destinations);
 
             var plantDetails = new PlantDetail
             {
