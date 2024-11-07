@@ -139,10 +139,6 @@ namespace VFHCatalogMVC.Application.Services
                         }
                     }
                 }
-                //else
-                //{
-                //    return id;
-                //}
                 return id;
             }
             else
@@ -726,13 +722,13 @@ namespace VFHCatalogMVC.Application.Services
             return sections;
         }
 
-        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int? sectionId)
+        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
         {
             List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
 
             if (typeId == 1)
             {
-                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e=>e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
             else if (typeId == 2 || typeId == 3)
             {

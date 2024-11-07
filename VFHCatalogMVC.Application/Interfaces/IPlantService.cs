@@ -20,7 +20,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         void AddPlantSeed(PlantSeedVm seed);
         void AddPlantSeedling(PlantSeedlingVm seedling);
         void AddPlantOpinion(PlantOpinionsVm opinion);
-        List<GrowthTypeVm> GetGrowthTypes(int typeId, int groupId, int? sectionId);
+        List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId);
         List<DestinationsVm> GetDestinations();
         List<ColorsVm> GetColors();
         List<GrowingSeazonVm> GetGrowingSeazons();

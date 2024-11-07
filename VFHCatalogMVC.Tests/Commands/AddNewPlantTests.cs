@@ -224,8 +224,15 @@ namespace Application.UnitTests.Commands
 
         }
 
-        [Fact]
-        public void GetGrowthTypes_ShouldReturnListogGrowthTypes()
+        [Theory]
+
+        [InlineData( 1, 1, 1 , "test1")]
+        [InlineData( 2, null, null, "test2")]
+        [InlineData(3, null, null, "test3")]
+        [InlineData(1, 3, 11, "test4")]
+
+
+        public void GetGrowthTypes_ShouldReturnListofGrowthTypes(int typeId, int? groupId, int? sectionId, string stringName)
         {
 
             //Arrange
@@ -247,9 +254,14 @@ namespace Application.UnitTests.Commands
                mockImageService.Object
            );
 
-         //Act
+            //Act
 
-         //var growthTypesList = plantService.GetGrowthTypes
+            var growthTypesList = plantService.GetGrowthTypes(typeId,groupId,sectionId);
+
+            //Assert
+
+            Assert.Equal(stringName,growthTypesList.AsQueryable().Single().Name);
+
 
         }
 

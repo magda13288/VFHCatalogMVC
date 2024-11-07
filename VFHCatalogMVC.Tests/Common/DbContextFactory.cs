@@ -29,26 +29,34 @@ namespace Application.UnitTests.Common
 
             var plantType = new List<PlantType>
             {
-                new PlantType {Id = 1, Name = "test1" },
-                new PlantType {Id = 2, Name = "test2" },
+                new PlantType {Id = 1, Name = "test" },
+                new PlantType {Id = 2, Name = "test" },
+                new PlantType {Id = 3 , Name = "test" },
 
             };
-            context.Add(plantType);
+            foreach(var items in plantType)
+            context.Add(items);
 
             var plantGroup = new List<PlantGroup>
             {
-               new PlantGroup { Id=1, PlantTypeId =1, Name ="test1" },
-               new PlantGroup { Id=2, PlantTypeId =2, Name ="test2" },
+               new PlantGroup { Id=1, PlantTypeId = 1, Name = "test" },
+               new PlantGroup { Id=2, PlantTypeId = 2, Name = "test" },
+               new PlantGroup { Id=3, PlantTypeId = 3, Name = "test" },
             };
-            context.Add(plantGroup);
+            foreach (var items in plantGroup)
+            context.Add(items);
 
             var plantSection = new List<PlantSection>
             {
-               new PlantSection{Id=1, PlantGroupId= 1, Name="test1"},
-               new PlantSection{Id=2, PlantGroupId = 2, Name="test2"},
+               new PlantSection{Id=1, PlantGroupId = 1, Name="test"},
+               new PlantSection{Id=2, PlantGroupId = 2, Name="test"},
+               new PlantSection{Id=3, PlantGroupId = 3, Name="test" },
+               new PlantSection{Id=11, PlantGroupId = 3, Name="test" },
 
             };
-            context.Add(plantSection);
+  
+            foreach (var items in plantSection)
+            context.Add(items);
 
             var color = new Color
             {
@@ -71,16 +79,18 @@ namespace Application.UnitTests.Common
             };
             context.Add(fruitType);
 
+            //based on data from data base
             var growthTypes = new List<GrowthType>
             {
-               new GrowthType {Id=1,PlantTypeId=1, Name="test" },
-               new GrowthType {Id=2,PlantTypeId=1,Name="test" },
-               new GrowthType{Id=3,PlantTypeId=2, Name="test"},
-               new GrowthType{Id=4,PlantTypeId=2, Name="test"},
-               //new GrowthType{Id=5,Name="test"},
-               //new GrowthType{Id=6,Name="test"},
+               new GrowthType {Id=1,PlantTypeId=1, PlantGroupId =1, PlantSectionId = 1, Name="test1" },
+               new GrowthType {Id=2,PlantTypeId=2, PlantGroupId= null, PlantSectionId = null, Name="test2" },
+               new GrowthType{Id=3,PlantTypeId=3, PlantGroupId= null, PlantSectionId = null, Name="test3"},
+               new GrowthType{Id=4,PlantTypeId=1, PlantGroupId=3, PlantSectionId = 11, Name="test4"},
+
             };
-            context.Add(growthTypes);
+            foreach (var items in growthTypes)
+            context.Add(items);
+           
 
             var growingSeazons = new List<GrowingSeazon>
             {
@@ -89,7 +99,9 @@ namespace Application.UnitTests.Common
                new GrowingSeazon{Id=3,Name="test"},
                new GrowingSeazon{Id=4,Name="test"},
             };
-            context.Add(growingSeazons);
+            foreach (var items in growingSeazons)
+            context.Add(items);
+
 
             var destinations = new List<Destination>
             {
@@ -98,8 +110,9 @@ namespace Application.UnitTests.Common
                new Destination {Id=3,Name="test"},
                new Destination {Id=4,Name="test"},
             };
-            context.Add(destinations);
-
+            foreach (var items in destinations)
+            context.Add(items);
+           
             var plantDetails = new PlantDetail
             {
                 Id = 1,
