@@ -24,7 +24,7 @@ You can find gardener by localization (now searching is basing on drop down list
 <h3>Roles</h3>
 <ul>
   <li>Admin (can: add new plants to catalog, delete plants, edit plants, send messages to users, activate and deactivate plants)</li>
-  <li> Private user (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant), send messages to other users)</li>
+  <li> Private user (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after veryfication information about plant), send messages to other users, add opinions about plants, users)</li>
   <li>Company (create a list of seeds and seedlings from the catalog that the user has, add new plant to catalog(with status not active - only admin can activate plant after weryfication information about plant))  </li>
 </ul>
 
