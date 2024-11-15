@@ -22,13 +22,46 @@ namespace Application.UnitTests.Commands
 {
     public class AddNewPlantTests : CommandTestBase
     {
-
+        //private readonly IMapper _mapper;
+        //private readonly PlantRepository _plantRepository;
+        //private readonly IUserService _userService;
+        //private readonly IImageService _imageService;
+        //private readonly UserManager<ApplicationUser> _userManager;
+        //private readonly PlantService _plantService;
+        //private readonly ApplicationUser applicationUser;
 
         public AddNewPlantTests() : base()
         {
+           // var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
 
+           // var mapper = configurationProvider.CreateMapper();
+            
+           // var mockPlantRepo = new Mock<PlantRepository>(_context);          
+           // var mockUserService = new Mock<IUserService>();         
+           // var mockImageService = new Mock<IImageService>();
+           // var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+           // mockUserManager.Setup(x => x.FindByNameAsync(applicationUser.UserName)).ReturnsAsync(applicationUser);
+           // mockUserManager.Setup(x => x.IsInRoleAsync(applicationUser, "Admin")).ReturnsAsync(true);
+
+           // _mapper = mapper;
+           // _plantRepository = mockPlantRepo.Object;
+           // _userService = mockUserService.Object;
+           // _imageService = mockImageService.Object;
+           // _userManager = mockUserManager.Object;
+
+
+           // var plantService = new PlantService(
+           //    mockPlantRepo.Object,
+           //    mapper,
+           //    mockUserManager.Object,
+           //    mockUserService.Object,
+           //    mockImageService.Object
+           //);
+
+           // _plantService = plantService;
         }
 
+        
         [Fact]
 
         public void Add_NewPlant_ProperRequest_ShouldReturnIdNotEquall0()
@@ -41,6 +74,7 @@ namespace Application.UnitTests.Commands
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserService = new Mock<IUserService>();
             var mockImageService = new Mock<IImageService>();
+            var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
             var mockUser = SetUser();
@@ -48,13 +82,17 @@ namespace Application.UnitTests.Commands
             mockUserManager.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
             mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, "Admin")).ReturnsAsync(true);
 
+            
             var plantService = new PlantService(
                 mockPlantRepo.Object,
                 mapper,
                 mockUserManager.Object,
                 mockUserService.Object,
-                mockImageService.Object
+                mockImageService.Object,
+                mockPlantDetailsService.Object
             );
+
+
 
             var newPlant = SetNewPlantParameters();
 
@@ -81,6 +119,7 @@ namespace Application.UnitTests.Commands
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserService = new Mock<IUserService>();
             var mockImageService = new Mock<IImageService>();
+            var mockPlantDetailsService = new Mock<PlantDetailsService>();
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
@@ -89,7 +128,8 @@ namespace Application.UnitTests.Commands
                mapper,
                mockUserManager.Object,
                mockUserService.Object,
-               mockImageService.Object
+               mockImageService.Object,
+               mockPlantDetailsService.Object
            );
 
             var newPlant = SetNewPlantParameters();
@@ -117,6 +157,7 @@ namespace Application.UnitTests.Commands
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserService = new Mock<IUserService>();
             var mockImageService = new Mock<IImageService>();
+            var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
             var mockUser = SetUser();
@@ -129,7 +170,8 @@ namespace Application.UnitTests.Commands
                mapper,
                mockUserManager.Object,
                mockUserService.Object,
-               mockImageService.Object
+               mockImageService.Object,
+               mockPlantDetailsService.Object
            );
 
             var newPlant = SetNewPlantParameters();
@@ -158,6 +200,7 @@ namespace Application.UnitTests.Commands
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserService = new Mock<IUserService>();
             var mockImageService = new Mock<IImageService>();
+            var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
             var mockUser = SetUser();
@@ -170,7 +213,8 @@ namespace Application.UnitTests.Commands
                mapper,
                mockUserManager.Object,
                mockUserService.Object,
-               mockImageService.Object
+               mockImageService.Object,
+               mockPlantDetailsService.Object
            );
 
             var newPlant = SetNewPlantParameters();
@@ -187,49 +231,13 @@ namespace Application.UnitTests.Commands
             Assert.Equal(true, isNew);
         }
 
-        [Fact]
-
-        public void PlantService_GetPlantDetailsById_ShouldReturnPlantDetail()
-        {
-            //Arrange
-
-            var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
-
-            var mapper = configurationProvider.CreateMapper();
-
-            var mockPlantRepo = new Mock<PlantRepository>(_context);
-            var mockUserService = new Mock<IUserService>();
-            var mockImageService = new Mock<IImageService>();
-
-            var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
-
-            var plantService = new PlantService(
-               mockPlantRepo.Object,
-               mapper,
-               mockUserManager.Object,
-               mockUserService.Object,
-               mockImageService.Object
-           );
-
-            var plantDetailsMock = mapper.Map<PlantDetailsVm>(_context.PlantDetails.FirstOrDefault(x => x.PlantRef == 1));
-
-
-            //Act
-
-            var plantDetails = plantService.GetPlantDetails(1);
-
-            //Arrange
-            Assert.NotNull(plantDetails);
-            //Assert.Equal(plantDetailsMock, plantDetails);
-
-        }
 
         [Theory]
 
-        [InlineData( 1, 1, 1 , "test1")]
-        [InlineData( 2, null, null, "test2")]
-        [InlineData(3, null, null, "test3")]
-        [InlineData(1, 3, 11, "test4")]
+        [InlineData( 1, 1, 1 , "test")]
+        [InlineData( 2, null, null, "test")]
+        [InlineData(3, null, null, "test")]
+        [InlineData(1, 3, 11, "test")]
 
 
         public void GetGrowthTypes_ShouldReturnListofGrowthTypes(int typeId, int? groupId, int? sectionId, string stringName)
@@ -239,10 +247,10 @@ namespace Application.UnitTests.Commands
             var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
 
             var mapper = configurationProvider.CreateMapper();
-
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserService = new Mock<IUserService>();
             var mockImageService = new Mock<IImageService>();
+            var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
@@ -251,7 +259,8 @@ namespace Application.UnitTests.Commands
                mapper,
                mockUserManager.Object,
                mockUserService.Object,
-               mockImageService.Object
+               mockImageService.Object,
+               mockPlantDetailsService.Object
            );
 
             //Act
@@ -287,17 +296,19 @@ namespace Application.UnitTests.Commands
         //       mockImageService.Object
         //   );
 
-        //   var searchString = "test";
+        //    var searchString = "test";
 
         //    //Act
 
-        //    var plantList = plantService.GetAllActivePlantsForList(10, null,"test",null,null,null);
+        //    var plantList = plantService.GetAllActivePlantsForList(10, null, "test", null, null, null);
 
         //    //Arrange
 
-        //    Assert.True(plantList.Count == 1 );
+        //    Assert.True(plantList.Count == 1);
         //    Assert.True(plantList.PlantForList.FullName == searchString);
         //}
+
+       
 
 
         private static NewPlantVm SetNewPlantParameters()

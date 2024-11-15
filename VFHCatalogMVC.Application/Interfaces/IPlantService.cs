@@ -10,9 +10,7 @@ namespace VFHCatalogMVC.Application.Interfaces
 {
     public interface IPlantService
     {
-        ListPlantForListVm GetAllActivePlantsForList(int pageSize,int? pageNo, string searchString, int? typeId,int? groupId,int? sectionId);
-        //Task<PlantDetailsVm> GetPlantDetailsAsync(int id);
-        PlantDetailsVm GetPlantDetails(int id);
+        ListPlantForListVm GetAllActivePlantsForList(int pageSize,int? pageNo, string searchString, int? typeId,int? groupId,int? sectionId);   
         List<PlantTypesVm> GetPlantTypes();
         List<PlantGroupsVm> GetPlantGroups(int? typeId);
         List<PlantSectionsVm> GetPlantSections(int? groupId);

@@ -19,14 +19,16 @@ namespace VFHCatalogApi.Controllers
     public class PlantController : ControllerBase
     {
         private readonly IPlantService _plantService;
+        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
         private readonly IUserService _userService;
         private readonly ILogger<PlantController> _logger;
 
-        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserService userService)
+        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserService userService, IPlantDetailsSerrvice plantDetailsSerrvice)
         {
             _plantService = plantService;
             _logger = logger;
             _userService = userService;
+            _plantDetailsSerrvice = plantDetailsSerrvice;
         }
 
         [HttpPost, HttpGet]
@@ -201,7 +203,7 @@ namespace VFHCatalogApi.Controllers
         [HttpGet/*("{id}")*/]
         public ActionResult<PlantDetailsVm> Details([FromBody] int id)
         {
-            var plantDetails = _plantService.GetPlantDetails(id);
+            var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
 
             if (plantDetails == null)
             {

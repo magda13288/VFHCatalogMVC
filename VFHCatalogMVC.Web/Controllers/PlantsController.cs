@@ -26,16 +26,18 @@ namespace VFHCatalogMVC.Web.Controllers
     {
 
         private readonly IPlantService _plantService;
+        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
         private readonly IUserService _userService;
         private readonly ILogger<PlantsController> _logger;
         private readonly IHelperService _helperService;
 
-        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserService userService, IHelperService helperService)
+        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserService userService, IHelperService helperService, IPlantDetailsSerrvice plantDetailsSerrvice)
         {
             _plantService = plantService;
             _logger = logger;
             _userService = userService;
             _helperService = helperService;
+            _plantDetailsSerrvice = plantDetailsSerrvice;
         }
 
         //[HttpGet]
@@ -233,7 +235,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [AllowAnonymous]
         public IActionResult Details(int id)
         {
-            var plantDetails = _plantService.GetPlantDetails(id);
+            var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
 
             if (plantDetails == null)
             {
