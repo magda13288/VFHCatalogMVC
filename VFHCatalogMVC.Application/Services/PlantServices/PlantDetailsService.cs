@@ -320,83 +320,67 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return propertyNames;
         }
+        public void UpdatePlantDestinations(NewPlantVm model)
+        {
+            var plantDestinations = _plantRepo.GetPlantDestinations(model.PlantDetails.Id);
 
-        //public List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
-        //{
-        //    List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
+            if (plantDestinations != null)
+            {
+                _plantRepo.DeletePlantDestinations(model.PlantDetails.Id);
+                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id);
+            }
+            else
+            {
+                _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id);
+            }
+        }
 
-        //    if (typeId == 1)
-        //    {
-        //        growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-        //    }
-        //    else if (typeId == 2 || typeId == 3)
-        //    {
-        //        growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-        //    }
+        public void UpdatePlantGrowingSeazons(NewPlantVm model)
+        {
+            var growingS = _plantRepo.GetPlantGrowingSeazons(model.PlantDetails.Id);
 
-        //    return growthTyes;
-        //}
+            if (growingS != null)
+            {
+                _plantRepo.DeletePlantGrowingSeazons(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id);
+            }
+            else
+            {
+                _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id);
+            }
+        }
 
-        //public List<DestinationsVm> GetDestinations()
-        //{
-        //    List<DestinationsVm> destinationsList = new List<DestinationsVm>();
+        public void UpdatePlantGrowthTypes(NewPlantVm model)
+        {
+            var plantGrowthTypes = _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id);
 
-        //    destinationsList = _plantRepo.GetDestinations().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            if (plantGrowthTypes != null)
+            {
+                _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id);
+                _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
+            }
+            else
+            {
+                _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
+            }
 
-        //    return destinationsList;
-        //}
-
-        //public List<ColorsVm> GetColors()
-        //{
-        //    List<ColorsVm> colorsList = new List<ColorsVm>();
-
-        //    colorsList = _plantRepo.GetColors().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
-
-        //    return colorsList;
-        //}
-
-        //public List<GrowingSeazonVm> GetGrowingSeazons()
-        //{
-        //    List<GrowingSeazonVm> growingSeazonList = new List<GrowingSeazonVm>();
-
-        //    growingSeazonList = _plantRepo.GetGrowingSeazons().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
-
-        //    return growingSeazonList;
-        //}
-
-        //public List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId)
-        //{
-        //    List<FruitSizeVm> fruitSizeList = new List<FruitSizeVm>();
-        //    if (!sectionId.HasValue)
-        //    {
-        //        fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-
-        //    }
-        //    if (sectionId.HasValue)
-        //    {
-        //        fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-        //    }
-
-
-        //    return fruitSizeList;
-        //}
-        //public List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId)
-        //{
-        //    List<FruitTypeVm> fruitTypeList = new List<FruitTypeVm>();
-
-        //    if (!sectionId.HasValue)
-        //    {
-        //        fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-
-        //    }
-        //    if (sectionId.HasValue)
-        //    {
-        //        fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-        //    }
-
-        //    return fruitTypeList;
-        //}
-
+        }
+        public void AddPlantOpinion(PlantOpinionsVm opinion)
+        {
+            if (opinion != null)
+            {
+                opinion.DateAdded = DateTime.Now;
+                var plantOpinion = _mapper.Map<PlantOpinion>(opinion);
+                _plantRepo.AddPlantOpinion(plantOpinion);
+            }
+            else { throw new NullReferenceException(); }
+        }
+        public PlantOpinionsVm FillPropertyOpinion(int id, string userName)
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var plantOpinion = new PlantOpinionsVm() { PlantDetailId = id, UserId = user.Result.Id };
+            return plantOpinion;
+        }
 
     }
 }

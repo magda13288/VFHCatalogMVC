@@ -23,9 +23,9 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<GrowingSeazonVm> GetGrowingSeazons();
         List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId);
         List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId);
-        List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList);
-        string UserAccountName(Task<ApplicationUser> user);
+        //string UserAccountName(Task<ApplicationUser> user);
         MessageDisplay MessagesToView(int type);
         IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant);
+        List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList);
     }
 }

@@ -11,24 +11,19 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
     public interface IPlantService
     {
         ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId);
-        //List<PlantTypesVm> GetPlantTypes();
-        //List<PlantGroupsVm> GetPlantGroups(int? typeId);
-        //List<PlantSectionsVm> GetPlantSections(int? groupId);
         int AddPlant(NewPlantVm model, string user);
         void AddPlantSeed(PlantSeedVm seed);
         void AddPlantSeedling(PlantSeedlingVm seedling);
-        void AddPlantOpinion(PlantOpinionsVm opinion);
         NewPlantVm GetPlantToEdit(int id);
         void UpdatePlant(NewPlantVm model);
         PlantForListVm DeletePlant(int id);
         PlantSeedVm FillProperties(int id, string userName);
         PlantSeedlingVm FillPropertiesSeedling(int id, string userName);
-        PlantOpinionsVm FillPropertyOpinion(int id, string userName);
         PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
         PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
         List<PlantSeedVm> FilterSeedsList(List<PlantSeedVm> seeds, List<string> filteredUsersList);
         List<PlantSeedlingVm> FilterSeedlingsList(List<PlantSeedlingVm> seedlings, List<string> filteredUsersList);
         void ActivatePlant(int id);
-        //List<string> Fill<T>(List<T> list) where T : class;
+        
     }
 }

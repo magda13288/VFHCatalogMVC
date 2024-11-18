@@ -31,12 +31,6 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             _plantRepo = plantRepository;
         }
 
-        //public void AddAddress(AddressVm address)
-        //{
-        //    var addressToSave = _mapper.Map<Address>(address);
-        //    _userRepo.AddAddress(addressToSave);
-        //}
-
         public UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
         {
             var user = _userManager.FindByNameAsync(userName);
@@ -167,99 +161,12 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             item.PlantForList.Photo = plant.Photo;
             item.Date = item.DateAdded.ToShortDateString();
             return item;
-        }
-        //public List<SelectListItem> FillCountryList(List<CountryVm> countries)
-        //{        
-        //        List<SelectListItem> propertyList = new List<SelectListItem>();
-
-        //        if (countries != null)
-        //        {
-        //            propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-        //            foreach (var type in countries)
-        //            {
-        //                propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-        //        }
-        //        return propertyList;
-        //}
-
-        //public List<SelectListItem> FillRegionList(List<RegionVm> regions)
-        //{
-        //    List<SelectListItem> propertyList = new List<SelectListItem>();
-
-        //    if (regions != null)
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-        //        foreach (var type in regions)
-        //        {
-        //            propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-        //    }
-        //    return propertyList;
-        //}
-
-        //public List<SelectListItem> FillCityList(List<CityVm> city)
-        //{
-        //    List<SelectListItem> propertyList = new List<SelectListItem>();
-
-        //    if (city != null)
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-        //        foreach (var type in city)
-        //        {
-        //            propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-        //    }
-        //    return propertyList;
-        //}
-        //public AddressVm GetAddress(string userId)
-        //{
-        //    var address = _userRepo.GetAddressInfo(userId);
-        //    var addressVm = _mapper.Map<AddressVm>(address);
-
-        //    return addressVm;
-        //}
-
-        //public List<CityVm> GetCities(int regionId)
-        //{
-        //    var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-        //    return cities;
-        //}
-
-        //public List<CountryVm> GetCountries()
-        //{
-        //    var countries = _userRepo.GetCountries().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-        //    return countries;
-        //}
-
-        //public List<RegionVm> GetRegions(int countryId)
-        //{
-        //    var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-        //    return regions;
-        //}
-
+        }       
         public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings)
         {
             var usersList = new List<string>();
             var address = new Address();
-            //var genericList = typeof(List<>);
-            //var dataType = new Type[] { typeof(PlantSeedVm), typeof(PlantSeedlingVm) };     
-
+              
             if (seeds is null)
             {
                 foreach (var item in seedlings)

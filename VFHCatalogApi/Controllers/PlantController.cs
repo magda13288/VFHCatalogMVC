@@ -128,7 +128,7 @@ namespace VFHCatalogApi.Controllers
             {
                 var countries = _userHelperService.GetCountries();
                 var viewBagCountriesList = _userHelperService.FillCountryList(countries);
-                var regions =   .GetRegions(countryId);
+                var regions =   _userHelperService.GetRegions(countryId);
                 var viewBagRegionsList = _userHelperService.FillRegionList(regions);
                 var cities = _userHelperService.GetCities(regionId);
                 var viewBagCitiesList = _userHelperService.FillCityList(cities);
@@ -171,9 +171,9 @@ namespace VFHCatalogApi.Controllers
         {
             var types = _plantHelperService.GetPlantTypes();
             var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
-            var colors = _plantDetailsSerrvice.GetColors();
+            var colors = _plantHelperService.GetColors();
             var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
-            var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+            var growingSeaznos = _plantHelperService.GetGrowingSeazons();
             var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
 
             return NoContent();
@@ -193,9 +193,9 @@ namespace VFHCatalogApi.Controllers
             {
                 var types = _plantHelperService.GetPlantTypes();
                 var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
-                var colors = _plantDetailsSerrvice.GetColors();
+                var colors = _plantHelperService.GetColors();
                 var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
-                var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+                var growingSeaznos = _plantHelperService.GetGrowingSeazons();
                 var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
                 //return RedirectToAction("AddPlant", model);
                 return BadRequest(ModelState.ErrorCount);
@@ -226,10 +226,10 @@ namespace VFHCatalogApi.Controllers
             try
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
-                var colors = _plantDetailsSerrvice.GetColors();
+                var colors = _plantHelperService.GetColors();
                 var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
 
-                var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+                var growingSeaznos = _plantHelperService.GetGrowingSeazons();
                 var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
 
                 var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
@@ -386,7 +386,7 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var plantOpinion = _plantService.FillPropertyOpinion(id, User.Identity.Name);
+                var plantOpinion = _plantDetailsSerrvice.FillPropertyOpinion(id, User.Identity.Name);
                 //return PartialView("AddOpinionModalPartial", plantOpinion);
                 return Ok(plantOpinion);
             }
@@ -406,7 +406,7 @@ namespace VFHCatalogApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _plantService.AddPlantOpinion(plantOpinion);
+                    _plantDetailsSerrvice.AddPlantOpinion(plantOpinion);
                     // return RedirectToAction("Details");
                     return Created("Details", plantOpinion);
 

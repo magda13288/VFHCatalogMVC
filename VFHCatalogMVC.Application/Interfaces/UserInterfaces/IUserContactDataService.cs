@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
+using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
 {
@@ -19,5 +21,6 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         List<SelectListItem> FillCityList(List<CityVm> city);
         AddressVm GetAddress(string userId);
         void AddAddress(AddressVm address);
+        string UserAccountName(Task<ApplicationUser> user);
     }
 }

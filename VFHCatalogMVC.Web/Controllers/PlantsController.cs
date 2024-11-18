@@ -420,7 +420,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plantOpinion = _plantService.FillPropertyOpinion(id, User.Identity.Name);
+                var plantOpinion = _plantDetailsSerrvice.FillPropertyOpinion(id, User.Identity.Name);
                 return PartialView("AddOpinionModalPartial", plantOpinion);
             }
             catch (Exception ex)
@@ -439,7 +439,7 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _plantService.AddPlantOpinion(plantOpinion);
+                    _plantDetailsSerrvice.AddPlantOpinion(plantOpinion);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddOpinionModalPartial");

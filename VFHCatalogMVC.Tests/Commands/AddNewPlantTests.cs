@@ -262,19 +262,21 @@ namespace Application.UnitTests.Commands
 
             var mapper = configurationProvider.CreateMapper();
             var mockPlantRepo = new Mock<PlantRepository>(_context);
-            var mockUserService = new Mock<IUserPlantService>();
+            var mockUserPlantService = new Mock<IUserPlantService>();
+            var mockUserContactDataService = new Mock<IUserContactDataService>();
             var mockImageService = new Mock<IImageService>();
             var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
-
+                        
             var mockUserManager = mockManager;
 
             var plantService = new PlantService(
                mockPlantRepo.Object,
                mapper,
                mockUserManager.Object,
-               mockUserService.Object,
+               mockUserContactDataService.Object,
                mockImageService.Object,
-               mockPlantDetailsService.Object
+               mockPlantDetailsService.Object,
+               mockUserPlantService.Object
            );
 
             return plantService;

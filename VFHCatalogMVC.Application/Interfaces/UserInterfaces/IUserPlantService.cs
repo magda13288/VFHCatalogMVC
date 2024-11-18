@@ -10,15 +10,7 @@ using VFHCatalogMVC.Domain.Model;
 namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
 {
     public interface IUserPlantService
-    {
-        //AddressVm GetAddress(string userId);
-        //List<CountryVm> GetCountries();
-        //List<RegionVm> GetRegions(int countryId);
-        //List<CityVm> GetCities(int regionId);
-        //List<SelectListItem> FillCountryList(List<CountryVm> countries);
-        //List<SelectListItem> FillRegionList(List<RegionVm> regions);
-        //List<SelectListItem> FillCityList(List<CityVm> city);
-        //void AddAddress(AddressVm address);
+    {       
         List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings);
         UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);

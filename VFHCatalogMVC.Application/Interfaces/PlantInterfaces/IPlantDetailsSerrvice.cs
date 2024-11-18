@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 
@@ -12,12 +13,11 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<string> GetGrowthTypesNames(int id);
         List<string> GetDestinationsNames(int id);
         List<string> GetGrowingSeaznosNames(int id);
-        //List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId);
-        //List<DestinationsVm> GetDestinations();
-        //List<ColorsVm> GetColors();
-        //List<GrowingSeazonVm> GetGrowingSeazons();
-        //List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId);
-        //List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId);
+        void UpdatePlantDestinations(NewPlantVm model);
+        void UpdatePlantGrowingSeazons(NewPlantVm model);
+        void UpdatePlantGrowthTypes(NewPlantVm model);
+        void AddPlantOpinion(PlantOpinionsVm opinion);
+        public PlantOpinionsVm FillPropertyOpinion(int id, string userName);
 
 
 

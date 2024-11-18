@@ -9,6 +9,7 @@ using AutoMapper.QueryableExtensions;
 using System.Linq;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Domain.Model;
+using System.Threading.Tasks;
 
 namespace VFHCatalogMVC.Application.Services.UserServices
 {
@@ -132,6 +133,16 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         {
             var addressToSave = _mapper.Map<Address>(address);
             _userRepo.AddAddress(addressToSave);
+        }
+        public string UserAccountName(Task<ApplicationUser> user)
+        {
+            string userAccountName = null;
+
+            if (user.Result.AccountName != null)
+                userAccountName = user.Result.AccountName;
+            if (user.Result.CompanyName != null)
+                userAccountName = user.Result.CompanyName;
+            return userAccountName;
         }
     }
 }
