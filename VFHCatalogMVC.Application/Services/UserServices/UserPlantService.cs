@@ -7,23 +7,23 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
-using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
-namespace VFHCatalogMVC.Application.Services
+namespace VFHCatalogMVC.Application.Services.UserServices
 {
-    public class UserService : IUserService
+    public class UserPlantService : IUserPlantService
     {
         private readonly IUserRepository _userRepo;
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository )
+        public UserPlantService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository)
         {
             _userRepo = userRepo;
             _mapper = mapper;
@@ -31,16 +31,16 @@ namespace VFHCatalogMVC.Application.Services
             _plantRepo = plantRepository;
         }
 
-        public void AddAddress(AddressVm address)
-        {
-            var addressToSave = _mapper.Map<Address>(address);
-            _userRepo.AddAddress(addressToSave);
-        }
+        //public void AddAddress(AddressVm address)
+        //{
+        //    var addressToSave = _mapper.Map<Address>(address);
+        //    _userRepo.AddAddress(addressToSave);
+        //}
 
         public UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
         {
             var user = _userManager.FindByNameAsync(userName);
-           
+
             var seeds = _userRepo.GetUserPlantSeeds(user.Result.Id).ProjectTo<UserSeedVm>(_mapper.ConfigurationProvider).ToList();
             var seedsToList = new List<UserSeedVm>();
             var seedsToShow = new List<UserSeedVm>();
@@ -48,8 +48,8 @@ namespace VFHCatalogMVC.Application.Services
             var userRole = _userManager.IsInRoleAsync(user.Result, "Company");
             if (userRole.Result is true)
             {
-                foreach ( var seed in seeds ) 
-            {
+                foreach (var seed in seeds)
+                {
                     seed.Date = seed.DateAdded.ToShortDateString();
 
                     var contactId = _userRepo.GetContactDetailForSeed(seed.Id);
@@ -73,9 +73,9 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var item in seeds)
                 {
                     var plant = _plantRepo.GetPlantById(item.PlantId);
-                    seedsToList.Add(GetSeedsList(plant,item));
+                    seedsToList.Add(GetSeedsList(plant, item));
                 }
-                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
             }
             else
             {
@@ -93,10 +93,10 @@ namespace VFHCatalogMVC.Application.Services
                                     var plant = _plantRepo.GetPlantById(item.PlantId);
                                     if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
                                     {
-                                        seedsToList.Add(GetSeedsList(plant, item));                         
+                                        seedsToList.Add(GetSeedsList(plant, item));
                                     }
                                 }
-                                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                             }
                             else
                             {
@@ -105,11 +105,11 @@ namespace VFHCatalogMVC.Application.Services
                                     var plant = _plantRepo.GetPlantById(item.PlantId);
                                     if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
                                     {
-                                        
-                                        seedsToList.Add(GetSeedsList(plant,item));
+
+                                        seedsToList.Add(GetSeedsList(plant, item));
                                     }
                                 }
-                                seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                             }
                         }
                         else
@@ -119,11 +119,11 @@ namespace VFHCatalogMVC.Application.Services
                                 var plant = _plantRepo.GetPlantById(item.PlantId);
                                 if (plant.PlantTypeId == typeId)
                                 {
-                                   
-                                    seedsToList.Add(GetSeedsList(plant,item));
+
+                                    seedsToList.Add(GetSeedsList(plant, item));
                                 }
                             }
-                            seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
                 }
@@ -134,10 +134,10 @@ namespace VFHCatalogMVC.Application.Services
                         var plant = _plantRepo.GetPlantById(item.PlantId);
                         if (plant.FullName.StartsWith(searchString))
                         {
-                            seedsToList.Add(GetSeedsList(plant,item));
+                            seedsToList.Add(GetSeedsList(plant, item));
                         }
                     }
-                    seedsToShow = seedsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                    seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                 }
             }
 
@@ -147,7 +147,7 @@ namespace VFHCatalogMVC.Application.Services
                 CurrentPage = pageNo,
                 UserSeeds = seedsToShow,
                 SearchString = searchString,
-                Count = seeds.Count,              
+                Count = seeds.Count,
             };
             return plantSeedsList;
         }
@@ -168,90 +168,90 @@ namespace VFHCatalogMVC.Application.Services
             item.Date = item.DateAdded.ToShortDateString();
             return item;
         }
-        public List<SelectListItem> FillCountryList(List<CountryVm> countries)
-        {        
-                List<SelectListItem> propertyList = new List<SelectListItem>();
+        //public List<SelectListItem> FillCountryList(List<CountryVm> countries)
+        //{        
+        //        List<SelectListItem> propertyList = new List<SelectListItem>();
 
-                if (countries != null)
-                {
-                    propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //        if (countries != null)
+        //        {
+        //            propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                    foreach (var type in countries)
-                    {
-                        propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                    }
-                }
-                else
-                {
-                    propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-                }
-                return propertyList;
-        }
+        //            foreach (var type in countries)
+        //            {
+        //                propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //        }
+        //        return propertyList;
+        //}
 
-        public List<SelectListItem> FillRegionList(List<RegionVm> regions)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
+        //public List<SelectListItem> FillRegionList(List<RegionVm> regions)
+        //{
+        //    List<SelectListItem> propertyList = new List<SelectListItem>();
 
-            if (regions != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    if (regions != null)
+        //    {
+        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var type in regions)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
+        //        foreach (var type in regions)
+        //        {
+        //            propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    }
+        //    return propertyList;
+        //}
 
-        public List<SelectListItem> FillCityList(List<CityVm> city)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
+        //public List<SelectListItem> FillCityList(List<CityVm> city)
+        //{
+        //    List<SelectListItem> propertyList = new List<SelectListItem>();
 
-            if (city != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    if (city != null)
+        //    {
+        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var type in city)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
-        public AddressVm GetAddress(string userId)
-        {
-            var address = _userRepo.GetAddressInfo(userId);
-            var addressVm = _mapper.Map<AddressVm>(address);
+        //        foreach (var type in city)
+        //        {
+        //            propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    }
+        //    return propertyList;
+        //}
+        //public AddressVm GetAddress(string userId)
+        //{
+        //    var address = _userRepo.GetAddressInfo(userId);
+        //    var addressVm = _mapper.Map<AddressVm>(address);
 
-            return addressVm;
-        }
+        //    return addressVm;
+        //}
 
-        public List<CityVm> GetCities(int regionId)
-        {
-            var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-            return cities;
-        }
+        //public List<CityVm> GetCities(int regionId)
+        //{
+        //    var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
+        //    return cities;
+        //}
 
-        public List<CountryVm> GetCountries()
-        {
-            var countries = _userRepo.GetCountries().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-            return countries;
-        }
+        //public List<CountryVm> GetCountries()
+        //{
+        //    var countries = _userRepo.GetCountries().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
+        //    return countries;
+        //}
 
-        public List<RegionVm> GetRegions(int countryId)
-        {
-            var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-            return regions;
-        }
+        //public List<RegionVm> GetRegions(int countryId)
+        //{
+        //    var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
+        //    return regions;
+        //}
 
         public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings)
         {
@@ -347,9 +347,9 @@ namespace VFHCatalogMVC.Application.Services
 
                 }
             }
-            
+
             return userSedd;
-            
+
         }
         public void UpdateSeed(UserSeedVm seed)
         {
@@ -377,9 +377,9 @@ namespace VFHCatalogMVC.Application.Services
                         contact.UserId = seed.UserId;
                         contact.ContactDetailInformation = seed.ContactDetail.ContactDetailInformation;
                         var contactDetails = _mapper.Map<ContactDetail>(contact);
-                        var id= _plantRepo.AddContactDetail(contactDetails);
+                        var id = _plantRepo.AddContactDetail(contactDetails);
 
-                        var contactDetailsForSeedVm = new ContactDetailForSeedVm() {ContactDetailId=id,PlantSeedId=seed.Id };
+                        var contactDetailsForSeedVm = new ContactDetailForSeedVm() { ContactDetailId = id, PlantSeedId = seed.Id };
                         var contactDetailsForSeed = _mapper.Map<ContactDetailForSeed>(contactDetailsForSeedVm);
                         _plantRepo.AddContactDetailForSeed(contactDetailsForSeed);
 
@@ -421,7 +421,7 @@ namespace VFHCatalogMVC.Application.Services
                         seedling.ContactDetail = new ContactDetailVm();
                         seedling.ContactDetail.ContactDetailInformation = "";
                     }
-                    
+
                 }
             }
 
@@ -429,10 +429,10 @@ namespace VFHCatalogMVC.Application.Services
             {
                 foreach (var item in seedlings)
                 {
-                    var plant = _plantRepo.GetPlantById(item.PlantId);                  
-                    seedlingsToList.Add(GetSeedlingsList(plant,item));
+                    var plant = _plantRepo.GetPlantById(item.PlantId);
+                    seedlingsToList.Add(GetSeedlingsList(plant, item));
                 }
-                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
             }
             else
             {
@@ -450,10 +450,10 @@ namespace VFHCatalogMVC.Application.Services
                                     var plant = _plantRepo.GetPlantById(item.PlantId);
                                     if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
                                     {
-                                        seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                        seedlingsToList.Add(GetSeedlingsList(plant, item));
                                     }
                                 }
-                                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                             }
                             else
                             {
@@ -462,10 +462,10 @@ namespace VFHCatalogMVC.Application.Services
                                     var plant = _plantRepo.GetPlantById(item.PlantId);
                                     if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
                                     {
-                                        seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                        seedlingsToList.Add(GetSeedlingsList(plant, item));
                                     }
                                 }
-                                seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                             }
                         }
                         else
@@ -475,10 +475,10 @@ namespace VFHCatalogMVC.Application.Services
                                 var plant = _plantRepo.GetPlantById(item.PlantId);
                                 if (plant.PlantTypeId == typeId)
                                 {
-                                    seedlingsToList.Add(GetSeedlingsList(plant,item));
+                                    seedlingsToList.Add(GetSeedlingsList(plant, item));
                                 }
                             }
-                            seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
                 }
@@ -489,10 +489,10 @@ namespace VFHCatalogMVC.Application.Services
                         var plant = _plantRepo.GetPlantById(item.PlantId);
                         if (plant.FullName.StartsWith(searchString))
                         {
-                            seedlingsToList.Add(GetSeedlingsList(plant,item));
+                            seedlingsToList.Add(GetSeedlingsList(plant, item));
                         }
                     }
-                    seedlingsToShow = seedlingsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                    seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                 }
             }
 
@@ -508,7 +508,7 @@ namespace VFHCatalogMVC.Application.Services
         }
         public UserSeedlingVm GetUserSeedlingToEdit(int id)
         {
-         
+
             var plantSeedling = _userRepo.GetUserSeedling(id);
             var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
 
@@ -564,12 +564,12 @@ namespace VFHCatalogMVC.Application.Services
         public void DeleteSeedling(int id)
         {
             var seedling = _userRepo.GetUserSeedling(id);
-           _userRepo.DeleteUserSeedling(seedling);
+            _userRepo.DeleteUserSeedling(seedling);
         }
 
         public ContactDetail GetContactDetail(int? id)
         {
-           var contactDetails = _userRepo.GetContactDetail(id);
+            var contactDetails = _userRepo.GetContactDetail(id);
             return contactDetails;
         }
 
@@ -585,16 +585,16 @@ namespace VFHCatalogMVC.Application.Services
             return contactId;
         }
 
-        public void AddNewUserPlant(int plantId,string userId)
+        public void AddNewUserPlant(int plantId, string userId)
         {
-            var newPlant = new NewUserPlantVm { PlantId = plantId,UserId = userId };
+            var newPlant = new NewUserPlantVm { PlantId = plantId, UserId = userId };
             var newUserPlant = _mapper.Map<NewUserPlant>(newPlant);
 
             _userRepo.AddNewUserPlant(newUserPlant);
-           
+
         }
 
-        public NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll,string userName)
+        public NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll, string userName)
         {
             var user = _userManager.FindByNameAsync(userName);
             var userRole = _userManager.GetRolesAsync(user.Result);
@@ -628,7 +628,7 @@ namespace VFHCatalogMVC.Application.Services
 
             if (viewAll is true)
             {
-                plantsToShow = plants.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                plantsToShow = plants.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
             }
             else
             {
@@ -647,7 +647,7 @@ namespace VFHCatalogMVC.Application.Services
                                     plantsToList.Add(plant);
                                 }
                             }
-                            plantsToShow = plantsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            plantsToShow = plantsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                         else
                         {
@@ -658,19 +658,19 @@ namespace VFHCatalogMVC.Application.Services
                                     plantsToList.Add(plant);
                                 }
                             }
-                            plantsToShow = plantsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            plantsToShow = plantsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
                     else
                     {
                         foreach (var plant in plants)
-                        {                     
+                        {
                             if (plant.PlantForList.TypeId == typeId)
                             {
                                 plantsToList.Add(plant);
                             }
                         }
-                        plantsToShow = plantsToList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                        plantsToShow = plantsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                     }
                 }
 
@@ -681,8 +681,8 @@ namespace VFHCatalogMVC.Application.Services
                 PageSize = pageSize,
                 CurrentPage = pageNo,
                 NewUserPlants = plantsToShow,
-                Count= plants.Count,
-                ViewAll= viewAll,
+                Count = plants.Count,
+                ViewAll = viewAll,
             };
 
             return newUserPlantsForList;

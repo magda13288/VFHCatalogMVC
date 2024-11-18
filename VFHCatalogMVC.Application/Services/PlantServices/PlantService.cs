@@ -20,23 +20,25 @@ using Microsoft.Extensions.Options;
 using System.Numerics;
 using System.Drawing;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 
-namespace VFHCatalogMVC.Application.Services
+namespace VFHCatalogMVC.Application.Services.PlantServices
 {
     public class PlantService : IPlantService
     {
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserService _userService;
+        private readonly IUserPlantService _userService;
         private readonly IImageService _imageService;
         private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
 
         public PlantService()
         {
-                
+
         }
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserService userService, IImageService imageService, IPlantDetailsSerrvice plantDetailsSerrvice)
+        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserPlantService userService, IImageService imageService, IPlantDetailsSerrvice plantDetailsSerrvice)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
@@ -55,7 +57,7 @@ namespace VFHCatalogMVC.Application.Services
 
             //check if adding plant does't exist in database
 
-            var plantList = GetAllActivePlantsForList(1, 10, model.FullName,null,null,null);
+            var plantList = GetAllActivePlantsForList(1, 10, model.FullName, null, null, null);
 
             if (plantList.Count == 0)
             {
@@ -64,8 +66,7 @@ namespace VFHCatalogMVC.Application.Services
 
                 if (model.Photo != null)
                 {
-                    string _DIR = "plantGallery/searchPhoto";
-                    var fileName = _imageService.UploadImage(model.Photo, model.FullName, _DIR);
+                    string fileName = _imageService.AddPlantSearchPhoto(model);
                     newPlant.Photo = fileName;
                 }
 
@@ -90,10 +91,10 @@ namespace VFHCatalogMVC.Application.Services
 
                     _userService.AddNewUserPlant(id, userInfo.Result.Id);
                 }
-                
+
                 if (id != 0)
-                {            
-                   var plantDetailId = _plantDetailsSerrvice.AddPlantDetails(model);
+                {
+                    var plantDetailId = _plantDetailsSerrvice.AddPlantDetails(model);
                 }
                 return id;
             }
@@ -101,7 +102,7 @@ namespace VFHCatalogMVC.Application.Services
             {
                 return 0;
             }
-            
+
         }
         public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
         {
@@ -193,8 +194,8 @@ namespace VFHCatalogMVC.Application.Services
                                 item.ContactDetail = new ContactDetailVm();
                                 item.ContactDetail.ContactDetailInformation = "";
                             }
-                           
-                          
+
+
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
                             item.PlantOpinions = opinions;
@@ -203,8 +204,8 @@ namespace VFHCatalogMVC.Application.Services
 
                             seedsList = FilterSeedsList(seeds, filteredUsersList);
 
-                            seedsToShow = seedsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
-                           
+                            seedsToShow = seedsList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
+
                         }
                     }
                     else
@@ -212,7 +213,7 @@ namespace VFHCatalogMVC.Application.Services
                         var role = _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER");
                         if (role.Result == true)
                         {
-                            item.AccountName =UserAccountName(user);
+                            item.AccountName = UserAccountName(user);
                             item.Date = item.DateAdded.ToShortDateString();
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
@@ -221,11 +222,11 @@ namespace VFHCatalogMVC.Application.Services
                             filteredUsersList.Add(user.Result.Id);
                             seedsList = FilterSeedsList(seeds, filteredUsersList);
 
-                            seedsToShow = seedsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            seedsToShow = seedsList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
-                }           
-                
+                }
+
             }
             else
             {
@@ -233,7 +234,7 @@ namespace VFHCatalogMVC.Application.Services
 
                 seedsList = FilterSeedsList(seeds, filteredUsersList);
                 var seedsListFiltered = new List<PlantSeedVm>();
-               
+
                 foreach (var item in seedsList)
                 {
                     var user = _userManager.FindByIdAsync(item.UserId);
@@ -243,7 +244,7 @@ namespace VFHCatalogMVC.Application.Services
                     {
                         var role = _userManager.IsInRoleAsync(user.Result, "Company");
                         if (role.Result == true)
-                        {                        
+                        {
                             item.AccountName = user.Result.CompanyName;
                             item.Date = item.DateAdded.ToShortDateString();
                             var contactId = _userService.GetContactDetailForSeed(item.Id);
@@ -255,7 +256,7 @@ namespace VFHCatalogMVC.Application.Services
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
                             item.PlantOpinions = opinions;
                             seedsListFiltered.Add(item);
-                      
+
                         }
                     }
                     else
@@ -274,15 +275,15 @@ namespace VFHCatalogMVC.Application.Services
                     }
                 }
 
-                seedsToShow = seedsListFiltered.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                seedsToShow = seedsListFiltered.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
             }
 
             string userId = null;
 
             if (userName != null)
             {
-               var userInfo = _userManager.FindByNameAsync(userName);
-               userId = userInfo.Result.Id;
+                var userInfo = _userManager.FindByNameAsync(userName);
+                userId = userInfo.Result.Id;
             }
 
             var plantSeedsList = new PlantSeedsForListVm()
@@ -294,11 +295,11 @@ namespace VFHCatalogMVC.Application.Services
                 PlantId = id,
                 isCompany = isCompany,
                 LoggedUserName = userId
-                
+
             };
 
             return plantSeedsList;
-        }        
+        }
         public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             var seedlings = new List<PlantSeedlingVm>();
@@ -336,7 +337,7 @@ namespace VFHCatalogMVC.Application.Services
 
                             seedlingsList = FilterSeedlingsList(seedlings, filteredUsersList);
 
-                            seedlingsToShow = seedlingsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            seedlingsToShow = seedlingsList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
                     else
@@ -354,15 +355,15 @@ namespace VFHCatalogMVC.Application.Services
                             seedlingsList = FilterSeedlingsList(seedlings, filteredUsersList);
 
 
-                            seedlingsToShow = seedlingsList.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                            seedlingsToShow = seedlingsList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
                         }
                     }
-                }             
+                }
             }
             else
             {
 
-                filteredUsersList = _userService.FilterUsers(countryId, regionId, cityId,null,seedlings);
+                filteredUsersList = _userService.FilterUsers(countryId, regionId, cityId, null, seedlings);
 
                 seedlingsList = FilterSeedlingsList(seedlings, filteredUsersList);
                 var seedlingsListFiltered = new List<PlantSeedlingVm>();
@@ -385,8 +386,8 @@ namespace VFHCatalogMVC.Application.Services
                             item.ContactDetail = contactDetailsVm;
 
                             opinions = _plantRepo.GetPlantOpinions(detailId).Where(p => p.UserId == user.Result.Id).ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider).ToList();
-                           item.PlantOpinions = opinions;
-                           seedlingsListFiltered.Add(item);
+                            item.PlantOpinions = opinions;
+                            seedlingsListFiltered.Add(item);
                         }
                     }
                     else
@@ -404,7 +405,7 @@ namespace VFHCatalogMVC.Application.Services
                     }
                 }
 
-                seedlingsToShow =seedlingsListFiltered.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                seedlingsToShow = seedlingsListFiltered.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
             }
 
 
@@ -420,108 +421,12 @@ namespace VFHCatalogMVC.Application.Services
 
             return plantSeedlingsList;
         }
-        
-        public List<PlantGroupsVm> GetPlantGroups(int? typeId)
-        {
-            var groups = _plantRepo.GetAllGroups().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
 
-            return groups;
-        }
 
-        public List<PlantTypesVm> GetPlantTypes()
-        {
-            var types = _plantRepo.GetAllTypes().OrderBy(p=>p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
-
-            return types;
-        }
-
-        public List<PlantSectionsVm> GetPlantSections(int? groupId)
-        {
-            var sections = _plantRepo.GetAllSections().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return sections;
-        }
-
-        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
-        {
-            List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
-
-            if (typeId == 1)
-            {
-                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-            else if (typeId == 2 || typeId == 3)
-            {
-                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-
-            return growthTyes;
-        }
-
-        public List<DestinationsVm> GetDestinations()
-        {
-            List<DestinationsVm> destinationsList = new List<DestinationsVm>();
-
-            destinationsList = _plantRepo.GetDestinations().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return destinationsList;
-        }
-
-        public List<ColorsVm> GetColors()
-        {
-            List<ColorsVm> colorsList = new List<ColorsVm>();
-
-            colorsList = _plantRepo.GetColors().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return colorsList;
-        }
-
-        public List<GrowingSeazonVm> GetGrowingSeazons()
-        {
-            List<GrowingSeazonVm> growingSeazonList = new List<GrowingSeazonVm>();
-
-            growingSeazonList = _plantRepo.GetGrowingSeazons().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
-
-            return growingSeazonList;
-        }
-
-        public List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId)
-        {
-            List<FruitSizeVm> fruitSizeList = new List<FruitSizeVm>();
-            if (!sectionId.HasValue)
-            {
-                fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-
-            }
-            if (sectionId.HasValue)
-            {
-                fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-
-            
-            return fruitSizeList;
-        }
-
-        public List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId)
-        {
-            List<FruitTypeVm> fruitTypeList = new List<FruitTypeVm>();
-
-            if (!sectionId.HasValue)
-            {
-                fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-
-            }
-            if (sectionId.HasValue)
-            {
-                fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-
-            return fruitTypeList;
-        }
 
         public NewPlantVm GetPlantToEdit(int id)
         {
-            
+
             var plant = _plantRepo.GetPlantById(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
             var plantDetails = _plantRepo.GetPlantDetails(id);
@@ -580,7 +485,7 @@ namespace VFHCatalogMVC.Application.Services
         {
             var getPhotoName = _plantRepo.GetPlantById(model.Id);
             var PhotoName = getPhotoName.Photo;
-            
+
             string direction = null;
             if (model.Photo != null)
             {
@@ -633,17 +538,17 @@ namespace VFHCatalogMVC.Application.Services
 
             if (model.PlantDetails.ColorId == 0)
                 model.PlantDetails.ColorId = null;
-            if(model.PlantDetails.FruitSizeId==0)
-                model.PlantDetails.FruitSizeId= null;
-            if(model.PlantDetails.FruitTypeId==0)
-                model.PlantDetails.FruitTypeId= null;
+            if (model.PlantDetails.FruitSizeId == 0)
+                model.PlantDetails.FruitSizeId = null;
+            if (model.PlantDetails.FruitTypeId == 0)
+                model.PlantDetails.FruitTypeId = null;
 
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
             _plantRepo.UpdatePlant(plant);
             _plantRepo.UpdatePlantDetails(plantDetails);
 
             //Update Destinations
-            if (model.PlantDetails.ListPlantDestinations != null)        
+            if (model.PlantDetails.ListPlantDestinations != null)
                 UpdatePlantDestinations(model);
 
             //Update GrowingSeazons
@@ -651,9 +556,9 @@ namespace VFHCatalogMVC.Application.Services
                 UpdatePlantGrowingSeazons(model);
 
             //UpdateGrowthTypes
-            if(model.PlantDetails.ListGrowthTypes!=null)
-            UpdatePlantGrowthTypes(model);
-            
+            if (model.PlantDetails.ListGrowthTypes != null)
+                UpdatePlantGrowthTypes(model);
+
         }
 
         private void UpdatePlantDestinations(NewPlantVm model)
@@ -688,9 +593,9 @@ namespace VFHCatalogMVC.Application.Services
 
         private void UpdatePlantGrowthTypes(NewPlantVm model)
         {
-            var plantGrowthTypes= _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id);
+            var plantGrowthTypes = _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id);
 
-            if (plantGrowthTypes!=null)
+            if (plantGrowthTypes != null)
             {
                 _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id);
                 _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id);
@@ -716,59 +621,20 @@ namespace VFHCatalogMVC.Application.Services
                 //var plantToDelete = _mapper.Map<Plant>(plantVm);
                 _plantRepo.DeletePlant(getPlantToDelete);
             }
-            
+
             return plantVm;
         }
 
-        public List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (list != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in list)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (colorList != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in colorList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (seazonList != null)
-            {
-                //propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in seazonList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-
-            return propertyList;
-        }
-
-        public PlantSeedVm FillProperties(int id,string userName)
+        public PlantSeedVm FillProperties(int id, string userName)
         {
             var user = _userManager.FindByNameAsync(userName);
-            var plantSedd = new PlantSeedVm() { PlantId = id,UserId = user.Result.Id};
+            var plantSedd = new PlantSeedVm() { PlantId = id, UserId = user.Result.Id };
             return plantSedd;
         }
 
         public void AddPlantSeed(PlantSeedVm seed)
         {
-         
+
             if (seed != null)
             {
                 seed.DateAdded = DateTime.Now;
@@ -776,7 +642,7 @@ namespace VFHCatalogMVC.Application.Services
                 var seedId = _plantRepo.AddPlantSeed(plantSeed);
 
                 //if (seed.ContactDetail != null)
-                if(seed.Link!=null)
+                if (seed.Link != null)
                 {
                     seed.ContactDetail.ContactDetailTypeID = 1;
                     seed.ContactDetail.UserId = seed.UserId;
@@ -785,17 +651,17 @@ namespace VFHCatalogMVC.Application.Services
                     var contactId = _plantRepo.AddContactDetail(contactDetails);
 
                     ContactDetailForSeedVm contactSeed = new ContactDetailForSeedVm();
-                    contactSeed.PlantSeedId= seedId;
-                    contactSeed.ContactDetailId= contactId;
+                    contactSeed.PlantSeedId = seedId;
+                    contactSeed.ContactDetailId = contactId;
 
                     var contactSeddToSave = _mapper.Map<ContactDetailForSeed>(contactSeed);
 
                     _plantRepo.AddContactDetailForSeed(contactSeddToSave);
-                }             
+                }
             }
             else
             {
-                throw new NullReferenceException(); 
+                throw new NullReferenceException();
             }
         }
 
@@ -814,7 +680,7 @@ namespace VFHCatalogMVC.Application.Services
                     var contactDetails = _mapper.Map<ContactDetail>(seedling.ContactDetail);
                     var contactId = _plantRepo.AddContactDetail(contactDetails);
 
-                    ContactDetailForSeedlingVm contactSeedling =new ContactDetailForSeedlingVm();
+                    ContactDetailForSeedlingVm contactSeedling = new ContactDetailForSeedlingVm();
                     contactSeedling.PlantSeedlingId = seedlingId;
                     contactSeedling.ContactDetailId = contactId;
 
@@ -927,7 +793,7 @@ namespace VFHCatalogMVC.Application.Services
             {
                 return filteredSeedlings;
             }
-            
+
         }
         public string UserAccountName(Task<ApplicationUser> user)
         {
@@ -945,12 +811,34 @@ namespace VFHCatalogMVC.Application.Services
             var plant = _plantRepo.GetPlantToActivate(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
 
-            plantVm.isActive= true;
+            plantVm.isActive = true;
             plantVm.isNew = false;
 
             var plantToSave = _mapper.Map<Plant>(plantVm);
 
             _plantRepo.ActivatePlant(plantToSave);
         }
+
+        //public List<PlantGroupsVm> GetPlantGroups(int? typeId)
+        //{
+        //    var groups = _plantRepo.GetAllGroups().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
+
+        //    return groups;
+        //}
+
+        //public List<PlantTypesVm> GetPlantTypes()
+        //{
+        //    var types = _plantRepo.GetAllTypes().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
+
+        //    return types;
+        //}
+
+        //public List<PlantSectionsVm> GetPlantSections(int? groupId)
+        //{
+        //    var sections = _plantRepo.GetAllSections().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
+
+        //    return sections;
+        //}
+
     }
 }

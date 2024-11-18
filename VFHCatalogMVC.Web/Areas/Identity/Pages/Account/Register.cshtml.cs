@@ -13,11 +13,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using VFHCatalogMVC.Application.Interfaces;
 
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 
 namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
 {
@@ -28,20 +28,21 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IUserService _userService;
+        private readonly IUserContactDataService _userContactDataService;
 
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IUserService _userRepo)
+            IEmailSender emailSender, IUserContactDataService userContactDataService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _userService = _userRepo;
+            _userContactDataService = userContactDataService;
+            
         }
 
         [BindProperty/*(SupportsGet = true)*/]
@@ -85,8 +86,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var countries =  _userService.GetCountries();
-            var countriesList = _userService.FillCountryList(countries);
+            var countries =  _userContactDataService.GetCountries();
+            var countriesList = _userContactDataService.FillCountryList(countries);
             ViewData["Country"] = countriesList;     
         }   
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -107,7 +108,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "PRIVATE_USER");
                     address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
-                    _userService.AddAddress(address);
+                    _userContactDataService.AddAddress(address);
                 }
 
                 if (Input.IsCompany == true)
@@ -116,7 +117,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "Company");
                     address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
-                    _userService.AddAddress(address);
+                    _userContactDataService.AddAddress(address);
                 }
 
 

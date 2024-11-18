@@ -7,21 +7,21 @@ using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Model;
 
-namespace VFHCatalogMVC.Application.Interfaces
+namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
 {
-    public interface IUserService
+    public interface IUserPlantService
     {
-        AddressVm GetAddress(string userId);
-        List<CountryVm> GetCountries();
-        List<RegionVm> GetRegions(int countryId);
-        List<CityVm> GetCities(int regionId);
-        List<SelectListItem> FillCountryList(List<CountryVm> countries);
-        List<SelectListItem> FillRegionList(List<RegionVm> regions);
-        List<SelectListItem> FillCityList(List<CityVm> city);
-        void AddAddress(AddressVm address);
-        List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds,List<PlantSeedlingVm> seedlings);
+        //AddressVm GetAddress(string userId);
+        //List<CountryVm> GetCountries();
+        //List<RegionVm> GetRegions(int countryId);
+        //List<CityVm> GetCities(int regionId);
+        //List<SelectListItem> FillCountryList(List<CountryVm> countries);
+        //List<SelectListItem> FillRegionList(List<RegionVm> regions);
+        //List<SelectListItem> FillCityList(List<CityVm> city);
+        //void AddAddress(AddressVm address);
+        List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings);
         UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
-        UserSeedlingsForListVm GetUserSeedlings (int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
+        UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedVm GetSeedsList(Plant plant, UserSeedVm item);
         UserSeedlingVm GetSeedlingsList(Plant plant, UserSeedlingVm item);
         UserSeedVm GetUserSeedToEdit(int id);
@@ -33,7 +33,7 @@ namespace VFHCatalogMVC.Application.Interfaces
         ContactDetail GetContactDetail(int? id);
         int? GetContactDetailForSeed(int id);
         int? GetContactDetailForSeedling(int id);
-        void AddNewUserPlant(int plantId,string userId);
+        void AddNewUserPlant(int plantId, string userId);
         NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
 
 

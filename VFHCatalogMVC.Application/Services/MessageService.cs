@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
@@ -20,9 +21,9 @@ namespace VFHCatalogMVC.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMessageRepository _messageRepo;
         private readonly IMapper _mapper;
-        private readonly IHelperService _helperService;
+        private readonly IPlantHelperService _helperService;
 
-        public MessageService(UserManager<ApplicationUser> userManager, IMessageRepository messageRepository,IMapper mapper, IHelperService helperService)
+        public MessageService(UserManager<ApplicationUser> userManager, IMessageRepository messageRepository,IMapper mapper, IPlantHelperService helperService)
         {
             _userManager = userManager;
             _messageRepo = messageRepository;

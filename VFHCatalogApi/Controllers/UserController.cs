@@ -4,10 +4,11 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Data;
 using System;
-using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 
 namespace VFHCatalogApi.Controllers
 {
@@ -15,11 +16,11 @@ namespace VFHCatalogApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserPlantService _userService;
         private readonly ILogger<UserController> _logger;
         private readonly IPlantService _plantService;
 
-        public UserController(IUserService userService, ILogger<UserController> logger, IPlantService plantService)
+        public UserController(IUserPlantService userService, ILogger<UserController> logger, IPlantService plantService)
         {
             _userService = userService;
             _logger = logger;

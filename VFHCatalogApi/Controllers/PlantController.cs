@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 
 namespace VFHCatalogApi.Controllers
@@ -19,16 +20,18 @@ namespace VFHCatalogApi.Controllers
     public class PlantController : ControllerBase
     {
         private readonly IPlantService _plantService;
+        private readonly IPlantHelperService _plantHelperService;
         private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
-        private readonly IUserService _userService;
+        private readonly IUserContactDataService _userHelperService;
         private readonly ILogger<PlantController> _logger;
 
-        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserService userService, IPlantDetailsSerrvice plantDetailsSerrvice)
+        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserContactDataService userHelperService, IPlantDetailsSerrvice plantDetailsSerrvice, IPlantHelperService plantHelperService)
         {
             _plantService = plantService;
             _logger = logger;
-            _userService = userService;
+            _userHelperService = userHelperService;
             _plantDetailsSerrvice = plantDetailsSerrvice;
+            _plantHelperService = plantHelperService;
         }
 
         [HttpPost, HttpGet]
@@ -37,8 +40,8 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var types = _plantService.GetPlantTypes();
-                var viewBagtypesList = _plantService.FillPropertyList(types, null, null);
+                var types = _plantHelperService.GetPlantTypes();
+                var viewBagtypesList = _plantHelperService.FillPropertyList(types, null, null);
                 var groupsList = GetPlantGroupsList(typeId);
                 var viewBaggroupsList = groupsList;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -78,12 +81,12 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userService.GetCountries();
-                var viewBagCountriesList = _userService.FillCountryList(countries);
-                var regions = _userService.GetRegions(countryId);
-                var viewBagRegionsList = _userService.FillRegionList(regions);
-                var cities = _userService.GetCities(regionId);
-                var viewBagCitiesList = _userService.FillCityList(cities);
+                var countries = _userHelperService.GetCountries();
+                var viewBagCountriesList = _userHelperService.FillCountryList(countries);
+                var regions = _userHelperService.GetRegions(countryId);
+                var viewBagRegionsList = _userHelperService.FillRegionList(regions);
+                var cities = _userHelperService.GetCities(regionId);
+                var viewBagCitiesList = _userHelperService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
                 if (!pageNo.HasValue)
@@ -123,12 +126,12 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userService.GetCountries();
-                var viewBagCountriesList = _userService.FillCountryList(countries);
-                var regions = _userService.GetRegions(countryId);
-                var viewBagRegionsList = _userService.FillRegionList(regions);
-                var cities = _userService.GetCities(regionId);
-                var viewBagCitiesList = _userService.FillCityList(cities);
+                var countries = _userHelperService.GetCountries();
+                var viewBagCountriesList = _userHelperService.FillCountryList(countries);
+                var regions =   .GetRegions(countryId);
+                var viewBagRegionsList = _userHelperService.FillRegionList(regions);
+                var cities = _userHelperService.GetCities(regionId);
+                var viewBagCitiesList = _userHelperService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
                 if (!pageNo.HasValue)
@@ -166,12 +169,12 @@ namespace VFHCatalogApi.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AddPlant()
         {
-            var types = _plantService.GetPlantTypes();
-            var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
-            var colors = _plantService.GetColors();
-            var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
-            var growingSeaznos = _plantService.GetGrowingSeazons();
-            var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+            var types = _plantHelperService.GetPlantTypes();
+            var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
+            var colors = _plantDetailsSerrvice.GetColors();
+            var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
+            var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+            var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
 
             return NoContent();
         }
@@ -188,12 +191,12 @@ namespace VFHCatalogApi.Controllers
             }
             else
             {
-                var types = _plantService.GetPlantTypes();
-                var viewBagTypesList = _plantService.FillPropertyList(types, null, null);
-                var colors = _plantService.GetColors();
-                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
-                var growingSeaznos = _plantService.GetGrowingSeazons();
-                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+                var types = _plantHelperService.GetPlantTypes();
+                var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
+                var colors = _plantDetailsSerrvice.GetColors();
+                var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
+                var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+                var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
                 //return RedirectToAction("AddPlant", model);
                 return BadRequest(ModelState.ErrorCount);
             }
@@ -223,11 +226,11 @@ namespace VFHCatalogApi.Controllers
             try
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
-                var colors = _plantService.GetColors();
-                var viewBagColorsList = _plantService.FillPropertyList(null, colors, null);
+                var colors = _plantDetailsSerrvice.GetColors();
+                var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
 
-                var growingSeaznos = _plantService.GetGrowingSeazons();
-                var viewBagGrowingSeazons = _plantService.FillPropertyList(null, null, growingSeaznos);
+                var growingSeaznos = _plantDetailsSerrvice.GetGrowingSeazons();
+                var viewBagGrowingSeazons = _plantHelperService.FillPropertyList(null, null, growingSeaznos);
 
                 var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                 var viewBagGrowthTypes = growthTypes;
@@ -425,7 +428,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
         {
-            var groups = _plantService.GetPlantGroups(typeId);
+            var groups = _plantHelperService.GetPlantGroups(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
 
             if (groups.Count > 0)
@@ -447,7 +450,7 @@ namespace VFHCatalogApi.Controllers
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
-            var sections = _plantService.GetPlantSections(groupId);
+            var sections = _plantHelperService.GetPlantSections(groupId);
 
             if (sections.Count > 0)
             {
@@ -472,7 +475,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetGrowthTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
-            var list = _plantService.GetGrowthTypes(typeId, groupId, sectionId);
+            var list = _plantHelperService.GetGrowthTypes(typeId, groupId, sectionId);
 
             List<SelectListItem> growthTypes = new List<SelectListItem>();
 
@@ -495,7 +498,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetDestinations()
         {
-            var destList = _plantService.GetDestinations();
+            var destList = _plantHelperService.GetDestinations();
 
             List<SelectListItem> destinations = new List<SelectListItem>();
 
@@ -517,7 +520,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetFruitTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
-            var fruitTypes = _plantService.GetFruitType(typeId, groupId, sectionId);
+            var fruitTypes = _plantHelperService.GetFruitType(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitTypesList = new List<SelectListItem>();
 
@@ -541,7 +544,7 @@ namespace VFHCatalogApi.Controllers
         [HttpPost]
         private List<SelectListItem> GetFruitSizes([FromBody] int typeId, int groupId, int? sectionId)
         {
-            var fruitSiezes = _plantService.GetFruitSize(typeId, groupId, sectionId);
+            var fruitSiezes = _plantHelperService.GetFruitSize(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitSizesList = new List<SelectListItem>();
 

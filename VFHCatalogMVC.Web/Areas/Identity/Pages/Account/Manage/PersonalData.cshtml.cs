@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Domain.Interface;
-using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using System.Web.Mvc;
+using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 
 namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
 {
@@ -18,18 +18,18 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IUserService _userService;
+        private readonly IUserContactDataService _userHelperService;
         private readonly ILogger<PersonalDataModel> _logger;
 
         public PersonalDataModel(
             UserManager<ApplicationUser> userManager,
             ILogger<PersonalDataModel> logger,
-            SignInManager<ApplicationUser> signInManager, IUserService _userRepo)
+            SignInManager<ApplicationUser> signInManager, IUserContactDataService userHelperService)
         {
             _userManager = userManager;
             _logger = logger;
             _signInManager = signInManager;
-            _userService= _userRepo;
+            _userHelperService = userHelperService;
         }
         public string Username { get; set; }
 
@@ -78,7 +78,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            var address = _userService.GetAddress(user.Id);
+            var address = _userHelperService.GetAddress(user.Id);
 
             Username = userName;
 
@@ -107,12 +107,12 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
 
             await LoadAsync(user);
 
-            var countries = _userService.GetCountries();
-            ViewData["Country"] = _userService.FillCountryList(countries);
-            var regions = _userService.GetRegions(Input.Address.CountryId);
-            ViewData["Region"] = _userService.FillRegionList(regions);
-            var cities = _userService.GetCities(Input.Address.RegionId);
-            ViewData["City"] = _userService.FillCityList(cities);
+            var countries = _userHelperService.GetCountries();
+            ViewData["Country"] = _userHelperService.FillCountryList(countries);
+            var regions = _userHelperService.GetRegions(Input.Address.CountryId);
+            ViewData["Region"] = _userHelperService.FillRegionList(regions);
+            var cities = _userHelperService.GetCities(Input.Address.RegionId);
+            ViewData["City"] = _userHelperService.FillCityList(cities);
 
             if (Input.Address.CountryId != 0)
             {

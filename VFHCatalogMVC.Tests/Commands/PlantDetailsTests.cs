@@ -9,16 +9,18 @@ using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.Services;
+using VFHCatalogMVC.Application.Services.PlantServices;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Infrastructure.Repositories;
 using Xunit;
+using static Application.UnitTests.Commands.AddNewPlantTests;
 
 namespace Application.UnitTests.Commands
 {
-    public class AddPlantDetailsTests: CommandTestBase
+    public class PlantDetailsTests: CommandTestBase
     {
-        public AddPlantDetailsTests():base()
+        public PlantDetailsTests():base()
         {
                 
         }
@@ -56,6 +58,75 @@ namespace Application.UnitTests.Commands
 
             Assert.NotEqual( 0, plantDetailId );
         }
+
+        //[Fact]
+
+        //public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
+        //{
+        //    //Arrange
+        //    var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+
+        //    var mapper = configurationProvider.CreateMapper();
+
+        //    var mockPlantRepo = new Mock<PlantRepository>(_context);
+        //    var mockImageService = new Mock<IImageService>();
+        //    var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+
+        //    var plantDetailService = new PlantDetailsService(
+
+        //        mockPlantRepo.Object,
+        //        mapper,
+        //        mockImageService.Object,
+        //        mockUserManager.Object
+
+        //       );
+
+        //    var plant = SetNewPlantParameters();
+        //    plant.Id = 1;
+
+        //    //Act
+
+        //    var plantDetailId = plantDetailService.AddPlantDetails(plant);
+
+        //    //Assert
+
+        //    Assert.NotEqual(0, plantDetailId);
+        //}
+
+        //[Theory]
+
+        //[InlineData(1, 1, 1, "test")]
+        //[InlineData(2, null, null, "test")]
+        //[InlineData(3, null, null, "test")]
+        //[InlineData(1, 3, 11, "test")]
+
+
+        //public void GetGrowthTypes_ShouldReturnListofGrowthTypes(int typeId, int? groupId, int? sectionId, string stringName)
+        //{
+
+        //    //Arrange
+        //    var mockUser = SetUser();
+        //    var userRole = UserRoles.Admin;
+        //    var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+
+        //    mockUserManager.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
+        //    mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
+
+        //    var plantService = SetPlantService(mockUserManager);
+
+        //    var newPlant = SetNewPlantParameters();
+
+        //    //Act
+
+        //    var growthTypesList = plantService.GetGrowthTypes(typeId, groupId, sectionId);
+
+        //    //Assert
+
+        //    Assert.Equal(stringName, growthTypesList.AsQueryable().Single().Name);
+
+
+        //}
+
         [Fact]
 
         public void GetGrowthTypesNames_ShouldReturnGrowthTypesNamesOfPlantByPlantDetailsID()
@@ -94,7 +165,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public void PlantService_GetPlantDetailsById_ShouldReturnPlantDetail()
+        public void GetPlantDetailsById_ShouldReturnPlantDetail()
         {
             //Arrange
 

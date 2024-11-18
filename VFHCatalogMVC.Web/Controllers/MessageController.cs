@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Message;
 
@@ -13,9 +14,9 @@ namespace VFHCatalogMVC.Web.Controllers
     {
         private readonly IMessageService _messageService;
         private readonly ILogger<MessageController> _logger;
-        private readonly IHelperService _helperService;
+        private readonly IPlantHelperService _helperService;
 
-        public MessageController(IMessageService messageService, ILogger<MessageController> logger, IHelperService helperService)
+        public MessageController(IMessageService messageService, ILogger<MessageController> logger, IPlantHelperService helperService)
         {
             _messageService = messageService;
             _logger = logger;
