@@ -21,11 +21,11 @@ namespace VFHCatalogApi.Controllers
     {
         private readonly IPlantService _plantService;
         private readonly IPlantHelperService _plantHelperService;
-        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsSerrvice;
         private readonly IUserContactDataService _userHelperService;
         private readonly ILogger<PlantController> _logger;
 
-        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserContactDataService userHelperService, IPlantDetailsSerrvice plantDetailsSerrvice, IPlantHelperService plantHelperService)
+        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserContactDataService userHelperService, IPlantDetailsService plantDetailsSerrvice, IPlantHelperService plantHelperService)
         {
             _plantService = plantService;
             _logger = logger;

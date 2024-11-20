@@ -20,12 +20,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
     public class PlantHelperService : IPlantHelperService
     {
         private readonly IPlantService _plantService;
-        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsSerrvice;
         private readonly IPlantRepository _plantRepo;
         private readonly IUserPlantService _userService;
         private readonly IMessageRepository _messageRepo;
         private readonly IMapper _mapper;
-        public PlantHelperService(IPlantService plantService, IUserPlantService userService, IMessageRepository messageRepo, IMapper mapper, IPlantDetailsSerrvice plantDetailsSerrvice, IPlantRepository plantRepository)
+        public PlantHelperService(IPlantService plantService, IUserPlantService userService, IMessageRepository messageRepo, IMapper mapper, IPlantDetailsService plantDetailsSerrvice, IPlantRepository plantRepository)
         {
             _plantService = plantService;
             _userService = userService;

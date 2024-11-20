@@ -182,22 +182,15 @@ namespace Application.UnitTests.Commands
         //public void GetAllActivePlantsForList_SearchByName_ShouldReturnPlantList()
         //{
         //    //Arrange
-        //    var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
-
-        //    var mapper = configurationProvider.CreateMapper();
-
-        //    var mockPlantRepo = new Mock<PlantRepository>(_context);
-        //    var mockUserService = new Mock<IUserService>();
-        //    var mockImageService = new Mock<IImageService>();
+        //    var mockUser = SetUser();
+        //    var userRole = UserRoles.PrivateUser;
         //    var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
-        //    var plantService = new PlantService(
-        //       mockPlantRepo.Object,
-        //       mapper,
-        //       mockUserManager.Object,
-        //       mockUserService.Object,
-        //       mockImageService.Object
-        //   );
+        //    mockUserManager.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
+        //    mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
+
+        //    var plantService = SetPlantService(mockUserManager);
+
 
         //    var searchString = "test";
 
@@ -210,9 +203,6 @@ namespace Application.UnitTests.Commands
         //    Assert.True(plantList.Count == 1);
         //    Assert.True(plantList.PlantForList.FullName == searchString);
         //}
-
-       
-
 
         private static NewPlantVm SetNewPlantParameters()
         {
@@ -265,7 +255,7 @@ namespace Application.UnitTests.Commands
             var mockUserPlantService = new Mock<IUserPlantService>();
             var mockUserContactDataService = new Mock<IUserContactDataService>();
             var mockImageService = new Mock<IImageService>();
-            var mockPlantDetailsService = new Mock<IPlantDetailsSerrvice>();
+            var mockPlantDetailsService = new Mock<IPlantDetailsService>();
                         
             var mockUserManager = mockManager;
 
@@ -281,7 +271,6 @@ namespace Application.UnitTests.Commands
 
             return plantService;
         }
-
         public static class UserRoles
         {
             public const string Admin = "Admin";

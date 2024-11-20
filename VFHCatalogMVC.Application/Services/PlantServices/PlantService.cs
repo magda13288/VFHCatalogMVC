@@ -33,13 +33,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly IUserContactDataService _userContactDataService;
         private readonly IUserPlantService _userPlantService;
         private readonly IImageService _imageService;
-        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsSerrvice;
 
         public PlantService()
         {
 
         }
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserContactDataService userContactDataService, IImageService imageService, IPlantDetailsSerrvice plantDetailsSerrvice, IUserPlantService userPlantService)
+        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserContactDataService userContactDataService, IImageService imageService, IPlantDetailsService plantDetailsSerrvice, IUserPlantService userPlantService)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
@@ -548,15 +548,34 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             //Update Destinations
             if (model.PlantDetails.ListPlantDestinations != null)
-                _plantDetailsSerrvice.UpdatePlantDestinations(model);
+                _plantDetailsSerrvice.UpdateEntity(
+                                        model.PlantDetails.Id,
+                                        model.PlantDetails.ListPlantDestinations.DestinationsIds,
+                                        id => _plantRepo.GetPlantDestinations(model.PlantDetails.Id),
+                                        (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
+                                        id => _plantRepo.DeletePlantDestinations(model.PlantDetails.Id)
+                                                );
 
             //Update GrowingSeazons
             if (model.PlantDetails.ListGrowingSeazons != null)
-                _plantDetailsSerrvice.UpdatePlantGrowingSeazons(model);
+                _plantDetailsSerrvice.UpdateEntity(
+                                       model.PlantDetails.Id,
+                                       model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
+                                       id => _plantRepo.GetPlantGrowingSeazons(model.PlantDetails.Id),
+                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
+                                       id => _plantRepo.DeletePlantDestinations(model.PlantDetails.Id)
+                                               );
 
             //UpdateGrowthTypes
             if (model.PlantDetails.ListGrowthTypes != null)
-               _plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
+                _plantDetailsSerrvice.UpdateEntity(
+                                       model.PlantDetails.Id,
+                                       model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
+                                       id => _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id),
+                                       (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
+                                       id => _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id)
+                                               );
+            //_plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
 
         }
         public PlantForListVm DeletePlant(int id)

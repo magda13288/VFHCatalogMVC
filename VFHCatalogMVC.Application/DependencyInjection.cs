@@ -22,7 +22,7 @@ namespace VFHCatalogMVC.Application
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IPlantHelperService, PlantHelperService>();
             services.AddTransient<IMessageService, MessageService>();
-            services.AddTransient<IPlantDetailsSerrvice, PlantDetailsService>();
+            services.AddTransient<IPlantDetailsService, PlantDetailsService>();
             services.AddTransient<IPlantHelperService, PlantHelperService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;

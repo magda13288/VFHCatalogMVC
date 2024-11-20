@@ -49,8 +49,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         {
             public PlantDetailsValidation()
             {
-                //RuleFor(x => x.Id).NotEmpty();
-                //RuleFor(x => x.ColorId).NotNull().WithMessage("*");
+                RuleFor(x => x.ColorId).NotEqual(0).WithMessage("*");
+                RuleFor(x=>x.FruitSizeId).NotEqual(0).WithMessage("*");
+                RuleFor(x=>x.FruitTypeId).NotEqual(0).WithMessage("*");
+                RuleFor(x=>x.ListGrowthTypes).NotEmpty().WithMessage("*");
+                RuleFor(x=>x.ListGrowingSeazons).NotNull().WithMessage("*");
+                RuleFor(x=>x.ListPlantDestinations).NotNull().WithMessage("*");
 
             }
         }

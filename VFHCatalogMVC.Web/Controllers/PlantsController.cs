@@ -27,12 +27,12 @@ namespace VFHCatalogMVC.Web.Controllers
     {
 
         private readonly IPlantService _plantService;
-        private readonly IPlantDetailsSerrvice _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsSerrvice;
         private readonly IUserContactDataService _userContactDataService;
         private readonly ILogger<PlantsController> _logger;
         private readonly IPlantHelperService _plantHelperService;
 
-        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserContactDataService userContactDataService, IPlantHelperService plantHelperService, IPlantDetailsSerrvice plantDetailsSerrvice)
+        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserContactDataService userContactDataService, IPlantHelperService plantHelperService, IPlantDetailsService plantDetailsSerrvice)
         {
             _plantService = plantService;
             _logger = logger;
@@ -261,7 +261,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
                 var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                 ViewBag.GrowthTypes = growthTypes.Value;
-
+      
                 var destinations = GetDestinations();
                 ViewBag.Destinations = destinations.Value;
 
