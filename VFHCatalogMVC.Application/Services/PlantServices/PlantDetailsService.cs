@@ -19,19 +19,24 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly IImageService _imageService;
-        private readonly UserManager<ApplicationUser> _userManager;
-
+        private readonly UserManager<ApplicationUser> _userManager;        
         public PlantDetailsService()
         {
 
         }
 
-        public PlantDetailsService(IPlantRepository plantRepo, IMapper mapper, IImageService imageService, UserManager<ApplicationUser> userManager)
+        public PlantDetailsService(
+            IPlantRepository plantRepo, 
+            IMapper mapper,
+            IImageService imageService,
+            UserManager<ApplicationUser> userManager
+            )
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
             _imageService = imageService;
             _userManager = userManager;
+           
         }
  
         public int AddPlantDetails(NewPlantVm model)

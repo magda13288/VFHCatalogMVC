@@ -22,6 +22,7 @@ using System.Drawing;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
+using MathNet.Numerics.RootFinding;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {
@@ -39,7 +40,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
 
         }
-        public PlantService(IPlantRepository plantRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IUserContactDataService userContactDataService, IImageService imageService, IPlantDetailsService plantDetailsSerrvice, IUserPlantService userPlantService)
+        public PlantService(
+            IPlantRepository plantRepo, 
+            IMapper mapper, UserManager<ApplicationUser> userManager, 
+            IUserContactDataService userContactDataService, 
+            IImageService imageService, 
+            IPlantDetailsService plantDetailsSerrvice,
+            IUserPlantService userPlantService)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
@@ -480,9 +487,49 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return plantVm;
         }
 
+        private void UpdatePlantPhoto(NewPlantVm model)
+        {
+            if (model.Photo != null)
+            {
+                var existingPlant = _plantRepo.GetPlantById(model.Id);
+                string direction = "plantGallery/searchPhoto";
+                string newPhoto = _imageService.UploadImage(model.Photo, model.FullName, direction);
+                _imageService.DeleteImage($"plantGallery/searchPhoto/{existingPlant.Photo}");
+                model.PhotoFileName = newPhoto;
+            }
+            else
+            {
+                model.PhotoFileName = _plantRepo.GetPlantById(model.Id).Photo;
+            }
+        }
+        private void UpdatePlantDetailsImages(NewPlantVm model)
+        {
+            string direction = "plantGallery/plantDetailsGallery";
+
+            if (model.PlantDetails.Images != null)
+            {
+                foreach (var image in model.PlantDetails.Images)
+                {
+                    string fileName = _imageService.UploadImage(image, model.FullName, direction);
+                    _plantRepo.AddPlantDetailsImages(fileName, model.PlantDetails.Id);
+                }
+            }
+
+            if (model.PlantDetails.PlantDetailsImages != null)
+            {
+                foreach (var image in model.PlantDetails.PlantDetailsImages.Where(i => i.IsChecked))
+                {
+                    string imagePath = direction + "/" + image.ImageURL;
+                    _imageService.DeleteImage(imagePath);
+                    _plantRepo.DeleteImageFromGallery(image.Id);
+                }
+            }
+        }
         public void UpdatePlant(NewPlantVm model)
         {
-            var getPhotoName = _plantRepo.GetPlantById(model.Id);
+            UpdatePlantPhoto(model);
+            /*
+             * var getPhotoName = _plantRepo.GetPlantById(model.Id);
             var PhotoName = getPhotoName.Photo;
 
             string direction = null;
@@ -502,8 +549,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 model.PhotoFileName = getPhotoName.Photo;
             }
-
-            if (model.PlantDetails.Images != null)
+            */
+            UpdatePlantDetailsImages(model);
+            /*
+             * if (model.PlantDetails.Images != null)
             {
                 if (model.PlantDetails.Images.Count > 0)
                 {
@@ -532,15 +581,17 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     }
                 }
             }
+            */
 
             var plant = _mapper.Map<Plant>(model);
 
-            if (model.PlantDetails.ColorId == 0)
-                model.PlantDetails.ColorId = null;
-            if (model.PlantDetails.FruitSizeId == 0)
-                model.PlantDetails.FruitSizeId = null;
-            if (model.PlantDetails.FruitTypeId == 0)
-                model.PlantDetails.FruitTypeId = null;
+            //rules in FluentValidation 
+            //if (model.PlantDetails.ColorId == 0)
+            //    model.PlantDetails.ColorId = null;
+            //if (model.PlantDetails.FruitSizeId == 0)
+            //    model.PlantDetails.FruitSizeId = null;
+            //if (model.PlantDetails.FruitTypeId == 0)
+            //    model.PlantDetails.FruitTypeId = null;
 
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
             _plantRepo.UpdatePlant(plant);

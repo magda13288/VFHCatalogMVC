@@ -17,13 +17,13 @@ namespace VFHCatalogMVC.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddTransient<IPlantService, PlantService>();
+            services.AddTransient<IPlantHelperService, PlantHelperService>();
+            services.AddTransient<IPlantDetailsService, PlantDetailsService>();
             services.AddTransient<IUserPlantService, UserPlantService>();
             services.AddTransient<IUserContactDataService, UserContactDataService>();
-            services.AddTransient<IImageService, ImageService>();
-            services.AddTransient<IPlantHelperService, PlantHelperService>();
+            services.AddTransient<IImageService, ImageService>();           
             services.AddTransient<IMessageService, MessageService>();
-            services.AddTransient<IPlantDetailsService, PlantDetailsService>();
-            services.AddTransient<IPlantHelperService, PlantHelperService>();
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

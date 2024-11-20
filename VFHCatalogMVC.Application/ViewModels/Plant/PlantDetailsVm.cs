@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
@@ -52,7 +53,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
                 RuleFor(x => x.ColorId).NotEqual(0).WithMessage("*");
                 RuleFor(x=>x.FruitSizeId).NotEqual(0).WithMessage("*");
                 RuleFor(x=>x.FruitTypeId).NotEqual(0).WithMessage("*");
-                RuleFor(x=>x.ListGrowthTypes).NotEmpty().WithMessage("*");
+                RuleFor(x=>x.ListGrowthTypes).NotEmpty().NotNull().WithMessage("*");
                 RuleFor(x=>x.ListGrowingSeazons).NotNull().WithMessage("*");
                 RuleFor(x=>x.ListPlantDestinations).NotNull().WithMessage("*");
 
