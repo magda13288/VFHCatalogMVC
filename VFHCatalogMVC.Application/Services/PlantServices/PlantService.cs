@@ -101,7 +101,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     _userPlantService.AddNewUserPlant(id, userInfo.Result.Id);
                 }
 
-                if (id != 0)
+                if (id > 0)
                 {
                     var plantDetailId = _plantDetailsSerrvice.AddPlantDetails(model);
                 }
@@ -115,45 +115,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
         {
-            /*
-             * var plants = new List<PlantForListVm>();
-             var plantsToShow = new List<PlantForListVm>();
-
-             if (searchString == "")
-             {
-                 if (typeId > 0 && typeId != null)
-                 {
-                     if (groupId > 0 && groupId != null)
-                     {
-                         //projectTo wykorzystywane przy kolekcjach IQueryable
-                         if (sectionId > 0 && sectionId != null)
-                         {
-                             plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
-                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
-                         }
-                         else
-                         {
-                             plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
-                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
-
-                         }
-                     }
-                     else
-                     {
-                         plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
-                     }
-                 }
-             }
-             else
-             {
-                 plants = _plantRepo.GetAllActivePlants().Where(p => p.FullName.StartsWith(searchString))
-                        .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
-             }
-            */
-
-            var query = _plantRepo.GetAllActivePlants();
-
-            var plants = GetAllActivePlantsFilters(query,searchString,typeId,groupId,sectionId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList(); ;
+            
+            var plants = ActivePlantsFilters(searchString, typeId, groupId, sectionId);
 
             var plantsToShow = Paginate(plants, pageSize, pageNo);
 
@@ -179,9 +142,43 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
         }
 
-        private IQueryable<Plant> GetAllActivePlantsFilters(IQueryable<Plant> query, string searchString, int? typeId, int? groupId, int? sectionId)
+        private List<PlantForListVm> ActivePlantsFilters(string searchString, int? typeId, int? groupId, int? sectionId)
         {
+            var plants = new List<PlantForListVm>();
+
             if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                plants = _plantRepo.GetAllActivePlants().Where(p => p.FullName.StartsWith(searchString))
+                       .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+            }
+            else 
+            { 
+                if (typeId > 0 && typeId != null)
+                {
+                    if (groupId > 0 && groupId != null)
+                    {
+                        //projectTo wykorzystywane przy kolekcjach IQueryable
+                        if (sectionId > 0 && sectionId != null)
+                        {
+                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
+                               .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+                        }
+                        else
+                        {
+                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
+                               .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+
+                        }
+                    }
+                    else
+                    {
+                        plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+                    }
+                }
+            }
+            return plants;
+
+           /* if (!string.IsNullOrWhiteSpace(searchString))
             {
                 query = query.Where(p => p.FullName.StartsWith(searchString));
             }
@@ -199,11 +196,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                         }
                         else
                         {
-                            query = query.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
-    
+                            query = query.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId);
 
 
-                    }
+
+                        }
                     }
                     else
                     {
@@ -213,7 +210,9 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
             return query;
+           */
         }
+
 
         public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName)
         {
