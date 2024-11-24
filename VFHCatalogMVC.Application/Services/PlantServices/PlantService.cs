@@ -216,7 +216,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         */
 
-       public PlantSeedsForListVm GetAllPlantSeeds2(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName)
+       public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName)
                {
 
                    var seeds = new List<PlantSeedVm>();
@@ -364,7 +364,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
                    return plantSeedsList;
                }
-               public PlantSeedlingsForListVm GetAllPlantSeedlings2(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+               public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
                {
                    var seedlings = new List<PlantSeedlingVm>();
                    var seedlingsToShow = new List<PlantSeedlingVm>();
