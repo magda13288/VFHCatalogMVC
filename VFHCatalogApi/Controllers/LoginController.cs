@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using VFHCatalogApi.Models;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogApi.Controllers

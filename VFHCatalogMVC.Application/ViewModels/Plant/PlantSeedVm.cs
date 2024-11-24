@@ -1,44 +1,38 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using VFHCatalogMVC.Application.Mapping;
-using VFHCatalogMVC.Domain.Model;
-using VFHCatalogMVC.Application.ViewModels.User;
-using System.Text.RegularExpressions;
+using VFHCatalogMVC.Application.Services.PlantServices;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
-    public class PlantSeedVm : IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeed>
+    public class PlantSeedVm : PlantItemVm, IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeed>
     {
-        public int Id { get; set; }
+        
+        //public int Id { get; set; }
         public int PlantId { get; set; }
         //[Required(ErrorMessage ="*")]
         public int Count { get; set; }
         //[Required(ErrorMessage ="*")]
         public string Description { get; set; }
-        public DateTime DateAdded { get; set; }
-        public string UserId { get; set; }
+        //public DateTime DateAdded { get; set; }
+        //public string UserId { get; set; }
 
-        [NotMapped]
-        public string Date { get; set; }
-        [NotMapped]
-        public string AccountName { get; set; }
+        //[NotMapped]
+        //public string Date { get; set; }
+        //[NotMapped]
+        //public string AccountName { get; set; }
 
         [NotMapped]
         //[RegularExpression(@"^(http(s):\/\/.)[-a - zA - Z0 - 9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$",ErrorMessage ="Niepoprawny format adresu strony")]
         public string Link { get; set; }
 
-        [NotMapped]
-        public ContactDetailVm ContactDetail { get; set; }
+        //[NotMapped]
+        //public ContactDetailVm ContactDetail { get; set; }
 
-        [NotMapped]
-        public List<PlantOpinionsVm> PlantOpinions { get; set; }
+        //[NotMapped]
+        //public List<PlantOpinionsVm> PlantOpinions { get; set; }
 
         [NotMapped]
         public int Price { get; set; }

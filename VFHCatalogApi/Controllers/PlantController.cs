@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using VFHCatalogApi.Models;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
@@ -20,51 +21,51 @@ namespace VFHCatalogApi.Controllers
     public class PlantController : ControllerBase
     {
         private readonly IPlantService _plantService;
-        private readonly IPlantHelperService _plantHelperService;
         private readonly IPlantDetailsService _plantDetailsSerrvice;
-        private readonly IUserContactDataService _userHelperService;
+        private readonly IUserContactDataService _userContactDataService;
         private readonly ILogger<PlantController> _logger;
+        private readonly IPlantHelperService _plantHelperService;
 
-        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserContactDataService userHelperService, IPlantDetailsService plantDetailsSerrvice, IPlantHelperService plantHelperService)
+        public PlantController(IPlantService plantService, ILogger<PlantController> logger, IUserContactDataService userContactDataService, IPlantHelperService plantHelperService, IPlantDetailsService plantDetailsSerrvice)
         {
             _plantService = plantService;
             _logger = logger;
-            _userHelperService = userHelperService;
             _plantDetailsSerrvice = plantDetailsSerrvice;
             _plantHelperService = plantHelperService;
+            _userContactDataService = userContactDataService;
         }
 
-        [HttpPost, HttpGet]
+        [HttpPost("Index"), HttpGet("Index")]
         [AllowAnonymous]
-        public ActionResult<ListPlantForListVm> Index([FromBody]int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public ActionResult<ListPlantForListVm> Index([FromBody] IndexPlant properties)
         {
             try
             {
                 var types = _plantHelperService.GetPlantTypes();
                 var viewBagtypesList = _plantHelperService.FillPropertyList(types, null, null);
-                var groupsList = GetPlantGroupsList(typeId);
+                var groupsList = GetPlantGroupsList(properties.typeId);
                 var viewBaggroupsList = groupsList;
-                var sectionsList = GetPlantSectionsList(groupId, typeId);
+                var sectionsList = GetPlantSectionsList(properties.groupId,properties.typeId);
                 var viewBagSectionsList = sectionsList;
                 int viewBagTypeId, viewBagGroupId;
                 int? viewBagSectionId;
 
-                if (!pageNo.HasValue)
+                if (!properties.pageNo.HasValue)
                 {
-                    pageNo = 1;
+                   properties.pageNo = 1;
                 }
-                if (searchString is null)
+                if (properties.searchString is null)
                 {
-                    searchString = string.Empty;
+                    properties.searchString = string.Empty;
                 }
-                if (typeId != 0)
-                    viewBagTypeId = typeId;
-                if (groupId != 0)
-                    viewBagGroupId = groupId;
-                if (sectionId != 0)
-                    viewBagSectionId = sectionId;
+                if (properties.typeId != 0)
+                    viewBagTypeId = properties.typeId;
+                if (properties.groupId != 0)
+                    viewBagGroupId = properties.groupId;
+                if (properties.sectionId != 0)
+                    viewBagSectionId = properties.sectionId;
 
-                var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo, searchString, typeId, groupId, sectionId);
+                var model = _plantService.GetAllActivePlantsForList(properties.pageSize, properties.pageNo, properties.searchString, properties.typeId, properties.groupId, properties.sectionId);
 
                 return Ok(model);
             }
@@ -75,42 +76,42 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet/*("{id}")*/, HttpPost]
+        [HttpGet("IndexSeeds"), HttpPost("IndexSeeds")]
         [Authorize(Roles = "PrivateUser,Company")]
-        public ActionResult<PlantSeedsForListVm> IndexSeeds([FromBody]int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public ActionResult<PlantSeedsForListVm> IndexSeeds([FromRoute]int id, IndexSeedSeedling properties)
         {
             try
             {
-                var countries = _userHelperService.GetCountries();
-                var viewBagCountriesList = _userHelperService.FillCountryList(countries);
-                var regions = _userHelperService.GetRegions(countryId);
-                var viewBagRegionsList = _userHelperService.FillRegionList(regions);
-                var cities = _userHelperService.GetCities(regionId);
-                var viewBagCitiesList = _userHelperService.FillCityList(cities);
+                var countries = _userContactDataService.Countries();
+                //var viewBagCountriesList = _userContactDataService.FillCountryList(countries);
+                var regions = _userContactDataService.GetRegions(properties.countryId);
+                //var viewBagRegionsList = _userContactDataService.FillRegionList(regions);
+                var cities = _userContactDataService.GetCities(properties.regionId);
+                //var viewBagCitiesList = _userContactDataService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
-                if (!pageNo.HasValue)
+                if (!properties.pageNo.HasValue)
                 {
-                    pageNo = 1;
+                   properties.pageNo = 1;
                 }
-                if (pageSize == 0)
+                if (properties.pageSize == 0)
                 {
-                    pageSize = 30;
+                   properties.pageSize = 30;
                 }
-                if (countryId != 0)
+                if (properties.countryId != 0)
                 {
-                    viewBagCountryId = countryId;
+                    viewBagCountryId = properties.countryId;
                 }
-                if (regionId != 0)
+                if (properties.regionId != 0)
                 {
-                    viewBagRegionId = regionId;
+                    viewBagRegionId = properties.regionId;
                 }
-                if (cityId != 0)
+                if (properties.cityId != 0)
                 {
-                    viewBagCityId = cityId;
+                    viewBagCityId = properties.cityId;
                 }
 
-                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
+                var model = _plantService.GetAllPlantSeeds(id, properties.countryId, properties.regionId, properties.cityId,properties.pageSize,properties.pageNo,properties.isCompany, User.Identity.Name);
                 return Ok(model);
             }
             catch (Exception ex)
@@ -120,18 +121,18 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet, HttpPost]
+        [HttpGet("IndexSeedlings"), HttpPost("IndexSeedlings")]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult IndexSeedlings([FromBody] int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             try
             {
-                var countries = _userHelperService.GetCountries();
-                var viewBagCountriesList = _userHelperService.FillCountryList(countries);
-                var regions =   _userHelperService.GetRegions(countryId);
-                var viewBagRegionsList = _userHelperService.FillRegionList(regions);
-                var cities = _userHelperService.GetCities(regionId);
-                var viewBagCitiesList = _userHelperService.FillCityList(cities);
+                var countries = _userContactDataService.GetCountries();
+                var viewBagCountriesList = _userContactDataService.FillCountryList(countries);
+                var regions =   _userContactDataService.GetRegions(countryId);
+                var viewBagRegionsList = _userContactDataService.FillRegionList(regions);
+                var cities = _userContactDataService.GetCities(regionId);
+                var viewBagCitiesList = _userContactDataService.FillCityList(cities);
                 int viewBagCountryId, viewBagRegionId, viewBagCityId;
 
                 if (!pageNo.HasValue)
@@ -165,7 +166,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("AddPlant")]
         [Authorize(Roles = "Admin")]
         public IActionResult AddPlant()
         {
@@ -179,7 +180,7 @@ namespace VFHCatalogApi.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("AddPlant")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult AddPlant([FromBody]NewPlantVm model)
@@ -203,7 +204,7 @@ namespace VFHCatalogApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet/*("{id}")*/]
+        [HttpGet("Details")]
         public ActionResult<PlantDetailsVm> Details([FromBody] int id)
         {
             var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
@@ -219,7 +220,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet/*("{id}")*/]
+        [HttpGet("Edit")]
         [Authorize(Roles = "Admin")]
         public ActionResult<NewPlantVm> Edit([FromBody] int id)
         {
@@ -252,7 +253,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("Edit")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit([FromBody] NewPlantVm plant)
@@ -276,7 +277,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpDelete/*("{id}")*/]
+        [HttpDelete]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete([FromBody] int id)
         {
@@ -293,7 +294,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet/*("{id}")*/]
+        [HttpGet("AddSeed")]
         [Authorize(Roles = "PrivateUser,Company")]
         public ActionResult<PlantSeedVm> AddSeed([FromBody] int id)
         {
@@ -310,7 +311,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddSeed")]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult AddSeed([FromBody] PlantSeedVm plantSeed)
         {
@@ -336,7 +337,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpGet/*("{id}")*/]
+        [HttpGet("AddSeedling")]
         [Authorize(Roles = "PrivateUser,Company")]
         public ActionResult<PlantSeedlingVm> AddSeedling([FromBody] int id)
         {
@@ -353,7 +354,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddSeedling")]
         [Authorize(Roles = "PrivateUser,Company")]
         public IActionResult AddSeedling([FromBody] PlantSeedlingVm plantSeedling)
         {
@@ -380,7 +381,7 @@ namespace VFHCatalogApi.Controllers
 
         }
 
-        [HttpGet/*("{id}")*/]
+        [HttpGet("AddOpinion")]
         [Authorize(Roles = "PrivateUser,Company")]
         public ActionResult<PlantOpinionsVm> AddOpinion([FromBody]int id)
         {
@@ -397,7 +398,7 @@ namespace VFHCatalogApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddOpinion")]
         [Authorize(Roles = "PrivateUser,Company")]
         //Add refereshing page after save opinion on modal popup
         public IActionResult AddOpinion([FromBody] PlantOpinionsVm plantOpinion)
@@ -425,7 +426,7 @@ namespace VFHCatalogApi.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("GetPlantGroupsList")]
         private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
         {
             var groups = _plantHelperService.GetPlantGroups(typeId);
@@ -445,7 +446,7 @@ namespace VFHCatalogApi.Controllers
             return groupsList;
         }
 
-        [HttpPost]
+        [HttpPost("GetPlantSectionsList")]
         private List<SelectListItem> GetPlantSectionsList([FromBody] int groupId, int typeId)
         {
 
@@ -472,7 +473,7 @@ namespace VFHCatalogApi.Controllers
             return sectionsList;
         }
 
-        [HttpPost]
+        [HttpPost("GetGrowthTypes")]
         private List<SelectListItem> GetGrowthTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var list = _plantHelperService.GetGrowthTypes(typeId, groupId, sectionId);
@@ -495,7 +496,7 @@ namespace VFHCatalogApi.Controllers
             return growthTypes;
         }
 
-        [HttpPost]
+        [HttpPost("GetDestinations")]
         private List<SelectListItem> GetDestinations()
         {
             var destList = _plantHelperService.GetDestinations();
@@ -517,7 +518,7 @@ namespace VFHCatalogApi.Controllers
             return destinations;
         }
 
-        [HttpPost]
+        [HttpPost("GetFruitTypes")]
         private List<SelectListItem> GetFruitTypes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var fruitTypes = _plantHelperService.GetFruitType(typeId, groupId, sectionId);
@@ -541,7 +542,7 @@ namespace VFHCatalogApi.Controllers
             return fruitTypesList;
         }
 
-        [HttpPost]
+        [HttpPost("GetFruitSizes")]
         private List<SelectListItem> GetFruitSizes([FromBody] int typeId, int groupId, int? sectionId)
         {
             var fruitSiezes = _plantHelperService.GetFruitSize(typeId, groupId, sectionId);

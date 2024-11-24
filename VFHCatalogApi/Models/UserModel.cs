@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VFHCatalogApi
+namespace VFHCatalogApi.Models
 {
     public class UserModel
     {

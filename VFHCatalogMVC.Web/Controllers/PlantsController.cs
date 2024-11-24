@@ -41,18 +41,6 @@ namespace VFHCatalogMVC.Web.Controllers
             _userContactDataService = userContactDataService;
         }
 
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public IActionResult Index()
-        //{
-        //    var model = _plantService.GetAllActivePlantsForList(10, 1, "", null, null, null); //2 elementy na stronie, pierwsza strona, zadnego wyszukiwania
-        //    var types = _plantService.GetPlantTypes();
-        //    ViewBag.TypesList = _plantService.FillPropertyList(types, null, null);
-        //    ViewBag.GroupsList = string.Empty;
-        //    ViewBag.SectionsList = string.Empty;
-
-        //    return View(model);
-        //}
 
         [HttpPost, HttpGet]
         [AllowAnonymous]

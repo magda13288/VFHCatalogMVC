@@ -23,6 +23,7 @@ namespace VFHCatalogMVC.Application
             services.AddTransient<IUserContactDataService, UserContactDataService>();
             services.AddTransient<IImageService, ImageService>();           
             services.AddTransient<IMessageService, MessageService>();
+            services.AddTransient(typeof(IPlantItemProcessor<>), typeof(PlantItemProcessor<>));
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;

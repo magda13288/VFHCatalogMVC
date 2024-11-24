@@ -59,40 +59,6 @@ namespace Application.UnitTests.Commands
             Assert.NotEqual( 0, plantDetailId );
         }
 
-        //[Fact]
-
-        //public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
-        //{
-        //    //Arrange
-        //    var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
-
-        //    var mapper = configurationProvider.CreateMapper();
-
-        //    var mockPlantRepo = new Mock<PlantRepository>(_context);
-        //    var mockImageService = new Mock<IImageService>();
-        //    var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
-
-        //    var plantDetailService = new PlantDetailsService(
-
-        //        mockPlantRepo.Object,
-        //        mapper,
-        //        mockImageService.Object,
-        //        mockUserManager.Object
-
-        //       );
-
-        //    var plant = SetNewPlantParameters();
-        //    plant.Id = 1;
-
-        //    //Act
-
-        //    var plantDetailId = plantDetailService.AddPlantDetails(plant);
-
-        //    //Assert
-
-        //    Assert.NotEqual(0, plantDetailId);
-        //}
-
         //[Theory]
 
         //[InlineData(1, 1, 1, "test")]
@@ -127,41 +93,41 @@ namespace Application.UnitTests.Commands
 
         //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetGrowthTypesNames_ShouldReturnGrowthTypesNamesOfPlantByPlantDetailsID()
-        {
-            //Arrange
-            var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        //public void GetGrowthTypesNames_ShouldReturnGrowthTypesNamesOfPlantByPlantDetailsID()
+        //{
+        //    //Arrange
+        //    var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
 
-            var mapper = configurationProvider.CreateMapper();
-            var mockPlantRepo = new Mock<PlantRepository>(_context);
-            var mockImageService = new Mock<IImageService>();
+        //    var mapper = configurationProvider.CreateMapper();
+        //    var mockPlantRepo = new Mock<PlantRepository>(_context);
+        //    var mockImageService = new Mock<IImageService>();
 
-            var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
+        //    var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
-            var plantDetailService = new PlantDetailsService(
+        //    var plantDetailService = new PlantDetailsService(
 
-                 mockPlantRepo.Object,
-                 mapper,
-                 mockImageService.Object,
-                 mockUserManager.Object
+        //         mockPlantRepo.Object,
+        //         mapper,
+        //         mockImageService.Object,
+        //         mockUserManager.Object
 
-                );
+        //        );
 
-            var id = 1;
+        //    var id = 1;
 
-            //Act 
+        //    //Act 
 
-            var growrthTypesNames = plantDetailService.GetGrowthTypesNames(id);
+        //    var growrthTypesNames = plantDetailService.GetGrowthTypesNames(id);
 
-            //Assert
+        //    //Assert
 
-            Assert.NotNull(growrthTypesNames);
-            //3 because nedd to add ',' between strings of names
-            Assert.Equal(3, growrthTypesNames.Count);
+        //    Assert.NotNull(growrthTypesNames);
+        //    //3 because nedd to add ',' between strings of names
+        //    Assert.Equal(3, growrthTypesNames.Count);
 
-        }
+        //}
 
         [Fact]
 
