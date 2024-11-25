@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Application.ViewModels.Adresses;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant
 {
@@ -11,6 +12,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public int? CurrentPage { get; set; }
         public int Count { get; set; }
         public bool isCompany { get; set; }
+        public AddressVm Address { get; set; }
         public string LoggedUserName { get; set; }
         public List<TVm> Items { get; set; }
     }

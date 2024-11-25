@@ -12,6 +12,9 @@ using VFHCatalogApi.Models;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 
 namespace VFHCatalogApi.Controllers
 {

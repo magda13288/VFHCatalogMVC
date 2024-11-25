@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using VFHCatalogMVC.Application.HelperClasses;
-using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces

@@ -11,6 +11,7 @@ using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.Services.PlantServices;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Infrastructure.Repositories;
 using Xunit;

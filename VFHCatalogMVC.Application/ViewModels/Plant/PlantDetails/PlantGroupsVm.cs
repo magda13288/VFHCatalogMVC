@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class PlantGroupsVm: IMapFrom<VFHCatalogMVC.Domain.Model.PlantGroup>
+    public class PlantGroupsVm : IMapFrom<Domain.Model.PlantGroup>
     {
         [Key]
         public int Id { get; set; }
@@ -19,7 +19,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantGroup, PlantGroupsVm>();
+            profile.CreateMap<Domain.Model.PlantGroup, PlantGroupsVm>();
         }
     }
 }

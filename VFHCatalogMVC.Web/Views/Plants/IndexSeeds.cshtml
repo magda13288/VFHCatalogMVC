@@ -1,4 +1,5 @@
-﻿@model VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedsForListVm
+﻿@using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds
+@model PlantSeedsForListVm
 
     @{
         ViewData["Title"] = "IndexSeeds";
@@ -78,7 +79,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.PlantSeeds) {
+                @foreach (var item in Model.Items) {
                 <tr class="text-center">
                     <td >
                         @Html.DisplayFor(modelItem => item.AccountName)

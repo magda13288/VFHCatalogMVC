@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
     public class ListGrowthTypesVm
     {

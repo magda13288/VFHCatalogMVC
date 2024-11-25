@@ -20,6 +20,9 @@ using Microsoft.Data.SqlClient;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 
 namespace VFHCatalogMVC.Web.Controllers
 {

@@ -9,9 +9,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class PlantDetailsVm: Mapping.IMapFrom<VFHCatalogMVC.Domain.Model.PlantDetail>
+    public class PlantDetailsVm : Mapping.IMapFrom<Domain.Model.PlantDetail>
     {
         public int Id { get; set; }
         public int PlantRef { get; set; }
@@ -34,7 +34,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public ListPlantDestinationsVm ListPlantDestinations { get; set; }
         [NotMapped]
         public ListGrowingSeazonsVm ListGrowingSeazons { get; set; }
-        [NotMapped]         
+        [NotMapped]
         public List<PlantDetailsImagesVm> PlantDetailsImages { get; set; }
         [NotMapped]
         public PlantForListVm Plant { get; set; }
@@ -43,7 +43,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PlantDetailsVm, VFHCatalogMVC.Domain.Model.PlantDetail>().ReverseMap()/*.ForMember(p => p.PlantDetailsImages, opt => opt.Ignore())*/;
+            profile.CreateMap<PlantDetailsVm, Domain.Model.PlantDetail>().ReverseMap()/*.ForMember(p => p.PlantDetailsImages, opt => opt.Ignore())*/;
 
         }
         public class PlantDetailsValidation : AbstractValidator<PlantDetailsVm>
@@ -51,11 +51,11 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
             public PlantDetailsValidation()
             {
                 RuleFor(x => x.ColorId).NotEqual(0).WithMessage("*");
-                RuleFor(x=>x.FruitSizeId).NotEqual(0).WithMessage("*");
-                RuleFor(x=>x.FruitTypeId).NotEqual(0).WithMessage("*");
-                RuleFor(x=>x.ListGrowthTypes).NotEmpty().NotNull().WithMessage("*");
-                RuleFor(x=>x.ListGrowingSeazons).NotNull().WithMessage("*");
-                RuleFor(x=>x.ListPlantDestinations).NotNull().WithMessage("*");
+                RuleFor(x => x.FruitSizeId).NotEqual(0).WithMessage("*");
+                RuleFor(x => x.FruitTypeId).NotEqual(0).WithMessage("*");
+                RuleFor(x => x.ListGrowthTypes).NotEmpty().NotNull().WithMessage("*");
+                RuleFor(x => x.ListGrowingSeazons).NotNull().WithMessage("*");
+                RuleFor(x => x.ListPlantDestinations).NotNull().WithMessage("*");
 
             }
         }

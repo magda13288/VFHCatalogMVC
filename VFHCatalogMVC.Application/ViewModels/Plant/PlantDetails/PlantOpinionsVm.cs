@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class PlantOpinionsVm:IMapFrom<VFHCatalogMVC.Domain.Model.PlantOpinion>
+    public class PlantOpinionsVm : IMapFrom<Domain.Model.PlantOpinion>
     {
         public int Id { get; set; }
         public string Opinion { get; set; }
@@ -16,12 +16,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public DateTime DateAdded { get; set; }
         public string Date { get; set; }
         public string UserId { get; set; }
-        [NotMapped] 
+        [NotMapped]
         public string AccountName { get; set; }
-       
+
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantOpinion, PlantOpinionsVm>().ReverseMap();
+            profile.CreateMap<Domain.Model.PlantOpinion, PlantOpinionsVm>().ReverseMap();
         }
 
         public class PlantOpinionValidation : AbstractValidator<PlantOpinionsVm>
@@ -33,5 +33,5 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         }
 
     }
-   
+
 }

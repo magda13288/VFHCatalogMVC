@@ -21,20 +21,23 @@ using FluentValidation.Resources;
 using FluentValidation.Results;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using static VFHCatalogMVC.Application.ViewModels.Plant.NewPlantVm;
-using static VFHCatalogMVC.Application.ViewModels.Plant.PlantDetailsVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails.PlantDetailsVm;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using static VFHCatalogMVC.Application.ViewModels.Adresses.AddressVm;
 using System.Reflection;
-using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedVm;
-using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlingVm;
-using static VFHCatalogMVC.Application.ViewModels.Plant.PlantOpinionsVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds.PlantSeedVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings.PlantSeedlingVm;
+using static VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails.PlantOpinionsVm;
 using VFHCatalogMVC.Application.ViewModels.User;
 using static VFHCatalogMVC.Application.ViewModels.User.UserSeedVm;
 using static VFHCatalogMVC.Application.ViewModels.User.UserSeedlingVm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 
 namespace VFHCatalogMVC.Web
 {

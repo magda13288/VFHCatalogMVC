@@ -5,6 +5,9 @@ using VFHCatalogMVC.Application.ViewModels.Plant;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+
 
 namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
 {
@@ -21,8 +24,6 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         PlantSeedlingVm FillPropertiesSeedling(int id, string userName);
         PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
         PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
-        //List<PlantSeedVm> FilterSeedsList(List<PlantSeedVm> seeds, List<string> filteredUsersList);
-        //List<PlantSeedlingVm> FilterSeedlingsList(List<PlantSeedlingVm> seedlings, List<string> filteredUsersList);
         void ActivatePlant(int id);
         
     }

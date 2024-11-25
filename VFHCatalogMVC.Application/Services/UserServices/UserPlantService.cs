@@ -10,6 +10,8 @@ using System.Text;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -162,14 +164,12 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             item.Date = item.DateAdded.ToShortDateString();
             return item;
         }       
-        public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings)
+        public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantItemVm> items)
         {
             var usersList = new List<string>();
             var address = new Address();
-              
-            if (seeds is null)
-            {
-                foreach (var item in seedlings)
+           
+                foreach (var item in items)
                 {
                     address = _userRepo.GetAddressInfo(item.UserId);
 
@@ -199,40 +199,6 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
                     }
                 }
-            }
-            else
-            {
-                foreach (var item in seeds)
-                {
-                    address = _userRepo.GetAddressInfo(item.UserId);
-
-                    if (countryId != 0)
-                    {
-                        if (regionId == 0 && cityId == 0)
-                        {
-                            if (address.CountryId == countryId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
-                        }
-                        if (regionId != 0 && cityId == 0)
-                        {
-                            if (address.CountryId == countryId && address.RegionId == regionId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
-                        }
-                        if (regionId != 0 && cityId != 0)
-                        {
-                            if (address.CountryId == countryId && address.RegionId == regionId && address.CityId == cityId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
-                        }
-
-                    }
-                }
-            }
 
             return usersList;
         }

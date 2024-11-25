@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Application.Services.PlantServices;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
-using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
+//using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Model;
 
@@ -11,7 +14,7 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
 {
     public interface IUserPlantService
     {       
-        List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantSeedVm> seeds, List<PlantSeedlingVm> seedlings);
+        List<string> FilterUsers(int countryId, int regionId, int cityId, List<VFHCatalogMVC.Application.ViewModels.Plant.PlantItemVm> items);
         UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedVm GetSeedsList(Plant plant, UserSeedVm item);

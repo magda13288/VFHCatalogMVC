@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class FruitSizeVm:IMapFrom<VFHCatalogMVC.Domain.Model.FruitSize>
+    public class GrowthTypeVm : IMapFrom<Domain.Model.GrowthType>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -16,7 +16,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<VFHCatalogMVC.Domain.Model.FruitSize, FruitSizeVm>();
+            profile.CreateMap<Domain.Model.GrowthType, GrowthTypeVm>();
         }
     }
 }
