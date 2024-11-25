@@ -179,18 +179,20 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             var seeds = _plantRepo.GetPlantSeeds(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany, pageSize, pageNo);
+            var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany);
+            var paginateList = Paginate(processedSeeds, pageSize, pageNo);
 
-            return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, processedSeeds, seeds.Count, pageSize, pageNo, isCompany, userName);
+            return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, paginateList, seeds.Count, pageSize, pageNo, isCompany, userName);
         }
 
         public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             var seedlings = _plantRepo.GetPlantSeedlings(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany, pageSize, pageNo);
+            var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany);
+            var paginateList = Paginate(processedSeedlings, pageSize, pageNo);
 
-            return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, processedSeedlings, seedlings.Count, pageSize, pageNo, isCompany, null);
+            return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, paginateList, seedlings.Count, pageSize, pageNo, isCompany, null);
         }
         private TListVm CreatePlantListVm<TVm, TListVm>(
             int id, List<TVm> items, int totalCount, int pageSize, int? pageNo, bool isCompany, string userName)

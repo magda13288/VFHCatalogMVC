@@ -38,7 +38,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _mapper = mapper;
         }
 
-        public List<TVm> ProcessItems(List<TVm> items, int detailId, int countryId, int regionId, int cityId, bool isCompany, int pageSize, int? pageNo)
+        public List<TVm> ProcessItems(List<TVm> items, int detailId, int countryId, int regionId, int cityId, bool isCompany)
         {
             var result = new List<TVm>();
 
@@ -56,7 +56,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
                 
 
-            return result.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
+            return result;
         }
         private List<TVm> FilterPlantItems<TVm>(List<TVm> items, List<string> filteredUsersList)
            where TVm : VFHCatalogMVC.Application.ViewModels.Plant.PlantItemVm
