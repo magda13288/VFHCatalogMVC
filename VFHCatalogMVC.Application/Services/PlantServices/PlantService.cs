@@ -221,15 +221,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (plantDetails != null)
             {
-                var plantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
-
-                if (plantDetailsImages != null)
-                {
-                    foreach (var image in plantDetailsImages)
-                    {
-                        plantVm.PlantDetails.PlantDetailsImages.Add(image);
-                    }
-                }
+                plantVm.PlantDetails.PlantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
                 var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetails.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
                 if (growthTypes != null)

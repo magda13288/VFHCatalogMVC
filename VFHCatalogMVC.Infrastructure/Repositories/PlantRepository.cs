@@ -40,36 +40,34 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plantDetail.Id;
 
         }
+        public void AddEntities<T>(int[] entityIds, int plantDetailId, Func<int, int, T> createEntity) where T : class
+        {
+            var entities = entityIds.Select(id => createEntity(id, plantDetailId)).ToList(); //createEntity - funkcja, która tworzy instancję encji na podstawie przekazanych danych
+            _context.Set<T>().AddRange(entities); //AddRange dodaje zbiorczo wszystkie encje zamiast dodwać je w pętli
+            _context.SaveChanges();
+        }
         public void AddPlantGrowthTypes(int[] growthTypesIds, int plantDetailId)
         {
-            PlantGrowthType plantGrowthType = new PlantGrowthType();
-
-            for (int i = 0; i < growthTypesIds.Length; i++)
-            {
-                _context.PlantGrowthTypes.Add(new PlantGrowthType { GrowthTypeId = growthTypesIds[i], PlantDetailId = plantDetailId });
-                _context.SaveChanges();
-            }
+            AddEntities<PlantGrowthType>(
+                growthTypesIds,
+                plantDetailId,
+                (id, detailId) => new PlantGrowthType { GrowthTypeId = id, PlantDetailId = detailId });
         }
 
-        public void AddPlantDestinations(int[] plantDestinationsIds, int plantDestId)
+        public void AddPlantDestinations(int[] plantDestinationsIds, int plantDetailId)
         {
-            PlantDestination plantDestination = new PlantDestination();
-
-            for (int i = 0; i < plantDestinationsIds.Length; i++)
-            {
-                _context.PlantDestinations.Add(new PlantDestination { DestinationId = plantDestinationsIds[i], PlantDetailId = plantDestId });
-                _context.SaveChanges();
-            }
+            AddEntities<PlantDestination>(
+                plantDestinationsIds,
+                plantDetailId,
+                (id, detailId) => new PlantDestination { DestinationId = id, PlantDetailId = detailId });
         }
-        public void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDestId)
-        {
-            PlantDestination plantDestination = new PlantDestination();
 
-            for (int i = 0; i < growingSeazonsIds.Length; i++)
-            {
-                _context.PlantGrowingSeazons.Add(new PlantGrowingSeazon { GrowingSeazonId = growingSeazonsIds[i], PlantDetailId = plantDestId });
-                _context.SaveChanges();
-            }
+        public void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDetailId)
+        {
+            AddEntities<PlantGrowingSeazon>(
+                growingSeazonsIds,
+                plantDetailId,
+                (id, detailId) => new PlantGrowingSeazon { GrowingSeazonId = id, PlantDetailId = detailId });
         }
         public void AddPlantDetailsImages(string fileName, int plantDetailId)
         {
@@ -128,25 +126,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>().Where(p => EF.Property<int>(p, "PlantDetailId") == id);
         }
-
-        /* public IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id)
-         {
-             var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
-             return growthTypes;
-         }
-         public IQueryable<PlantDestination> GetPlantDestinations(int id)
-         {
-             var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
-             return destinations;
-         }
-
-         public IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id)
-         {
-             var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
-             return growingSeazons;
-         }
-        */
-
         public IQueryable<T> GetAllEntities<T>() where T : class
         {
             return _context.Set<T>();
