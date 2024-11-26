@@ -254,7 +254,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
                         var contactDetailsForSeedVm = new ContactDetailForSeedVm() { ContactDetailId = id, PlantSeedId = seed.Id };
                         var contactDetailsForSeed = _mapper.Map<ContactDetailForSeed>(contactDetailsForSeedVm);
-                        _plantRepo.AddContactDetailForSeed(contactDetailsForSeed);
+                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeed>(contactDetailsForSeed);
 
 
                     }
@@ -429,7 +429,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
                         var contactDetailsForSeedlingVm = new ContactDetailForSeedlingVm() { ContactDetailId = id, PlantSeedlingId = seedling.Id };
                         var contactDetailsForSeedling = _mapper.Map<ContactDetailForSeedling>(contactDetailsForSeedlingVm);
-                        _plantRepo.AddContactDetailForSeedling(contactDetailsForSeedling);
+                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeedling>(contactDetailsForSeedling);
                     }
                 }
             }

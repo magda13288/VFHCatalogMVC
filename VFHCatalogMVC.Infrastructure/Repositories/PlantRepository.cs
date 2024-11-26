@@ -97,25 +97,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var plant = _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == plantId);
             return plant;
         }
-
-       /* public string GetPlantColorName(int? id)
-        {
-            var color = _context.Colors.FirstOrDefault(p => p.Id == id);
-            return color.Name;
-        }
-
-        public string GetPlantFruitSizeName(int? id)
-        {
-            var fruitSize = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
-            return fruitSize.Name;
-        }
-
-        public string GetPlantFriutTypeName(int? id)
-        {
-            var fruitType = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
-            return fruitType.Name;
-        }
-       */
         public string GetPlantDetailsPropertyName<T>(int? id) where T: class
         {
             var entity = _context.Set<T>().FirstOrDefault(p => EF.Property<int?>(p, "Id") == id);
@@ -170,24 +151,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>();
         }
-        //public IQueryable<PlantType> GetAllTypes()
-        //{
-        //    var types = _context.PlantTypes;
-        //    return types;
-        //}
-
-        //public IQueryable<PlantGroup> GetAllGroups()
-        //{
-        //    var groups = _context.PlantGroups;
-        //    return groups;
-        //}
-
-        //public IQueryable<PlantSection> GetAllSections()
-        //{
-        //    var sections = _context.PlantSections;
-        //    return sections;
-        //}
-
         public int EditPlant(Plant plant)
         {
             throw new NotImplementedException();
@@ -199,45 +162,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
             return plants;
         }
-
-      /*  public IQueryable<GrowthType> GetGrowthTypes()
-        {
-            var growthTypes = _context.GrowthTypes;
-
-            return growthTypes;
-        }
-
-        public IQueryable<Destination> GetDestinations()
-        {
-            var destinations = _context.Destinations;
-            return destinations;
-        }
-
-        public IQueryable<Color> GetColors()
-        {
-            var colors = _context.Colors;
-            return colors;
-        }
-
-        public IQueryable<GrowingSeazon> GetGrowingSeazons()
-        {
-            var growingSeazons = _context.GrowingSeazons;
-            return growingSeazons;
-        }
-
-        public IQueryable<FruitSize> GetFruitSizes()
-        {
-            var fruitSizes = _context.FruitSizes;
-            return fruitSizes;
-        }
-
-        public IQueryable<FruitType> GetFruitTypes()
-        {
-            var fruitTypes = _context.FruitTypes;
-            return fruitTypes;
-        }
-      */
-
         public IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId)
         {
             var plantDetailsImages = _context.PlantDetailsImages.Where(p => p.PlantDetailId == plantDetailId);
@@ -266,26 +190,13 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
             
         }
-        public void DeletePlantDestinations(int id)
-        {
-            var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
-            _context.PlantDestinations.RemoveRange(destinations);
-            _context.SaveChanges();
-        }
-        public void DeletePlantGrowingSeazons(int id)
-        {
-            var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
-            _context.PlantGrowingSeazons.RemoveRange(growingSeazons);
-            _context.SaveChanges();
-        }
 
-        public void DeletePlantGrowthTypes(int id)
+        public void DeletePlantDetailEntity<T>(int id) where T : class
         {
-            var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
-            _context.PlantGrowthTypes.RemoveRange(growthTypes);
+            var entity = _context.Set<T>().Where(p => EF.Property<int>(p, "PlantDetailId") == id); 
+            _context.Set<T>().RemoveRange(entity);
             _context.SaveChanges();
         }
-
         public void DeleteImageFromGallery(int id)
         {
             var imageToDelete = _context.PlantDetailsImages.FirstOrDefault(p => p.Id == id);
@@ -293,12 +204,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
 
         }
-        public IQueryable<PlantOpinion> GetPlantOpinions(int id)
-        {
-            var plantOpinions = _context.PlantOpinions.Where(p => p.PlantDetailId == id);
-            return plantOpinions;
-        }
-
         public int AddPlantSeed(PlantSeed seed)
         {
             _context.PlantSeeds.Add(seed);
@@ -338,28 +243,17 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var seedlings = _context.PlantSeedlings.Where(p => p.PlantId == id);
             return seedlings;
         }
-        public void AddContactDetailsForSeed(ContactDetail contact)
+
+        public void AddContactDetailsEntity<T>(T entity) where T : class
         {
-            _context.ContactDetails.Add(contact);
+            _context.Set<T>().Add(entity);
             _context.SaveChanges();
         }
-
         public int AddContactDetail(ContactDetail contact)
         {
             _context.ContactDetails.Add(contact);
             _context.SaveChanges();
             return contact.Id;
-        }
-
-        public void AddContactDetailForSeed(ContactDetailForSeed contact)
-        {
-            _context.ContactDetailForSeeds.Add(contact);
-            _context.SaveChanges();
-        }
-        public void AddContactDetailForSeedling(ContactDetailForSeedling contact)
-        {
-           _context.ContactDetailForSeedlings.Add(contact);
-            _context.SaveChanges();
         }
 
         public Plant GetPlantToActivate(int id)
