@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -17,12 +18,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public void DeletePlant(Plant plant)
         {
-            //var plantToDelete = _context.Plants.Find(id;
-            //if (plantToDelete != null)
-            //{
-            //    _context.Plants.Remove(plantToDelete);
-            //    _context.SaveChanges();
-            //}
+            
            _context.Attach(plant);
            _context.Entry(plant).Property("isActive").IsModified = true;
            _context.SaveChanges();
@@ -102,7 +98,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plant;
         }
 
-        public string GetPlantColorName(int? id)
+       /* public string GetPlantColorName(int? id)
         {
             var color = _context.Colors.FirstOrDefault(p => p.Id == id);
             return color.Name;
@@ -110,50 +106,87 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public string GetPlantFruitSizeName(int? id)
         {
-           var fruitSize = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
+            var fruitSize = _context.FruitSizes.FirstOrDefault(p => p.Id == id);
             return fruitSize.Name;
         }
 
         public string GetPlantFriutTypeName(int? id)
         {
-           var fruitType = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
-            return fruitType.Name;  
+            var fruitType = _context.FruitTypes.FirstOrDefault(p => p.Id == id);
+            return fruitType.Name;
+        }
+       */
+        public string GetPlantDetailsPropertyName<T>(int? id) where T: class
+        {
+            var entity = _context.Set<T>().FirstOrDefault(p => EF.Property<int?>(p, "Id") == id);
+            if (entity == null) return null;
+
+            var nameProperty = typeof(T).GetProperty("Name");
+            return nameProperty?.GetValue(entity)?.ToString();
+
+            /*if (nameProperty != null)
+            {
+                var value = nameProperty.GetValue(entity);
+                if (value != null)
+                {
+                    return value.ToString();
+                }
+            }
+            return null;
+            */
+
+        }
+        /// <summary>
+        /// Metoda Set<T>() w Entity Framework pozwala na uzyskanie dostępu do zestawu danych dla dowolnego typu encji.
+        /// Funkcja EF.Property<T>() umożliwia dostęp do właściwości w czasie wykonywania, co jest przydatne w przypadku dynamicznie określanych typów.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public IQueryable<T> GetPlantDetailsById<T>(int id) where T : class
+        {
+            return _context.Set<T>().Where(p => EF.Property<int>(p, "PlantDetailId") == id);
         }
 
-        public IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id)
-        {
-            var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
-            return growthTypes;
-        }
-        public IQueryable<PlantDestination> GetPlantDestinations(int id)
-        {
-            var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
-            return destinations;
-        }
+        /* public IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id)
+         {
+             var growthTypes = _context.PlantGrowthTypes.Where(p => p.PlantDetailId == id);
+             return growthTypes;
+         }
+         public IQueryable<PlantDestination> GetPlantDestinations(int id)
+         {
+             var destinations = _context.PlantDestinations.Where(p => p.PlantDetailId == id);
+             return destinations;
+         }
 
-        public IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id)
-        {
-            var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
-            return growingSeazons;
-        }
+         public IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id)
+         {
+             var growingSeazons = _context.PlantGrowingSeazons.Where(p => p.PlantDetailId == id);
+             return growingSeazons;
+         }
+        */
 
-        public IQueryable<PlantType> GetAllTypes()
+        public IQueryable<T> GetAllEntities<T>() where T : class
         {
-            var types = _context.PlantTypes;
-            return types;
+            return _context.Set<T>();
         }
+        //public IQueryable<PlantType> GetAllTypes()
+        //{
+        //    var types = _context.PlantTypes;
+        //    return types;
+        //}
 
-        public IQueryable<PlantGroup> GetAllGroups()
-        {
-            var groups = _context.PlantGroups;
-            return groups;
-        }
+        //public IQueryable<PlantGroup> GetAllGroups()
+        //{
+        //    var groups = _context.PlantGroups;
+        //    return groups;
+        //}
 
-        public IQueryable<PlantSection> GetAllSections()
-        {
-            var sections = _context.PlantSections;
-            return sections;
-        }
+        //public IQueryable<PlantSection> GetAllSections()
+        //{
+        //    var sections = _context.PlantSections;
+        //    return sections;
+        //}
 
         public int EditPlant(Plant plant)
         {
@@ -167,7 +200,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plants;
         }
 
-        public IQueryable<GrowthType> GetGrowthTypes()
+      /*  public IQueryable<GrowthType> GetGrowthTypes()
         {
             var growthTypes = _context.GrowthTypes;
 
@@ -194,7 +227,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public IQueryable<FruitSize> GetFruitSizes()
         {
-           var fruitSizes = _context.FruitSizes;
+            var fruitSizes = _context.FruitSizes;
             return fruitSizes;
         }
 
@@ -203,6 +236,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var fruitTypes = _context.FruitTypes;
             return fruitTypes;
         }
+      */
 
         public IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId)
         {

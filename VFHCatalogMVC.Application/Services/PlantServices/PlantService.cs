@@ -555,15 +555,16 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
               }
 
     */
-
         public NewPlantVm GetPlantToEdit(int id)
         {
 
             var plant = _plantRepo.GetPlantById(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
+
             var plantDetails = _plantRepo.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
             plantVm.PlantDetails = plantDetailsVm;
+
             if (plantDetails != null)
             {
                 var plantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
@@ -576,7 +577,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     }
                 }
 
-                var growthTypes = _plantRepo.GetPlantGrowthTypes(plantDetails.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetails.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
                 if (growthTypes != null)
                 {
                     plantDetailsVm.ListGrowthTypes = new ListGrowthTypesVm();
@@ -587,7 +588,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     }
                 }
 
-                var growingSeazons = _plantRepo.GetPlantGrowingSeazons(plantDetails.Id).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+                var growingSeazons = _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetails.Id).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
                 if (growingSeazons != null)
                 {
                     plantDetailsVm.ListGrowingSeazons = new ListGrowingSeazonsVm();
@@ -598,7 +599,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     }
                 }
 
-                var destinations = _plantRepo.GetPlantDestinations(plantDetails.Id).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+                var destinations = _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetails.Id).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
                 if (destinations != null)
                 {
                     plantDetailsVm.ListPlantDestinations = new ListPlantDestinationsVm();
@@ -728,7 +729,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 _plantDetailsSerrvice.UpdateEntity(
                                         model.PlantDetails.Id,
                                         model.PlantDetails.ListPlantDestinations.DestinationsIds,
-                                        id => _plantRepo.GetPlantDestinations(model.PlantDetails.Id),
+                                        id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
                                         (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
                                         id => _plantRepo.DeletePlantDestinations(model.PlantDetails.Id)
                                                 );
@@ -738,7 +739,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 _plantDetailsSerrvice.UpdateEntity(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
-                                       id => _plantRepo.GetPlantGrowingSeazons(model.PlantDetails.Id),
+                                       id => _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(model.PlantDetails.Id),
                                        (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantDestinations(model.PlantDetails.Id)
                                                );
@@ -748,7 +749,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 _plantDetailsSerrvice.UpdateEntity(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
-                                       id => _plantRepo.GetPlantGrowthTypes(model.PlantDetails.Id),
+                                       id => _plantRepo.GetPlantDetailsById<PlantGrowthType>(model.PlantDetails.Id),
                                        (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantGrowthTypes(model.PlantDetails.Id)
                                                );

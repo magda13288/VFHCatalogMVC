@@ -135,3 +135,9 @@ table {
 .close span {
     color: red;
 }
+
+#seedsOpinions {
+
+    text-align: center;
+    color:black;
+}

@@ -118,9 +118,9 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 var plant = _plantRepo.GetPlantById(id);
                 var plantVm = _mapper.Map<PlantForListVm>(plant);
 
-                plantDetailsVm.ColorName = GetNameOrNull(plantDetailsVm.ColorId, _plantRepo.GetPlantColorName);
-                plantDetailsVm.FruitSizeName = GetNameOrNull(plantDetailsVm.FruitSizeId, _plantRepo.GetPlantFriutTypeName);
-                plantDetailsVm.FruitTypeName = GetNameOrNull(plantDetailsVm.FruitTypeId, _plantRepo.GetPlantFriutTypeName);
+                plantDetailsVm.ColorName = GetNameOrNull(plantDetailsVm.ColorId, _plantRepo.GetPlantDetailsPropertyName<Color>);
+                plantDetailsVm.FruitSizeName = GetNameOrNull(plantDetailsVm.FruitSizeId, _plantRepo.GetPlantDetailsPropertyName<FruitSize>);
+                plantDetailsVm.FruitTypeName = GetNameOrNull(plantDetailsVm.FruitTypeId, _plantRepo.GetPlantDetailsPropertyName<FruitType>);
                 plantDetailsVm.Plant = plantVm;
 
                 plantDetailsVm.ListGrowthTypes = BuildGrowthTypesVm(plantDetailsVm.Id);
@@ -508,16 +508,16 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
         }
         private bool HasElements<T>(IEnumerable<T> list) => list != null && list.Any();
-        private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantRepo.GetPlantGrowthTypes, _plantRepo.GetGrowthTypes, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
-        private ListPlantDestinationsVm BuildDestinationsVm(int id) => new ListPlantDestinationsVm { DestinationsNames = GetPropertyNames(_plantRepo.GetPlantDestinations, _plantRepo.GetDestinations, x => x.DestinationId, x => x.Id, x => x.Name, id) };
-        private ListGrowingSeazonsVm BuildGrowingSeaznosVm(int id) => new ListGrowingSeazonsVm { GrwoingSeazonsNames = GetPropertyNames(_plantRepo.GetPlantGrowingSeazons, _plantRepo.GetGrowingSeazons, x => x.GrowingSeazonId, x => x.Id, x => x.Name, id) };
+        private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowthType>, _plantRepo.GetAllEntities<GrowthType>, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
+        private ListPlantDestinationsVm BuildDestinationsVm(int id) => new ListPlantDestinationsVm { DestinationsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantDestination>, _plantRepo.GetAllEntities<Destination>, x => x.DestinationId, x => x.Id, x => x.Name, id) };
+        private ListGrowingSeazonsVm BuildGrowingSeaznosVm(int id) => new ListGrowingSeazonsVm { GrwoingSeazonsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowingSeazon>, _plantRepo.GetAllEntities<GrowingSeazon>, x => x.GrowingSeazonId, x => x.Id, x => x.Name, id) };
 
         private List<PlantDetailsImagesVm> BuildGalleryVm(int plantDetailsId) =>
            _plantRepo.GetPlantDetailsImages(plantDetailsId).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
         private List<PlantOpinionsVm> BuildOpinionsVm(int plantDetailsId)
         {
-            var plantOpinions = _plantRepo.GetPlantOpinions(plantDetailsId)
+            var plantOpinions = _plantRepo.GetPlantDetailsById<PlantOpinion>(plantDetailsId)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();
 

@@ -111,7 +111,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 item.ContactDetail = new ContactDetailVm { ContactDetailInformation = "" };
             }
 
-            item.PlantOpinions = _plantRepo.GetPlantOpinions(detailId)
+            item.PlantOpinions = _plantRepo.GetPlantDetailsById<PlantOpinion>(detailId)
                 .Where(p => p.UserId == user.Result.Id)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();

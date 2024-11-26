@@ -8,6 +8,9 @@ namespace VFHCatalogMVC.Domain.Interface
 {
     public interface IPlantRepository
     {
+        IQueryable<T> GetPlantDetailsById<T>(int id) where T : class;
+        string GetPlantDetailsPropertyName<T>(int? id) where T : class;
+        IQueryable<T> GetAllEntities<T>() where T : class;
         void DeletePlant(Plant plant);
         int AddPlant(Plant plant);
         int AddPlantSeed(PlantSeed seed);
@@ -30,25 +33,9 @@ namespace VFHCatalogMVC.Domain.Interface
         int GetPlantDetailId(int id);
         void DeleteImageFromGallery(int id);
         IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId);
-        PlantDetail GetPlantDetails(int id);
-        string GetPlantColorName(int? id);
-        string GetPlantFruitSizeName(int? id);
-        string GetPlantFriutTypeName(int? id);
-        IQueryable<PlantGrowthType> GetPlantGrowthTypes(int id);
-        IQueryable<PlantDestination> GetPlantDestinations(int id);
-        IQueryable<PlantGrowingSeazon> GetPlantGrowingSeazons(int id);
+        PlantDetail GetPlantDetails(int id);     
         IQueryable<Plant> GetAllActivePlants(); //zwraca konkretny model bazodanowy (z konkretnej tabeli w bazie)    
         Plant GetPlantById(int plantId);
-        IQueryable<PlantType> GetAllTypes();
-        IQueryable<PlantGroup> GetAllGroups();
-        IQueryable<PlantSection> GetAllSections();
-        IQueryable<GrowthType> GetGrowthTypes();
-        IQueryable<Destination> GetDestinations();
-        IQueryable<Color> GetColors();
-        IQueryable<GrowingSeazon> GetGrowingSeazons();
-        IQueryable<FruitSize> GetFruitSizes();
-        IQueryable<FruitType> GetFruitTypes();
-        IQueryable<PlantOpinion> GetPlantOpinions(int id);
         IQueryable<PlantSeed> GetPlantSeeds(int id);
         IQueryable<PlantSeedling> GetPlantSeedlings(int id);
         Plant GetPlantToActivate(int id);

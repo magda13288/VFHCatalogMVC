@@ -37,21 +37,21 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         public List<PlantGroupsVm> GetPlantGroups(int? typeId)
         {
-            var groups = _plantRepo.GetAllGroups().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
+            var groups = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
 
             return groups;
         }
 
         public List<PlantTypesVm> GetPlantTypes()
         {
-            var types = _plantRepo.GetAllTypes().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
+            var types = _plantRepo.GetAllEntities<PlantType>().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
 
             return types;
         }
 
         public List<PlantSectionsVm> GetPlantSections(int? groupId)
         {
-            var sections = _plantRepo.GetAllSections().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
+            var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
 
             return sections;
         }
@@ -61,11 +61,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (typeId == 1)
             {
-                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTyes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
             else if (typeId == 2 || typeId == 3)
             {
-                growthTyes = _plantRepo.GetGrowthTypes().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTyes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
             return growthTyes;
@@ -75,7 +75,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             List<DestinationsVm> destinationsList = new List<DestinationsVm>();
 
-            destinationsList = _plantRepo.GetDestinations().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            destinationsList = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
 
             return destinationsList;
         }
@@ -84,7 +84,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             List<ColorsVm> colorsList = new List<ColorsVm>();
 
-            colorsList = _plantRepo.GetColors().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
+            colorsList = _plantRepo.GetAllEntities<Color>().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
 
             return colorsList;
         }
@@ -93,7 +93,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             List<GrowingSeazonVm> growingSeazonList = new List<GrowingSeazonVm>();
 
-            growingSeazonList = _plantRepo.GetGrowingSeazons().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
+            growingSeazonList = _plantRepo.GetAllEntities<GrowingSeazon>().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
 
             return growingSeazonList;
         }
@@ -103,12 +103,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             List<FruitSizeVm> fruitSizeList = new List<FruitSizeVm>();
             if (!sectionId.HasValue)
             {
-                fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
+                fruitSizeList = _plantRepo.GetAllEntities<FruitSize>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
 
             }
             if (sectionId.HasValue)
             {
-                fruitSizeList = _plantRepo.GetFruitSizes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
+                fruitSizeList = _plantRepo.GetAllEntities<FruitSize>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
 
@@ -120,12 +120,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (!sectionId.HasValue)
             {
-                fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
+                fruitTypeList = _plantRepo.GetAllEntities<FruitType>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
 
             }
             if (sectionId.HasValue)
             {
-                fruitTypeList = _plantRepo.GetFruitTypes().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
+                fruitTypeList = _plantRepo.GetAllEntities<FruitType>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
             return fruitTypeList;
