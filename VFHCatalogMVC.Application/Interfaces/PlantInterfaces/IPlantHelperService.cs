@@ -15,12 +15,8 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<SelectListItem> GetSelectList<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource : class;
-        List<SelectListItem> GetTypes();
         List<SelectListItem> GetGroups(int? typeId);
         List<SelectListItem> GetSections(int? groupId);        
-        List<SelectListItem> GetColors();
-        List<SelectListItem> GetGrowingSeazons();
-        List<SelectListItem> GetDestinations();
         List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId);
         List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId);
         List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId);

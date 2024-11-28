@@ -38,47 +38,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return GetSelectListItem(groups);
         }
 
-        public List<SelectListItem> GetTypes()
-        {
-            var types = _plantRepo.GetAllEntities<PlantType>().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
-
-            return GetSelectListItem(types);
-        }
-
         public List<SelectListItem> GetSections(int? groupId)
         {
             var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
 
             return GetSelectListItem(sections);
         }
-        public List<SelectListItem> GetColors()
-        {
-            var colorsList = _plantRepo.GetAllEntities<Color>().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return GetSelectListItem(colorsList);
-        }
-
-        public List<SelectListItem> GetGrowingSeazons()
-        {        
-
-           var growingSeazonList = _plantRepo.GetAllEntities<GrowingSeazon>().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
-
-            return GetSelectListItem(growingSeazonList);
-        }
-
+     
         public List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
         {
             var growthTypes = FilterGrowthTypes(typeId, groupId, sectionId);
 
             return GetSelectListItem(growthTypes);
-        }
-
-        public List<SelectListItem> GetDestinations()
-        {
-            var destinations = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return GetSelectListItem(destinations);
-
         }
 
         public List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId)
@@ -99,13 +70,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         where TSource: class
         {
             var entities = _plantRepo.GetAllEntities<TSource>()
-                                     //.OrderBy(e => e.GetType().GetProperty("Id"))
                                      .ProjectTo<TViewModel>(_mapper.ConfigurationProvider)
                                      .ToList();
 
-            if (!entities.Any()) return new List<SelectListItem>();
+            return GetSelectListItem(entities); 
 
-            return entities 
+        }
+        private List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
+        {
+
+            if (!entity.Any()) return new List<SelectListItem>();
+
+            return entity
                            .OrderBy(p => p.Id)
                            .Where(e => e.Id != 0 && !string.IsNullOrEmpty(e.Name))
                            .Select(e => new SelectListItem
@@ -115,19 +91,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                            })
                            .Prepend(new SelectListItem { Text = "-Wybierz-", Value = "0" })
                            .ToList();
-        }
-        private List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
-        {
-           
-            if (!entity.Any()) return null;
-
-            return entity.Where(g => g.Id != 0 && !string.IsNullOrEmpty(g.Name)).Select(g => new SelectListItem
-            {
-                Value = g.Id.ToString(),
-                Text = g.Name
-            }).ToList()
-                .Prepend(new SelectListItem { Text = "-Wybierz-", Value = "0" })
-                .ToList();
         }
         public List<PlantGroupsVm> GetGroupsJR(int typeId)
         {

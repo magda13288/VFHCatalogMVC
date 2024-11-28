@@ -169,9 +169,9 @@ namespace VFHCatalogMVC.Web.Controllers
         [Authorize(Roles = "Admin, PrivateUser, Company")]
         public IActionResult AddPlant()
         {
-            ViewBag.TypesList = _plantHelperService.GetTypes();
-            ViewBag.ColorsList = _plantHelperService.GetColors();
-            ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
+            ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
+            ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
+            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();
 
             return View();
         }
@@ -190,10 +190,10 @@ namespace VFHCatalogMVC.Web.Controllers
 
                     if (id == 0)
                     {
-                        ViewBag.Message = "Podana nazwa już istnieje";                      
-                        ViewBag.TypesList = _plantHelperService.GetTypes();
-                        ViewBag.ColorsList = _plantHelperService.GetColors();
-                        ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
+                        ViewBag.Message = "Podana nazwa już istnieje";
+                        ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
+                        ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
+                        ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
                         return View(model);
                     }
                     else
@@ -201,9 +201,9 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.TypesList = _plantHelperService.GetTypes();
-                    ViewBag.ColorsList = _plantHelperService.GetColors();
-                    ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
+                    ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
+                    ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
+                    ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
                     return View(model);
                 }
             }
@@ -238,14 +238,13 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
 
-                ViewBag.ColorsList = _plantHelperService.GetColors();
+                ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
 
-                ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
-
-                //var growthTypes = _plantHelperService.GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();
+        
                 ViewBag.GrowthTypes = _plantHelperService.GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                   
-                ViewBag.Destinations = _plantHelperService.GetDestinations();
+                ViewBag.Destinations = _plantHelperService.GetSelectList<Destination,DestinationsVm>();
 
                 ViewBag.FruitTypes = _plantHelperService.GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
