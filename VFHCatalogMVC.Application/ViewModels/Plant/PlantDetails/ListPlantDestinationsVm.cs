@@ -5,9 +5,9 @@ using System.Text;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class ListPlantDestinationsVm
+    public class ListPlantDestinationsVm : ListPlantDetails
     {
-        public List<SelectListItem> DestinationsList { get; set; }
+        public List<SelectListItemVm> DestinationsList { get; set; }
         public int[] DestinationsIds { get; set; }
         public List<string> DestinationsNames { get; set; }
     }

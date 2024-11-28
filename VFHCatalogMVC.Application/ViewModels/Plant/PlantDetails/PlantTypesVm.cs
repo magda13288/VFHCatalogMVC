@@ -7,11 +7,11 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class PlantTypesVm : IMapFrom<Domain.Model.PlantType>
+    public class PlantTypesVm : SelectListItemVm, IMapFrom<Domain.Model.PlantType>
     {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //[Key]
+        //public int Id { get; set; }
+        //public string Name { get; set; }
 
 
         public void Mapping(Profile profile)

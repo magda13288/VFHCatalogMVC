@@ -40,8 +40,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var types = _plantHelperService.GetPlantTypes();
-                ViewBag.TypesList = _plantHelperService.FillPropertyList(types, null, null);
+                ViewBag.TypesList = _plantHelperService.GetTypes();
                 var groupsList = GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -83,12 +82,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var types = _plantHelperService.GetPlantTypes();
-                ViewBag.TypesList = _plantHelperService.FillPropertyList(types, null, null);
-                var groupsList = GetPlantGroupsList(typeId);
-                ViewBag.GroupsList = groupsList.Value;
-                var sectionsList = GetPlantSectionsList(groupId, typeId);
-                ViewBag.SectionsList = sectionsList.Value;
+                ViewBag.TypesList = _plantHelperService.GetTypes();
+                ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
+                ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
                 if (!pageNo.HasValue)
                 {
@@ -127,12 +123,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var types = _plantHelperService.GetPlantTypes();
-                ViewBag.TypesList = _plantHelperService.FillPropertyList(types, null, null);
-                var groupsList = GetPlantGroupsList(typeId);
-                ViewBag.GroupsList = groupsList.Value;
-                var sectionsList = GetPlantSectionsList(groupId, typeId);
-                ViewBag.SectionsList = sectionsList.Value;
+                ViewBag.TypesList = _plantHelperService.GetTypes();
+                ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
+                ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
                 if (!pageNo.HasValue)
                 {
@@ -330,7 +323,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
         {
-            var groups = _plantHelperService.GetPlantGroups(typeId);
+            var groups = _plantHelperService.GetGroupsJR(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
 
             if (groups.Count > 0)
@@ -353,7 +346,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
-            var sections = _plantHelperService.GetPlantSections(groupId);
+            var sections = _plantHelperService.GetSectionsJR(groupId);
 
             if (sections.Count > 0)
             {

@@ -44,14 +44,6 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var types = _plantHelperService.GetPlantTypes();
-                var viewBagtypesList = _plantHelperService.FillPropertyList(types, null, null);
-                var groupsList = GetPlantGroupsList(properties.typeId);
-                var viewBaggroupsList = groupsList;
-                var sectionsList = GetPlantSectionsList(properties.groupId,properties.typeId);
-                var viewBagSectionsList = sectionsList;
-                int viewBagTypeId, viewBagGroupId;
-                int? viewBagSectionId;
 
                 if (!properties.pageNo.HasValue)
                 {
@@ -61,13 +53,7 @@ namespace VFHCatalogApi.Controllers
                 {
                     properties.searchString = string.Empty;
                 }
-                if (properties.typeId != 0)
-                    viewBagTypeId = properties.typeId;
-                if (properties.groupId != 0)
-                    viewBagGroupId = properties.groupId;
-                if (properties.sectionId != 0)
-                    viewBagSectionId = properties.sectionId;
-
+               
                 var model = _plantService.GetAllActivePlantsForList(properties.pageSize, properties.pageNo, properties.searchString, properties.typeId, properties.groupId, properties.sectionId);
 
                 return Ok(model);
@@ -85,13 +71,7 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userContactDataService.Countries();
-                //var viewBagCountriesList = _userContactDataService.FillCountryList(countries);
-                var regions = _userContactDataService.GetRegions(properties.countryId);
-                //var viewBagRegionsList = _userContactDataService.FillRegionList(regions);
-                var cities = _userContactDataService.GetCities(properties.regionId);
-                //var viewBagCitiesList = _userContactDataService.FillCityList(cities);
-                int viewBagCountryId, viewBagRegionId, viewBagCityId;
+            
 
                 if (!properties.pageNo.HasValue)
                 {
@@ -101,19 +81,7 @@ namespace VFHCatalogApi.Controllers
                 {
                    properties.pageSize = 30;
                 }
-                if (properties.countryId != 0)
-                {
-                    viewBagCountryId = properties.countryId;
-                }
-                if (properties.regionId != 0)
-                {
-                    viewBagRegionId = properties.regionId;
-                }
-                if (properties.cityId != 0)
-                {
-                    viewBagCityId = properties.cityId;
-                }
-
+                
                 var model = _plantService.GetAllPlantSeeds(id, properties.countryId, properties.regionId, properties.cityId,properties.pageSize,properties.pageNo,properties.isCompany, User.Identity.Name);
                 return Ok(model);
             }
@@ -130,13 +98,7 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var countries = _userContactDataService.GetCountries();
-                var viewBagCountriesList = _userContactDataService.FillCountryList(countries);
-                var regions =   _userContactDataService.GetRegions(countryId);
-                var viewBagRegionsList = _userContactDataService.FillRegionList(regions);
-                var cities = _userContactDataService.GetCities(regionId);
-                var viewBagCitiesList = _userContactDataService.FillCityList(cities);
-                int viewBagCountryId, viewBagRegionId, viewBagCityId;
+                
 
                 if (!pageNo.HasValue)
                 {
@@ -146,19 +108,7 @@ namespace VFHCatalogApi.Controllers
                 {
                     pageSize = 30;
                 }
-                if (countryId != 0)
-                {
-                    viewBagCountryId = countryId;
-                }
-                if (regionId != 0)
-                {
-                    viewBagRegionId = regionId;
-                }
-                if (cityId != 0)
-                {
-                    viewBagCityId = cityId;
-                }
-
+               
                 var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo, isCompany);
                 return Ok(model);
             }
@@ -173,8 +123,7 @@ namespace VFHCatalogApi.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AddPlant()
         {
-            var types = _plantHelperService.GetPlantTypes();
-            var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
+            var viewBagTypesList = _plantHelperService.GetPlantTypes();
             var colors = _plantHelperService.GetColors();
             var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
             var growingSeaznos = _plantHelperService.GetGrowingSeazons();
@@ -195,8 +144,7 @@ namespace VFHCatalogApi.Controllers
             }
             else
             {
-                var types = _plantHelperService.GetPlantTypes();
-                var viewBagTypesList = _plantHelperService.FillPropertyList(types, null, null);
+                var viewBagTypesList = _plantHelperService.GetPlantTypes();
                 var colors = _plantHelperService.GetColors();
                 var viewBagColorsList = _plantHelperService.FillPropertyList(null, colors, null);
                 var growingSeaznos = _plantHelperService.GetGrowingSeazons();
@@ -429,143 +377,143 @@ namespace VFHCatalogApi.Controllers
 
         }
 
-        [HttpPost("GetPlantGroupsList")]
-        private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
-        {
-            var groups = _plantHelperService.GetPlantGroups(typeId);
-            List<SelectListItem> groupsList = new List<SelectListItem>();
+        //[HttpPost("GetPlantGroupsList")]
+        //private List<SelectListItem> GetPlantGroupsList([FromBody] int typeId)
+        //{
+        //    var groups = _plantHelperService.GetPlantGroups(typeId);
+        //    List<SelectListItem> groupsList = new List<SelectListItem>();
 
-            if (groups.Count > 0)
-            {
+        //    if (groups.Count > 0)
+        //    {
 
-                groupsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //        groupsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var group in groups)
-                {
-                    groupsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
+        //        foreach (var group in groups)
+        //        {
+        //            groupsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
+        //        }
+        //    }
 
-            return groupsList;
-        }
+        //    return groupsList;
+        //}
 
-        [HttpPost("GetPlantSectionsList")]
-        private List<SelectListItem> GetPlantSectionsList([FromBody] int groupId, int typeId)
-        {
+        //[HttpPost("GetPlantSectionsList")]
+        //private List<SelectListItem> GetPlantSectionsList([FromBody] int groupId, int typeId)
+        //{
 
-            List<SelectListItem> sectionsList = new List<SelectListItem>();
-            var sections = _plantHelperService.GetPlantSections(groupId);
+        //    List<SelectListItem> sectionsList = new List<SelectListItem>();
+        //    var sections = _plantHelperService.GetPlantSections(groupId);
 
-            if (sections.Count > 0)
-            {
-                if (typeId != 3)
-                {
-                    sectionsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    if (sections.Count > 0)
+        //    {
+        //        if (typeId != 3)
+        //        {
+        //            sectionsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                    foreach (var section in sections)
-                    {
-                        sectionsList.Add(new SelectListItem { Text = section.Name, Value = section.Id.ToString() });
-                    }
-                }
-            }
-            //else
-            //{
-            //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
+        //            foreach (var section in sections)
+        //            {
+        //                sectionsList.Add(new SelectListItem { Text = section.Name, Value = section.Id.ToString() });
+        //            }
+        //        }
+        //    }
+        //    //else
+        //    //{
+        //    //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
 
-            //}
-            return sectionsList;
-        }
+        //    //}
+        //    return sectionsList;
+        //}
 
-        [HttpPost("GetGrowthTypes")]
-        private List<SelectListItem> GetGrowthTypes([FromBody] int typeId, int groupId, int? sectionId)
-        {
-            var list = _plantHelperService.GetGrowthTypes(typeId, groupId, sectionId);
+        //[HttpPost("GetGrowthTypes")]
+        //private List<SelectListItem> GetGrowthTypes([FromBody] int typeId, int groupId, int? sectionId)
+        //{
+        //    var list = _plantHelperService.GetGrowthTypes(typeId, groupId, sectionId);
 
-            List<SelectListItem> growthTypes = new List<SelectListItem>();
+        //    List<SelectListItem> growthTypes = new List<SelectListItem>();
 
 
-            if (list.Count > 0)
-            {
-                foreach (var types in list)
-                {
-                    growthTypes.Add(new SelectListItem { Text = types.Name, Value = types.Id.ToString() });
-                }
-            }
-            else
-            {
-                growthTypes.Add(new SelectListItem { Text = "Nie określono typów wzrostu", Value = 0.ToString() });
-            }
+        //    if (list.Count > 0)
+        //    {
+        //        foreach (var types in list)
+        //        {
+        //            growthTypes.Add(new SelectListItem { Text = types.Name, Value = types.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        growthTypes.Add(new SelectListItem { Text = "Nie określono typów wzrostu", Value = 0.ToString() });
+        //    }
 
-            return growthTypes;
-        }
+        //    return growthTypes;
+        //}
 
-        [HttpPost("GetDestinations")]
-        private List<SelectListItem> GetDestinations()
-        {
-            var destList = _plantHelperService.GetDestinations();
+        //[HttpPost("GetDestinations")]
+        //private List<SelectListItem> GetDestinations()
+        //{
+        //    var destList = _plantHelperService.GetDestinations();
 
-            List<SelectListItem> destinations = new List<SelectListItem>();
+        //    List<SelectListItem> destinations = new List<SelectListItem>();
 
-            if (destList.Count > 0)
-            {
-                foreach (var dest in destList)
-                {
-                    destinations.Add(new SelectListItem { Text = dest.Name, Value = dest.Id.ToString() });
-                }
-            }
-            else
-            {
-                destinations.Add(new SelectListItem { Text = "Nie określono przeznaczenia", Value = 0.ToString() });
-            }
+        //    if (destList.Count > 0)
+        //    {
+        //        foreach (var dest in destList)
+        //        {
+        //            destinations.Add(new SelectListItem { Text = dest.Name, Value = dest.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        destinations.Add(new SelectListItem { Text = "Nie określono przeznaczenia", Value = 0.ToString() });
+        //    }
 
-            return destinations;
-        }
+        //    return destinations;
+        //}
 
-        [HttpPost("GetFruitTypes")]
-        private List<SelectListItem> GetFruitTypes([FromBody] int typeId, int groupId, int? sectionId)
-        {
-            var fruitTypes = _plantHelperService.GetFruitType(typeId, groupId, sectionId);
+        //[HttpPost("GetFruitTypes")]
+        //private List<SelectListItem> GetFruitTypes([FromBody] int typeId, int groupId, int? sectionId)
+        //{
+        //    var fruitTypes = _plantHelperService.GetFruitType(typeId, groupId, sectionId);
 
-            List<SelectListItem> fruitTypesList = new List<SelectListItem>();
+        //    List<SelectListItem> fruitTypesList = new List<SelectListItem>();
 
-            if (fruitTypes.Count > 0)
-            {
-                fruitTypesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //    if (fruitTypes.Count > 0)
+        //    {
+        //        fruitTypesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var types in fruitTypes)
-                {
-                    fruitTypesList.Add(new SelectListItem { Text = types.Name, Value = types.Id.ToString() });
-                }
-            }
-            else
-            {
-                fruitTypesList.Add(new SelectListItem { Text = "Nie określono typu owoców", Value = 0.ToString() });
-            }
+        //        foreach (var types in fruitTypes)
+        //        {
+        //            fruitTypesList.Add(new SelectListItem { Text = types.Name, Value = types.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        fruitTypesList.Add(new SelectListItem { Text = "Nie określono typu owoców", Value = 0.ToString() });
+        //    }
 
-            return fruitTypesList;
-        }
+        //    return fruitTypesList;
+        //}
 
-        [HttpPost("GetFruitSizes")]
-        private List<SelectListItem> GetFruitSizes([FromBody] int typeId, int groupId, int? sectionId)
-        {
-            var fruitSiezes = _plantHelperService.GetFruitSize(typeId, groupId, sectionId);
+        //[HttpPost("GetFruitSizes")]
+        //private List<SelectListItem> GetFruitSizes([FromBody] int typeId, int groupId, int? sectionId)
+        //{
+        //    var fruitSiezes = _plantHelperService.GetFruitSize(typeId, groupId, sectionId);
 
-            List<SelectListItem> fruitSizesList = new List<SelectListItem>();
+        //    List<SelectListItem> fruitSizesList = new List<SelectListItem>();
 
-            if (fruitSiezes.Count > 0)
-            {
-                fruitSizesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-                foreach (var sizes in fruitSiezes)
-                {
-                    fruitSizesList.Add(new SelectListItem { Text = sizes.Name, Value = sizes.Id.ToString() });
-                }
-            }
-            else
-            {
-                fruitSizesList.Add(new SelectListItem { Text = "Nie określono wielkości owoców", Value = 0.ToString() });
-            }
+        //    if (fruitSiezes.Count > 0)
+        //    {
+        //        fruitSizesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+        //        foreach (var sizes in fruitSiezes)
+        //        {
+        //            fruitSizesList.Add(new SelectListItem { Text = sizes.Name, Value = sizes.Id.ToString() });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        fruitSizesList.Add(new SelectListItem { Text = "Nie określono wielkości owoców", Value = 0.ToString() });
+        //    }
 
-            return fruitSizesList;
-        }
+        //    return fruitSizesList;
+        //}
 }
 }

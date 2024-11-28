@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class ListGrowingSeazonsVm
+    public class ListGrowingSeazonsVm : ListPlantDetails
     {
-        public List<SelectListItem> GrowingSeazonsList { get; set; }
+        public List<SelectListItemVm> GrowingSeazonsList { get; set; }
         public int[] GrowingSeaznosIds { get; set; }
         public List<string> GrwoingSeazonsNames { get; set; }
     }

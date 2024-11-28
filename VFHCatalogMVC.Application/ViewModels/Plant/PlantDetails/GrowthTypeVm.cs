@@ -6,10 +6,10 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class GrowthTypeVm : IMapFrom<Domain.Model.GrowthType>
+    public class GrowthTypeVm : SelectListItemVm, IMapFrom<Domain.Model.GrowthType>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //public int Id { get; set; }
+        //public string Name { get; set; }
         public int PlantTypeId { get; set; }
         public int? PlantGroupId { get; set; }
         public int? PlantSectionId { get; set; }

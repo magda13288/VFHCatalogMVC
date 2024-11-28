@@ -1,11 +1,14 @@
 ﻿
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using NPOI.OpenXmlFormats.Dml;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
@@ -19,43 +22,135 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 {
     public class PlantHelperService : IPlantHelperService
     {
-        private readonly IPlantService _plantService;
-        private readonly IPlantDetailsService _plantDetailsSerrvice;
+      
         private readonly IPlantRepository _plantRepo;
-        private readonly IUserPlantService _userService;
-        private readonly IMessageRepository _messageRepo;
         private readonly IMapper _mapper;
-        public PlantHelperService(IPlantService plantService, IUserPlantService userService, IMessageRepository messageRepo, IMapper mapper, IPlantDetailsService plantDetailsSerrvice, IPlantRepository plantRepository)
-        {
-            _plantService = plantService;
-            _userService = userService;
-            _messageRepo = messageRepo;
+        public PlantHelperService( IMapper mapper, IPlantRepository plantRepository)
+        {            
             _mapper = mapper;
-            _plantDetailsSerrvice = plantDetailsSerrvice;
             _plantRepo = plantRepository;
         }
 
-        public List<PlantGroupsVm> GetPlantGroups(int? typeId)
+        public List<SelectListItem> GetGroups(int? typeId)
+        {
+            var groups = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(groups);
+        }
+
+        public List<SelectListItem> GetTypes()
+        {
+            var types = _plantRepo.GetAllEntities<PlantType>().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(types);
+        }
+
+        public List<SelectListItem> GetSections(int? groupId)
+        {
+            var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(sections);
+        }
+        public List<SelectListItem> GetColors()
+        {
+            var colorsList = _plantRepo.GetAllEntities<Color>().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(colorsList);
+        }
+
+        public List<SelectListItem> GetGrowingSeazons()
+        {        
+
+           var growingSeazonList = _plantRepo.GetAllEntities<GrowingSeazon>().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(growingSeazonList);
+        }
+
+        public List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
+        {
+            var growthTypes = FilterGrowthTypes(typeId, groupId, sectionId);
+
+            return GetSelectListItem(growthTypes);
+        }
+
+        public List<SelectListItem> GetDestinations()
+        {
+            var destinations = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+
+            return GetSelectListItem(destinations);
+
+        }
+
+        public List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId)
+        {
+            var fruitSiezes = FilterFruitSize(typeId, groupId, sectionId);
+
+            return GetSelectListItem(fruitSiezes);
+        }
+
+        public List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId)
+        {
+            var fruitTypes = FilterFruitType(typeId, groupId, sectionId);
+
+            return GetSelectListItem(fruitTypes);
+        }
+        public List<SelectListItem> GetSelectList<TSource, TViewModel>()
+        where TViewModel : SelectListItemVm
+        where TSource: class
+        {
+            var entities = _plantRepo.GetAllEntities<TSource>()
+                                     //.OrderBy(e => e.GetType().GetProperty("Id"))
+                                     .ProjectTo<TViewModel>(_mapper.ConfigurationProvider)
+                                     .ToList();
+
+            if (!entities.Any()) return new List<SelectListItem>();
+
+            return entities 
+                           .OrderBy(p => p.Id)
+                           .Where(e => e.Id != 0 && !string.IsNullOrEmpty(e.Name))
+                           .Select(e => new SelectListItem
+                           {
+                               Value = e.Id.ToString(),
+                               Text = e.Name
+                           })
+                           .Prepend(new SelectListItem { Text = "-Wybierz-", Value = "0" })
+                           .ToList();
+        }
+        private List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
+        {
+           
+            if (!entity.Any()) return null;
+
+            return entity.Where(g => g.Id != 0 && !string.IsNullOrEmpty(g.Name)).Select(g => new SelectListItem
+            {
+                Value = g.Id.ToString(),
+                Text = g.Name
+            }).ToList()
+                .Prepend(new SelectListItem { Text = "-Wybierz-", Value = "0" })
+                .ToList();
+        }
+        public List<PlantGroupsVm> GetGroupsJR(int typeId)
         {
             var groups = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
 
             return groups;
+
         }
-
-        public List<PlantTypesVm> GetPlantTypes()
-        {
-            var types = _plantRepo.GetAllEntities<PlantType>().OrderBy(p => p.Id).ProjectTo<PlantTypesVm>(_mapper.ConfigurationProvider).ToList();
-
-            return types;
-        }
-
-        public List<PlantSectionsVm> GetPlantSections(int? groupId)
+        public List<PlantSectionsVm> GetSectionsJR(int groupId)
         {
             var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
 
             return sections;
+
         }
-        public List<GrowthTypeVm> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
+        public List<GrowthTypeVm> GetGrowthTypesJR(int typeId, int? groupId, int? sectionId)
+        {
+            var growthTyes = FilterGrowthTypes(typeId, groupId, sectionId);
+
+            return growthTyes;
+        }
+
+        private List<GrowthTypeVm> FilterGrowthTypes(int typeId, int? groupId, int? sectionId)
         {
             List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
 
@@ -70,35 +165,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return growthTyes;
         }
-
-        public List<DestinationsVm> GetDestinations()
+        public List<DestinationsVm> GetDestinationsJR()
         {
-            List<DestinationsVm> destinationsList = new List<DestinationsVm>();
 
-            destinationsList = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            var destinationsList = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
 
             return destinationsList;
         }
 
-        public List<ColorsVm> GetColors()
-        {
-            List<ColorsVm> colorsList = new List<ColorsVm>();
-
-            colorsList = _plantRepo.GetAllEntities<Color>().OrderBy(p => p.Id).ProjectTo<ColorsVm>(_mapper.ConfigurationProvider).ToList();
-
-            return colorsList;
-        }
-
-        public List<GrowingSeazonVm> GetGrowingSeazons()
-        {
-            List<GrowingSeazonVm> growingSeazonList = new List<GrowingSeazonVm>();
-
-            growingSeazonList = _plantRepo.GetAllEntities<GrowingSeazon>().OrderBy(p => p.Id).ProjectTo<GrowingSeazonVm>(_mapper.ConfigurationProvider).ToList();
-
-            return growingSeazonList;
-        }
-
-        public List<FruitSizeVm> GetFruitSize(int typeId, int groupId, int? sectionId)
+        private List<FruitSizeVm> FilterFruitSize(int typeId, int groupId, int? sectionId)
         {
             List<FruitSizeVm> fruitSizeList = new List<FruitSizeVm>();
             if (!sectionId.HasValue)
@@ -111,10 +186,17 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 fruitSizeList = _plantRepo.GetAllEntities<FruitSize>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
+            return fruitSizeList;
+        }
+        public List<FruitSizeVm> GetFruitSizeJR(int typeId, int groupId, int? sectionId)
+        {
+            
+            var fruitSizeList = FilterFruitSize(typeId, groupId, sectionId);
 
             return fruitSizeList;
         }
-        public List<FruitTypeVm> GetFruitType(int typeId, int groupId, int? sectionId)
+
+        private List<FruitTypeVm> FilterFruitType(int typeId, int groupId, int? sectionId)
         {
             List<FruitTypeVm> fruitTypeList = new List<FruitTypeVm>();
 
@@ -127,6 +209,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 fruitTypeList = _plantRepo.GetAllEntities<FruitType>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
+            return fruitTypeList;
+        }
+        public List<FruitTypeVm> GetFruitTypeJR(int typeId, int groupId, int? sectionId)
+        {
+            var fruitTypeList = FilterFruitType(typeId, groupId, sectionId);
 
             return fruitTypeList;
         }
@@ -136,66 +223,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return index;
         }
-
-        public List<SelectListItem> PlantColors()
-        {
-            var colors = GetColors();
-            var colorsList = FillPropertyList(null, colors, null);
-            return colorsList;
-        }
-
-        public List<SelectListItem> PlantGrowingSeaznos()
-        {
-            var growingSeaznos = GetGrowingSeazons();
-            var list = FillPropertyList(null, null, growingSeaznos);
-            return list;
-        }
-
-        public List<SelectListItem> PlantTypes()
-        {
-            var types = GetPlantTypes();
-            var plantTypes = FillPropertyList(types, null, null);
-            return plantTypes;
-        }
-        public List<SelectListItem> FillPropertyList(List<PlantTypesVm> list, List<ColorsVm> colorList, List<GrowingSeazonVm> seazonList)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (list != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in list)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (colorList != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in colorList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            if (seazonList != null)
-            {
-                //propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in seazonList)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-
-            return propertyList;
-        }
-
         public MessageDisplay MessagesToView(int type)
         {
             var messageDisplay = new MessageDisplay();

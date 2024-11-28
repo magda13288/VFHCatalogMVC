@@ -17,6 +17,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using NPOI.OpenXmlFormats.Wordprocessing;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
@@ -223,43 +224,67 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 plantVm.PlantDetails.PlantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
-                var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetails.Id).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
-                if (growthTypes != null)
-                {
-                    plantDetailsVm.ListGrowthTypes = new ListGrowthTypesVm();
-                    plantDetailsVm.ListGrowthTypes.GrowthTypesIds = new int[growthTypes.Count];
-                    for (int i = 0; i < growthTypes.Count; i++)
-                    {
-                        plantDetailsVm.ListGrowthTypes.GrowthTypesIds[i] = growthTypes[i].GrowthTypeId;
-                    }
-                }
-
-                var growingSeazons = _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetails.Id).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
-                if (growingSeazons != null)
-                {
-                    plantDetailsVm.ListGrowingSeazons = new ListGrowingSeazonsVm();
-                    plantDetailsVm.ListGrowingSeazons.GrowingSeaznosIds = new int[growingSeazons.Count];
-                    for (int i = 0; i < growingSeazons.Count; i++)
-                    {
-                        plantDetailsVm.ListGrowingSeazons.GrowingSeaznosIds[i] = growingSeazons[i].GrowingSeazonId;
-                    }
-                }
-
-                var destinations = _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetails.Id).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
-                if (destinations != null)
-                {
-                    plantDetailsVm.ListPlantDestinations = new ListPlantDestinationsVm();
-                    plantDetailsVm.ListPlantDestinations.DestinationsIds = new int[destinations.Count];
-                    for (int i = 0; i < destinations.Count; i++)
-                    {
-                        plantDetailsVm.ListPlantDestinations.DestinationsIds[i] = destinations[i].DestinationId;
-                    }
-                }
+                SetPlantGrowthType(plantDetailsVm, plantDetailsVm.Id);
+                SetPlantGrowingSeazons(plantDetailsVm, plantDetailsVm.Id);
+                SetPlantDestinations(plantDetailsVm, plantDetailsVm.Id);
             }
 
             return plantVm;
         }
 
+        private bool SetPlantGrowthType(PlantDetailsVm plant, int plantDetailId)
+        {
+            var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+            if (growthTypes != null)
+            {
+                plant.ListGrowthTypes = new ListGrowthTypesVm();
+                plant.ListGrowthTypes.GrowthTypesIds = new int[growthTypes.Count];
+                for (int i = 0; i < growthTypes.Count; i++)
+                {
+                    plant.ListGrowthTypes.GrowthTypesIds[i] = growthTypes[i].GrowthTypeId;
+                }
+            }
+
+            var set = plant.ListGrowthTypes.GrowthTypesIds.Any() ? true: false;
+
+            return set;
+        }
+
+        private bool SetPlantGrowingSeazons(PlantDetailsVm plant, int plantDetailId)
+        {
+            var growingSeazons = _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+            if (growingSeazons != null)
+            {
+                plant.ListGrowingSeazons = new ListGrowingSeazonsVm();
+                plant.ListGrowingSeazons.GrowingSeaznosIds = new int[growingSeazons.Count];
+                for (int i = 0; i < growingSeazons.Count; i++)
+                {
+                    plant.ListGrowingSeazons.GrowingSeaznosIds[i] = growingSeazons[i].GrowingSeazonId;
+                }
+            }
+
+            var set = plant.ListGrowingSeazons.GrowingSeaznosIds.Any() ? true : false;
+
+            return set;
+        }
+        private bool SetPlantDestinations(PlantDetailsVm plant, int plantDetailId)
+        {
+            var destinations = _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            if (destinations != null)
+            {
+                plant.ListPlantDestinations = new ListPlantDestinationsVm();
+                plant.ListPlantDestinations.DestinationsIds = new int[destinations.Count];
+                for (int i = 0; i < destinations.Count; i++)
+                {
+                    plant.ListPlantDestinations.DestinationsIds[i] = destinations[i].DestinationId;
+                }
+            }
+
+            var set = plant.ListPlantDestinations.DestinationsIds.Any() ? true : false;
+
+            return set;
+
+        }
         private void UpdatePlantPhoto(NewPlantVm model)
         {
             if (model.Photo != null)
@@ -303,16 +328,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             UpdatePlantPhoto(model);
   
             UpdatePlantDetailsImages(model);
-           
-            var plant = _mapper.Map<Plant>(model);
 
-            //rules in FluentValidation 
-            //if (model.PlantDetails.ColorId == 0)
-            //    model.PlantDetails.ColorId = null;
-            //if (model.PlantDetails.FruitSizeId == 0)
-            //    model.PlantDetails.FruitSizeId = null;
-            //if (model.PlantDetails.FruitTypeId == 0)
-            //    model.PlantDetails.FruitTypeId = null;
+            var plant = _mapper.Map<Plant>(model);
 
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
             _plantRepo.UpdatePlant(plant);
@@ -327,6 +344,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                         (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
                                         id => _plantRepo.DeletePlantDetailEntity<Destination>(model.PlantDetails.Id)
                                                 );
+            else SetPlantDestinations(model.PlantDetails, model.PlantDetails.Id);
 
             //Update GrowingSeazons
             if (model.PlantDetails.ListGrowingSeazons != null)
@@ -337,6 +355,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                        (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantDetailEntity<GrowingSeazon>(model.PlantDetails.Id)
                                                );
+            else SetPlantGrowingSeazons(model.PlantDetails, model.PlantDetails.Id);
 
             //UpdateGrowthTypes
             if (model.PlantDetails.ListGrowthTypes != null)
@@ -347,6 +366,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                        (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantDetailEntity<GrowthType>(model.PlantDetails.Id)
                                                );
+            else SetPlantGrowthType(model.PlantDetails,model.PlantDetails.Id); 
             //_plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
 
         }

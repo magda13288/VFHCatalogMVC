@@ -9,20 +9,12 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel;
-using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Diagnostics;
-using VFHCatalogMVC.Web.Models;
-using Microsoft.Data.SqlClient;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
+using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -53,8 +45,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {        
-                var types = _plantHelperService.GetPlantTypes();
-                ViewBag.TypesList = _plantHelperService.FillPropertyList(types, null, null);
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
                 var groupsList = GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -178,9 +169,9 @@ namespace VFHCatalogMVC.Web.Controllers
         [Authorize(Roles = "Admin, PrivateUser, Company")]
         public IActionResult AddPlant()
         {
-            ViewBag.TypesList = _plantHelperService.PlantTypes();
-            ViewBag.ColorsList = _plantHelperService.PlantColors();
-            ViewBag.GrowingSeazons = _plantHelperService.PlantGrowingSeaznos();
+            ViewBag.TypesList = _plantHelperService.GetTypes();
+            ViewBag.ColorsList = _plantHelperService.GetColors();
+            ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
 
             return View();
         }
@@ -200,9 +191,9 @@ namespace VFHCatalogMVC.Web.Controllers
                     if (id == 0)
                     {
                         ViewBag.Message = "Podana nazwa już istnieje";                      
-                        ViewBag.TypesList = _plantHelperService.PlantTypes();
-                        ViewBag.ColorsList = _plantHelperService.PlantColors();
-                        ViewBag.GrowingSeazons = _plantHelperService.PlantGrowingSeaznos();
+                        ViewBag.TypesList = _plantHelperService.GetTypes();
+                        ViewBag.ColorsList = _plantHelperService.GetColors();
+                        ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
                         return View(model);
                     }
                     else
@@ -210,9 +201,9 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.TypesList = _plantHelperService.PlantTypes();
-                    ViewBag.ColorsList = _plantHelperService.PlantColors();
-                    ViewBag.GrowingSeazons = _plantHelperService.PlantGrowingSeaznos();
+                    ViewBag.TypesList = _plantHelperService.GetTypes();
+                    ViewBag.ColorsList = _plantHelperService.GetColors();
+                    ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
                     return View(model);
                 }
             }
@@ -246,20 +237,19 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
-                ViewBag.ColorsList = _plantHelperService.PlantColors();
 
-                ViewBag.GrowingSeazons = _plantHelperService.PlantGrowingSeaznos();
+                ViewBag.ColorsList = _plantHelperService.GetColors();
 
-                var growthTypes = GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
-                ViewBag.GrowthTypes = growthTypes.Value;
-      
-                var destinations = GetDestinations();
-                ViewBag.Destinations = destinations.Value;
+                ViewBag.GrowingSeazons = _plantHelperService.GetGrowingSeazons();
 
-                var fruitTypes = GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
-                ViewBag.FruitTypes = fruitTypes.Value;
-                var fruitSize = GetFruitSizes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
-                ViewBag.FruitSizes = fruitSize.Value;
+                //var growthTypes = _plantHelperService.GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.GrowthTypes = _plantHelperService.GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                  
+                ViewBag.Destinations = _plantHelperService.GetDestinations();
+
+                ViewBag.FruitTypes = _plantHelperService.GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+
+                ViewBag.FruitSizes = _plantHelperService.GetFruitSize(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
                 return View(plantToEdit);
             }
@@ -475,7 +465,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
         {
-            var groups = _plantHelperService.GetPlantGroups(typeId);
+            var groups = _plantHelperService.GetGroupsJR(typeId);
             List<SelectListItem> groupsList = new List<SelectListItem>();
 
             if (groups.Count > 0)
@@ -498,7 +488,8 @@ namespace VFHCatalogMVC.Web.Controllers
         {
 
             List<SelectListItem> sectionsList = new List<SelectListItem>();
-            var sections = _plantHelperService.GetPlantSections(groupId);
+            var sections = _plantHelperService.GetSectionsJR(groupId);
+
 
             if (sections.Count > 0)
             {
@@ -510,20 +501,20 @@ namespace VFHCatalogMVC.Web.Controllers
                     {
                         sectionsList.Add(new SelectListItem { Text = section.Name, Value = section.Id.ToString() });
                     }
-                }         
+                }
             }
-            //else
-            //{
-            //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
+            else
+            {
+                sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
 
-            //}
+            }
             return Json(sectionsList);
         }
 
         [HttpPost]
         public JsonResult GetGrowthTypes( int typeId, int groupId, int? sectionId)
         {
-            var list = _plantHelperService.GetGrowthTypes(typeId, groupId,sectionId);
+            var list = _plantHelperService.GetGrowthTypesJR(typeId, groupId,sectionId);
 
             List<SelectListItem> growthTypes = new List<SelectListItem>();
 
@@ -546,7 +537,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetDestinations()
         {
-            var destList = _plantHelperService.GetDestinations();
+            var destList = _plantHelperService.GetDestinationsJR();
 
             List<SelectListItem> destinations = new List<SelectListItem>();
 
@@ -568,7 +559,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypes = _plantHelperService.GetFruitType(typeId, groupId, sectionId);
+            var fruitTypes = _plantHelperService.GetFruitTypeJR(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitTypesList = new List<SelectListItem>();
 
@@ -592,7 +583,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId)
         {
-            var fruitSiezes = _plantHelperService.GetFruitSize(typeId, groupId, sectionId);
+            var fruitSiezes = _plantHelperService.GetFruitSizeJR(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitSizesList = new List<SelectListItem>();
 

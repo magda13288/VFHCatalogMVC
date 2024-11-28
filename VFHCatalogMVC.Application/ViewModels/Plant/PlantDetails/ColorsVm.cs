@@ -6,10 +6,10 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class ColorsVm : IMapFrom<Domain.Model.Color>
+    public class ColorsVm : SelectListItemVm, IMapFrom<Domain.Model.Color>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //public int Id { get; set; }
+        //public string Name { get; set; }
 
         public void Mapping(Profile profile)
         {

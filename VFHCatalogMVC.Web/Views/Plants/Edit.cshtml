@@ -27,7 +27,8 @@
             </div>
              <div  class="form-group" id="AddEditPlant">
                 <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
-                @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(ViewBag.GrowthTypes,"Value","Text", selectedValues:Model.PlantDetails.ListGrowthTypes.GrowthTypesIds),new {@class="form-control m-0", multiple= true,id="ddlGrowthTypes"})
+                  @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(ViewBag.GrowthTypes,"Value","Text", Model.PlantDetails.ListGrowthTypes.GrowthTypesIds),new {@class="form-control m-0", multiple= "multiple",id="ddlGrowthTypes"})
+                <span asp-validation-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="text-danger"></span>
             </div>
             <div  class="form-group">
                 <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>

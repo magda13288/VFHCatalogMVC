@@ -7,10 +7,10 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class FruitTypeVm : IMapFrom<Domain.Model.FruitType>
+    public class FruitTypeVm : SelectListItemVm, IMapFrom<Domain.Model.FruitType>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //public int Id { get; set; }
+        //public string Name { get; set; }
         public int PlantTypeId { get; set; }
         public int? PlantGroupId { get; set; }
         public int? PlantSectionId { get; set; }

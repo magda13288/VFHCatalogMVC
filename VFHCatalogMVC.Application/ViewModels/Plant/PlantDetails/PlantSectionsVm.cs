@@ -8,11 +8,11 @@ using VFHCatalogMVC.Application.Mapping;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {
-    public class PlantSectionsVm : IMapFrom<Domain.Model.PlantSection>
+    public class PlantSectionsVm : SelectListItemVm, IMapFrom<Domain.Model.PlantSection>
     {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //[Key]
+        //public int Id { get; set; }
+        //public string Name { get; set; }
         public int PlantGroupId { get; set; }
         [ForeignKey("PlantGroupId")]
         public PlantGroupsVm PlantGroups { get; set; }
