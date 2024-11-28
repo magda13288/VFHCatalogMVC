@@ -15,9 +15,13 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<SelectListItem> GetSelectList<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource : class;
+        List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
         List<SelectListItem> GetGroups(int? typeId);
         List<SelectListItem> GetSections(int? groupId);        
         List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId);
+        List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int groupId, int? sectionId)
+            where TSource : class
+            where TVm : SelectListItemVm;
         List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId);
         List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId);
         List<PlantGroupsVm> GetGroupsJR(int typeId);

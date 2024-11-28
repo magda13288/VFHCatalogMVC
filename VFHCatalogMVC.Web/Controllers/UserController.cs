@@ -11,7 +11,9 @@ using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Message;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -40,7 +42,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = _plantHelperService.GetTypes();
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
                 var groupsList = GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
@@ -82,7 +84,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = _plantHelperService.GetTypes();
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
                 ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
                 ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
@@ -123,7 +125,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = _plantHelperService.GetTypes();
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
                 ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
                 ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 

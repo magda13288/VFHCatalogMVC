@@ -132,10 +132,11 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.RegionsList = _userContactDataService.Regions(countryId);
                 ViewBag.CitiesList = _userContactDataService.Cities(regionId);
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
+                pageNo = !pageNo.HasValue ? 1: pageNo;
+                //if (!pageNo.HasValue)
+                //{
+                //    pageNo = 1;
+                //}
                 if (pageSize == 0)
                 {
                     pageSize = 30;
@@ -494,19 +495,15 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 if (typeId != 3)
                 {
-                    sectionsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
+                    sectionsList = _plantHelperService.GetSelectListItem(sections);
+                }
+                else
+                {
+                    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
 
-                    foreach (var section in sections)
-                    {
-                        sectionsList.Add(new SelectListItem { Text = section.Name, Value = section.Id.ToString() });
-                    }
                 }
             }
-            else
-            {
-                sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
-
-            }
+            
             return Json(sectionsList);
         }
 
@@ -564,12 +561,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
             if (fruitTypes.Count > 0)              
             {
-                fruitTypesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var types in fruitTypes)
-                {
-                    fruitTypesList.Add(new SelectListItem { Text = types.Name, Value = types.Id.ToString() });
-                }
+                fruitTypesList = _plantHelperService.GetSelectListItem(fruitTypes);
             }
             else
             {
@@ -588,11 +580,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
             if (fruitSiezes.Count > 0)
             {
-                fruitSizesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-                foreach (var sizes in fruitSiezes)
-                {
-                    fruitSizesList.Add(new SelectListItem { Text = sizes.Name, Value = sizes.Id.ToString() });
-                }
+                fruitSizesList = _plantHelperService.GetSelectListItem(fruitSiezes);
             }
             else
             {

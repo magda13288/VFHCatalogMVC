@@ -54,14 +54,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         public List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId)
         {
-            var fruitSiezes = FilterFruitSize(typeId, groupId, sectionId);
+            var fruitSiezes = FilterFruitSizeOrType<FruitSize,FruitSizeVm>(typeId, groupId, sectionId);
 
             return GetSelectListItem(fruitSiezes);
         }
 
         public List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypes = FilterFruitType(typeId, groupId, sectionId);
+            var fruitTypes = FilterFruitSizeOrType<FruitType,FruitTypeVm>(typeId, groupId, sectionId);
 
             return GetSelectListItem(fruitTypes);
         }
@@ -76,7 +76,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return GetSelectListItem(entities); 
 
         }
-        private List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
+        public List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
         {
 
             if (!entity.Any()) return new List<SelectListItem>();
@@ -128,6 +128,25 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return growthTyes;
         }
+        public List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int groupId, int? sectionId)
+           where TSource : class
+           where TVm : SelectListItemVm
+        {
+            List<TVm> fruitTypeList = new List<TVm>();
+
+            if (!sectionId.HasValue)
+            {
+                fruitTypeList = _plantRepo.GetAllEntities<TSource>().ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+                fruitTypeList = fruitTypeList.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ToList();
+
+            }
+            if (sectionId.HasValue)
+            {
+                fruitTypeList = _plantRepo.GetAllEntities<TSource>().ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+                fruitTypeList = fruitTypeList.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ToList();
+            }
+            return fruitTypeList;
+        }
         public List<DestinationsVm> GetDestinationsJR()
         {
 
@@ -135,48 +154,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return destinationsList;
         }
-
-        private List<FruitSizeVm> FilterFruitSize(int typeId, int groupId, int? sectionId)
-        {
-            List<FruitSizeVm> fruitSizeList = new List<FruitSizeVm>();
-            if (!sectionId.HasValue)
-            {
-                fruitSizeList = _plantRepo.GetAllEntities<FruitSize>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-
-            }
-            if (sectionId.HasValue)
-            {
-                fruitSizeList = _plantRepo.GetAllEntities<FruitSize>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitSizeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-
-            return fruitSizeList;
-        }
+     
         public List<FruitSizeVm> GetFruitSizeJR(int typeId, int groupId, int? sectionId)
         {
             
-            var fruitSizeList = FilterFruitSize(typeId, groupId, sectionId);
+            var fruitSizeList = FilterFruitSizeOrType<FruitSize,FruitSizeVm>(typeId, groupId, sectionId);
 
             return fruitSizeList;
         }
 
-        private List<FruitTypeVm> FilterFruitType(int typeId, int groupId, int? sectionId)
-        {
-            List<FruitTypeVm> fruitTypeList = new List<FruitTypeVm>();
-
-            if (!sectionId.HasValue)
-            {
-                fruitTypeList = _plantRepo.GetAllEntities<FruitType>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-
-            }
-            if (sectionId.HasValue)
-            {
-                fruitTypeList = _plantRepo.GetAllEntities<FruitType>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId).OrderBy(p => p.Id).ProjectTo<FruitTypeVm>(_mapper.ConfigurationProvider).ToList();
-            }
-            return fruitTypeList;
-        }
         public List<FruitTypeVm> GetFruitTypeJR(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypeList = FilterFruitType(typeId, groupId, sectionId);
+            var fruitTypeList = FilterFruitSizeOrType<FruitType,FruitTypeVm>(typeId, groupId, sectionId);
 
             return fruitTypeList;
         }
