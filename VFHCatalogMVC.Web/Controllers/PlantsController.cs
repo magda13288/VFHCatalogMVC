@@ -15,6 +15,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
+using System.Web.WebPages;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -51,20 +52,12 @@ namespace VFHCatalogMVC.Web.Controllers
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
                 ViewBag.SectionsList = sectionsList.Value;
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
-                if (searchString is null)
-                {
-                    searchString = string.Empty;
-                }
-                if (typeId != 0)
-                    ViewBag.TypeId = typeId;
-                if (groupId != 0)
-                    ViewBag.GroupId = groupId;
-                if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageSize = pageSize == 0 ? 30 : pageSize;
+                searchString = searchString is null ? string.Empty : searchString;
+                ViewBag.TypeId = typeId;
+                ViewBag.GroupId = groupId;
+                ViewBag.SectionId = sectionId;       
 
                 var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo.Value, searchString, typeId, groupId, sectionId);
 
@@ -90,26 +83,13 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.RegionsList = _userContactDataService.Regions(countryId);
                 ViewBag.CitiesList = _userContactDataService.Cities(regionId);
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
-                if (pageSize == 0)
-                {
-                    pageSize = 30;
-                }
-                if (countryId != 0)
-                {
-                    ViewBag.CountryId = countryId;
-                }
-                if (regionId != 0)
-                {
-                    ViewBag.RegionId = regionId;
-                }
-                if (cityId != 0)
-                {
-                    ViewBag.CityId = cityId;
-                }
+                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageSize = pageSize == 0 ? 30 : pageSize;
+               
+                 ViewBag.CountryId = countryId;               
+                 ViewBag.RegionId = regionId;                          
+                 ViewBag.CityId = cityId;
+                
 
                 var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
@@ -133,26 +113,11 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.CitiesList = _userContactDataService.Cities(regionId);
 
                 pageNo = !pageNo.HasValue ? 1: pageNo;
-                //if (!pageNo.HasValue)
-                //{
-                //    pageNo = 1;
-                //}
-                if (pageSize == 0)
-                {
-                    pageSize = 30;
-                }
-                if (countryId != 0)
-                {
-                    ViewBag.CountryId = countryId;
-                }
-                if (regionId != 0)
-                {
-                    ViewBag.RegionId = regionId;
-                }
-                if (cityId != 0)
-                {
-                    ViewBag.CityId = cityId;
-                }
+                pageSize = pageSize == 0 ? 30 : pageSize;
+
+                ViewBag.CountryId = countryId;
+                ViewBag.RegionId = regionId;
+                ViewBag.CityId = cityId;
 
                 var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo,isCompany);
                 return View(model);

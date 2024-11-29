@@ -1,0 +1,149 @@
+﻿@using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
+@model PlantDetailsVm
+
+@{
+    ViewData["Title"] = "Details";
+}
+<body>
+<div id="PlaceHolderHere"></div>
+<h1>@Model.Plant.FullName</h1>
+
+<div class="container-fluid">
+   @* <h4>PlantDetailsVm</h4>*@
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+    <dl class="row">
+        <dd class = "col-sm">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+     </dl>
+        <dl class="row">
+        <dt class = "col-sm-2">
+          <label>Kolor</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColorName)
+        </dd>
+        <dt class = "col-sm-2">
+            <label>Wielkość owocu</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FruitSizeName)
+        </dd>
+        <dt class = "col-sm-2">
+            <label>Typ owocu</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FruitTypeName)
+        </dd>
+         <dt class = "col-sm-2">
+        <label>Przeznaczenie</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ListPlantDestinations.DestinationsNames)
+        </dd>
+        <dt class = "col-sm-2">
+            <label>Typ wzrostu</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ListGrowthTypes.GrowthTypesNames)
+        </dd>
+        <dt class = "col-sm-2">
+        <label>Okres wegetacji</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ListGrowingSeazons.GrwoingSeazonsNames)
+        </dd>      
+        <dt class = "col-sm-2">
+           <label>Numer paszportu</label>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PlantPassportNumber)
+        </dd>
+    </dl>
+    </div>
+    <div class="col-md-4">
+        <div id="carouselControls" class="carousel slide" data-bs-ride="carousel">
+            <ol class="carousel-indicators">
+                @for(int i=0;i<Model.PlantDetailsImages.Count; i++)
+                    {
+                        <li data-target="#carouselControls" data-slide-to="@i" class="@(i==0 ? "active" : "")"></li>
+                    }
+            </ol>
+          <div class="carousel-inner">
+              @for (int i=0;i<Model.PlantDetailsImages.Count;i++) 
+             {
+                 <div class="@(i==0 ? "carousel-item active" : "carousel-item")">             
+                   <img class="d-block w-100" src="/plantGallery/plantDetailsGallery/@Model.PlantDetailsImages[i].ImageURL"  alt="" asp-append-version="true"/>         
+                </div>
+             }
+         </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+    </div>
+    </div>
+    <p></p>
+    <div class="row">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
+       Opinie
+      </button>
+        <div class="collapse" id="collapseOpinions" onscroll="true" >
+            <div class="card card-body" style="background-color: transparent">
+                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
+                <table class="table-hover" border="0">
+                    <tbody>
+                 @for(int i=0;i<Model.PlantOpinions.Count;i++)
+                 {
+                <tr class="text-center">
+                     <td>
+                         @Html.HiddenFor(it=>Model.PlantOpinions[i].Id)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].AccountName)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].Opinion)
+                    </td>
+                     <td>
+                      @Html.DisplayFor(it=>Model.PlantOpinions[i].Date)
+                     </td>                
+                </tr>
+                 }
+            </tbody>
+           </table>         
+           </div>
+      </div>
+    </div>
+</div>
+<div>
+    @if(User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
+    }
+    <p></p>
+    <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
+</div>
+    </body>
+
+@*@section Scripts
+{
+    <script type="text/javascript">
+       
+        function RefreshMe()
+       {
+var nuovourl = window.location.href + '';
+nuovourl = nuovourl + (nuovourl.indexOf('?') > -1 ? "&refreshme=1" : "?refreshme=1");
+
+window.location.href = nuovourl;
+
+}
+    </script>
+}*@

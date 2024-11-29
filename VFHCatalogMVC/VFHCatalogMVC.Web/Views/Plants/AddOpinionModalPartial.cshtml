@@ -1,0 +1,57 @@
+﻿@using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
+@model  PlantOpinionsVm
+
+
+<div id="PlaceHolderHere"></div>
+        <div class="modal fade" id="Plant">
+            <div class="modal-dialog" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="addPlantOpinionLabel">Dodaj opinię</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                        <span>x</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+         @Html.AntiForgeryToken()
+                <div class="row">
+                    @if (ViewBag.Message != null)
+                    {
+                        <span class="text-success">@ViewBag.Message</span>
+                    }
+                </div>
+        <form action="AddOpinion">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+             <input type="hidden" id="plantDetailId" asp-for="PlantDetailId" class="control-label"/>
+             <input type="hidden" id="userId" asp-for="UserId" class="control-label"/>
+            <div class="form-group">
+                <label asp-for="Opinion" class="control-label">Opinia</label>
+                <textarea asp-for="Opinion" class="form-control" rows="3"> </textarea>
+                <span asp-validation-for="Opinion" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
+                <button type="button" class="btn btn-primary" data-url="/Plants/" data-save="modal">Zapisz</button>
+            </div>
+</div>
+     </div>
+  </div>
+
+@*@section Scripts
+    {
+    <script type="text/javascript">
+
+        function RefreshMe() {
+            var nuovourl = window.location.href + '';
+            nuovourl = nuovourl + (nuovourl.indexOf('?') > -1 ? "&refreshme=1" : "?refreshme=1");
+
+            window.location.href = nuovourl;
+
+        }
+    </script>
+}
+*@
+
+

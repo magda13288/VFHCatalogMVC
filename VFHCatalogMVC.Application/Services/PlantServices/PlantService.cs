@@ -12,12 +12,10 @@ using System.Data;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
-using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using System.Reflection.Metadata.Ecma335;
+
 
 
 namespace VFHCatalogMVC.Application.Services.PlantServices

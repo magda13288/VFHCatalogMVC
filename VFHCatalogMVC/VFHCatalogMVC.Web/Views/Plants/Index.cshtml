@@ -1,0 +1,183 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Plant.ListPlantForListVm
+
+ @{
+  ViewData["Title"] = "Index";
+ }
+
+
+<body>
+    @* <body style="background-image: url('/images/16243.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat;"> *@
+  <div id="PlaceHolderHere"></div>
+  <h3 class="text-center">Witaj w katalogu roślin uprawnych</h3>
+
+@if (User.IsInRole("Admin") || User.IsInRole("PrivateUser") || User.IsInRole("Company"))
+{
+    <p>
+        <a asp-action="AddPlant" class="btn btn-success">Dodaj nową roślinę</a>
+    </p>
+}
+<form asp-action="Index" asp-controller="Plants" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="navbar navbar-expand-lg" id="selectNav">
+                 <div class="collapse navbar-collapse" id="navbarSupportedContent">     
+                     <label asp-for="PlantForList.TypeId" class="control-label">Typ</label>
+                     <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control 
+                            aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", 
+                            selectedValue: ViewBag.TypeId))"></select>
+                     <label asp-for="PlantForList.GroupId" class="control-label">Grupa</label>
+                     <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control"
+                            aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", 
+                            selectedValue: ViewBag.GroupId))" ></select>
+                     <label asp-for="PlantForList.SectionId" class="control-label">Sekcja</label>
+                     <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control" 
+                            aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",
+                            selectedValue:ViewBag.SectionId))"></select>
+                     <input class="form-control" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
+                     <button class="btn btn-outline-success" type="submit" id="Submit">Szukaj</button>
+                 </div>      
+            </nav>
+            <p></p>
+            <div>
+                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Filtry
+                </a>
+           </div>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    Filtry dostosowane do rośliny.
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table-striped table-hover" id="plantsTable">
+                <thead class="thead-light">
+                    <tr class="text-center">
+                        <th>
+                            Nazwa
+                        </th>
+                        <th>
+                            Zdjęcie
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Plants) 
+                    {
+                    <tr class="text-center">
+                          <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Image)
+                            <img src="/plantGallery/searchPhoto/@item.Photo" class="img-fluid" width="120" height="80" asp-append-version="true"/>
+                         </td>
+                         <td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    @Html.ActionLink("Edytuj ", "Edit", new {  id=item.Id }, new { @class = "btn btn-info" })
+                                <span>|</span>
+                                    @Html.ActionLink("Sczegóły", "Details", new { id = item.Id }, new { @class = "btn btn-warning" })
+                                <span>|</span>
+                                    @Html.ActionLink("Usuń", "Delete", new { id = item.Id }, new { @class = "btn btn-danger"} )
+                                }
+                                else
+                                {
+                                 @if (User.IsInRole("PrivateUser") || User.IsInRole("Company"))
+                                    {
+
+                                        <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeed/{item.Id}")" >+Nasiona</button>                                       
+                                        <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddSeedling/{item.Id}")" >+Sadzonki</button>
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeeds", "Plants",new {id=item.Id})'">Nasiona</button>
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeedlings", "Plants",new {id=item.Id})'">Sadzonki</button>
+                                        <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.Id})'">Szczegóły</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeeds", "Plants",new {id=item.Id})'">Nasiona</button>
+                                        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexSeedlings", "Plants",new {id=item.Id})'">Sadzonki</button>
+                                         @Html.ActionLink("Sczegóły", "Details", new { id = item.Id },new { @class = "btn btn-warning" })
+                                    }
+                                }
+                                                                
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+<div class="row">
+    <table>
+        <tr class="text-left">
+            @for(int i =1;i<=Math.Ceiling(Model.Count/(double)Model.PageSize);i++)
+            {
+                    <td class="text-left">
+                        @if (i != Model.CurrentPage)
+                        {
+                            <a href="javascript:PagerClick(@i)">@i</a>
+                        }
+                        else
+                        {
+                         <span>@i</span>   
+                        }
+                    </td>
+                    
+                }
+            </tr>
+    </table>
+    <input type="hidden" name="pageNo" id="pageNo"/>
+    <input type="hidden" name="pageSize" id="pageSize" value="10" />
+</div>
+    </div>
+</form>
+</body>
+
+@section Scripts
+{ <script type="text/javascript">
+
+        function PagerClick(index)
+        {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+        
+        $(function () {
+        $("#ddlType").change(function () {
+            $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
+                var row = "";
+                $("#ddlGroup").empty();
+                $.each(d, function (i, v) {
+                    row += "<option value=" + v.value + ">"+v.text+"</option>";
+                });
+                $("#ddlGroup").html(row);
+            })
+        })
+    })
+        $(function() {
+            $("#ddlGroup").change(function() {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                $.post('@Url.Action("GetPlantSectionsList")', { groupId: gId, typeId: tId }, function(d) {
+                    var row = "";
+                    $("#ddlSection").empty();
+                    $.each(d, function(i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlSection").html(row);
+                })
+            })
+        })
+
+//$(function Delete(id) {
+//    var table = $("#plantsTable")
+//    $.post('@Url.Action("Delete")', { id=id },
+//        table.reload();
+//})
+
+    //document.location.reload();
+    </script>
+
+}
+
+@*<a> ancor tworzy link do strony albo do innego elementu</a>*@

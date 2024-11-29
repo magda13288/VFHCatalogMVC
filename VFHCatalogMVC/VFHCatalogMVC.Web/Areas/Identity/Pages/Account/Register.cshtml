@@ -1,0 +1,165 @@
+﻿@page
+@model RegisterModel
+@using VFHCatalogMVC.Web.Controllers
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h4>Create a new account.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.IsPrivateUser">Użytkownik prywatny</label>
+                @Html.CheckBoxFor(m=>Model.Input.IsPrivateUser, new { @class = "checkbox" , id="chkPrivateUser",onclick= "EnableDisableTextBoxUser(this)"})   
+                <label asp-for="Input.IsCompany">Firma</label>
+                @Html.CheckBoxFor(m=>Model.Input.IsCompany, new { @class = "checkbox", id="chkCompany",onclick="EnableDisableTextBoxCompany(this)" }) 
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.CountryId">Kraj</label>
+               @*  <select id="ddlCountry" asp-for="Input.CountryId" name="countryId" class="form-control text-center" aria-label="Country" asp-items="@(new SelectList(ViewBag.Country,"Value", "Text"))"></select>*@
+               @Html.DropDownListFor(model=>model.Input.CountryId, new SelectList(ViewBag.Country,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlCountry" })
+                 <span asp-validation-for="Input.CountryId" class="text-danger"></span>
+             </div>
+            <div class="form-group">
+                <label asp-for="Input.RegionId">Województwo</label>
+                 @*<select id="ddlRegion" asp-for="Input.RegionId" name="regionId" class="form-control text-center" aria-label="Region" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
+                  @Html.DropDownListFor(model=>model.Input.RegionId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlRegion" })
+                 <span asp-validation-for="Input.RegionId" class="text-danger"></span>
+             </div>
+            <div class="form-group">
+                <label asp-for="Input.CityId">Miasto</label>
+                 @*<select id="ddlCity" asp-for="Input.CityId" name="CityId" class="form-control text-center" aria-label="City" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
+                 @Html.DropDownListFor(model=>model.Input.CityId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlCity" })
+                 <span asp-validation-for="Input.CityId" class="text-danger"></span>
+             </div>
+            <div class="form-group">
+                <label asp-for="Input.AccountName">Nazwa konta</label>
+                <input asp-for="Input.AccountName" class="form-control" id="txtUser", disabled="disabled"/>
+                <span asp-validation-for="Input.AccountName" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Input.CompanyName">Nazwa firmy</label>
+                <input asp-for="Input.CompanyName" class="form-control" id="txtCustomer" disabled="disabled"/>
+                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Password">Hasło</label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword">Powtórz hasło</label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h4>Use another service to register.</h4>
+            <hr />
+            @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                            <div>
+                              <p>
+                                   There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                                   for details on setting up this ASP.NET application to support logging in via external services.
+                              </p>
+                           </div>
+                }
+                else
+                {
+                         <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                          <div>
+                              <p>
+                                @foreach (var provider in Model.ExternalLogins)
+                                {
+                                 <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                              </p>
+                         </div>
+                        </form>
+                }
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+       
+     $(function () {
+        $("#ddlCountry").change(function () {
+             var countryId = $("#ddlCountry").val();
+            //$.getJSON("GetRegions", id: countryId, function(d) { 
+             $.post("@Url.Action("GetRegions","User")", { id: countryId }, function (d) {
+                var row = "";
+                $("#ddlRegion").empty();
+                $.each(d, function (i, v) {
+                    row += "<option value=" + v.value + ">"+v.text+"</option>";
+                });
+                $("#ddlRegion").html(row);
+            })
+        })
+    })
+
+     $(function () {
+        $("#ddlRegion").change(function () {
+             var regionId = $("#ddlRegion").val();
+            //$.getJSON("GetRegions", id: countryId, function(d) { 
+             $.post("@Url.Action("GetCities","User")", { id: regionId }, function (d) {
+                var row = "";
+                $("#ddlCity").empty();
+                $.each(d, function (i, v) {
+                    row += "<option value=" + v.value + ">"+v.text+"</option>";
+                });
+                $("#ddlCity").html(row);
+            })
+        })
+    })
+
+    function EnableDisableTextBoxUser(chkPrivateUser) {
+        var txtUser = document.getElementById("txtUser");
+        var chkCompany = document.getElementById("chkCompany");
+        txtUser.disabled = chkPrivateUser.checked ? false : true;
+        if (!txtUser.disabled) {
+            //txtUser.focus();
+            chkCompany.disabled = true;
+        }
+        else {
+            chkCompany.disabled = false;
+        }
+    }
+
+    function EnableDisableTextBoxCompany(chkCompany) {
+        var txtCustomer = document.getElementById("txtCustomer");
+        var chkPrivateUser = document.getElementById("chkPrivateUser")
+        txtCustomer.disabled = chkCompany.checked ? false : true;
+        if (!txtCustomer.disabled) {
+            //txtCustomer.focus();
+            chkPrivateUser.disabled = true;
+        }
+        else {
+        
+            chkPrivateUser.disabled=false;
+        }
+    }
+     </script>
+     }
+

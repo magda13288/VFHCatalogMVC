@@ -1,0 +1,117 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Message.MessageForListVm
+
+@{
+    ViewData["Title"] = "IndexPlantMessages";
+}
+
+<body>
+<h3>Wiadomości</h3>
+<div id="PlaceHolderHere"></div>
+
+<div class="row">
+ <div class="col">
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=0})'">Wszystkie wiadomości</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=1})'">Odebrane</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=2})'">Wysłane</button>
+  </div>
+</div>
+<p></p>
+<div class="row">
+    <table class="table-striped table-hover">
+        <thead class="thead-light text-center">
+            <tr>
+            <th>
+                Nadawca
+            </th>
+            <th class="text-wrap">
+                Wiadomość
+            </th>
+            <th>
+                Data wysłania
+            </th>
+             <th>
+                 Odbiorca
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Message)
+        {
+                <tr class="text-center text-wrap">
+                <td>
+                    @if(item.AccountName == null)
+                    @Html.DisplayFor(modelItem => item.UserName)
+                    else
+                    @Html.DisplayFor(modelItem => item.AccountName)
+                </td>
+                <td class="text-wrap text-break">
+                    @Html.DisplayFor(modelItem => item.MessageContent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AddedDate)
+                </td>
+                    <td>
+                        @if (item.MessageReceiver != null)
+                        {
+                            @if (item.MessageReceiver.AccountName != null)
+                                @Html.DisplayFor(modelItem => item.MessageReceiver.AccountName)
+                            else
+                            {
+                                @Html.DisplayFor(modelItem=>item.MessageReceiver.UserName)
+                            }
+                        }
+                    </td>
+                     <td>
+                    @if (item.UserName != User.Identity.Name && item.isAnswer == false)
+                    {
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Odpowiedz</button>                          
+                    }
+                  @*  @if (item.UserName == User.Identity.Name && item.isAnswer == true)*@
+                    @*{
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"GetMessage/{item.Id}")">Odpowiedź</button>
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Odpowiedz</button>
+                    }*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+<div class="row">
+    <table>
+        <tr>
+            @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+            {
+               <td>
+                    @if (i != Model.CurrentPage)
+                    {
+                    <a href="javascript:PagerClick(@i)">@i</a>
+                    }
+                    else
+                    {
+                       <span>@i</span>   
+                    }
+              </td>
+
+            }
+            </tr>
+    </table>
+    <input type="hidden" name="pageNo" id="pageNo"/>
+    <input type="hidden" name="pageSize" id="pageSize" value="30" />
+</div>
+@*<a asp-action="IndexNewPlants" asp-controller="User" class="btn btn-dark">Wstecz</a>*@
+</body>
+
+@section Scripts
+{
+         <script type="text/javascript">
+
+        function PagerClick(index) {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+        </script>
+}
+
+
