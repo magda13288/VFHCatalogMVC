@@ -57,7 +57,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 searchString = searchString is null ? string.Empty : searchString;
                 ViewBag.TypeId = typeId;
                 ViewBag.GroupId = groupId;
-                ViewBag.SectionId = sectionId;       
+                ViewBag.SectionId = sectionId;
 
                 var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo.Value, searchString, typeId, groupId, sectionId);
 
@@ -85,11 +85,12 @@ namespace VFHCatalogMVC.Web.Controllers
 
                 pageNo = pageNo.HasValue ? pageNo.Value : 1;
                 pageSize = pageSize == 0 ? 30 : pageSize;
-               
-                 ViewBag.CountryId = countryId;               
-                 ViewBag.RegionId = regionId;                          
-                 ViewBag.CityId = cityId;
-                
+
+                ViewBag.CountryId = countryId;
+                ViewBag.RegionId = regionId;
+                ViewBag.CityId = cityId;
+
+
 
                 var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
@@ -112,7 +113,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.RegionsList = _userContactDataService.Regions(countryId);
                 ViewBag.CitiesList = _userContactDataService.Cities(regionId);
 
-                pageNo = !pageNo.HasValue ? 1: pageNo;
+                pageNo = !pageNo.HasValue ? 1 : pageNo;
                 pageSize = pageSize == 0 ? 30 : pageSize;
 
                 ViewBag.CountryId = countryId;
