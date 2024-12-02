@@ -23,5 +23,10 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public List<PlantOpinionsVm> PlantOpinions { get; set; }
         [NotMapped]
         public ContactDetailVm ContactDetail { get; set; }
+
+        [NotMapped]
+        public string Link { get; set; }
+        [NotMapped]
+        public int Price { get; set; }
     }
 }

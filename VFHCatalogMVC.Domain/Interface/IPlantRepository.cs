@@ -12,14 +12,13 @@ namespace VFHCatalogMVC.Domain.Interface
         string GetPlantDetailsPropertyName<T>(int? id) where T : class;
         IQueryable<T> GetAllEntities<T>() where T : class;
         void DeletePlantDetailEntity<T>(int id) where T : class;
-        void AddContactDetailsEntity<T>(T entity) where T : class;
+        int AddContactDetailsEntity<T>(T entity) where T : class;
         void DeletePlant(Plant plant);
         int AddPlant(Plant plant);
         int AddPlantSeed(PlantSeed seed);
         int AddContactDetail(ContactDetail contact);
         int AddPlantSeedling(PlantSeedling seedling);
         void AddPlantOpinion(PlantOpinion opinion);
-        int EditPlant(Plant plant);
         void UpdatePlant(Plant plant);
         void UpdatePlantDetails(PlantDetail plant); 
         int AddPlantDetails(PlantDetail plant, int plantId);

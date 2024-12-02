@@ -28,10 +28,9 @@ namespace Application.UnitTests.Commands
 {
     public class AddNewPlantTests : CommandTestBase
     {
-       
-       public AddNewPlantTests() : base()
+        public AddNewPlantTests() : base()
         {
-           
+            
         }
 
         
@@ -164,7 +163,7 @@ namespace Application.UnitTests.Commands
             mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
 
             var plantService = SetPlantService(mockUserManager);
-
+       
             var newPlant = SetNewPlantParameters();
 
             //Act
@@ -256,20 +255,23 @@ namespace Application.UnitTests.Commands
             var mapper = configurationProvider.CreateMapper();
             var mockPlantRepo = new Mock<PlantRepository>(_context);
             var mockUserPlantService = new Mock<IUserPlantService>();
-            var mockUserContactDataService = new Mock<IUserContactDataService>();
             var mockImageService = new Mock<IImageService>();
             var mockPlantDetailsService = new Mock<IPlantDetailsService>();
-                        
+            var mockSeedProcessor =  new Mock<IPlantItemProcessor<PlantSeedVm>>();
+            var mockSeedlingProcessor = new Mock<IPlantItemProcessor<PlantSeedlingVm>>();
+
             var mockUserManager = mockManager;
 
             var plantService = new PlantService(
                mockPlantRepo.Object,
                mapper,
                mockUserManager.Object,
-               mockUserContactDataService.Object,
                mockImageService.Object,
                mockPlantDetailsService.Object,
-               mockUserPlantService.Object
+               mockUserPlantService.Object, 
+               mockSeedProcessor.Object,
+               mockSeedlingProcessor.Object
+               
            );
 
             return plantService;

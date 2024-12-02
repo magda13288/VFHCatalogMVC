@@ -15,6 +15,8 @@ using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
+using MathNet.Numerics.Statistics.Mcmc;
+using NPOI.OpenXmlFormats.Dml;
 
 
 
@@ -26,7 +28,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserContactDataService _userContactDataService;
         private readonly IUserPlantService _userPlantService;
         private readonly IImageService _imageService;
         private readonly IPlantDetailsService _plantDetailsSerrvice;
@@ -40,7 +41,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         public PlantService(
             IPlantRepository plantRepo,
             IMapper mapper, UserManager<ApplicationUser> userManager,
-            IUserContactDataService userContactDataService,
             IImageService imageService,
             IPlantDetailsService plantDetailsSerrvice,
             IUserPlantService userPlantService,
@@ -52,7 +52,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _userManager = userManager;
             _imageService = imageService;
             _plantDetailsSerrvice = plantDetailsSerrvice;
-            _userContactDataService = userContactDataService;
             _userPlantService = userPlantService;
             _seedProcessor = seedProcessor;
             _seedlingProcessor = seedlingProcessor;
@@ -340,7 +339,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                         model.PlantDetails.ListPlantDestinations.DestinationsIds,
                                         id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
                                         (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
-                                        id => _plantRepo.DeletePlantDetailEntity<Destination>(model.PlantDetails.Id)
+                                        id => _plantRepo.DeletePlantDetailEntity<PlantDestination>(model.PlantDetails.Id)
                                                 );
             else SetPlantDestinations(model.PlantDetails, model.PlantDetails.Id);
 
@@ -351,7 +350,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                        model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(model.PlantDetails.Id),
                                        (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntity<GrowingSeazon>(model.PlantDetails.Id)
+                                       id => _plantRepo.DeletePlantDetailEntity<PlantGrowingSeazon>(model.PlantDetails.Id)
                                                );
             else SetPlantGrowingSeazons(model.PlantDetails, model.PlantDetails.Id);
 
@@ -362,7 +361,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                        model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowthType>(model.PlantDetails.Id),
                                        (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntity<GrowthType>(model.PlantDetails.Id)
+                                       id => _plantRepo.DeletePlantDetailEntity<PlantGrowthType>(model.PlantDetails.Id)
                                                );
             else SetPlantGrowthType(model.PlantDetails,model.PlantDetails.Id); 
             //_plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
@@ -386,84 +385,98 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return plantVm;
         }
 
-        public PlantSeedVm FillProperties(int id, string userName)
-        {
-            var user = _userManager.FindByNameAsync(userName);
-            var plantSedd = new PlantSeedVm() { PlantId = id, UserId = user.Result.Id };
-            return plantSedd;
-        }
-
         public void AddPlantSeed(PlantSeedVm seed)
         {
 
-            if (seed != null)
-            {
-                seed.DateAdded = DateTime.Now;
-                var plantSeed = _mapper.Map<PlantSeed>(seed);
-                var seedId = _plantRepo.AddPlantSeed(plantSeed);
-
-                //if (seed.ContactDetail != null)
-                if (seed.Link != null)
+           var plantEntityId =  AddPlantEntity<PlantSeedVm,PlantSeed>(seed, _plantRepo.AddPlantSeed);
+            var contactId = AddEntityContactDetails(
+                plantEntityId,
+                seed,
+                (plantEntityId, contactDetailId) => new ContactDetailForSeed
                 {
-                    seed.ContactDetail.ContactDetailTypeID = 1;
-                    seed.ContactDetail.UserId = seed.UserId;
-                    seed.ContactDetail.ContactDetailInformation = seed.Link;
-                    var contactDetails = _mapper.Map<ContactDetail>(seed.ContactDetail);
-                    var contactId = _plantRepo.AddContactDetail(contactDetails);
-
-                    ContactDetailForSeedVm contactSeed = new ContactDetailForSeedVm();
-                    contactSeed.PlantSeedId = seedId;
-                    contactSeed.ContactDetailId = contactId;
-
-                    var contactSeddToSave = _mapper.Map<ContactDetailForSeed>(contactSeed);
-
-                    _plantRepo.AddContactDetailsEntity<ContactDetailForSeed>(contactSeddToSave);
-                }
-            }
-            else
-            {
-                throw new NullReferenceException();
-            }
+                    PlantSeedId = plantEntityId,
+                    ContactDetailId = contactDetailId
+                },
+                contactEntity => _plantRepo.AddContactDetailsEntity(contactEntity)
+                );
+                      
         }
-
         public void AddPlantSeedling(PlantSeedlingVm seedling)
         {
-            if (seedling != null)
-            {
-                seedling.DateAdded = DateTime.Now;
-                var plantSeedling = _mapper.Map<PlantSeedling>(seedling);
-                var seedlingId = _plantRepo.AddPlantSeedling(plantSeedling);
-
-                if (seedling.ContactDetail != null)
+            var plantEntityId = AddPlantEntity<PlantSeedlingVm, PlantSeedling>(seedling, _plantRepo.AddPlantSeedling);
+            var contactId = AddEntityContactDetails(
+                plantEntityId,
+                seedling,
+                (plantEntityId, contactDetailId) => new ContactDetailForSeedling
                 {
-                    seedling.ContactDetail.ContactDetailTypeID = 1;
-                    seedling.ContactDetail.UserId = seedling.UserId;
-                    var contactDetails = _mapper.Map<ContactDetail>(seedling.ContactDetail);
-                    var contactId = _plantRepo.AddContactDetail(contactDetails);
+                    PlantSeedlingId = plantEntityId,
+                    ContactDetailId = contactDetailId
+                },
+                contactEntity => _plantRepo.AddContactDetailsEntity(contactEntity)
+                );
+        }
 
-                    ContactDetailForSeedlingVm contactSeedling = new ContactDetailForSeedlingVm();
-                    contactSeedling.PlantSeedlingId = seedlingId;
-                    contactSeedling.ContactDetailId = contactId;
-
-                    var contactSeedlingToSave = _mapper.Map<ContactDetailForSeedling>(contactSeedling);
-                    _plantRepo.AddContactDetailsEntity<ContactDetailForSeedling>(contactSeedlingToSave);
-
-                }
+        public int AddPlantEntity<TVm, TSource>(TVm entity, Func<TSource, int> addEntity)
+           where TVm : PlantItemVm
+           where TSource : class
+        {
+            if (entity != null)
+            {
+                entity.DateAdded = DateTime.Now;
+                var plantEntity = _mapper.Map<TSource>(entity);
+                var plantEntityId = addEntity(plantEntity);
+                return plantEntityId;
 
             }
             else
             {
                 throw new NullReferenceException();
             }
+
         }
 
-        public PlantSeedlingVm FillPropertiesSeedling(int id, string userName)
+        public int AddEntityContactDetails<TVm, TContactEntity>(
+             int entityId,
+             TVm entity,
+             Func<int, int, TContactEntity> createContactEntity,
+             Func<TContactEntity, int> saveContactEntity)
+            where TVm : PlantItemVm
+            where TContactEntity : class
+        {
+
+            if (entity.ContactDetail != null)
+            {
+                entity.ContactDetail.ContactDetailTypeID = 1;
+                entity.ContactDetail.UserId = entity.UserId;
+                entity.ContactDetail.ContactDetailInformation = entity.Link;
+
+                var contactDetail = _mapper.Map<ContactDetail>(entity.ContactDetail);
+                var contactDetailId = _plantRepo.AddContactDetail(contactDetail);
+
+                var contactEntity = createContactEntity(entityId, contactDetailId);
+                var id = saveContactEntity(contactEntity);
+                return id;
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+
+        }
+
+        public T FillProperty<T>(
+            int id, 
+            string userName
+            )
+               where T : PlantItemVm, new()
         {
             var user = _userManager.FindByNameAsync(userName);
-            var plantSeddling = new PlantSeedlingVm() { PlantId = id, UserId = user.Result.Id };
+            if (user == null)
+                throw new Exception($"User with name {userName} not found.");
+            var plantSeddling = new T() { PlantId = id, UserId = user.Result.Id };
             return plantSeddling;
-        }      
-       
+        }
+      
         public void ActivatePlant(int id)
         {
             var plant = _plantRepo.GetPlantToActivate(id);

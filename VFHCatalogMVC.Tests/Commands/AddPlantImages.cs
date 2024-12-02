@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Infrastructure.Repositories;
 using Xunit;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;

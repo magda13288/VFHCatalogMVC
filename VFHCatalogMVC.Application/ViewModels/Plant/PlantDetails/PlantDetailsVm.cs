@@ -54,8 +54,8 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
                 RuleFor(x => x.FruitSizeId).NotEqual(0).WithMessage("*");
                 RuleFor(x => x.FruitTypeId).NotEqual(0).WithMessage("*");
                 RuleFor(x => x.ListGrowthTypes).NotEmpty().NotNull().WithMessage("*");
-                RuleFor(x => x.ListGrowingSeazons).NotNull().WithMessage("*");
-                RuleFor(x => x.ListPlantDestinations).NotNull().WithMessage("*");
+                RuleFor(x => x.ListGrowingSeazons).NotEmpty().NotNull().WithMessage("*");
+                RuleFor(x => x.ListPlantDestinations).NotEmpty().NotNull().WithMessage("*");
 
             }
         }

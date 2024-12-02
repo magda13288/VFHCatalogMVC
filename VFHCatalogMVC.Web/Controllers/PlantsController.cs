@@ -207,7 +207,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
                 ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
 
-                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();
+                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();               
         
                 ViewBag.GrowthTypes = _plantHelperService.GetGrowthTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                   
@@ -272,7 +272,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plantSedd = _plantService.FillProperties(id, User.Identity.Name);
+                var plantSedd = _plantService.FillProperty<PlantSeedVm>(id, User.Identity.Name);
                 return PartialView("AddSeedModalPartial", plantSedd);
             }
             catch (Exception ex)
@@ -319,7 +319,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plantSeedling = _plantService.FillPropertiesSeedling(id, User.Identity.Name);
+                var plantSeedling = _plantService.FillProperty<PlantSeedlingVm>(id, User.Identity.Name);
                 return PartialView("AddSeedlingModalPartial", plantSeedling);
             }
             catch (Exception ex)

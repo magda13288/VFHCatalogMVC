@@ -10,12 +10,12 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds
     public class PlantSeedVm : PlantItemVm, IMapFrom<Domain.Model.PlantSeed>
     {
 
-        [NotMapped]
-        //[RegularExpression(@"^(http(s):\/\/.)[-a - zA - Z0 - 9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$",ErrorMessage ="Niepoprawny format adresu strony")]
-        public string Link { get; set; }
+        //[NotMapped]
+        ////[RegularExpression(@"^(http(s):\/\/.)[-a - zA - Z0 - 9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$",ErrorMessage ="Niepoprawny format adresu strony")]
+        //public string Link { get; set; }
 
-        [NotMapped]
-        public int Price { get; set; }
+        //[NotMapped]
+        //public int Price { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -130,11 +130,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>();
         }
-        public int EditPlant(Plant plant)
-        {
-            throw new NotImplementedException();
-        }
-
         public IQueryable<Plant> GetAllActivePlants()
         {
             var plants = _context.Plants.Where(p => p.isActive == true).OrderBy(p => p.Id);
@@ -223,10 +218,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return seedlings;
         }
 
-        public void AddContactDetailsEntity<T>(T entity) where T : class
+        public int AddContactDetailsEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            return _context.SaveChanges();
         }
         public int AddContactDetail(ContactDetail contact)
         {

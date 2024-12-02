@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using Xunit;
 
 namespace Application.UnitTests.Validations
