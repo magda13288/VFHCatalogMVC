@@ -72,7 +72,7 @@ namespace Application.UnitTests.Commands
             var mockUser = SetUser();
 
             mockUserManager.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
-            mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, "Admin")).ReturnsAsync(true);
+            mockUserManager.Setup(x => x.IsInRoleAsync(mockUser, UserRoles.Admin)).ReturnsAsync(true);
 
             var plantService = SetPlantService(mockUserManager);
 

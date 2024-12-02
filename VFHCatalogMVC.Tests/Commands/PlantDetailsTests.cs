@@ -31,22 +31,8 @@ namespace Application.UnitTests.Commands
         public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
         {
             //Arrange
-            var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
 
-            var mapper = configurationProvider.CreateMapper();
-
-            var mockPlantRepo = new Mock<PlantRepository>(_context);
-            var mockImageService = new Mock<IImageService>();
-            var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
-
-            var plantDetailService = new PlantDetailsService(
-
-                mockPlantRepo.Object,             
-                mapper,
-                mockImageService.Object,
-                mockUserManager.Object
-
-               );
+            var plantDetailService = SetServices();
 
             var plant = SetNewPlantParameters();
             plant.Id = 1;
@@ -59,6 +45,11 @@ namespace Application.UnitTests.Commands
 
             Assert.NotEqual( 0, plantDetailId );
         }
+
+
+
+
+
 
         //[Theory]
 
@@ -136,6 +127,60 @@ namespace Application.UnitTests.Commands
         {
             //Arrange
 
+            var plantDetailService = SetServices();
+
+            //Act
+
+            var plantDetails = plantDetailService.GetPlantDetails(1);
+
+            //Arrange
+            Assert.NotNull(plantDetails);
+          
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantColor()
+        {
+            
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitSize()
+        {
+
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitType()
+        {
+
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowthTypes()
+        {
+
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowingSeazons()
+        {
+
+        }
+
+        [Fact]
+
+        public void GetPlantDetailsById_ShouldReturnNameOfPlantDestinations()
+        {
+
+        }
+        public PlantDetailsService SetServices()
+        {
             var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
 
             var mapper = configurationProvider.CreateMapper();
@@ -144,7 +189,7 @@ namespace Application.UnitTests.Commands
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
 
-            var plantDetailService = new PlantDetailsService(
+            return new PlantDetailsService(
 
                  mockPlantRepo.Object,
                  mapper,
@@ -153,17 +198,7 @@ namespace Application.UnitTests.Commands
 
                 );
 
-            var plantDetailsMock = mapper.Map<PlantDetailsVm>(_context.PlantDetails.FirstOrDefault(x => x.PlantRef == 1));
-
-
-            //Act
-
-            var plantDetails = plantDetailService.GetPlantDetails(1);
-
-            //Arrange
-            Assert.NotNull(plantDetails);
-            //Assert.Equal(plantDetailsMock, plantDetails);
-
+            
         }
         private static NewPlantVm SetNewPlantParameters()
         {
