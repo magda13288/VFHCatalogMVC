@@ -17,7 +17,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Message
         public DateTime AddedDate { get; set; }
         public bool isAnswer { get; set; }
         [NotMapped]
-        public int? MessageIdisAnswer { get; set; }
+        public int MessageIdisAnswer { get; set; }
         [NotMapped]
         public int PlantId { get; set; }
         [NotMapped]
