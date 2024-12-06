@@ -41,10 +41,14 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<MessageAnswer> MessageAnswers { get; set; }
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
         public DbSet<PlantMessage> PlantMessages { get; set; }
-  
+        //public DbSet<FruitSizeForListFilters> FruitSizeForListFilters { get; set; }
+        //public DbSet<FruitTypeForListFilters> FruitTypeForListFilters { get; set; }
+
+        //public DbSet<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; }
+
         public Context(DbContextOptions options) : base(options)
         {
-         
+
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -195,28 +199,96 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(pt => pt.PlantTags)
                 .HasForeignKey(pt => pt.TagId);
 
+
+
             builder.Entity<PlantDestination>(entity => {
 
-                entity.HasKey(pd => new { pd.PlantDetailId, pd.DestinationId });
+                entity.HasKey(p => new { p.PlantDetailId, p.DestinationId });
 
-                entity.HasOne<PlantDetail>(pd => pd.PlantDetail)
-                .WithMany(pd => pd.PlantDestinations)
-                .HasForeignKey(pd => pd.PlantDetailId);
+                entity.HasOne<PlantDetail>(p => p.PlantDetail)
+                .WithMany(p => p.PlantDestinations)
+                .HasForeignKey(p => p.PlantDetailId);
 
-                entity.HasOne<Destination>(pd => pd.Destinations)
-                .WithMany(pd => pd.PlantDestinations)
-                .HasForeignKey(pd => pd.DestinationId);
+                entity.HasOne<Destination>(p => p.Destinations)
+                .WithMany(p => p.PlantDestinations)
+                .HasForeignKey(p => p.DestinationId);
             });
+
+            //builder.Entity<FruitSizeForListFilters>(entity =>
+            // {
+            //     entity.HasKey(p => new { p.FruitSizeId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
+
+            //     entity.HasOne<FruitSize>(p => p.FruitSize)
+            //     .WithMany(p => p.FruitSizeForFilters)
+            //     .HasForeignKey(p => p.FruitSizeId);
+
+            //     entity.HasOne<PlantType>(p => p.PlantType)
+            //     .WithMany(p => p.FruitSizeForFilters)
+            //     .HasForeignKey(p => p.PlantTypeId);
+
+            //     entity.HasOne<PlantGroup>(p => p.PlantGroup)
+            //     .WithMany(p => p.FruitSizeForFilters)
+            //     .HasForeignKey(p => p.PlantGroupId);
+
+            //     entity.HasOne<PlantSection>(p=>p.PlantSection)
+            //     .WithMany(p=>p.FruitSizeForFilters)
+            //     .HasForeignKey(p=>p.PlantSectionId);
+
+            //     });
+
+            //builder.Entity<FruitTypeForListFilters>(entity =>
+            //{
+            //    entity.HasKey(p => new { p.FruitTypeId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
+
+            //    entity.HasOne<FruitType>(p => p.FruitType)
+            //    .WithMany(p => p.FruitTypeForFilters)
+            //    .HasForeignKey(p => p.FruitTypeId);
+
+            //    entity.HasOne<PlantType>(p => p.PlantType)
+            //    .WithMany(p => p.FruitTypeForFilters)
+            //    .HasForeignKey(p => p.PlantTypeId);
+
+            //    entity.HasOne<PlantGroup>(p => p.PlantGroup)
+            //    .WithMany(p => p.FruitTypeForFilters)
+            //    .HasForeignKey(p => p.PlantGroupId);
+
+            //    entity.HasOne<PlantSection>(p => p.PlantSection)
+            //    .WithMany(p => p.FruitTypeForFilters)
+            //    .HasForeignKey(p => p.PlantSectionId);
+
+            //});
+
+            //builder.Entity<GrowthTypesForListFilters>(entity => {
+
+            //    entity.HasKey(p => new { p.GrowthTypesId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
+
+            //    entity.HasOne<GrowthType>(p => p.GrowthType)
+            //    .WithMany(p => p.GrowthTypesForListFilters)
+            //    .HasForeignKey(p => p.GrowthTypesId);
+
+            //    entity.HasOne<PlantType>(p => p.PlantType)
+            //    .WithMany(p => p.GrowthTypesForListFilters)
+            //    .HasForeignKey(p => p.PlantTypeId);
+
+            //    entity.HasOne<PlantGroup>(p => p.PlantGroup)
+            //   .WithMany(p => p.GrowthTypesForListFilters)
+            //   .HasForeignKey(p => p.PlantGroupId);
+
+            //    entity.HasOne<PlantSection>(p => p.PlantSection)
+            //    .WithMany(p => p.GrowthTypesForListFilters)
+            //    .HasForeignKey(p => p.PlantSectionId);
+            //});
+
 
             builder.Entity<PlantGrowthType>(entity => {
 
                 entity.HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
 
-                entity.HasOne(pg => pg.PlantDetail)
+                entity.HasOne<PlantDetail>(pg => pg.PlantDetail)
                   .WithMany(pg => pg.PlantGrowthTypes)
                   .HasForeignKey(pg => pg.PlantDetailId);
 
-                entity.HasOne(pg => pg.GrowthType)
+                entity.HasOne<GrowthType>(pg => pg.GrowthType)
                     .WithMany(pg => pg.PlantGrowthTypes)
                     .HasForeignKey(pg => pg.GrowthTypeId);
             });
@@ -296,8 +368,8 @@ namespace VFHCatalogMVC.Infrastructure
                 .WithMany(e => e.PlantMessages)
                 .HasForeignKey(e => e.PlantId);
 
-                entity.HasOne(e=>e.Message)
-                .WithMany(e=>e.PlantMessages)
+                entity.HasOne(e => e.Message)
+                .WithMany(e => e.PlantMessages)
                 .HasForeignKey(e => e.MessageId);
             });
         }

@@ -15,5 +15,7 @@ namespace VFHCatalogMVC.Domain.Model
         public int? PlantSectionId { get; set; }
         public virtual PlantSection PlantSection { get; set; }
         public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; }
+        //public ICollection<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; }
+
     }
 }

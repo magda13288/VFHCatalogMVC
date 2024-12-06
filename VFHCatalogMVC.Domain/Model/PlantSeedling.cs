@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantSeedling
+    public class PlantSeedling 
     {
         public int Id { get; set; }
         public int PlantId { get; set; }

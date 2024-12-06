@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
@@ -35,30 +36,18 @@ namespace VFHCatalogMVC.Application.Services
         {
             var plantIdForMessage = _messageRepo.GetPlantId(id);
             var userInfo = _userManager.FindByNameAsync(user);
-            var message = new MessageVm();
-
-            if (plantIdForMessage != 0)
+                      
+            var message = new MessageVm
             {
-                message.UserId = userInfo.Result.Id;
-                message.AddedDate = DateTime.Now;
-                message.PlantId = plantIdForMessage;
-                message.MessageIdisAnswer = id;
-                message.isSeed = index.seeds;
-                message.isSeedling = index.seedlings;
-                message.isNewPlant = index.newPlant;
-
-            }
-            else
-            {
-                message.UserId = userInfo.Result.Id;
-                message.AddedDate = DateTime.Now;
-                message.PlantId = id;
-                message.isSeed = index.seeds;
-                message.isSeedling = index.seedlings;
-                message.isNewPlant = index.newPlant;
-                message.OwnerId = ownerId;
-            }
-
+                UserId = userInfo.Result.Id,
+                AddedDate = DateTime.Now,
+                PlantId = plantIdForMessage != 0 ? plantIdForMessage : id,
+                isSeed = index.seeds,
+                isSeedling = index.seedlings,
+                isNewPlant = index.newPlant,
+                MessageIdisAnswer = plantIdForMessage != 0 ? id : (int?)null,
+                OwnerId = plantIdForMessage == 0 ? ownerId : null 
+            };
             return message;
         }
 
@@ -75,53 +64,80 @@ namespace VFHCatalogMVC.Application.Services
             return messageVm;
         }
 
+        private List<MessageVm> GetSentMessages(string userId)
+        {
+            var sentMessages = _messageRepo
+                .GetSentMessages(userId)
+                .ProjectTo<MessageVm>(_mapper.ConfigurationProvider)
+                .ToList();
+
+            foreach (var message in sentMessages)
+            {
+                var user = _userManager.FindByIdAsync(message.UserId).Result;
+                message.UserName = user?.UserName;
+                message.AccountName = user?.AccountName;
+                message.MessageReceiver = GetMessageReceiverInfo(message.Id);
+            }
+
+            return sentMessages;
+        }
+
+        private List<MessageVm> GetReceivedMessages(string userId)
+        {
+            var messages = _messageRepo
+                .GetReceivedMessages(userId)
+                .ProjectTo<MessageReceiverVm>(_mapper.ConfigurationProvider)
+                .ToList();
+
+            var receivedMessages = new List<MessageVm>();
+
+            foreach (var item in messages)
+            {
+                var messageInfo = _messageRepo.GetMessageById(item.MessageId);
+                var messageVm = _mapper.Map<MessageVm>(messageInfo);
+                var user = _userManager.FindByIdAsync(messageVm.UserId).Result;
+                messageVm.UserName = user?.UserName;
+                messageVm.AccountName = user?.AccountName;
+                receivedMessages.Add(messageVm);
+            }
+
+            return receivedMessages;
+        }
+        private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)
+        {
+            if (!pageNo.HasValue || pageNo <= 0)
+            {
+                pageNo = 1; // default first page
+            }
+
+            return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
+        }
         public MessageForListVm GetMessages(int pageSize, int? pageNo, MessageDisplay messageDisplay, string userName)
         {
-            var userInfo = _userManager.FindByNameAsync(userName);
-          
-            var messages = new List<MessageReceiverVm>();
-            var sentMessages = new List<MessageVm>();
-            var receivedMessages = new List<MessageVm>();
+            var userInfo = _userManager.FindByNameAsync(userName).Result;
+
+            if (userInfo == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+
             var messagesToShow = new List<MessageVm>();
             int messagesCount = 0;
 
             if (messageDisplay.Sent == true)
             {
-                sentMessages = _messageRepo.GetSentMessages(userInfo.Result.Id).ProjectTo<MessageVm>(_mapper.ConfigurationProvider).ToList();
+                var sentMessages = GetSentMessages(userInfo.Id);
 
-                foreach (var item in sentMessages)
-                {
-                    var user = _userManager.FindByIdAsync(item.UserId);
-                    item.UserName = user.Result.UserName;
-                    item.AccountName = user.Result.AccountName;
-
-                    var messageReceiverVm = GetMessageReceiverInfo(item.Id);
-
-                    item.MessageReceiver = messageReceiverVm;
-                }
-                messagesToShow = sentMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
                 messagesCount = sentMessages.Count;
+                messagesToShow = Paginate(sentMessages, pageSize, pageNo);
             }
             else
             {
                 if(messageDisplay.Received == true) 
                 {
-                    messages = _messageRepo.GetReceivedMessages(userInfo.Result.Id).ProjectTo<MessageReceiverVm>(_mapper.ConfigurationProvider).ToList();
-
-                    foreach (var item in messages)
-                    {
-                       var messageInfo = _messageRepo.GetMessageById(item.MessageId);
-                       var messageVm = _mapper.Map<MessageVm>(messageInfo);
-                       var user = _userManager.FindByIdAsync(messageVm.UserId);
-                       messageVm.UserName = user.Result.UserName;
-                       messageVm.AccountName = user.Result.AccountName;
-                       
-                       receivedMessages.Add(messageVm);
-                       
-                    }
-
+                    var receivedMessages = GetReceivedMessages(userInfo.Id);
                     messagesCount = receivedMessages.Count;
-                    messagesToShow = receivedMessages.Skip((pageSize * ((int)pageNo - 1))).Take(pageSize).ToList();
+                    messagesToShow = Paginate(receivedMessages, pageSize, pageNo);
                 }
             }
 
@@ -138,31 +154,46 @@ namespace VFHCatalogMVC.Application.Services
 
         }
 
+        private List<PlantMessageVm> FilterMessagesByPlantType(List<PlantMessageVm> messagesList, IndexPlantType index)
+        {
+            if (index.seeds)
+                return messagesList.Where(x => x.isSeed).ToList();
+
+            if (index.seedlings)
+                return messagesList.Where(x => x.isSeedling).ToList();
+
+            if (index.newPlant)
+                return messagesList.Where(x => x.isNewPlant).ToList();
+
+            return messagesList;
+        }
+
+        private List<MessageVm> GetDetailedMessages(List<PlantMessageVm> messagesList, int plantId)
+        {
+            var messagesDetails = new List<MessageVm>();
+
+            foreach (var item in messagesList)
+            {
+                var message = _messageRepo.GetMessageById(item.MessageId);
+                var messageVm = _mapper.Map<MessageVm>(message);
+
+                var user = _userManager.FindByIdAsync(messageVm.UserId).Result;
+                messageVm.UserName = user?.UserName;
+                messageVm.AccountName = user?.AccountName;
+                messageVm.PlantId = plantId;
+
+                messagesDetails.Add(messageVm);
+            }
+
+            return messagesDetails;
+        }
         public MessageForListVm GetMessagesForPlant(int plantId, int pageSize, int? pageNo, MessageDisplay messageDisplay, IndexPlantType index, string userName)
         {
 
             var messagesList = _messageRepo.GetMessagesForNewUserPlant(plantId).ProjectTo<PlantMessageVm>(_mapper.ConfigurationProvider).ToList();
 
-            if (index.seeds == true)
-            {
-                messagesList = messagesList.Where(x => x.isSeed == true).ToList();
-            }
-            else
-            {
-                if (index.seedlings == true)
-                {
-                    messagesList = messagesList.Where(x => x.isSeedling == true).ToList();
-                }
-                else
-                {
-                    if (index.newPlant)
-                    {
-                        messagesList = messagesList.Where(x => x.isNewPlant == true).ToList();
-                    }
-                }
-            }
+            messagesList = FilterMessagesByPlantType(messagesList, index);
 
-            var messagesDetails = new List<MessageVm>();
             var receivedMessages = new List<MessageVm>();
             var sentMessages = new List<MessageVm>();   
             var messagesToShow = new List<MessageVm>();
@@ -170,18 +201,7 @@ namespace VFHCatalogMVC.Application.Services
 
             if (messagesList != null)
             {
-                foreach (var item in messagesList)
-                {
-                    var message = _messageRepo.GetMessageById(item.MessageId);
-                    var messageVm = _mapper.Map<MessageVm>(message);
-
-                    var user = _userManager.FindByIdAsync(messageVm.UserId);
-                    messageVm.UserName = user.Result.UserName;
-                    messageVm.AccountName = user.Result.AccountName;
-                    messageVm.PlantId= plantId;
-
-                    messagesDetails.Add(messageVm);
-                }
+                var messagesDetails = GetDetailedMessages(messagesList, plantId);
 
                 var userInfo = _userManager.FindByNameAsync(userName);
 

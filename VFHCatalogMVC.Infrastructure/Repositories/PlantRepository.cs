@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -189,7 +190,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public int AddPlantSeedling(PlantSeedling seedling)
         {
             _context.PlantSeedlings.Add(seedling);
-            var i = _context.SaveChanges();
+            _context.SaveChanges();
             return seedling.Id;
         }
 
