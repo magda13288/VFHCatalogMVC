@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
@@ -16,7 +17,7 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {
-    public class PlantItemProcessor<TVm> : IPlantItemProcessor<TVm> where TVm : VFHCatalogMVC.Application.ViewModels.Plant.PlantItemVm, new()
+    public class PlantItemProcessor<TVm> : IPlantItemProcessor<TVm> where TVm : PlantItemVm, new()
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserPlantService _userPlantService;
@@ -48,7 +49,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
             else
             {
-                var filteredUserList = _userPlantService.FilterUsers(countryId, regionId, cityId, items.Cast<VFHCatalogMVC.Application.ViewModels.Plant.PlantItemVm>().ToList());
+                var filteredUserList = _userPlantService.FilterUsers(countryId, regionId, cityId, items.Cast<PlantItemVm>().ToList());
 
                 var list = FilterPlantItems(items, filteredUserList);
 
@@ -59,7 +60,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return result;
         }
         private List<TVm> FilterPlantItems<TVm>(List<TVm> items, List<string> filteredUsersList)
-           where TVm : VFHCatalogMVC.Application.ViewModels.Plant.PlantItemVm
+           where TVm : PlantItemVm
         {
             // Filtruj elementy, których UserId znajduje się w liście filteredUsersList
             var filteredItems = items

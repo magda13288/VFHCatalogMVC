@@ -7,6 +7,7 @@ using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Message;
+using VFHCatalogMVC.Application.Constants;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -16,7 +17,10 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly ILogger<MessageController> _logger;
         private readonly IPlantHelperService _helperService;
 
-        public MessageController(IMessageService messageService, ILogger<MessageController> logger, IPlantHelperService helperService)
+        public MessageController(
+            IMessageService messageService,
+            ILogger<MessageController> logger, 
+            IPlantHelperService helperService)
         {
             _messageService = messageService;
             _logger = logger;
@@ -24,9 +28,15 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
         //id -> PlantSeedId or PlantSeedlindId
-        public IActionResult SendPlantMessage(/*int plantId, */int id, bool seeds, bool seedlings, bool newPlant,string ownerId)
+        public IActionResult SendPlantMessage(
+            int id,
+            bool seeds,
+            bool seedlings, 
+            bool newPlant,
+            string ownerId
+            )
         {
             var indexPlant = _helperService.GetIndexPlantType(seeds, seedlings, newPlant);
             var message = _messageService.FillMessageProperties(/*plantId,*/id, User.Identity.Name, indexPlant, ownerId);
@@ -35,7 +45,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
 
         public IActionResult SendPlantMessage(MessageVm message)
         {
@@ -63,8 +73,16 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet,HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult IndexPlantMessages(int id, int pageSize, int? pageNo, int type, bool seeds, bool seedlings, bool newPlant)
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
+        public IActionResult IndexPlantMessages(
+            int id,
+            int pageSize,
+            int? pageNo,
+            int type,
+            bool seeds,
+            bool seedlings,
+            bool newPlant
+            )
         {
 
             if (!pageNo.HasValue)
@@ -85,8 +103,13 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet,HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
-        public IActionResult IndexMessages(int pageSize, int? pageNo, int type, /*IndexPlantType index,*/ string userName)
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
+        public IActionResult IndexMessages(
+            int pageSize, 
+            int? pageNo, 
+            int type, 
+            string userName
+            )
         {
             if (!pageNo.HasValue)
             {

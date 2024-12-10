@@ -15,8 +15,8 @@ using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
-using MathNet.Numerics.Statistics.Mcmc;
-using NPOI.OpenXmlFormats.Dml;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+
 
 
 
@@ -106,7 +106,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             plant.isNew = !isAdmin;
 
         }
-        public ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId)
+        public ListPlantForListVm GetAllActivePlantsForList(
+            int pageSize, 
+            int? pageNo, 
+            string searchString, 
+            int? typeId,
+            int? groupId,
+            int? sectionId)
         {
 
             var plants = ActivePlantsFilters(searchString, typeId, groupId, sectionId);
@@ -173,7 +179,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         }
 
-        public PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName)
+        public PlantSeedsForListVm GetAllPlantSeeds(
+            int id,
+            int countryId,
+            int regionId,
+            int cityId,
+            int pageSize, 
+            int? pageNo, 
+            bool isCompany, 
+            string userName)
         {
             var seeds = _plantRepo.GetPlantSeeds(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
@@ -183,7 +197,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, paginateList, seeds.Count, pageSize, pageNo, isCompany, userName);
         }
 
-        public PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
+        public PlantSeedlingsForListVm GetAllPlantSeedlings(
+            int id,
+            int countryId,
+            int regionId, 
+            int cityId, 
+            int pageSize,
+            int? pageNo,
+            bool isCompany)
         {
             var seedlings = _plantRepo.GetPlantSeedlings(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
@@ -193,7 +214,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, paginateList, seedlings.Count, pageSize, pageNo, isCompany, null);
         }
         private TListVm CreatePlantListVm<TVm, TListVm>(
-            int id, List<TVm> items, int totalCount, int pageSize, int? pageNo, bool isCompany, string userName)
+            int id, List<TVm> items, 
+            int totalCount, 
+            int pageSize,
+            int? pageNo,
+            bool isCompany,
+            string userName)
             where TListVm : VFHCatalogMVC.Application.ViewModels.Plant.PlantListVm<TVm>, new()
         {
             return new TListVm

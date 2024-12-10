@@ -5,7 +5,7 @@ using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.User;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant
+namespace VFHCatalogMVC.Application.ViewModels.Plant.Common
 {
     public class PlantItemVm
     {
@@ -21,6 +21,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public DateTime DateAdded { get; set; }
         [NotMapped]
         public List<PlantOpinionsVm> PlantOpinions { get; set; }
+
+        [NotMapped]
+        public PlantForListVm PlantForList { get; set; }
         [NotMapped]
         public ContactDetailVm ContactDetail { get; set; }
 

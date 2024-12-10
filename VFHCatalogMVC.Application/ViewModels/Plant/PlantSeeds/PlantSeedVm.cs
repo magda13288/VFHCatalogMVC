@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.Services.PlantServices;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds
 {

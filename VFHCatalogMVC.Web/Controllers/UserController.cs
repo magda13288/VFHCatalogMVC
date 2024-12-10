@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
@@ -26,7 +27,14 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly IPlantHelperService _plantHelperService;
         private readonly IUserContactDataService _userHelperService;
 
-        public UserController(IUserPlantService userService, ILogger<UserController> logger, IPlantService plantService, IMessageService messageService, IPlantHelperService plantHelperService, IUserContactDataService userHelperService)
+        public UserController(
+            IUserPlantService userService, 
+            ILogger<UserController> logger, 
+            IPlantService plantService, 
+            IMessageService messageService, 
+            IPlantHelperService plantHelperService,
+            IUserContactDataService userHelperService
+            )
         {
             _userService = userService;
             _logger = logger;
@@ -37,8 +45,14 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet, HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult IndexSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
+        public IActionResult IndexSeeds(
+            int pageSize,
+            int? pageNo,
+            string searchString, 
+            int typeId, 
+            int groupId, 
+            int? sectionId)
         {
             try
             {
@@ -79,8 +93,14 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet, HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult IndexSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
+        public IActionResult IndexSeedlings(
+            int pageSize,
+            int? pageNo, 
+            string searchString, 
+            int typeId, 
+            int groupId,
+            int? sectionId)
         {
             try
             {
@@ -120,8 +140,15 @@ namespace VFHCatalogMVC.Web.Controllers
 
 
         [HttpGet, HttpPost]
-        [Authorize(Roles = "PrivateUser,Company,Admin")]
-        public IActionResult IndexNewPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll)
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
+        public IActionResult IndexNewPlants(
+            int pageSize, 
+            int? pageNo, 
+            string searchString, 
+            int typeId, 
+            int groupId,
+            int? sectionId, 
+            bool viewAll)
         {
             try
             {
@@ -161,7 +188,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult EditSeed(int id)
         {
             try
@@ -177,7 +204,7 @@ namespace VFHCatalogMVC.Web.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult EditSeed(UserSeedVm model)
         {
             try
@@ -205,7 +232,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult DeleteSeed(int id)
         {
             try
@@ -221,7 +248,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult EditSeedling(int id)
         {
             try
@@ -238,7 +265,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult EditSeedling(UserSeedlingVm model)
         {
             try
@@ -266,7 +293,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult DeleteSeedling(int id)
         {
             try

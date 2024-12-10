@@ -15,7 +15,9 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.Constants;
 using System.Web.WebPages;
+using VFHCatalogMVC.Application.Services.UserServices;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -28,13 +30,21 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly ILogger<PlantsController> _logger;
         private readonly IPlantHelperService _plantHelperService;
 
-        public PlantsController(IPlantService plantService, ILogger<PlantsController> logger, IUserContactDataService userContactDataService, IPlantHelperService plantHelperService, IPlantDetailsService plantDetailsSerrvice)
+
+        public PlantsController(
+            IPlantService plantService, 
+            ILogger<PlantsController> logger, 
+            IUserContactDataService userContactDataService, 
+            IPlantHelperService plantHelperService, 
+            IPlantDetailsService plantDetailsSerrvice
+       )
         {
             _plantService = plantService;
             _logger = logger;
             _plantDetailsSerrvice = plantDetailsSerrvice;
             _plantHelperService = plantHelperService;
             _userContactDataService = userContactDataService;
+   
         }
 
 
@@ -42,7 +52,13 @@ namespace VFHCatalogMVC.Web.Controllers
         [AllowAnonymous]
         //pageSize okresla ile rekordow bedzie wyswietlanych na stronie 
         //pageNumber okresla na ktorej stronie jestesm
-        public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
+        public IActionResult Index(
+            int pageSize,
+            int? pageNo,
+            string searchString, 
+            int typeId,
+            int groupId,
+            int? sectionId)
         {
             try
             {        
@@ -73,7 +89,15 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet,HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string sortOrder)
+        public IActionResult IndexSeeds(
+            int id,
+            int countryId,
+            int regionId,
+            int cityId,
+            int pageSize,
+            int? pageNo,
+            bool isCompany,
+            string sortOrder)
         {
             try
             {
@@ -105,7 +129,14 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet, HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo,bool isCompany)
+        public IActionResult IndexSeedlings(
+            int id, 
+            int countryId,
+            int regionId,
+            int cityId, 
+            int pageSize,
+            int? pageNo,
+            bool isCompany)
         {
             try
             {
@@ -133,7 +164,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         //wyświetli pusty formularz gotowy do wypełnienia
         [HttpGet]
-        [Authorize(Roles = "Admin, PrivateUser, Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
         public IActionResult AddPlant()
         {
             ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
@@ -198,7 +229,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
         public IActionResult Edit(int id)
         {
             try
@@ -227,7 +258,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(NewPlantVm plant)
         {
@@ -251,7 +282,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         //Add referesing table after delete plant
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.ADMIN)]
         public ActionResult Delete(int id)
         {
             try
@@ -267,7 +298,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult AddSeed(int id)
         {
             try
@@ -284,7 +315,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
     
         public IActionResult AddSeed(PlantSeedVm plantSeed)
         {
@@ -314,7 +345,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult AddSeedling(int id)
         {
             try
@@ -330,7 +361,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         public IActionResult AddSeedling(PlantSeedlingVm plantSeedling)
         {
             try
@@ -378,7 +409,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         //Add refereshing page after save opinion on modal popup
         public IActionResult AddOpinion(PlantOpinionsVm plantOpinion)
         {
@@ -411,7 +442,7 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = UserRoles.ADMIN)]
 
         public IActionResult ActivatePlant(int id)
         {

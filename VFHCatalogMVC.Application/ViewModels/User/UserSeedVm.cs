@@ -10,25 +10,13 @@ using AutoMapper;
 using FluentValidation;
 using System.Text.RegularExpressions;
 using static System.Net.WebRequestMethods;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 
 namespace VFHCatalogMVC.Application.ViewModels.User
 {
-    public class UserSeedVm : IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeed>
+    public class UserSeedVm : PlantItemVm, IMapFrom<VFHCatalogMVC.Domain.Model.PlantSeed>
     {
-        public int Id { get; set; }
-        public int PlantId { get; set; }
-        //[RegularExpression("[0-9]", ErrorMessage = "Dopuszczalne tylko liczby")]
-        public int Count { get; set; }
-        public string Description { get; set; }
-        public DateTime DateAdded { get; set; }
-        [NotMapped]
-        public string Date { get; set; }
-        public string UserId { get; set; }
-
-        [NotMapped]
-        public PlantForListVm PlantForList { get; set; }
-        [NotMapped]
-        public ContactDetailVm ContactDetail { get; set; }
+        
         public void Mapping(Profile profile)
         {
             profile.CreateMap<VFHCatalogMVC.Domain.Model.PlantSeed, UserSeedVm>().ReverseMap();

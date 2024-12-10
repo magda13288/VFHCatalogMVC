@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 //using System.Web.Mvc;
 using VFHCatalogMVC.Application.HelperClasses;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
 

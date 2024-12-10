@@ -17,6 +17,7 @@ using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {

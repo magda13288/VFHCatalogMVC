@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
+namespace VFHCatalogMVC.Application.ViewModels.Plant.Common
 {
     public class SelectListItemVm
     {

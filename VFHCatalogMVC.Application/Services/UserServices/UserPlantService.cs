@@ -2,19 +2,24 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NPOI.OpenXmlFormats.Dml;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
+
 
 namespace VFHCatalogMVC.Application.Services.UserServices
 {
@@ -25,7 +30,12 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserPlantService(IUserRepository userRepo, IMapper mapper, UserManager<ApplicationUser> userManager, IPlantRepository plantRepository)
+        public UserPlantService(
+            IUserRepository userRepo,
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager,
+            IPlantRepository plantRepository
+            )
         {
             _userRepo = userRepo;
             _mapper = mapper;
@@ -33,172 +43,80 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             _plantRepo = plantRepository;
         }
 
-        public UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
+
+        public UserSeedsForListVm GetUserSeeds(
+            int pageSize,
+            int? pageNo,
+            string searchString,
+            int typeId,
+            int groupId,
+            int? sectionId,
+            string userName)
         {
-            var user = _userManager.FindByNameAsync(userName);
 
-            var seeds = _userRepo.GetUserPlantSeeds(user.Result.Id).ProjectTo<UserSeedVm>(_mapper.ConfigurationProvider).ToList();
-            var seedsToList = new List<UserSeedVm>();
-            var seedsToShow = new List<UserSeedVm>();
+            return GetUserPlantItems<UserSeedVm, UserSeedsForListVm, PlantSeed>(
+               pageSize,
+               pageNo,
+               searchString,
+               typeId,
+               groupId,
+               sectionId,
+               userName,
+               _userRepo.GetUserPlantSeeds,
+               _userRepo.GetContactDetailForSeed
+           );
+        }
+        public UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
+        {
 
-            var userRole = _userManager.IsInRoleAsync(user.Result, "Company");
-            if (userRole.Result is true)
-            {
-                foreach (var seed in seeds)
-                {
-                    seed.Date = seed.DateAdded.ToShortDateString();
-
-                    var contactId = _userRepo.GetContactDetailForSeed(seed.Id);
-                    if (contactId != null)
-                    {
-                        var contactDetails = _userRepo.GetContactDetail(contactId);
-                        var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                        seed.ContactDetail = new ContactDetailVm();
-                        seed.ContactDetail = contactDetailsVm;
-                    }
-                    else
-                    {
-                        seed.ContactDetail = new ContactDetailVm();
-                        seed.ContactDetail.ContactDetailInformation = "";
-                    }
-                }
-            }
-
-            if (typeId == 0 && searchString == "")
-            {
-                foreach (var item in seeds)
-                {
-                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                    seedsToList.Add(GetSeedsList(plant, item));
-                }
-                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-            }
-            else
-            {
-                if (searchString == "")
-                {
-                    if (typeId != 0 && typeId != null)
-                    {
-                        if (groupId != 0 && groupId != null)
-                        {
-                            //projectTo wykorzystywane przy kolekcjach IQueryable
-                            if (sectionId != 0 && sectionId != null)
-                            {
-                                foreach (var item in seeds)
-                                {
-                                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
-                                    {
-                                        seedsToList.Add(GetSeedsList(plant, item));
-                                    }
-                                }
-                                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                            }
-                            else
-                            {
-                                foreach (var item in seeds)
-                                {
-                                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
-                                    {
-
-                                        seedsToList.Add(GetSeedsList(plant, item));
-                                    }
-                                }
-                                seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                            }
-                        }
-                        else
-                        {
-                            foreach (var item in seeds)
-                            {
-                                var plant = _plantRepo.GetPlantById(item.PlantId);
-                                if (plant.PlantTypeId == typeId)
-                                {
-
-                                    seedsToList.Add(GetSeedsList(plant, item));
-                                }
-                            }
-                            seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var item in seeds)
-                    {
-                        var plant = _plantRepo.GetPlantById(item.PlantId);
-                        if (plant.FullName.StartsWith(searchString))
-                        {
-                            seedsToList.Add(GetSeedsList(plant, item));
-                        }
-                    }
-                    seedsToShow = seedsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                }
-            }
-
-            var plantSeedsList = new UserSeedsForListVm()
-            {
-                PageSize = pageSize,
-                CurrentPage = pageNo,
-                UserSeeds = seedsToShow,
-                SearchString = searchString,
-                Count = seeds.Count,
-            };
-            return plantSeedsList;
+            return GetUserPlantItems<UserSeedlingVm, UserSeedlingsForListVm, PlantSeedling>(
+               pageSize,
+               pageNo,
+               searchString,
+               typeId,
+               groupId,
+               sectionId,
+               userName,
+               _userRepo.GetUserPlantSeedlings,
+               _userRepo.GetContactDetailForSeed
+           );
         }
 
-        public UserSeedVm GetSeedsList(Plant plant, UserSeedVm item)
-        {
-            item.PlantForList = new PlantForListVm();
-            item.PlantForList.FullName = plant.FullName;
-            item.PlantForList.Photo = plant.Photo;
-            item.Date = item.DateAdded.ToShortDateString();
-            return item;
-        }
-        public UserSeedlingVm GetSeedlingsList(Plant plant, UserSeedlingVm item)
-        {
-            item.PlantForList = new PlantForListVm();
-            item.PlantForList.FullName = plant.FullName;
-            item.PlantForList.Photo = plant.Photo;
-            item.Date = item.DateAdded.ToShortDateString();
-            return item;
-        }       
         public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantItemVm> items)
         {
             var usersList = new List<string>();
             var address = new Address();
-           
-                foreach (var item in items)
+
+            foreach (var item in items)
+            {
+                address = _userRepo.GetAddressInfo(item.UserId);
+
+                if (countryId != 0)
                 {
-                    address = _userRepo.GetAddressInfo(item.UserId);
-
-                    if (countryId != 0)
+                    if (regionId == 0 && cityId == 0)
                     {
-                        if (regionId == 0 && cityId == 0)
+                        if (address.CountryId == countryId)
                         {
-                            if (address.CountryId == countryId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
+                            usersList.Add(item.UserId);
                         }
-                        if (regionId != 0 && cityId == 0)
-                        {
-                            if (address.CountryId == countryId && address.RegionId == regionId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
-                        }
-                        if (regionId != 0 && cityId != 0)
-                        {
-                            if (address.CountryId == countryId && address.RegionId == regionId && address.CityId == cityId)
-                            {
-                                usersList.Add(item.UserId);
-                            }
-                        }
-
                     }
+                    if (regionId != 0 && cityId == 0)
+                    {
+                        if (address.CountryId == countryId && address.RegionId == regionId)
+                        {
+                            usersList.Add(item.UserId);
+                        }
+                    }
+                    if (regionId != 0 && cityId != 0)
+                    {
+                        if (address.CountryId == countryId && address.RegionId == regionId && address.CityId == cityId)
+                        {
+                            usersList.Add(item.UserId);
+                        }
+                    }
+
                 }
+            }
 
             return usersList;
         }
@@ -208,7 +126,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var userSedd = _mapper.Map<UserSeedVm>(plantSeed);
 
             var user = _userManager.FindByIdAsync(userSedd.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, "Company");
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
             if (userRole.Result is true)
             {
                 var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeed.Id);
@@ -267,118 +185,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             _userRepo.DeleteUserSeed(seed);
         }
 
-        public UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
-        {
-            var user = _userManager.FindByNameAsync(userName);
-            var seedlings = _userRepo.GetUserPlantSeedlings(user.Result.Id).ProjectTo<UserSeedlingVm>(_mapper.ConfigurationProvider).ToList();
-            var seedlingsToList = new List<UserSeedlingVm>();
-            var seedlingsToShow = new List<UserSeedlingVm>();
 
-            var userRole = _userManager.IsInRoleAsync(user.Result, "Company");
-            if (userRole.Result is true)
-            {
-                foreach (var seedling in seedlings)
-                {
-                    seedling.Date = seedling.DateAdded.ToShortDateString();
-
-                    var contactId = _userRepo.GetContactDetailForSeedling(seedling.Id);
-                    if (contactId != null)
-                    {
-                        var contactDetails = _userRepo.GetContactDetail(contactId);
-                        var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                        seedling.ContactDetail = new ContactDetailVm();
-                        seedling.ContactDetail = contactDetailsVm;
-                    }
-                    else
-                    {
-                        seedling.ContactDetail = new ContactDetailVm();
-                        seedling.ContactDetail.ContactDetailInformation = "";
-                    }
-
-                }
-            }
-
-            if (typeId == 0 && searchString == "")
-            {
-                foreach (var item in seedlings)
-                {
-                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                    seedlingsToList.Add(GetSeedlingsList(plant, item));
-                }
-                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-            }
-            else
-            {
-                if (searchString == "")
-                {
-                    if (typeId != 0 && typeId != null)
-                    {
-                        if (groupId != 0 && groupId != null)
-                        {
-                            //projectTo wykorzystywane przy kolekcjach IQueryable
-                            if (sectionId != 0 && sectionId != null)
-                            {
-                                foreach (var item in seedlings)
-                                {
-                                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId && plant.PlantSectionId == sectionId)
-                                    {
-                                        seedlingsToList.Add(GetSeedlingsList(plant, item));
-                                    }
-                                }
-                                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                            }
-                            else
-                            {
-                                foreach (var item in seedlings)
-                                {
-                                    var plant = _plantRepo.GetPlantById(item.PlantId);
-                                    if (plant.PlantTypeId == typeId && plant.PlantGroupId == groupId)
-                                    {
-                                        seedlingsToList.Add(GetSeedlingsList(plant, item));
-                                    }
-                                }
-                                seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                            }
-                        }
-                        else
-                        {
-                            foreach (var item in seedlings)
-                            {
-                                var plant = _plantRepo.GetPlantById(item.PlantId);
-                                if (plant.PlantTypeId == typeId)
-                                {
-                                    seedlingsToList.Add(GetSeedlingsList(plant, item));
-                                }
-                            }
-                            seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var item in seedlings)
-                    {
-                        var plant = _plantRepo.GetPlantById(item.PlantId);
-                        if (plant.FullName.StartsWith(searchString))
-                        {
-                            seedlingsToList.Add(GetSeedlingsList(plant, item));
-                        }
-                    }
-                    seedlingsToShow = seedlingsToList.Skip(pageSize * ((int)pageNo - 1)).Take(pageSize).ToList();
-                }
-            }
-
-            var plantSeedlingsList = new UserSeedlingsForListVm()
-            {
-                PageSize = pageSize,
-                CurrentPage = pageNo,
-                UserSeedlings = seedlingsToShow,
-                SearchString = searchString,
-                Count = seedlings.Count,
-            };
-            return plantSeedlingsList;
-        }
         public UserSeedlingVm GetUserSeedlingToEdit(int id)
         {
 
@@ -386,7 +193,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
 
             var user = _userManager.FindByIdAsync(userSeedling.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, "Company");
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
             if (userRole.Result is true)
             {
                 var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeedling.Id);
@@ -473,7 +280,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var userRole = _userManager.GetRolesAsync(user.Result);
             var plants = new List<NewUserPlantVm>();
 
-            if (userRole.Result.Count > 0 && userRole.Result.Contains("Admin") == true)
+            if (userRole.Result.Count > 0 && userRole.Result.Contains(UserRoles.ADMIN) == true)
             {
                 plants = _userRepo.GetAllNewUserPlants().ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
 
@@ -559,6 +366,138 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             };
 
             return newUserPlantsForList;
+        }
+    }
+
+     private TListVm GetUserPlantItems<TVm, TListVm, T>(
+            int pageSize,
+            int? pageNo,
+            string searchString,
+            int typeId,
+            int groupId,
+            int? sectionId,
+            string userName,
+            Func<string, IQueryable<T>> getItems,
+            Func<int, int?> getContactDetailId
+            )
+            where TVm : PlantItemVm
+            where TListVm : UserPlantItemListVm<TVm>, new()
+
+        {
+            var user = _userManager.FindByNameAsync(userName);
+            var items = getItems(user.Result.Id).ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
+
+            if (items == null) return null;
+
+            if (userRole.Result is true)
+            {
+                PopulateItemProperties(items);
+            }
+
+            var filteredItems = FilterItems(items, searchString, typeId, groupId, sectionId);
+            var paginatedItems = Paginate(filteredItems, pageSize, pageNo);
+
+            return new TListVm
+            {
+                PageSize = pageSize,
+                CurrentPage = pageNo,
+                PlantItems = paginatedItems,
+                SearchString = searchString,
+                Count = items.Count
+            };
+
+        }
+
+        private List<TVm> FilterItems<TVm>(List<TVm> items, string searchString, int typeId, int groupId, int? sectionId)
+             where TVm : PlantItemVm
+        {
+
+            return items
+             .Select(item =>
+             {
+                 var plant = _plantRepo.GetPlantById(item.PlantId);
+                 return new { Plant = plant, Item = item }; // create new temporary struct which contain Plant and Item
+             })
+             .Where(x => MatchesCriteria(x.Plant, searchString, typeId, groupId, sectionId))
+             .Select(x => GetEntityList<TVm>(x.Plant, x.Item))
+             .ToList();
+
+
+        }
+        private bool MatchesCriteria(Plant plant, string searchString, int typeId, int groupId, int? sectionId)
+        {
+            //Separation of Concerns (SoC)
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                return plant.FullName.StartsWith(searchString);
+            }
+
+            if (typeId != 0 && plant.PlantTypeId != typeId)
+            {
+                return false;
+            }
+
+            if (groupId != 0 && plant.PlantGroupId != groupId)
+            {
+                return false;
+            }
+
+            if (sectionId.HasValue && sectionId != 0 && plant.PlantSectionId != sectionId)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        private List<TVm> PopulateItemProperties<TVm>(List<TVm> entity) where TVm : PlantItemVm
+        {
+
+            foreach (var item in entity)
+            {
+                item.Date = item.DateAdded.ToShortDateString();
+
+                var contactId = _userRepo.GetContactDetailForSeed(item.Id);
+
+                if (contactId != null)
+                {
+                    var contactDetails = _userRepo.GetContactDetail(contactId);
+                    var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                    item.ContactDetail = new ContactDetailVm();
+                    item.ContactDetail = contactDetailsVm;
+                }
+                else
+                {
+                    item.ContactDetail = new ContactDetailVm();
+                    item.ContactDetail.ContactDetailInformation = string.Empty;
+                }
+            }
+
+            return entity;
+        }
+
+        private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)
+        {
+            if (!pageNo.HasValue || pageNo <= 0)
+            {
+                pageNo = 1; // default first page
+            }
+
+            return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
+        }
+        private T GetEntityList<T>(Plant plant, T item)
+           where T : PlantItemVm
+        {
+            item.PlantForList = new PlantForListVm()
+            {
+                FullName = plant.FullName,
+                Photo = plant.Photo,
+            };
+
+            item.Date = item.DateAdded.ToShortDateString();
+
+            return item;
+
         }
     }
 }
