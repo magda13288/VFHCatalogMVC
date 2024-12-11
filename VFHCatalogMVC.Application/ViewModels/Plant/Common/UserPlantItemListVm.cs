@@ -5,9 +5,9 @@ using VFHCatalogMVC.Application.ViewModels.User;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.Common
 {
-    public class UserPlantItemListVm<T> 
+    public class UserPlantItemListVm<TVm> where TVm : class
     {
-        public List<T> PlantItems { get; set; }
+        public List<TVm> PlantItems { get; set; }
         public int? CurrentPage { get; set; }
         public int PageSize { get; set; }
         public int Count { get; set; }

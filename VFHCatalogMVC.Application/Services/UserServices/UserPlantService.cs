@@ -62,7 +62,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                groupId,
                sectionId,
                userName,
-               _userRepo.GetUserPlantSeeds,
+               _userRepo.GetUserPlantEntity<PlantSeed>,
                _userRepo.GetContactDetailForSeed
            );
         }
@@ -77,135 +77,42 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                groupId,
                sectionId,
                userName,
-               _userRepo.GetUserPlantSeedlings,
+               _userRepo.GetUserPlantEntity<PlantSeedling>,
                _userRepo.GetContactDetailForSeed
            );
         }
 
         public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantItemVm> items)
         {
+            if (countryId == 0)
+                return new List<string>(); 
+
             var usersList = new List<string>();
-            var address = new Address();
 
             foreach (var item in items)
             {
-                address = _userRepo.GetAddressInfo(item.UserId);
+                var address = _userRepo.GetAddressInfo(item.UserId);
 
-                if (countryId != 0)
-                {
-                    if (regionId == 0 && cityId == 0)
-                    {
-                        if (address.CountryId == countryId)
-                        {
-                            usersList.Add(item.UserId);
-                        }
-                    }
-                    if (regionId != 0 && cityId == 0)
-                    {
-                        if (address.CountryId == countryId && address.RegionId == regionId)
-                        {
-                            usersList.Add(item.UserId);
-                        }
-                    }
-                    if (regionId != 0 && cityId != 0)
-                    {
-                        if (address.CountryId == countryId && address.RegionId == regionId && address.CityId == cityId)
-                        {
-                            usersList.Add(item.UserId);
-                        }
-                    }
+                if (address.CountryId != countryId)
+                    continue; // If countryId isn't match,skip
 
-                }
+                if (regionId != 0 && address.RegionId != regionId)
+                    continue; 
+
+                if (cityId != 0 && address.CityId != cityId)
+                    continue; 
+
+                usersList.Add(item.UserId);
             }
 
             return usersList;
         }
-        public UserSeedVm GetUserSeedToEdit(int id)
+
+        public void UpdateEntity<TVm>(TVm entity)
         {
-            var plantSeed = _userRepo.GetUserSeed(id);
-            var userSedd = _mapper.Map<UserSeedVm>(plantSeed);
-
-            var user = _userManager.FindByIdAsync(userSedd.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
-            if (userRole.Result is true)
-            {
-                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeed.Id);
-                if (seedContactDetails != 0)
-                {
-                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
-                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                    userSedd.ContactDetail = contacDetailsVm;
-
-                }
-            }
-
-            return userSedd;
-
-        }
-        public void UpdateSeed(UserSeedVm seed)
-        {
-            if (seed != null)
-            {
-                var seedToEdit = _mapper.Map<PlantSeed>(seed);
-                _userRepo.EditUserSeed(seedToEdit);
-
-                if (seed.ContactDetail != null)
-                {
-                    var seedDetails = _userRepo.GetContactDetailForSeed(seed.Id);
-                    if (seedDetails != null)
-                    {
-                        var contact = _userRepo.GetContactDetail(seedDetails);
-                        seed.ContactDetail.Id = contact.Id;
-                        seed.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
-                        seed.ContactDetail.UserId = contact.UserId;
-                        var contactDetails = _mapper.Map<ContactDetail>(seed.ContactDetail);
-                        _userRepo.EditContactDetails(contactDetails);
-                    }
-                    else
-                    {
-                        var contact = new ContactDetailVm();
-                        contact.ContactDetailTypeID = 1;
-                        contact.UserId = seed.UserId;
-                        contact.ContactDetailInformation = seed.ContactDetail.ContactDetailInformation;
-                        var contactDetails = _mapper.Map<ContactDetail>(contact);
-                        var id = _plantRepo.AddContactDetail(contactDetails);
-
-                        var contactDetailsForSeedVm = new ContactDetailForSeedVm() { ContactDetailId = id, PlantSeedId = seed.Id };
-                        var contactDetailsForSeed = _mapper.Map<ContactDetailForSeed>(contactDetailsForSeedVm);
-                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeed>(contactDetailsForSeed);
-
-
-                    }
-                }
-            }
-        }
-        public void DeleteSeed(int id)
-        {
-            var seed = _userRepo.GetUserSeed(id);
-            _userRepo.DeleteUserSeed(seed);
+            
         }
 
-
-        public UserSeedlingVm GetUserSeedlingToEdit(int id)
-        {
-
-            var plantSeedling = _userRepo.GetUserSeedling(id);
-            var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
-
-            var user = _userManager.FindByIdAsync(userSeedling.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
-            if (userRole.Result is true)
-            {
-                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeedling.Id);
-                if (seedContactDetails != 0)
-                {
-                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
-                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                    userSeedling.ContactDetail = contacDetailsVm;
-                }
-            }
-            return userSeedling;
-        }
         public void UpdateSeedling(UserSeedlingVm seedling)
         {
             if (seedling != null)
@@ -241,9 +148,97 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                 }
             }
         }
+        public void UpdateSeed(UserSeedVm seed)
+        {
+            if (seed != null)
+            {
+                var seedToEdit = _mapper.Map<PlantSeed>(seed);
+                _userRepo.EditUserSeed(seedToEdit);
+
+                if (seed.ContactDetail != null)
+                {
+                    var seedDetails = _userRepo.GetContactDetailForSeed(seed.Id);
+
+                    if (seedDetails != null)
+                    {
+                        var contact = _userRepo.GetContactDetail(seedDetails);
+                        seed.ContactDetail.Id = contact.Id;
+                        seed.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
+                        seed.ContactDetail.UserId = contact.UserId;
+                        var contactDetails = _mapper.Map<ContactDetail>(seed.ContactDetail);
+                        _userRepo.EditContactDetails(contactDetails);
+                    }
+                    else
+                    {
+                        var contact = new ContactDetailVm();
+                        contact.ContactDetailTypeID = 1;
+                        contact.UserId = seed.UserId;
+                        contact.ContactDetailInformation = seed.ContactDetail.ContactDetailInformation;
+                        var contactDetails = _mapper.Map<ContactDetail>(contact);
+                        var id = _plantRepo.AddContactDetail(contactDetails);
+
+                        var contactDetailsForSeedVm = new ContactDetailForSeedVm() { ContactDetailId = id, PlantSeedId = seed.Id };
+                        var contactDetailsForSeed = _mapper.Map<ContactDetailForSeed>(contactDetailsForSeedVm);
+                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeed>(contactDetailsForSeed);
+
+
+                    }
+                }
+            }
+        }
+        public void DeleteSeed(int id)
+        {
+            var seed = _userRepo.GetUserEntity<PlantSeed>(id);
+            _userRepo.DeleteUserSeed(seed);
+        }
+
+        public UserSeedVm GetUserSeedToEdit(int id)
+        {
+            var plantSeed = _userRepo.GetUserEntity<PlantSeed>(id);
+            var userSedd = _mapper.Map<UserSeedVm>(plantSeed);
+
+            var user = _userManager.FindByIdAsync(userSedd.UserId);
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
+
+            if (userRole.Result is true)
+            {
+                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeed.Id);
+                if (seedContactDetails != 0)
+                {
+                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
+                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                    userSedd.ContactDetail = contacDetailsVm;
+
+                }
+            }
+
+            return userSedd;
+
+        }
+        public UserSeedlingVm GetUserSeedlingToEdit(int id)
+        {
+
+            var plantSeedling = _userRepo.GetUserEntity<PlantSeedling>(id);
+            var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
+
+            var user = _userManager.FindByIdAsync(userSeedling.UserId);
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
+            if (userRole.Result is true)
+            {
+                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeedling.Id);
+                if (seedContactDetails != 0)
+                {
+                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
+                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                    userSeedling.ContactDetail = contacDetailsVm;
+                }
+            }
+            return userSeedling;
+        }
+        
         public void DeleteSeedling(int id)
         {
-            var seedling = _userRepo.GetUserSeedling(id);
+            var seedling = _userRepo.GetUserEntity<PlantSeedling>(id);
             _userRepo.DeleteUserSeedling(seedling);
         }
 
@@ -292,7 +287,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
             else
             {
-                plants = _userRepo.GetNewUserPlants(user.Result.Id).ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
+                plants = _userRepo.GetUserPlantEntity<NewUserPlant>(user.Result.Id).ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
             }
 
             var plantsToList = new List<NewUserPlantVm>();
@@ -367,8 +362,6 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             return newUserPlantsForList;
         }
-    }
-
      private TListVm GetUserPlantItems<TVm, TListVm, T>(
             int pageSize,
             int? pageNo,

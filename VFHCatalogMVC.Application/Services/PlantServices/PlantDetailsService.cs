@@ -156,7 +156,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         private List<PlantOpinionsVm> BuildOpinionsVm(int plantDetailsId)
         {
-            var plantOpinions = _plantRepo.GetPlantDetailsById<PlantOpinion>(plantDetailsId)
+            var plantOpinions = _plantRepo.GetPlantOpinions(plantDetailsId)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();
 

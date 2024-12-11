@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Interface
 {
     public interface IPlantRepository
     {
-        IQueryable<T> GetPlantDetailsById<T>(int id) where T : class;
-        string GetPlantDetailsPropertyName<T>(int? id) where T : class;
+        IQueryable<T> GetPlantDetailsById<T>(int id) where T : BasePlantDetailKeyProperty;
+        string GetPlantDetailsPropertyName<T>(int? id) where T : BasePlantEntityNameProperty;
         IQueryable<T> GetAllEntities<T>() where T : class;
-        void DeletePlantDetailEntity<T>(int id) where T : class;
+        IQueryable<PlantOpinion> GetPlantOpinions(int id);
+        void DeletePlantDetailEntity<T>(int id) where T : BasePlantDetailKeyProperty;
         int AddContactDetailsEntity<T>(T entity) where T : class;
         void DeletePlant(Plant plant);
         int AddPlant(Plant plant);

@@ -62,10 +62,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private List<TVm> FilterPlantItems<TVm>(List<TVm> items, List<string> filteredUsersList)
            where TVm : PlantItemVm
         {
-            // Filtruj elementy, których UserId znajduje się w liście filteredUsersList
+            //FilteredUsersList Filter elements which UserId in on the list filteredUsersList
             var filteredItems = items
                 .Where(item => filteredUsersList.Contains(item.UserId))
-                .Distinct() // Usuwa duplikaty na podstawie wartości referencji
+                .Distinct() // Removes duplicates based on reference values
                 .ToList();
 
             return filteredItems;
@@ -112,7 +112,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 item.ContactDetail = new ContactDetailVm { ContactDetailInformation = "" };
             }
 
-            item.PlantOpinions = _plantRepo.GetPlantDetailsById<PlantOpinion>(detailId)
+            item.PlantOpinions = _plantRepo.GetPlantOpinions(detailId)
                 .Where(p => p.UserId == user.Result.Id)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();

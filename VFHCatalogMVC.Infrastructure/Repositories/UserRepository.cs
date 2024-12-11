@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -118,36 +119,18 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return regions;
         }
 
-        public PlantSeed GetUserSeed(int id)
+        public IQueryable<T> GetUserPlantEntity<T>(string userId) where T : BaseEntityProperty
         {
-           var seed = _context.PlantSeeds.FirstOrDefault(p => p.Id == id);
-            return seed;
+            var entity = _context.Set<T>().Where(p=>p.UserId == userId);
+            return entity;
         }
 
-        public PlantSeedling GetUserSeedling(int id)
+        public T GetUserEntity<T>(int id) where T : BaseEntityProperty
         {
-            var seedling = _context.PlantSeedlings.FirstOrDefault(p => p.Id == id);
-            return seedling;
+            var entity = _context.Set<T>().FirstOrDefault(p=>p.Id == id);
+            return entity;
+            
         }
-
-        public IQueryable<PlantSeed> GetUserPlantSeeds(string userId)
-        {
-            var seeds = _context.PlantSeeds.Where(p => p.UserId == userId);
-            return seeds;
-        }
-
-        public IQueryable<PlantSeedling> GetUserPlantSeedlings(string userId)
-        {
-            var seedlings = _context.PlantSeedlings.Where(p => p.UserId == userId);
-            return seedlings;
-        }
-
-        public IQueryable<NewUserPlant> GetNewUserPlants(string userId)
-        {
-            var plants = _context.NewUserPlants.Where(p => p.UserId == userId);
-            return plants;
-        }
-
         public IQueryable<NewUserPlant> GetAllNewUserPlants()
         {
             var plants = _context.NewUserPlants;

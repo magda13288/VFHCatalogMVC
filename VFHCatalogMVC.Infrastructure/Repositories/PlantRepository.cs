@@ -96,24 +96,15 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var plant = _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == plantId);
             return plant;
         }
-        public string GetPlantDetailsPropertyName<T>(int? id) where T: class
+        public string GetPlantDetailsPropertyName<T>(int? id) where T: BasePlantEntityNameProperty
         {
-            var entity = _context.Set<T>().FirstOrDefault(p => EF.Property<int?>(p, "Id") == id);
+            var entity = _context.Set<T>().FirstOrDefault(p =>p.Id== id);
             if (entity == null) return null;
 
-            var nameProperty = typeof(T).GetProperty("Name");
-            return nameProperty?.GetValue(entity)?.ToString();
+            //var nameProperty = typeof(T).GetProperty("Name");
+            //return nameProperty?.GetValue(entity)?.ToString();
 
-            /*if (nameProperty != null)
-            {
-                var value = nameProperty.GetValue(entity);
-                if (value != null)
-                {
-                    return value.ToString();
-                }
-            }
-            return null;
-            */
+            return entity.Name;        
 
         }
         /// <summary>
@@ -123,10 +114,15 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IQueryable<T> GetPlantDetailsById<T>(int id) where T : class
+        public IQueryable<T> GetPlantDetailsById<T>(int id) where T : BasePlantDetailKeyProperty
         {
-            return _context.Set<T>().Where(p => EF.Property<int>(p, "PlantDetailId") == id);
+            return _context.Set<T>().Where(p => p.PlantDetailId == id);
         }
+        public IQueryable<PlantOpinion> GetPlantOpinions(int id)
+        {
+            return _context.PlantOpinions.Where(p=>p.PlantDetailId== id);
+        }
+
         public IQueryable<T> GetAllEntities<T>() where T : class
         {
             return _context.Set<T>();
@@ -166,9 +162,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             
         }
 
-        public void DeletePlantDetailEntity<T>(int id) where T : class
+        public void DeletePlantDetailEntity<T>(int id) where T : BasePlantDetailKeyProperty
         {
-            var entity = _context.Set<T>().Where(p => EF.Property<int>(p, "PlantDetailId") == id); 
+            var entity = _context.Set<T>().Where(p => p.PlantDetailId == id); 
             _context.Set<T>().RemoveRange(entity);
             _context.SaveChanges();
         }

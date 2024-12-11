@@ -350,6 +350,7 @@ namespace VFHCatalogMVC.Infrastructure
             builder.Entity<NewUserPlant>(entity =>
             {
                 entity.HasKey(e => new { e.PlantId, e.UserId });
+                entity.Ignore(e => e.Id);
 
                 entity.HasOne(e => e.Plant)
                 .WithMany(e => e.NewUserPlants)
