@@ -9,6 +9,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 //using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
@@ -19,12 +20,12 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
         UserSeedVm GetUserSeedToEdit(int id);
+        void DeleteItem<T>(int id)  where T : BaseEntityProperty;
         void UpdateSeed(UserSeedVm seed);
-        void DeleteSeed(int id);
-        UserSeedlingVm GetUserSeedlingToEdit(int id);
         void UpdateSeedling(UserSeedlingVm seedling);
-        void DeleteSeedling(int id);
+        UserSeedlingVm GetUserSeedlingToEdit(int id);      
         ContactDetail GetContactDetail(int? id);
+        int? GetContactDetailForPlant(int id, Func<int, int?> getContact);
         int? GetContactDetailForSeed(int id);
         int? GetContactDetailForSeedling(int id);
         void AddNewUserPlant(int plantId, string userId);

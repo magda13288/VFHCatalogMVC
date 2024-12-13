@@ -99,7 +99,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             item.Date = item.DateAdded.ToShortDateString();
 
             var contactId = isCompany
-                ? _userPlantService.GetContactDetailForSeed(item.Id)
+                ? _userPlantService.GetContactDetail(item.Id, )
                 : _userPlantService.GetContactDetailForSeedling(item.Id);
 
             if (contactId.HasValue)

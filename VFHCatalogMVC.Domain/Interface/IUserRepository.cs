@@ -11,22 +11,18 @@ namespace VFHCatalogMVC.Domain.Interface
     {
         IQueryable<T> GetUserPlantEntity<T>(string userId) where T : BaseEntityProperty;
         T GetUserEntity<T>(int id) where T : BaseEntityProperty;
+        void EditEntity<T>(T entity) where T : BasePlantSeedSeedlingProperty;
+        int AddEntity<T>(T entity) where T : class;
+        int DeleteEntity<T>(T entity) where T : class;
+        IQueryable<T> GetEntity<T>() where T : class;
         Address GetAddress(int id);
-        IQueryable<Country> GetCountries();
         IQueryable<Region> GetRegions(int countryId);
         IQueryable<City> GetCities(int regionId);
-        void AddAddress(Address address);
         Address GetAddressInfo(string userId);
-        void EditUserSeed(PlantSeed seed);
-        void DeleteUserSeed(PlantSeed seed);
-        void EditUserSeedling(PlantSeedling seedling);
-        void DeleteUserSeedling(PlantSeedling seedling);
         ContactDetail GetContactDetail(int? id);
         int? GetContactDetailForSeed(int id);
         int? GetContactDetailForSeedling(int id);
-        void EditContactDetails(ContactDetail contact);
-        void AddNewUserPlant(NewUserPlant plant);       
-        IQueryable<NewUserPlant> GetAllNewUserPlants();
+        void EditContactDetails(ContactDetail contact);    
 
     }
 }

@@ -237,7 +237,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                _userService.DeleteSeed(id);
+                _userService.DeleteItem<PlantSeed>(id);
                 return RedirectToAction("IndexSeeds");
             }
             catch (Exception ex)
@@ -298,7 +298,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                _userService.DeleteSeedling(id);
+                _userService.DeleteItem<PlantSeedling>(id);
                 return RedirectToAction("IndexSeedlings");
             }
             catch (Exception ex)

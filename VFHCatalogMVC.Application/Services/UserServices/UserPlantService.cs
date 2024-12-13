@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NPOI.OpenXmlFormats.Dml;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -106,140 +108,43 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
 
             return usersList;
-        }
-
-        public void UpdateEntity<TVm>(TVm entity)
-        {
-            
-        }
-
+        }      
         public void UpdateSeedling(UserSeedlingVm seedling)
         {
-            if (seedling != null)
-            {
-                var seedlingToEdit = _mapper.Map<PlantSeedling>(seedling);
-                _userRepo.EditUserSeedling(seedlingToEdit);
-
-                if (seedling.ContactDetail != null)
-                {
-                    var seedlingDetails = _userRepo.GetContactDetailForSeedling(seedling.Id);
-                    if (seedlingDetails != null)
-                    {
-                        var contact = _userRepo.GetContactDetail(seedlingDetails);
-                        seedling.ContactDetail.Id = contact.Id;
-                        seedling.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
-                        seedling.ContactDetail.UserId = contact.UserId;
-                        var contactDetails = _mapper.Map<ContactDetail>(seedling.ContactDetail);
-                        _userRepo.EditContactDetails(contactDetails);
-                    }
-                    else
-                    {
-                        var contact = new ContactDetailVm();
-                        contact.ContactDetailTypeID = 1;
-                        contact.UserId = seedling.UserId;
-                        contact.ContactDetailInformation = seedling.ContactDetail.ContactDetailInformation;
-                        var contactDetails = _mapper.Map<ContactDetail>(contact);
-                        var id = _plantRepo.AddContactDetail(contactDetails);
-
-                        var contactDetailsForSeedlingVm = new ContactDetailForSeedlingVm() { ContactDetailId = id, PlantSeedlingId = seedling.Id };
-                        var contactDetailsForSeedling = _mapper.Map<ContactDetailForSeedling>(contactDetailsForSeedlingVm);
-                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeedling>(contactDetailsForSeedling);
-                    }
-                }
-            }
+            UpdateEntity<PlantSeedling,UserSeedlingVm, ContactDetailForSeedlingVm, ContactDetailForSeedling>(
+                seedling,
+                id => _userRepo.GetContactDetailForSeedling(id),
+                id => new ContactDetailForSeedlingVm { ContactDetailId = id, PlantSeedlingId = seedling.Id },
+                vm => _mapper.Map<ContactDetailForSeedling>(vm)
+            );
         }
+
         public void UpdateSeed(UserSeedVm seed)
         {
-            if (seed != null)
-            {
-                var seedToEdit = _mapper.Map<PlantSeed>(seed);
-                _userRepo.EditUserSeed(seedToEdit);
-
-                if (seed.ContactDetail != null)
-                {
-                    var seedDetails = _userRepo.GetContactDetailForSeed(seed.Id);
-
-                    if (seedDetails != null)
-                    {
-                        var contact = _userRepo.GetContactDetail(seedDetails);
-                        seed.ContactDetail.Id = contact.Id;
-                        seed.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
-                        seed.ContactDetail.UserId = contact.UserId;
-                        var contactDetails = _mapper.Map<ContactDetail>(seed.ContactDetail);
-                        _userRepo.EditContactDetails(contactDetails);
-                    }
-                    else
-                    {
-                        var contact = new ContactDetailVm();
-                        contact.ContactDetailTypeID = 1;
-                        contact.UserId = seed.UserId;
-                        contact.ContactDetailInformation = seed.ContactDetail.ContactDetailInformation;
-                        var contactDetails = _mapper.Map<ContactDetail>(contact);
-                        var id = _plantRepo.AddContactDetail(contactDetails);
-
-                        var contactDetailsForSeedVm = new ContactDetailForSeedVm() { ContactDetailId = id, PlantSeedId = seed.Id };
-                        var contactDetailsForSeed = _mapper.Map<ContactDetailForSeed>(contactDetailsForSeedVm);
-                        _plantRepo.AddContactDetailsEntity<ContactDetailForSeed>(contactDetailsForSeed);
-
-
-                    }
-                }
-            }
+            UpdateEntity<PlantSeed, UserSeedVm, ContactDetailForSeedVm, ContactDetailForSeed>(
+                seed,
+                id => _userRepo.GetContactDetailForSeed(id),
+                id => new ContactDetailForSeedVm { ContactDetailId = id, PlantSeedId = seed.Id },
+                vm => _mapper.Map<ContactDetailForSeed>(vm)
+            );
         }
-        public void DeleteSeed(int id)
+
+        public void DeleteItem<T>(int id)
+            where T : BaseEntityProperty
         {
-            var seed = _userRepo.GetUserEntity<PlantSeed>(id);
-            _userRepo.DeleteUserSeed(seed);
+            var item = _userRepo.GetUserEntity<T>(id);
+            _userRepo.DeleteEntity<T>(item);
         }
 
         public UserSeedVm GetUserSeedToEdit(int id)
         {
-            var plantSeed = _userRepo.GetUserEntity<PlantSeed>(id);
-            var userSedd = _mapper.Map<UserSeedVm>(plantSeed);
-
-            var user = _userManager.FindByIdAsync(userSedd.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
-
-            if (userRole.Result is true)
-            {
-                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeed.Id);
-                if (seedContactDetails != 0)
-                {
-                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
-                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                    userSedd.ContactDetail = contacDetailsVm;
-
-                }
-            }
-
-            return userSedd;
+            return GetUserPlantSeeOrSeedlingToEdit<UserSeedVm, PlantSeed> (id, _userRepo.GetContactDetailForSeed);
 
         }
         public UserSeedlingVm GetUserSeedlingToEdit(int id)
         {
 
-            var plantSeedling = _userRepo.GetUserEntity<PlantSeedling>(id);
-            var userSeedling = _mapper.Map<UserSeedlingVm>(plantSeedling);
-
-            var user = _userManager.FindByIdAsync(userSeedling.UserId);
-            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
-            if (userRole.Result is true)
-            {
-                var seedContactDetails = _userRepo.GetContactDetailForSeed(plantSeedling.Id);
-                if (seedContactDetails != 0)
-                {
-                    var contactDetails = _userRepo.GetContactDetail(seedContactDetails);
-                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
-                    userSeedling.ContactDetail = contacDetailsVm;
-                }
-            }
-            return userSeedling;
-        }
-        
-        public void DeleteSeedling(int id)
-        {
-            var seedling = _userRepo.GetUserEntity<PlantSeedling>(id);
-            _userRepo.DeleteUserSeedling(seedling);
+            return GetUserPlantSeeOrSeedlingToEdit<UserSeedlingVm, PlantSeedling>(id, _userRepo.GetContactDetailForSeedling);
         }
 
         public ContactDetail GetContactDetail(int? id)
@@ -248,6 +153,11 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             return contactDetails;
         }
 
+        private int? GetContactDetailForPlant(int id, Func<int,int?> getContact)
+        {
+            return getContact(id);
+           
+        }
         public int? GetContactDetailForSeed(int id)
         {
             var contactId = _userRepo.GetContactDetailForSeed(id);
@@ -265,7 +175,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var newPlant = new NewUserPlantVm { PlantId = plantId, UserId = userId };
             var newUserPlant = _mapper.Map<NewUserPlant>(newPlant);
 
-            _userRepo.AddNewUserPlant(newUserPlant);
+            _userRepo.AddEntity<NewUserPlant>(newUserPlant);
 
         }
 
@@ -277,7 +187,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             if (userRole.Result.Count > 0 && userRole.Result.Contains(UserRoles.ADMIN) == true)
             {
-                plants = _userRepo.GetAllNewUserPlants().ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
+                plants = _userRepo.GetEntity<NewUserPlant>().ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
 
                 foreach (var plant in plants)
                 {
@@ -492,5 +402,79 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             return item;
 
         }
+        private void UpdateEntity<T, TVm, TDetailForEntityVm, TDetailForEntity>(
+               TVm entityVm,
+               Func<int, int?> getExistingDetail,
+               Func<int, TDetailForEntityVm> createDetailForEntityVm,
+               Func<TDetailForEntityVm, TDetailForEntity> mapDetailForEntity)
+               where T : BasePlantSeedSeedlingProperty
+               where TVm : PlantItemVm
+               where TDetailForEntityVm : class
+               where TDetailForEntity : class
+        {
+            if (entityVm != null)
+            {
+                var entityToEdit = _mapper.Map<T>(entityVm);
+                _userRepo.EditEntity<T>(entityToEdit);
+
+                if (entityVm.ContactDetail != null)
+                {
+                    var existingDetail = getExistingDetail(entityVm.Id);
+                    if (existingDetail != null)
+                    {
+                        var contact = _userRepo.GetContactDetail(existingDetail);
+                        entityVm.ContactDetail.Id = contact.Id;
+                        entityVm.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
+                        entityVm.ContactDetail.UserId = contact.UserId;
+                        var contactDetails = _mapper.Map<ContactDetail>(entityVm.ContactDetail);
+                        _userRepo.EditContactDetails(contactDetails);
+                    }
+                    else
+                    {
+                        var contact = new ContactDetailVm()
+                        {
+                            ContactDetailTypeID = 1,
+                            UserId = entityVm.UserId,
+                            ContactDetailInformation = entityVm.ContactDetail.ContactDetailInformation
+                        };
+
+                        var contactDetails = _mapper.Map<ContactDetail>(contact);
+                        var id = _plantRepo.AddContactDetail(contactDetails);
+
+                        var contactDetailsForEntityVm = createDetailForEntityVm(id);
+                        var contactDetailsForEntity = mapDetailForEntity(contactDetailsForEntityVm);
+                        _plantRepo.AddContactDetailsEntity(contactDetailsForEntity);
+                    }
+                }
+            }
+        }
+        private TVm GetUserPlantSeeOrSeedlingToEdit<TVm, TPlant>
+            (int id,
+             Func<int, int?> getContactDetailId
+            )
+            where TVm : PlantItemVm
+            where TPlant : BasePlantSeedSeedlingProperty
+        {
+            var item = _userRepo.GetUserEntity<TPlant>(id);
+            var userItem = _mapper.Map<TVm>(item);
+
+            var user = _userManager.FindByIdAsync(userItem.UserId);
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
+
+            if (userRole.Result is true)
+            {
+                var itemContactDetails = getContactDetailId(item.Id);
+                if (itemContactDetails != 0)
+                {
+                    var contactDetails = _userRepo.GetContactDetail(itemContactDetails);
+                    var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
+                    userItem.ContactDetail = contacDetailsVm;
+
+                }
+            }
+
+            return userItem;
+        }
+
     }
 }

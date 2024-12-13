@@ -54,7 +54,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
         public List<CountryVm> GetCountries()
         {
-            var countries = _userRepo.GetCountries().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
+            var countries = _userRepo.GetEntity<Country>().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
             return countries;
         }
 
@@ -132,7 +132,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         public void AddAddress(AddressVm address)
         {
             var addressToSave = _mapper.Map<Address>(address);
-            _userRepo.AddAddress(addressToSave);
+            _userRepo.AddEntity<Address>(addressToSave);
         }
         public string UserAccountName(Task<ApplicationUser> user)
         {

@@ -17,30 +17,17 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public void AddAddress(Address address)
+        public int AddEntity<T>(T entity) where T : class
         {
-            _context.Addresses.Add(address);
-            _context.SaveChanges();
+            _context.Set<T>().Add(entity);
+            return _context.SaveChanges();
         }
 
-        public void AddNewUserPlant(NewUserPlant plant)
+        public int DeleteEntity<T>(T entity) where T : class
         {
-            _context.NewUserPlants.Add(plant);
-            _context.SaveChanges();
-        }
-
-        public void DeleteUserSeed(PlantSeed seed)
-        {
-            _context.PlantSeeds.Remove(seed);
-            _context.SaveChanges();
-        }
-
-        public void DeleteUserSeedling(PlantSeedling seedling)
-        {
-           _context.PlantSeedlings.Remove(seedling);
-            _context.SaveChanges();
-        }
-
+            _context.Set<T>().Remove(entity);
+            return _context.SaveChanges();
+        }      
         public void EditContactDetails(ContactDetail contact)
         {
             _context.Attach(contact);
@@ -48,24 +35,15 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void EditUserSeed(PlantSeed seed)
+        public void EditEntity<T>(T entity) where T: BasePlantSeedSeedlingProperty
         {
-            _context.Attach(seed);
-            _context.Entry(seed).Property("Count").IsModified = true;
-            _context.Entry(seed).Property("Description").IsModified= true;
-            _context.Entry(seed).Property("DateAdded").IsModified= true;
+            _context.Attach(entity);
+            _context.Entry(entity).Property(e=>e.Count).IsModified = true;
+            _context.Entry(entity).Property(e=>e.Description).IsModified = true;
+            _context.Entry(entity).Property(e=>e.DateAdded).IsModified = true;
             _context.SaveChanges();
         }
-
-        public void EditUserSeedling(PlantSeedling seedling)
-        {
-            _context.Attach(seedling);
-            _context.Entry(seedling).Property("Count").IsModified = true;
-            _context.Entry(seedling).Property("Description").IsModified = true;
-            _context.Entry(seedling).Property("DateAdded").IsModified = true;
-            _context.SaveChanges();
-        }
-
+        
         public Address GetAddress(int id)
         {
             var address = _context.Addresses.FirstOrDefault(p => p.Id == id);
@@ -107,12 +85,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             else
                 return contactDetails.ContactDetailId;
         }
-        public IQueryable<Country> GetCountries()
-        {
-            var countries = _context.Countries;
-            return countries;
-        }
 
+        public IQueryable<T> GetEntity<T>() where T : class
+        {
+            return _context.Set<T>();
+        }
         public IQueryable<Region> GetRegions(int countryId)
         {
            var regions = _context.Regions.Where(p => p.CountryId == countryId);
@@ -130,11 +107,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var entity = _context.Set<T>().FirstOrDefault(p=>p.Id == id);
             return entity;
             
-        }
-        public IQueryable<NewUserPlant> GetAllNewUserPlants()
-        {
-            var plants = _context.NewUserPlants;
-            return plants;
-        }
+        }      
     }
 }
