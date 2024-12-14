@@ -23,6 +23,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly IUserPlantService _userPlantService;
         private readonly IPlantRepository _plantRepo;
         private readonly IUserContactDataService _userContactDataService;
+        private readonly IUserRepository _userRepo;
         private readonly IMapper _mapper;
 
         public PlantItemProcessor(
@@ -30,12 +31,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             IUserPlantService userPlantService,
             IPlantRepository plantRepo,
             IUserContactDataService userContactDataService,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _userManager = userManager;
             _userPlantService = userPlantService;
             _plantRepo = plantRepo;
             _userContactDataService = userContactDataService;
+            _userRepo = userRepository;
             _mapper = mapper;
         }
 
@@ -99,8 +102,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             item.Date = item.DateAdded.ToShortDateString();
 
             var contactId = isCompany
-                ? _userPlantService.GetContactDetail(item.Id, )
-                : _userPlantService.GetContactDetailForSeedling(item.Id);
+                ? _userPlantService.GetContactDetailForPlant(item.Id, id => _userRepo.GetContactDetailForSeed(item.Id))
+                : _userPlantService.GetContactDetailForPlant(item.Id, id=> _userRepo.GetContactDetailForSeedling(item.Id));
 
             if (contactId.HasValue)
             {

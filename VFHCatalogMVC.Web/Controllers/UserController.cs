@@ -175,7 +175,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
 
-                var model = _userService.GetNewUserPlants(pageSize, pageNo, searchString, typeId, groupId, sectionId, viewAll, User.Identity.Name);
+                var model = _userService.GetNewUserPlants(pageSize, pageNo, typeId, groupId, sectionId, viewAll, User.Identity.Name);
 
                 return View(model);
             }

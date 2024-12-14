@@ -26,10 +26,8 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         UserSeedlingVm GetUserSeedlingToEdit(int id);      
         ContactDetail GetContactDetail(int? id);
         int? GetContactDetailForPlant(int id, Func<int, int?> getContact);
-        int? GetContactDetailForSeed(int id);
-        int? GetContactDetailForSeedling(int id);
         void AddNewUserPlant(int plantId, string userId);
-        NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
+        NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
 
 
     }
