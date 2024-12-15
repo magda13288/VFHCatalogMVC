@@ -280,7 +280,11 @@ namespace VFHCatalogMVC.Application.Services
 
             return messagesNewPlantsList;
         }
-
+        public int GetPlantIdForMessage(int id)
+        {
+            var plantId = _messageRepo.GetPlantId(id);
+            return plantId;
+        }
         private MessageReceiverVm GetMessageReceiverInfo(int messageId)
         {
             var messageReveiver = _messageRepo.GetMessageReceiverByMessageId(messageId);
@@ -290,12 +294,7 @@ namespace VFHCatalogMVC.Application.Services
             messageReceiverVm.AccountName = receiverUserInfo.Result.AccountName;
 
             return messageReceiverVm;
-        }
-        public int GetPlantIdForMessage(int id)
-        {
-            var plantId = _messageRepo.GetPlantId(id);
-            return plantId;
-        }
+        }       
         private void HandleAnswerMessage(MessageVm message, int messageId, IndexPlantType indexPlant)
         {
             var messageInfo = _messageRepo.GetMessageById(message.MessageIdisAnswer);

@@ -23,7 +23,7 @@ namespace VFHCatalogMVC.Application.Services
 
         public List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId)
         {
-            string _DIR = "plantGallery/plantDetailsGallery";
+            const string _DIR = "plantGallery/plantDetailsGallery";
             var fileNames = new List<string>();
 
             foreach (var item in model.PlantDetails.Images)

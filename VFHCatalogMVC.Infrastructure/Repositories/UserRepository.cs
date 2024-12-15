@@ -31,7 +31,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void EditContactDetails(ContactDetail contact)
         {
             _context.Attach(contact);
-            _context.Entry(contact).Property("ContactDetailInformation").IsModified = true;
+            _context.Entry(contact).Property(e=>e.ContactDetailInformation).IsModified = true;
             _context.SaveChanges();
         }
 

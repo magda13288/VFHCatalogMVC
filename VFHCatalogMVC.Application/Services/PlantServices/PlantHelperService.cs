@@ -47,25 +47,20 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
      
         public List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId)
+
         {
             var growthTypes = FilterGrowthTypes(typeId, groupId, sectionId);
 
             return GetSelectListItem(growthTypes);
         }
 
-        public List<SelectListItem> GetFruitSize(int typeId, int groupId, int? sectionId)
+        public List<SelectListItem> GetFruitPropertyList<TSource, TViewModel>(int typeId, int groupId, int? sectionId)
+           where TViewModel : SelectListItemVm
+           where TSource : class
         {
-            var fruitSiezes = FilterFruitSizeOrType<FruitSize,FruitSizeVm>(typeId, groupId, sectionId);
-
-            return GetSelectListItem(fruitSiezes);
-        }
-
-        public List<SelectListItem> GetFruitTypes(int typeId, int groupId, int? sectionId)
-        {
-            var fruitTypes = FilterFruitSizeOrType<FruitType,FruitTypeVm>(typeId, groupId, sectionId);
-
-            return GetSelectListItem(fruitTypes);
-        }
+            var item = FilterFruitSizeOrType<TSource, TViewModel>(typeId, groupId, sectionId);
+            return GetSelectListItem(item);
+        }   
         public List<SelectListItem> GetSelectList<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource: class
@@ -116,18 +111,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         private List<GrowthTypeVm> FilterGrowthTypes(int typeId, int? groupId, int? sectionId)
         {
-            List<GrowthTypeVm> growthTyes = new List<GrowthTypeVm>();
+            List<GrowthTypeVm> growthTypes = new List<GrowthTypeVm>();
 
             if (typeId == 1)
             {
-                growthTyes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTypes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
             else if (typeId == 2 || typeId == 3)
             {
-                growthTyes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTypes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
-            return growthTyes;
+            return growthTypes;
         }
         public List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int groupId, int? sectionId)
            where TSource : class
@@ -148,6 +143,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
             return fruitTypeList;
         }
+
+       
         public List<DestinationsVm> GetDestinationsJR()
         {
 
@@ -155,24 +152,22 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return destinationsList;
         }
-     
-        public List<FruitSizeVm> GetFruitSizeJR(int typeId, int groupId, int? sectionId)
+
+        public List<TVm> GetPropertiesListJR<TVm,TSource>(int typeId, int groupId, int? sectionId)
+           where TSource : class
+           where TVm : SelectListItemVm
         {
+            return FilterFruitSizeOrType<TSource, TVm>(typeId, groupId, sectionId);
             
-            var fruitSizeList = FilterFruitSizeOrType<FruitSize,FruitSizeVm>(typeId, groupId, sectionId);
 
-            return fruitSizeList;
-        }
-
-        public List<FruitTypeVm> GetFruitTypeJR(int typeId, int groupId, int? sectionId)
-        {
-            var fruitTypeList = FilterFruitSizeOrType<FruitType,FruitTypeVm>(typeId, groupId, sectionId);
-
-            return fruitTypeList;
-        }
+        }  
         public IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant)
         {
-            var index = new IndexPlantType() { seeds = seeds, seedlings = seedlings, newPlant = newPlant };
+            var index = new IndexPlantType() 
+            { seeds = seeds, 
+              seedlings = seedlings,
+              newPlant = newPlant
+            };
 
             return index;
         }

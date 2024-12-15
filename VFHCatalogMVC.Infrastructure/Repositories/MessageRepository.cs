@@ -64,7 +64,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void UpdateMassageStatusIsAnswer(Message message)
         {
             _context.Attach(message);
-            _context.Entry(message).Property("isAnswer").IsModified = true;
+            _context.Entry(message).Property(e=>e.isAnswer).IsModified = true;
             _context.SaveChanges();
         }
 

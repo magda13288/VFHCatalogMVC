@@ -10,6 +10,8 @@ using System.Linq;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Domain.Model;
 using System.Threading.Tasks;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+
 
 namespace VFHCatalogMVC.Application.Services.UserServices
 {
@@ -31,19 +33,19 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         public List<SelectListItem> Cities(int regionId)
         {
             var cities = GetCities(regionId);
-            var list = FillCityList(cities);
+            var list = FillList(cities);
             return list;
         }
         public List<SelectListItem> Countries()
         {
             var countries = GetCountries();
-            var list = FillCountryList(countries);
+            var list = FillList(countries);
             return list;
         }
         public List<SelectListItem> Regions(int countryId)
         {
             var regions = GetRegions(countryId);
-            var list = FillRegionList(regions);
+            var list = FillList(regions);
             return list;
         }
         public List<CityVm> GetCities(int regionId)
@@ -63,55 +65,17 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
             return regions;
         }
-        public List<SelectListItem> FillCountryList(List<CountryVm> countries)
+
+        public List<SelectListItem> FillList<TVm>(List<TVm> items)
+            where TVm: SelectListItemVm
         {
             List<SelectListItem> propertyList = new List<SelectListItem>();
 
-            if (countries != null)
+            if (items != null)
             {
                 propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
 
-                foreach (var type in countries)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
-
-        public List<SelectListItem> FillRegionList(List<RegionVm> regions)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (regions != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in regions)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
-
-        public List<SelectListItem> FillCityList(List<CityVm> city)
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (city != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in city)
+                foreach (var type in items)
                 {
                     propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
                 }

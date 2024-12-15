@@ -244,9 +244,9 @@ namespace VFHCatalogMVC.Web.Controllers
                   
                 ViewBag.Destinations = _plantHelperService.GetSelectList<Destination,DestinationsVm>();
 
-                ViewBag.FruitTypes = _plantHelperService.GetFruitTypes(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.FruitTypes = _plantHelperService.GetFruitPropertyList<FruitType,FruitTypeVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
-                ViewBag.FruitSizes = _plantHelperService.GetFruitSize(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.FruitSizes = _plantHelperService.GetFruitPropertyList<FruitSize,FruitSizeVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
                 return View(plantToEdit);
             }
@@ -552,7 +552,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypes = _plantHelperService.GetFruitTypeJR(typeId, groupId, sectionId);
+            var fruitTypes = _plantHelperService.GetPropertiesListJR<FruitSizeVm,FruitType>(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitTypesList = new List<SelectListItem>();
 
@@ -571,7 +571,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId)
         {
-            var fruitSiezes = _plantHelperService.GetFruitSizeJR(typeId, groupId, sectionId);
+            var fruitSiezes = _plantHelperService.GetPropertiesListJR<FruitSizeVm,FruitSize>(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitSizesList = new List<SelectListItem>();
 

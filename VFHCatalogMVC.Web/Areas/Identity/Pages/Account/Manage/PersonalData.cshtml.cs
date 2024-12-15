@@ -108,11 +108,11 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
             await LoadAsync(user);
 
             var countries = _userHelperService.GetCountries();
-            ViewData["Country"] = _userHelperService.FillCountryList(countries);
+            ViewData["Country"] = _userHelperService.FillList(countries);
             var regions = _userHelperService.GetRegions(Input.Address.CountryId);
-            ViewData["Region"] = _userHelperService.FillRegionList(regions);
+            ViewData["Region"] = _userHelperService.FillList(regions);
             var cities = _userHelperService.GetCities(Input.Address.RegionId);
-            ViewData["City"] = _userHelperService.FillCityList(cities);
+            ViewData["City"] = _userHelperService.FillList(cities);
 
             if (Input.Address.CountryId != 0)
             {

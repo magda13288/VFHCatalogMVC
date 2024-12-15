@@ -21,7 +21,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             
            _context.Attach(plant);
-           _context.Entry(plant).Property("isActive").IsModified = true;
+           _context.Entry(plant).Property(e=>e.isActive).IsModified = true;
            _context.SaveChanges();
         }
 
@@ -141,23 +141,21 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public void UpdatePlant(Plant plant)
         {
-            //_context.Entry(plant).State = EntityState.Detached;
-            //_context.Set<Plant>().Update(plant);
             _context.Attach(plant);
-            _context.Entry(plant).Property("FullName").IsModified = true;
-            _context.Entry(plant).Property("Photo").IsModified = true;
+            _context.Entry(plant).Property(e=>e.FullName).IsModified = true;
+            _context.Entry(plant).Property(e=>e.Photo).IsModified = true;
             _context.SaveChanges();          
         }
 
         public void UpdatePlantDetails(PlantDetail plant)
         {
             _context.Attach(plant);
-            _context.Entry(plant).Property("ColorId").IsModified = true;
-            _context.Entry(plant).Property("FruitSizeId").IsModified = true;
-            _context.Entry(plant).Property("FruitTypeId").IsModified = true;
-            _context.Entry(plant).Property("Description").IsModified = true;
-            _context.Entry(plant).Property("PlantPassportNumber").IsModified = true;
-            _context.Entry(plant).Property("PlantRef").IsModified = false;
+            _context.Entry(plant).Property(e=>e.ColorId).IsModified = true;
+            _context.Entry(plant).Property(e=>e.FruitSizeId).IsModified = true;
+            _context.Entry(plant).Property(e=>e.FruitSizeId).IsModified = true;
+            _context.Entry(plant).Property(e=>e.Description).IsModified = true;
+            _context.Entry(plant).Property(e=>e.PlantPassportNumber).IsModified = true;
+            _context.Entry(plant).Property(e=>e.PlantRef).IsModified = false;
             _context.SaveChanges();
             
         }
@@ -236,8 +234,8 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void ActivatePlant(Plant plant)
         {
             _context.Attach(plant);
-            _context.Entry(plant).Property("isActive").IsModified = true;
-            _context.Entry(plant).Property("isNew").IsModified = true;
+            _context.Entry(plant).Property(e=>e.isActive).IsModified = true;
+            _context.Entry(plant).Property(e=>e.isNew).IsModified = true;
             _context.SaveChanges();
         }
     }

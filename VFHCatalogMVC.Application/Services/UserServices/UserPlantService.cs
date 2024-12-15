@@ -257,7 +257,6 @@ namespace VFHCatalogMVC.Application.Services.UserServices
              .Select(x => GetEntityList<TVm>(x.Plant, x.Item))
              .ToList();
 
-
         }
         private bool MatchesCriteria(Plant plant, string searchString, int typeId, int groupId, int? sectionId)
         {
@@ -322,9 +321,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                 Count = items.Count
             };
 
-        }
-
-       
+        }      
         private List<TVm> PopulateItemProperties<TVm>(List<TVm> entity) where TVm : PlantItemVm
         {
 

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
+using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
@@ -16,9 +17,7 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         List<CountryVm> GetCountries();
         List<RegionVm> GetRegions(int countryId);
         List<CityVm> GetCities(int regionId);
-        List<SelectListItem> FillCountryList(List<CountryVm> countries);
-        List<SelectListItem> FillRegionList(List<RegionVm> regions);
-        List<SelectListItem> FillCityList(List<CityVm> city);
+        List<SelectListItem> FillList<TVm>(List<TVm> items) where TVm : SelectListItemVm;
         AddressVm GetAddress(string userId);
         void AddAddress(AddressVm address);
         string UserAccountName(Task<ApplicationUser> user);
