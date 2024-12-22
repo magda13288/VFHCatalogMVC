@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
@@ -15,6 +16,9 @@ namespace VFHCatalogMVC.Application.Services
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IPlantRepository _plantRepo;
+        private readonly string _DIR_GALLERY = "plantGallery/plantDetailsGallery";
+        private readonly string _DIR_SEARCH = "plantGallery/searchPhoto";
+
         public ImageService(IWebHostEnvironment webHostEnvironment, IPlantRepository plantRepository)
         {
             _webHostEnvironment = webHostEnvironment;
@@ -23,12 +27,12 @@ namespace VFHCatalogMVC.Application.Services
 
         public List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId)
         {
-            const string _DIR = "plantGallery/plantDetailsGallery";
+       
             var fileNames = new List<string>();
 
             foreach (var item in model.PlantDetails.Images)
             {
-                string fileName = UploadImage(item, model.FullName, _DIR);
+                string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
                 _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
                 fileNames.Add(fileName);
             }
@@ -38,8 +42,7 @@ namespace VFHCatalogMVC.Application.Services
 
         public string AddPlantSearchPhoto(NewPlantVm model)
         {
-            string _DIR = "plantGallery/searchPhoto";
-            var fileName = UploadImage(model.Photo, model.FullName, _DIR);
+            var fileName = UploadImage(model.Photo, model.FullName, _DIR_SEARCH);
             return fileName;
         }
 

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Web.Mvc;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class Plant
+    public class Plant:BaseEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public int PlantTypeId { get; set; }
         public virtual PlantType PlantType { get; set; }
         public int PlantGroupId { get; set; }

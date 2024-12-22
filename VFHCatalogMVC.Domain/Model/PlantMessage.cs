@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantMessage
+    public class PlantMessage:AuditableEntity
     {
         public int PlantId { get; set; }
         public virtual Plant Plant { get; set; }

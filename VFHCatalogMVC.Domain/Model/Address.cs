@@ -10,8 +10,8 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class Address : BaseEntityProperty
     {
-        //[PersonalData]
-        //public int Id { get; set; }
+        [PersonalData]
+        public int Id { get; set; }
         [PersonalData]
         public string Street { get; set; }
         [PersonalData]
@@ -29,10 +29,10 @@ namespace VFHCatalogMVC.Domain.Model
         [PersonalData]
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
-        //[PersonalData]
-        //public string UserId { get; set; }
-        //public virtual ApplicationUser User { get; set; }
-        
+        [PersonalData]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
 
     }
 }
