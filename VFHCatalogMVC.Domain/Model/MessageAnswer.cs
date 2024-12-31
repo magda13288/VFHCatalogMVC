@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class MessageAnswer
+    public class MessageAnswer:AuditableEntity
     {
         public int MessageId { get; set; }
         public virtual Message Message { get; set; }

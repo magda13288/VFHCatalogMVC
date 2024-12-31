@@ -30,7 +30,7 @@ namespace Application.UnitTests.Commands
     {
         public AddNewPlantTests() : base()
         {
-            
+           
         }
 
         

@@ -83,7 +83,8 @@ namespace VFHCatalogMVC.Web
 
             services.AddApplication();
             services.AddInfrastructure();
-           
+            services.AddHttpContextAccessor();
+
 
             services.AddControllersWithViews().AddFluentValidation(options =>
             {

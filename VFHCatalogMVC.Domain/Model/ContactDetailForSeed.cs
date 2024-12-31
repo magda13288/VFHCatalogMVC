@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class ContactDetailForSeed
+    public class ContactDetailForSeed:AuditableEntity
     {
         public int PlantSeedId { get; set; }
         public PlantSeed PlantSeed { get; set; }

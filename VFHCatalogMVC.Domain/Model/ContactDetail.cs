@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class ContactDetail
+    public class ContactDetail:BaseEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string ContactDetailInformation { get; set; }
         public int ContactDetailTypeID { get; set; }
         public ContactDetailType ContactDetailType { get; set; }

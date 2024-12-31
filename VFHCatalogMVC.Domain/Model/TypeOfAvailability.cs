@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class TypeOfAvailability
+    public class TypeOfAvailability:BaseEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
        // public bool ForSale { get; set; }
         public bool ToReplace { get; set; }
         public bool ForFree { get; set; }
