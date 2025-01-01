@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Common
 {
-    public class BasePlantDetailKeyProperty:AuditableEntity
+    public class BasePlantDetailKeyProperty
     {
         public int PlantDetailId { get; set; }
         public PlantDetail PlantDetail { get; set; }

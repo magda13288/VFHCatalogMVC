@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class GrowthTypesForListFilters:AuditableEntity
+    public class GrowthTypesForListFilters
     {
         public int GrowthTypesId { get; set; }
         public GrowthType GrowthType { get; set; }

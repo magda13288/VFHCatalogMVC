@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class FruitSizeForListFilters:AuditableEntity
+    public class FruitSizeForListFilters
     {
         public int FruitSizeId { get; set; }
         public FruitSize FruitSize { get; set; }
