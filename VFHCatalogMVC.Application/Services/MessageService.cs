@@ -72,7 +72,7 @@ namespace VFHCatalogMVC.Application.Services
         private List<MessageVm> GetSentMessages(string userId)
         {
             var sentMessages = _messageRepo
-                .GetSentMessages(userId)
+                .GetMessage<Message>(userId)
                 .ProjectTo<MessageVm>(_mapper.ConfigurationProvider)
                 .ToList();
 
@@ -90,7 +90,7 @@ namespace VFHCatalogMVC.Application.Services
         private List<MessageVm> GetReceivedMessages(string userId)
         {
             var messages = _messageRepo
-                .GetReceivedMessages(userId)
+                .GetMessage<MessageReceiver>(userId)
                 .ProjectTo<MessageReceiverVm>(_mapper.ConfigurationProvider)
                 .ToList();
 
@@ -310,7 +310,7 @@ namespace VFHCatalogMVC.Application.Services
             };
 
             var messageAnswer = _mapper.Map<MessageAnswer>(messageAnswerVm);
-            _messageRepo.AddMessageAnswer(messageAnswer);
+            _messageRepo.AddEntity<MessageAnswer>(messageAnswer);
         }
         private void HandleNonSeedlingMessage(MessageVm message, int messageId, IndexPlantType indexPlant)
         {
@@ -370,7 +370,7 @@ namespace VFHCatalogMVC.Application.Services
                 UserId = userId 
             };
 
-            _messageRepo.AddMessageReceiver(_mapper.Map<MessageReceiver>(messageReceiver));
+            _messageRepo.AddEntity<MessageReceiver>(_mapper.Map<MessageReceiver>(messageReceiver));
 
             var plantMessage = new PlantMessageVm() 
             {   PlantId = plantId, 
@@ -380,7 +380,7 @@ namespace VFHCatalogMVC.Application.Services
                 isNewPlant = index.newPlant 
             };
 
-            _messageRepo.AddNewUserPlantMessage(_mapper.Map<PlantMessage>(plantMessage));
+            _messageRepo.AddEntity<PlantMessage>(_mapper.Map<PlantMessage>(plantMessage));
         }
 
         private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)

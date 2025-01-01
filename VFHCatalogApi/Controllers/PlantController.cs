@@ -226,7 +226,7 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var plantSedd = _plantService.FillProperties(id, User.Identity.Name);
+                var plantSedd = _plantService.FillProperty<PlantSeedVm>(id, User.Identity.Name);
                 //return PartialView("AddSeedModalPartial", plantSedd);
                 return Ok(plantSedd);
             }
@@ -269,7 +269,7 @@ namespace VFHCatalogApi.Controllers
         {
             try
             {
-                var plantSeedling = _plantService.FillPropertiesSeedling(id, User.Identity.Name);
+                var plantSeedling = _plantService.FillProperty<PlantSeedlingVm>(id, User.Identity.Name);
                 //return PartialView("AddSeedlingModalPartial", plantSeedling);
                 return Ok(plantSeedling);
             }

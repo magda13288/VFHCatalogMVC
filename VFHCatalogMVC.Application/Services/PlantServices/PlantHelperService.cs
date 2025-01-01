@@ -115,11 +115,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (typeId == 1)
             {
-                growthTypes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTypes = _plantRepo.GetAllEntities<GrowthType>()/*.Where(e => e.PlantTypeId == typeId && e.PlantGroupId == groupId && e.PlantSectionId == sectionId).OrderBy(e => e.PlantTypeId)*/.ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
             else if (typeId == 2 || typeId == 3)
             {
-                growthTypes = _plantRepo.GetAllEntities<GrowthType>().Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId).ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+                growthTypes = _plantRepo.GetAllEntities<GrowthType>()/*.Where(e => e.PlantTypeId == typeId).OrderBy(e => e.PlantTypeId)*/.ProjectTo<GrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             }
 
             return growthTypes;

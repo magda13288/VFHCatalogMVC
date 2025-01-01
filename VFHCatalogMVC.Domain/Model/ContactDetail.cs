@@ -7,7 +7,6 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class ContactDetail
     {
-        public int Id { get; set; }
         public string ContactDetailInformation { get; set; }
         public int ContactDetailTypeID { get; set; }
         public ContactDetailType ContactDetailType { get; set; }

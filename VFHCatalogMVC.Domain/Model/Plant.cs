@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Web.Mvc;
+using VFHCatalogMVC.Domain.Common;
+using VFHCatalogMVC.Domain.Interface;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class Plant
+    public class Plant:BaseEntity, IAuditableEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public int PlantTypeId { get; set; }
         public virtual PlantType PlantType { get; set; }
         public int PlantGroupId { get; set; }
@@ -20,7 +22,6 @@ namespace VFHCatalogMVC.Domain.Model
         public bool isActive { get; set; }
         public bool isNew { get; set; }
 
-
         // TypeId,GroupId, NameId, AvailabilityId jeden do wielu - jeden typ może być przypisany do wielu plantów     
 
         //wiele do wielu - kilka plantów może mieć przypisane kilka tagów i na odwrót
@@ -28,13 +29,15 @@ namespace VFHCatalogMVC.Domain.Model
         public PlantDetail PlantDetail { get; set; }
         public TypeOfAvailability TypeOfAvailability { get; set; }
         public ICollection<PlantTag> PlantTags { get; set; }
-        //public ICollection<PrivateUserPlant> PrivateUserPlants { get; set; }
-        //public ICollection<CustomerPlant> CustomerPlants { get; set; }
-        //public ICollection<PlantHolder> PlantHolders { get; set; }
         public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
         public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
         public virtual ICollection<NewUserPlant> NewUserPlants { get; set; }
         public virtual ICollection<PlantMessage> PlantMessages { get; set; }
-       
+        public DateTime CreatedAtUtc { get; set; }
+        public DateTime? UpdatedAtUtc { get; set; }
+        public DateTime? InactivatedAtUtc { get; set; }
+        public string CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
+        public string? InactivatedBy { get; set; }
     }
 }

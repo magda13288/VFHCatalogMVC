@@ -1,6 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Domain.Common;
+using Microsoft.EntityFrameworkCore.Metadata;
+using VFHCatalogMVC.Infrastructure.Common;
+using VFHCatalogMVC.Infrastructure.Mapping;
+using VFHCatalogMVC.Infrastructure.Seed;
 
 namespace VFHCatalogMVC.Infrastructure
 {
@@ -41,338 +53,233 @@ namespace VFHCatalogMVC.Infrastructure
         public DbSet<MessageAnswer> MessageAnswers { get; set; }
         public DbSet<NewUserPlant> NewUserPlants { get; set; }
         public DbSet<PlantMessage> PlantMessages { get; set; }
-        //public DbSet<FruitSizeForListFilters> FruitSizeForListFilters { get; set; }
-        //public DbSet<FruitTypeForListFilters> FruitTypeForListFilters { get; set; }
+        public DbSet<FruitSizeForListFilters> FruitSizeForListFilters { get; set; }
+        public DbSet<FruitTypeForListFilters> FruitTypeForListFilters { get; set; }
+        public DbSet<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; }
+        public DbSet<AuditTrial> AuditTrials { get; set; }
 
-        //public DbSet<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; }
-
-        public Context(DbContextOptions options) : base(options)
+        public ICurrentSessionProvider CurrentSessionProvider;
+        public Context(DbContextOptions options, ICurrentSessionProvider currentSessionProvider) : base(options)
         {
-
+            CurrentSessionProvider = currentSessionProvider;
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Address>(entity =>
-            {
-                entity.HasOne(p => p.Country)
-                .WithMany(p => p.Adresses)
-                .HasForeignKey(p => p.CountryId)
-                .OnDelete(DeleteBehavior.NoAction);
+            GetApplyConfiguration(builder);
 
-                entity.HasOne(p => p.Region)
-                .WithMany(p => p.Address)
-                .HasForeignKey(p => p.RegionId)
-                .OnDelete(DeleteBehavior.NoAction);
+                                          
+        }
 
-                entity.HasOne(p => p.City)
-                .WithMany(p => p.Addresses)
-                .HasForeignKey(p => p.CityId)
-                .OnDelete(DeleteBehavior.NoAction);
+        private static void GetApplyConfiguration(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new AuditTrailConfiguration());
+            builder.ApplyConfiguration(new AddressConfigration());
+            builder.ApplyConfiguration(new PlantConfiguration());
+            builder.ApplyConfiguration(new PlantDetailConfiguration());
+            builder.ApplyConfiguration(new PlantTagConfiguration());
+            builder.ApplyConfiguration(new PlantDestinationConfiguration());
+            builder.ApplyConfiguration(new FruitSizeForListFiltersConfiguration());
+            builder.ApplyConfiguration(new FruitTypeForListFiltersConfiguration());
+            builder.ApplyConfiguration(new GrowthTypesForListFiltersConfiguration());
+            builder.ApplyConfiguration(new PlantGrowthTypeConfiguration());
+            builder.ApplyConfiguration(new PlantGrowingSeazonConfiguration());
+            builder.ApplyConfiguration(new ContactDetailForSeedConfiguration());
+            builder.ApplyConfiguration(new ContactDetailForSeedlingConfiguration());
+            builder.ApplyConfiguration(new MessageAnswerConfiguration());
+            builder.ApplyConfiguration(new NewUserPlantConfiguration());
+            builder.ApplyConfiguration(new PlantMessageConfiguration());
 
-            });
+            DataSeed.Seed(builder);
+         
+        }
 
-            builder.Entity<Plant>(entity =>
-            {
-                entity.HasOne(p => p.PlantType)
-                .WithMany(p => p.Plants)
-                .HasForeignKey(p => p.PlantTypeId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .IsRequired();
-
-                entity.HasOne(p => p.PlantGroup)
-               .WithMany(p => p.Plants)
-               .HasForeignKey(p => p.PlantGroupId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired();
-
-                entity.HasOne(p => p.PlantSection)
-               .WithMany(p => p.Plants)
-               .HasForeignKey(p => p.PlantSectionId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-
-            });
-
-            builder.Entity<GrowthType>(entity =>
-            {
-                entity.HasOne(p => p.PlantType)
-                .WithMany(p => p.GrowthTypes)
-                .HasForeignKey(p => p.PlantTypeId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .IsRequired();
-
-                entity.HasOne(p => p.PlantGroup)
-               .WithMany(p => p.GrowthTypes)
-               .HasForeignKey(p => p.PlantGroupId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-
-                entity.HasOne(p => p.PlantSection)
-               .WithMany(p => p.GrowthTypes)
-               .HasForeignKey(p => p.PlantSectionId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-            });
-
-
-            builder.Entity<FruitSize>(entity =>
-            {
-                entity.HasOne(p => p.PlantType)
-                .WithMany(p => p.FruitSizes)
-                .HasForeignKey(p => p.PlantTypeId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .IsRequired();
-
-                entity.HasOne(p => p.PlantGroup)
-               .WithMany(p => p.FruitSizes)
-               .HasForeignKey(p => p.PlantGroupId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-
-                entity.HasOne(p => p.PlantSection)
-               .WithMany(p => p.FruitSizes)
-               .HasForeignKey(p => p.PlantSectionId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-            });
-
-
-            builder.Entity<FruitType>(entity =>
-            {
-                entity.HasOne(p => p.PlantType)
-                .WithMany(p => p.FruitTypes)
-                .HasForeignKey(p => p.PlantTypeId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .IsRequired();
-
-                entity.HasOne(p => p.PlantGroup)
-               .WithMany(p => p.FruitTypes)
-               .HasForeignKey(p => p.PlantGroupId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-
-                entity.HasOne(p => p.PlantSection)
-               .WithMany(p => p.FruitTypes)
-               .HasForeignKey(p => p.PlantSectionId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired(false);
-            });
-
-            builder.Entity<PlantDetail>(entity =>
-            {
-                entity.HasOne(p => p.Color)
-                .WithMany(p => p.PlantDetails)
-                .HasForeignKey(p => p.ColorId)
-                .IsRequired(false);
-
-                entity.HasOne(p => p.FruitSize)
-               .WithMany(p => p.PlantDetails)
-               .HasForeignKey(p => p.FruitSizeId)
-               .IsRequired(false);
-
-                entity.HasOne(p => p.FruitType)
-               .WithMany(p => p.PlantDetails)
-               .HasForeignKey(p => p.FruitTypeId)
-               .IsRequired(false);
-            });
-
-            builder.Entity<Plant>()
-                .HasOne(a => a.TypeOfAvailability).WithOne(b => b.Plant)
-                .HasForeignKey<TypeOfAvailability>(e => e.PlantRef);
-
-            builder.Entity<Plant>()
-                .HasOne(a => a.PlantDetail).WithOne(b => b.Plant)
-                .HasForeignKey<PlantDetail>(e => e.PlantRef);
-
-            builder.Entity<PlantTag>()
-                .HasKey(pt => new { pt.PlantId, pt.TagId });
-
-            builder.Entity<PlantTag>()
-                .HasOne<Plant>(pt => pt.Plant)
-                .WithMany(pt => pt.PlantTags)
-                .HasForeignKey(pt => pt.PlantId);
-
-            builder.Entity<PlantTag>()
-                .HasOne<Tag>(pt => pt.Tag)
-                .WithMany(pt => pt.PlantTags)
-                .HasForeignKey(pt => pt.TagId);
-
-
-
-            builder.Entity<PlantDestination>(entity => {
-
-                entity.HasKey(p => new { p.PlantDetailId, p.DestinationId });
-
-                entity.HasOne<PlantDetail>(p => p.PlantDetail)
-                .WithMany(p => p.PlantDestinations)
-                .HasForeignKey(p => p.PlantDetailId);
-
-                entity.HasOne<Destination>(p => p.Destinations)
-                .WithMany(p => p.PlantDestinations)
-                .HasForeignKey(p => p.DestinationId);
-            });
-
-            //builder.Entity<FruitSizeForListFilters>(entity =>
-            // {
-            //     entity.HasKey(p => new { p.FruitSizeId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
-
-            //     entity.HasOne<FruitSize>(p => p.FruitSize)
-            //     .WithMany(p => p.FruitSizeForFilters)
-            //     .HasForeignKey(p => p.FruitSizeId);
-
-            //     entity.HasOne<PlantType>(p => p.PlantType)
-            //     .WithMany(p => p.FruitSizeForFilters)
-            //     .HasForeignKey(p => p.PlantTypeId);
-
-            //     entity.HasOne<PlantGroup>(p => p.PlantGroup)
-            //     .WithMany(p => p.FruitSizeForFilters)
-            //     .HasForeignKey(p => p.PlantGroupId);
-
-            //     entity.HasOne<PlantSection>(p=>p.PlantSection)
-            //     .WithMany(p=>p.FruitSizeForFilters)
-            //     .HasForeignKey(p=>p.PlantSectionId);
-
-            //     });
-
-            //builder.Entity<FruitTypeForListFilters>(entity =>
+        public override int SaveChanges()
+        {
+            //foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             //{
-            //    entity.HasKey(p => new { p.FruitTypeId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
+            //    switch (entry.State)
+            //    {
+            //        case EntityState.Added:
+            //            entry.Entity.CreatedBy = string.Empty;
+            //            entry.Entity.Created = DateTime.Now;
+            //            entry.Entity.StatusId = 1;
+            //            break;
 
-            //    entity.HasOne<FruitType>(p => p.FruitType)
-            //    .WithMany(p => p.FruitTypeForFilters)
-            //    .HasForeignKey(p => p.FruitTypeId);
+            //        case EntityState.Modified:
+            //            entry.Entity.ModifiedBy = string.Empty; 
+            //            entry.Entity.Modified = DateTime.Now;
+            //            break;
 
-            //    entity.HasOne<PlantType>(p => p.PlantType)
-            //    .WithMany(p => p.FruitTypeForFilters)
-            //    .HasForeignKey(p => p.PlantTypeId);
-
-            //    entity.HasOne<PlantGroup>(p => p.PlantGroup)
-            //    .WithMany(p => p.FruitTypeForFilters)
-            //    .HasForeignKey(p => p.PlantGroupId);
-
-            //    entity.HasOne<PlantSection>(p => p.PlantSection)
-            //    .WithMany(p => p.FruitTypeForFilters)
-            //    .HasForeignKey(p => p.PlantSectionId);
-
-            //});
-
-            //builder.Entity<GrowthTypesForListFilters>(entity => {
-
-            //    entity.HasKey(p => new { p.GrowthTypesId, p.PlantTypeId, p.PlantGroupId, p.PlantSectionId });
-
-            //    entity.HasOne<GrowthType>(p => p.GrowthType)
-            //    .WithMany(p => p.GrowthTypesForListFilters)
-            //    .HasForeignKey(p => p.GrowthTypesId);
-
-            //    entity.HasOne<PlantType>(p => p.PlantType)
-            //    .WithMany(p => p.GrowthTypesForListFilters)
-            //    .HasForeignKey(p => p.PlantTypeId);
-
-            //    entity.HasOne<PlantGroup>(p => p.PlantGroup)
-            //   .WithMany(p => p.GrowthTypesForListFilters)
-            //   .HasForeignKey(p => p.PlantGroupId);
-
-            //    entity.HasOne<PlantSection>(p => p.PlantSection)
-            //    .WithMany(p => p.GrowthTypesForListFilters)
-            //    .HasForeignKey(p => p.PlantSectionId);
-            //});
+            //        case EntityState.Deleted:
+            //            entry.Entity.ModifiedBy = string.Empty;
+            //            entry.Entity.Modified = DateTime.Now;
+            //            entry.Entity.InactivatedBy = string.Empty;
+            //            entry.Entity.Inactivated = DateTime.Now;
+            //            entry.Entity.StatusId = 0;
+            //            entry.State = EntityState.Modified;
+            //            break;
 
 
-            builder.Entity<PlantGrowthType>(entity => {
+            //    }
+            //}
+            //return base.SaveChanges();
 
-                entity.HasKey(pg => new { pg.PlantDetailId, pg.GrowthTypeId });
+            var userId = CurrentSessionProvider.GetUserId();
 
-                entity.HasOne<PlantDetail>(pg => pg.PlantDetail)
-                  .WithMany(pg => pg.PlantGrowthTypes)
-                  .HasForeignKey(pg => pg.PlantDetailId);
+            SetAuditableProperties(userId);
 
-                entity.HasOne<GrowthType>(pg => pg.GrowthType)
-                    .WithMany(pg => pg.PlantGrowthTypes)
-                    .HasForeignKey(pg => pg.GrowthTypeId);
-            });
-
-            builder.Entity<PlantGrowingSeazon>(entity =>
+            var auditEntries = HandleAuditingBeforeSaveChanges(userId).ToList();
+            if (auditEntries.Count > 0)
             {
-                entity.HasKey(e => new { e.PlantDetailId, e.GrowingSeazonId });
+                AuditTrials.AddRange(auditEntries);
+            }
 
-                entity.HasOne<PlantDetail>(e => e.PlantDetail)
-                .WithMany(e => e.PlantGrowingSeazons)
-                .HasForeignKey(e => e.PlantDetailId);
+            return  base.SaveChanges();
+        }
 
-                entity.HasOne<GrowingSeazon>(e => e.GrowingSeazon)
-                .WithMany(e => e.PlantGrowingSeazons)
-                .HasForeignKey(e => e.GrowingSeazonId);
-            });
+        private List<AuditTrial> HandleAuditingBeforeSaveChanges(string userId)
+        {
+            var auditableEntries = ChangeTracker.Entries<IAuditableEntity>()
+                     .Where(x => x.State == EntityState.Added ||
+                                 x.State == EntityState.Deleted ||
+                                 x.State == EntityState.Modified)
+                     .Select(x => CreateTrailEntry(userId, x))
+                     .ToList();
+            return auditableEntries;
+        }
 
-            builder.Entity<ContactDetailForSeed>(entity =>
+        private static AuditTrial CreateTrailEntry(string userId, EntityEntry<IAuditableEntity> entry)
+        {
+            var trailEntry = new AuditTrial
             {
-                entity.HasKey(e => new { e.PlantSeedId, e.ContactDetailId });
+                Id = Guid.NewGuid(),
+                EntityName = entry.Entity.GetType().Name,
+                UserId = userId,
+                DateUtc = DateTime.UtcNow
+            };
 
-                entity.HasOne(e => e.PlantSeed)
-                .WithMany(e => e.ContactDetailForSeeds)
-                .HasForeignKey(e => e.PlantSeedId);
+            SetAuditTrailPropertyValues(entry, trailEntry); //plain properties
+            SetAuditTrailNavigationValues(entry, trailEntry); // reference properites
+            SetAuditTrailReferenceValues(entry, trailEntry); //navigation property
 
-                entity.HasOne(e => e.ContactDetail)
-                .WithMany(e => e.ContactDetailForSeeds)
-                .HasForeignKey(e => e.ContactDetailId);
-            });
+            return trailEntry;
+        }
 
-            builder.Entity<ContactDetailForSeedling>(entity =>
+        private static void SetAuditTrailReferenceValues(EntityEntry entry, AuditTrial trailEntry)
+        {
+            foreach (var reference in entry.References.Where(x => x.IsModified))
             {
-                entity.HasKey(e => new { e.PlantSeedlingId, e.ContactDetailId });
+                var referenceName = reference.EntityEntry.Entity.GetType().Name;
+                trailEntry.ChangedColumns.Add(referenceName);
+            }
+        }
 
-                entity.HasOne(e => e.PlantSeedling)
-                .WithMany(e => e.ContactDetailForSeedlings)
-                .HasForeignKey(e => e.PlantSeedlingId);
+        private static void SetAuditTrailNavigationValues(EntityEntry entry, AuditTrial trailEntry)
+        {
 
-                entity.HasOne(e => e.ContactDetail)
-                .WithMany(e => e.ContactsForSeedling)
-                .HasForeignKey(e => e.ContactDetailId);
-            });
-
-            builder.Entity<MessageAnswer>(entity =>
+            foreach (var navigation in entry.Navigations.Where(x => x.Metadata.IsCollection() && x.IsModified))
             {
-                entity.HasKey(e => new { e.MessageId, e.MessageAnswerId });
+                var enumerable = navigation.CurrentValue as IEnumerable<object>;
+                if (enumerable == null)
+                {
+                    continue; //skip is CurrentBalue isn't collection
+                }
 
-                entity.HasOne(e => e.Message)
-                .WithMany(e => e.MessageAnswers)
-                .HasForeignKey(e => e.MessageId)
-                .OnDelete(DeleteBehavior.NoAction);
+                var collection = enumerable.ToList();
+                if (collection.Count == 0)
+                {
+                    continue; // skip null collection
+                }
 
-                entity.HasOne(e => e.Message)
-               .WithMany(e => e.MessageAnswers)
-               .HasForeignKey(e => e.MessageAnswerId)
-               .OnDelete(DeleteBehavior.NoAction);
-            });
+                var navigationName = collection.First().GetType().Name;
+                trailEntry.ChangedColumns.Add(navigationName);
+            }
+        }
 
-            builder.Entity<NewUserPlant>(entity =>
+        private static void SetAuditTrailPropertyValues(EntityEntry entry, AuditTrial trailEntry)
+        {
+            // Skip temp fields (that will be assigned automatically by ef core engine, for example: when inserting an entity
+            foreach (var property in entry.Properties.Where(x => !x.IsTemporary))
             {
-                entity.HasKey(e => new { e.PlantId, e.UserId });
-                entity.Ignore(e => e.Id);
+                if (property.Metadata.IsPrimaryKey())
+                {
+                    trailEntry.PrimaryKey = property.CurrentValue?.ToString();
+                    continue;
+                }
 
-                entity.HasOne(e => e.Plant)
-                .WithMany(e => e.NewUserPlants)
-                .HasForeignKey(e => e.PlantId);
+                // Filter properties that should not appear in the audit list
+                if (property.Metadata.Name.Equals("PasswordHash"))
+                {
+                    continue;
+                }
 
-                entity.HasOne(e => e.User)
-                .WithMany(e => e.NewUserPlants)
-                .HasForeignKey(e => e.UserId);
-            });
+                SetAuditTrailPropertyValue(entry, trailEntry, property);
+            }
+        }
 
-            builder.Entity<PlantMessage>(entity =>
+        private static void SetAuditTrailPropertyValue(EntityEntry entry, AuditTrial trailEntry, PropertyEntry property)
+        {
+            var propertyName = property.Metadata.Name;
+
+            switch (entry.State)
             {
-                entity.HasKey(e => new { e.PlantId, e.MessageId });
+                case EntityState.Added:
+                    trailEntry.TrailType = TrailType.Create;
+                    trailEntry.NewValues[propertyName] = property.CurrentValue;
 
-                entity.HasOne(e => e.Plant)
-                .WithMany(e => e.PlantMessages)
-                .HasForeignKey(e => e.PlantId);
+                    break;
 
-                entity.HasOne(e => e.Message)
-                .WithMany(e => e.PlantMessages)
-                .HasForeignKey(e => e.MessageId);
-            });
+                case EntityState.Deleted:
+                    trailEntry.TrailType = TrailType.Delete;
+                    trailEntry.OldValues[propertyName] = property.OriginalValue;
+
+                    break;
+
+                case EntityState.Modified:
+                    if (property.IsModified && (property.OriginalValue is null || !property.OriginalValue.Equals(property.CurrentValue)))
+                    {
+                        trailEntry.ChangedColumns.Add(propertyName);
+                        trailEntry.TrailType = TrailType.Update;
+                        trailEntry.OldValues[propertyName] = property.OriginalValue;
+                        trailEntry.NewValues[propertyName] = property.CurrentValue;
+                    }
+
+                    break;
+            }
+
+            if (trailEntry.ChangedColumns.Count > 0)
+            {
+                trailEntry.TrailType = TrailType.Update;
+            }
+        }
+
+        private void SetAuditableProperties(string userId)
+        {
+            const string systemSource = "system";
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedAtUtc = DateTime.UtcNow;
+                        entry.Entity.CreatedBy = userId?.ToString() ?? systemSource;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedAtUtc = DateTime.UtcNow;
+                        entry.Entity.UpdatedBy = userId?.ToString() ?? systemSource;
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.Entity.UpdatedAtUtc = DateTime.UtcNow;
+                        entry.Entity.UpdatedBy = userId?.ToString() ?? systemSource;
+                        entry.Entity.InactivatedBy = userId?.ToString() ?? systemSource;
+                        entry.Entity.InactivatedAtUtc = DateTime.UtcNow;
+                        break;
+                }
+            }
         }
     }
 }

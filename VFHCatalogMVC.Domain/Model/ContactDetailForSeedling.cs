@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
+using VFHCatalogMVC.Domain.Interface;
 
 namespace VFHCatalogMVC.Domain.Model
 {

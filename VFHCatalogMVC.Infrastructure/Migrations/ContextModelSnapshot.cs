@@ -15,7 +15,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.30")
+                .HasAnnotation("ProductVersion", "3.1.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -293,6 +293,52 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.AuditTrial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChangedColumnsJson")
+                        .HasColumnName("ChangedColumns")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("NewValuesJson")
+                        .HasColumnName("NewValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValuesJson")
+                        .HasColumnName("OldValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryKey")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("TrailType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityName");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuditTrials");
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.City", b =>
                 {
                     b.Property<int>("Id")
@@ -326,6 +372,53 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Colors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "White"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Black"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Red"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Indigo"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Orange"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Pink"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Multicolor"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Green"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Yellow"
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.CompanyContactInformation", b =>
@@ -452,6 +545,23 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Destinations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ground"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Under covers"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Pot"
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitSize", b =>
@@ -464,24 +574,91 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("FruitSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Not specified"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Small"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Cherry type"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Large-fruited"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Medium-fruited"
+                        });
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitSizeForListFilters", b =>
+                {
+                    b.Property<int>("FruitSizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlantTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PlantGroupId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PlantSectionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlantTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlantGroupId");
+                    b.HasKey("FruitSizeId", "PlantTypeId");
 
                     b.HasIndex("PlantSectionId");
 
                     b.HasIndex("PlantTypeId");
 
-                    b.ToTable("FruitSizes");
+                    b.HasIndex("PlantGroupId", "PlantSectionId");
+
+                    b.ToTable("FruitSizeForListFilters");
+
+                    b.HasData(
+                        new
+                        {
+                            FruitSizeId = 2,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            FruitSizeId = 3,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            FruitSizeId = 4,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            FruitSizeId = 5,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitType", b =>
@@ -494,24 +671,91 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("FruitTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Not specified"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Fleshy"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Multichambered"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Spicy"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Sweet"
+                        });
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitTypeForListFilters", b =>
+                {
+                    b.Property<int>("FruitTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlantTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PlantGroupId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PlantSectionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlantTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlantGroupId");
+                    b.HasKey("FruitTypeId", "PlantTypeId");
 
                     b.HasIndex("PlantSectionId");
 
                     b.HasIndex("PlantTypeId");
 
-                    b.ToTable("FruitTypes");
+                    b.HasIndex("PlantGroupId", "PlantSectionId");
+
+                    b.ToTable("FruitTypeForListFilters");
+
+                    b.HasData(
+                        new
+                        {
+                            FruitTypeId = 2,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            FruitTypeId = 3,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            FruitTypeId = 4,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 2
+                        },
+                        new
+                        {
+                            FruitTypeId = 5,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 2
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.GrowingSeazon", b =>
@@ -527,6 +771,38 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GrowingSeazons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Late"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Early"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Mid-late"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Mid-early"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Annual"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Perennial"
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.GrowthType", b =>
@@ -539,24 +815,180 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("GrowthTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Not specified"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Tall growing"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Dwarf"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Potted"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Determinate"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Shrub"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Sweet"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Bush"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Tree"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Climbing plant"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Hanging plant"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Vine"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Root"
+                        });
+                });
+
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.GrowthTypesForListFilters", b =>
+                {
+                    b.Property<int>("GrowthTypesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlantTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PlantGroupId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PlantSectionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PlantTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlantGroupId");
+                    b.HasKey("GrowthTypesId", "PlantTypeId");
 
                     b.HasIndex("PlantSectionId");
 
                     b.HasIndex("PlantTypeId");
 
-                    b.ToTable("GrowthTypes");
+                    b.HasIndex("PlantGroupId", "PlantSectionId");
+
+                    b.ToTable("GrowthTypesForListFilters");
+
+                    b.HasData(
+                        new
+                        {
+                            GrowthTypesId = 2,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            GrowthTypesId = 3,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            GrowthTypesId = 4,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            GrowthTypesId = 5,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 1
+                        },
+                        new
+                        {
+                            GrowthTypesId = 6,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 6,
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 7,
+                            PlantTypeId = 1,
+                            PlantGroupId = 1,
+                            PlantSectionId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 8,
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 9,
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 10,
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            GrowthTypesId = 11,
+                            PlantTypeId = 3
+                        },
+                        new
+                        {
+                            GrowthTypesId = 12,
+                            PlantTypeId = 3
+                        },
+                        new
+                        {
+                            GrowthTypesId = 13,
+                            PlantTypeId = 3
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Message", b =>
@@ -647,7 +1079,19 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
@@ -661,6 +1105,12 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.Property<int>("PlantTypeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
@@ -687,6 +1137,39 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("DestinationId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Inactivated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PlantDetailId", "DestinationId");
 
                     b.HasIndex("DestinationId");
@@ -701,23 +1184,41 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ColorId")
+                    b.Property<int>("ColorId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FruitSizeId")
+                    b.Property<int>("FruitSizeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FruitTypeId")
+                    b.Property<int>("FruitTypeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlantPassportNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PlantRef")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -740,11 +1241,29 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PlantDetailId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -771,6 +1290,116 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("PlantTypeId");
 
                     b.ToTable("PlantGroups");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Nightshade",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Cucurbits",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Legumes",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Cruciferous",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Leafy",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Onion",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Root",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Turnip greens",
+                            PlantTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Pitted",
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Berry",
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Pome",
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Citrus",
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Exotic",
+                            PlantTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "Healing",
+                            PlantTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "Spicy",
+                            PlantTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "Essential oil",
+                            PlantTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "Outdoor",
+                            PlantTypeId = 4
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Name = "Indoor",
+                            PlantTypeId = 4
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantGrowingSeazon", b =>
@@ -780,6 +1409,39 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.Property<int>("GrowingSeazonId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Inactivated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PlantDetailId", "GrowingSeazonId");
 
@@ -796,6 +1458,39 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("GrowthTypeId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Inactivated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PlantDetailId", "GrowthTypeId");
 
                     b.HasIndex("GrowthTypeId");
@@ -811,6 +1506,39 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Inactivated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("isNewPlant")
                         .HasColumnType("bit");
 
@@ -824,7 +1552,7 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
 
                     b.HasIndex("MessageId");
 
-                    b.ToTable("IndexPlantMessages");
+                    b.ToTable("PlantMessages");
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantOpinion", b =>
@@ -834,14 +1562,32 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Opinion")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PlantDetailId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -873,6 +1619,392 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("PlantGroupId");
 
                     b.ToTable("PlantSections");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Tomato",
+                            PlantGroupId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Pepper",
+                            PlantGroupId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Potato",
+                            PlantGroupId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Eggplant",
+                            PlantGroupId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Other",
+                            PlantGroupId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Cucumber",
+                            PlantGroupId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Zucchini",
+                            PlantGroupId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Pumpkin",
+                            PlantGroupId = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Patison",
+                            PlantGroupId = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Other",
+                            PlantGroupId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Beans",
+                            PlantGroupId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Pea",
+                            PlantGroupId = 3
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Lentils",
+                            PlantGroupId = 3
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "Broad bean",
+                            PlantGroupId = 3
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "Other",
+                            PlantGroupId = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "Cabbage",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "Brussels sprouts",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Name = "Broccoli",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Name = "Cauliflower",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Name = "Kohlrabi",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Name = "Other",
+                            PlantGroupId = 4
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Name = "Lettuce",
+                            PlantGroupId = 5
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Name = "Spinach",
+                            PlantGroupId = 5
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Name = "Leaf parsley",
+                            PlantGroupId = 5
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Name = "Other",
+                            PlantGroupId = 5
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Name = "Onion",
+                            PlantGroupId = 6
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "Garlic",
+                            PlantGroupId = 6
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "Leek",
+                            PlantGroupId = 6
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Name = "Other",
+                            PlantGroupId = 6
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Name = "Carrot",
+                            PlantGroupId = 7
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Name = "Root parsley",
+                            PlantGroupId = 7
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Name = "Beetroot",
+                            PlantGroupId = 7
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Name = "Root celery",
+                            PlantGroupId = 7
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Name = "Other",
+                            PlantGroupId = 7
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Name = "Radish",
+                            PlantGroupId = 8
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Name = "Rutabaga",
+                            PlantGroupId = 8
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Name = "Turnip",
+                            PlantGroupId = 8
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Name = "Other",
+                            PlantGroupId = 8
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Name = "Cherries",
+                            PlantGroupId = 9
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Name = "Peach",
+                            PlantGroupId = 9
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Name = "Plum",
+                            PlantGroupId = 9
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Name = "Apricot",
+                            PlantGroupId = 9
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Name = "Other",
+                            PlantGroupId = 9
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Name = "Strawberry",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Name = "Blackberries",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Name = "Blueberries",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Name = "Raspberries",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Name = "Currants",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Name = "Berries",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Name = "Other",
+                            PlantGroupId = 10
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Name = "Apple",
+                            PlantGroupId = 11
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Name = "Pear",
+                            PlantGroupId = 11
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Name = "Quince",
+                            PlantGroupId = 11
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Name = "Pomegranate",
+                            PlantGroupId = 11
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Name = "Other",
+                            PlantGroupId = 11
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Name = "Lemon",
+                            PlantGroupId = 12
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Name = "Tangerine",
+                            PlantGroupId = 12
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Name = "Orange",
+                            PlantGroupId = 12
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Name = "Grapefruit",
+                            PlantGroupId = 12
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Name = "Other",
+                            PlantGroupId = 12
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Name = "Banana",
+                            PlantGroupId = 13
+                        },
+                        new
+                        {
+                            Id = 62,
+                            Name = "Pineapple",
+                            PlantGroupId = 13
+                        },
+                        new
+                        {
+                            Id = 63,
+                            Name = "Lychee",
+                            PlantGroupId = 13
+                        },
+                        new
+                        {
+                            Id = 64,
+                            Name = "Other",
+                            PlantGroupId = 13
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantSeed", b =>
@@ -885,14 +2017,32 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PlantId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -916,14 +2066,32 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("InactivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PlantId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -943,6 +2111,27 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Inactivated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InactivatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
                         .HasColumnType("int");
 
                     b.HasKey("PlantId", "TagId");
@@ -965,6 +2154,38 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PlantTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Vegetable"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Fruit"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Herb"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Flower"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Home plant"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Grass"
+                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.Region", b =>
@@ -1111,6 +2332,14 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.AuditTrial", b =>
+                {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.City", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Region", "Region")
@@ -1170,58 +2399,76 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitSize", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitSizeForListFilters", b =>
                 {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.FruitSize", "FruitSize")
+                        .WithMany("FruitSizeForFilters")
+                        .HasForeignKey("FruitSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantGroup", "PlantGroup")
-                        .WithMany("FruitSizes")
+                        .WithMany("FruitSizeForFilters")
                         .HasForeignKey("PlantGroupId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantSection", "PlantSection")
-                        .WithMany("FruitSizes")
+                        .WithMany("FruitSizeForFilters")
                         .HasForeignKey("PlantSectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantType", "PlantType")
-                        .WithMany("FruitSizes")
+                        .WithMany("FruitSizeForFilters")
                         .HasForeignKey("PlantTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitType", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.FruitTypeForListFilters", b =>
                 {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.FruitType", "FruitType")
+                        .WithMany("FruitTypeForFilters")
+                        .HasForeignKey("FruitTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantGroup", "PlantGroup")
-                        .WithMany("FruitTypes")
+                        .WithMany("FruitTypeForFilters")
                         .HasForeignKey("PlantGroupId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantSection", "PlantSection")
-                        .WithMany("FruitTypes")
+                        .WithMany("FruitTypeForFilters")
                         .HasForeignKey("PlantSectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantType", "PlantType")
-                        .WithMany("FruitTypes")
+                        .WithMany("FruitTypeForFilters")
                         .HasForeignKey("PlantTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.GrowthType", b =>
+            modelBuilder.Entity("VFHCatalogMVC.Domain.Model.GrowthTypesForListFilters", b =>
                 {
+                    b.HasOne("VFHCatalogMVC.Domain.Model.GrowthType", "GrowthType")
+                        .WithMany("GrowthTypesForListFilters")
+                        .HasForeignKey("GrowthTypesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantGroup", "PlantGroup")
-                        .WithMany("GrowthTypes")
+                        .WithMany("GrowthTypesForListFilters")
                         .HasForeignKey("PlantGroupId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantSection", "PlantSection")
-                        .WithMany("GrowthTypes")
+                        .WithMany("GrowthTypesForListFilters")
                         .HasForeignKey("PlantSectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.PlantType", "PlantType")
-                        .WithMany("GrowthTypes")
+                        .WithMany("GrowthTypesForListFilters")
                         .HasForeignKey("PlantTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1316,15 +2563,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Color", "Color")
                         .WithMany("PlantDetails")
-                        .HasForeignKey("ColorId");
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.FruitSize", "FruitSize")
                         .WithMany("PlantDetails")
-                        .HasForeignKey("FruitSizeId");
+                        .HasForeignKey("FruitSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.FruitType", "FruitType")
                         .WithMany("PlantDetails")
-                        .HasForeignKey("FruitTypeId");
+                        .HasForeignKey("FruitTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
                         .WithOne("PlantDetail")
@@ -1384,13 +2637,13 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.PlantMessage", b =>
                 {
                     b.HasOne("VFHCatalogMVC.Domain.Model.Message", "Message")
-                        .WithMany("IndexPlantMessages")
+                        .WithMany("PlantMessages")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("VFHCatalogMVC.Domain.Model.Plant", "Plant")
-                        .WithMany("IndexPlantMessages")
+                        .WithMany("PlantMessages")
                         .HasForeignKey("PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

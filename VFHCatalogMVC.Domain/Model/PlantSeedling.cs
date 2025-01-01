@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Domain.Common;
+using VFHCatalogMVC.Domain.Interface;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantSeedling : BasePlantSeedSeedlingProperty
-    {
-        //public int Id { get; set; }
-        //public int PlantId { get; set; }
-        //public virtual Plant Plant { get; set; }
-        //public int Count { get; set; }
-        //public string Description { get; set; }
-        //public DateTime DateAdded { get; set; }
-        //public string UserId { get; set; }
-        //public virtual ApplicationUser User { get; set; }
+    public class PlantSeedling : BasePlantSeedSeedlingProperty, IAuditableEntity
+    {     
+        public DateTime CreatedAtUtc { get; set; }
+        public DateTime? UpdatedAtUtc { get; set; }
+        public DateTime? InactivatedAtUtc { get; set; }
+        public string CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
+        public string? InactivatedBy { get; set; }
         public ICollection<ContactDetailForSeedling> ContactDetailForSeedlings { get; set; }
     }
 }

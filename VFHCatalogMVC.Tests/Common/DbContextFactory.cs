@@ -82,10 +82,10 @@ namespace Application.UnitTests.Common
             //based on data from data base
             var growthTypes = new List<GrowthType>
             {
-               new GrowthType {Id=1,PlantTypeId=1, PlantGroupId =1, PlantSectionId = 1, Name="test" },
-               new GrowthType {Id=2,PlantTypeId=2, PlantGroupId= null, PlantSectionId = null, Name="test" },
-               new GrowthType{Id=3,PlantTypeId=3, PlantGroupId= null, PlantSectionId = null, Name="test"},
-               new GrowthType{Id=4,PlantTypeId=1, PlantGroupId=3, PlantSectionId = 11, Name="test"},
+               new GrowthType {Id=1,/*PlantTypeId=1, PlantGroupId =1, PlantSectionId = 1,*/ Name="test" },
+               new GrowthType {Id=2,/*PlantTypeId=2, PlantGroupId= null, PlantSectionId = null,*/ Name="test" },
+               new GrowthType{Id=3,/*,PlantTypeId=3, PlantGroupId= null, PlantSectionId = null,*/ Name="test"},
+               new GrowthType{Id=4,/*PlantTypeId=1, PlantGroupId=3, PlantSectionId = 11,*/ Name="test"},
 
             };
             foreach (var items in growthTypes)

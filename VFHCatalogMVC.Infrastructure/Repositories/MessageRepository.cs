@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -15,17 +16,22 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public void AddMessageReceiver(MessageReceiver receiver)
+        public void AddEntity<T>(T entity) where T : class 
         {
-            _context.MessageReceivers.Add(receiver);
+            _context.Set<T>().Add(entity);
             _context.SaveChanges();
         }
+        //public void AddMessageReceiver(MessageReceiver receiver)
+        //{
+        //    _context.MessageReceivers.Add(receiver);
+        //    _context.SaveChanges();
+        //}
 
-        public void AddNewUserPlantMessage(PlantMessage plantMessage)
-        {
-            _context.PlantMessages.Add(plantMessage);
-            _context.SaveChanges();
-        }
+        //public void AddNewUserPlantMessage(PlantMessage plantMessage)
+        //{
+        //    _context.PlantMessages.Add(plantMessage);
+        //    _context.SaveChanges();
+        //}
 
         public int AddMessage(Message message)
         {
@@ -68,11 +74,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void AddMessageAnswer(MessageAnswer message)
-        {
-            _context.MessageAnswers.Add(message);
-            _context.SaveChanges();
-        }
+        //public void AddMessageAnswer(MessageAnswer message)
+        //{
+        //    _context.MessageAnswers.Add(message);
+        //    _context.SaveChanges();
+        //}
         public int GetMessageAnswerIdById(int id)
         {
             var message = _context.MessageAnswers.FirstOrDefault(e => e.MessageId == id);
@@ -80,17 +86,21 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         }
 
-        public IQueryable<Message> GetSentMessages(string userId)
+        public IQueryable<T> GetMessage<T>(string userId) where T: BaseEntityProperty
         {
-           var messages = _context.Messages.Where(e => e.UserId == userId);
-            return messages;
+            return _context.Set<T>().Where(e => e.UserId == userId);
         }
+        //public IQueryable<Message> GetSentMessages(string userId)
+        //{
+        //   var messages = _context.Messages.Where(e => e.UserId == userId);
+        //    return messages;
+        //}
 
-        public IQueryable<MessageReceiver> GetReceivedMessages(string userId)
-        {
-           var messages = _context.MessageReceivers.Where(e => e.UserId == userId);
-           return messages;
-        }
+        //public IQueryable<MessageReceiver> GetReceivedMessages(string userId)
+        //{
+        //   var messages = _context.MessageReceivers.Where(e => e.UserId == userId);
+        //   return messages;
+        //}
 
         public MessageReceiver GetMessageReceiverByMessageId(int id)
         {
