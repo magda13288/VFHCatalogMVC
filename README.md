@@ -31,7 +31,7 @@ You can find gardener by localization (now searching is basing on drop down list
 <h3>Development</h3>
 <ul>
 <li>Better frontend (using for example blazor)</li>
-<li>Implementation of tests</li>
+<li>Implementation async</li>
 <li>Implementation advanced filters adapted to the plant species, type and subtype</li>
 <li>Add catalog of other garden products with filtration</li>
 <li>Implementation of all functionality enabling shopping in stores</li>
@@ -46,26 +46,17 @@ You can find gardener by localization (now searching is basing on drop down list
     <dd>email: kinga123@gmail.com</dd>
     <dd>pass: Kinga1_123</dd>
 </dl>
+<dl>
+  <dt>Private user:</dt>
+    <dd>email: sara2013@gmail.com</dd>
+    <dd>pass: Sara_123</dd>
+</dl>
 <p></p>
 <dl>
   <dt>Admin:</dt>
     <dd>email: admin@gmail.com</dd>
     <dd>pass: Admin1_1</dd>
 </dl>
-
-<h3>Configuration</h3>
-For the correct operation of drop-down lists it is necessary to add default values to table in databse. Execute queries on branch "Queries" in the following order:
-<ul>
-  <li>PlantTypesPL</li>
-  <li>PlantGroupsPL</li>
-  <li>PlantSectionsPL</li>
-  <li>GrowthTypesPL</li>
-  <li>FruitTypesPL</li>
-  <li>FruitSizesPL</li>
-  <li>GrowingSeazonsPL</li>
-  <li>DestinationsPL</li>
-  <li>ColorsTable</li>
-</ul>
 
 <h3>Screenshots</h3>
 <br>
