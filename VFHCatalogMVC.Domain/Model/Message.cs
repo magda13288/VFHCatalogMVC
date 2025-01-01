@@ -6,7 +6,7 @@ using VFHCatalogMVC.Domain.Interface;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class Message
+    public class Message:BaseEntityProperty
     {
         public string MessageContent { get; set; }
         public DateTime AddedDate { get; set; }

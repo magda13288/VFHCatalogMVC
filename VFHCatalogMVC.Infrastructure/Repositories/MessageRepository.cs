@@ -21,18 +21,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Set<T>().Add(entity);
             _context.SaveChanges();
         }
-        //public void AddMessageReceiver(MessageReceiver receiver)
-        //{
-        //    _context.MessageReceivers.Add(receiver);
-        //    _context.SaveChanges();
-        //}
-
-        //public void AddNewUserPlantMessage(PlantMessage plantMessage)
-        //{
-        //    _context.PlantMessages.Add(plantMessage);
-        //    _context.SaveChanges();
-        //}
-
         public int AddMessage(Message message)
         {
            _context.Messages.Add(message);
@@ -73,12 +61,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Entry(message).Property(e=>e.isAnswer).IsModified = true;
             _context.SaveChanges();
         }
-
-        //public void AddMessageAnswer(MessageAnswer message)
-        //{
-        //    _context.MessageAnswers.Add(message);
-        //    _context.SaveChanges();
-        //}
         public int GetMessageAnswerIdById(int id)
         {
             var message = _context.MessageAnswers.FirstOrDefault(e => e.MessageId == id);
@@ -90,18 +72,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>().Where(e => e.UserId == userId);
         }
-        //public IQueryable<Message> GetSentMessages(string userId)
-        //{
-        //   var messages = _context.Messages.Where(e => e.UserId == userId);
-        //    return messages;
-        //}
-
-        //public IQueryable<MessageReceiver> GetReceivedMessages(string userId)
-        //{
-        //   var messages = _context.MessageReceivers.Where(e => e.UserId == userId);
-        //   return messages;
-        //}
-
         public MessageReceiver GetMessageReceiverByMessageId(int id)
         {
             var message = _context.MessageReceivers.FirstOrDefault(e=>e.MessageId== id);

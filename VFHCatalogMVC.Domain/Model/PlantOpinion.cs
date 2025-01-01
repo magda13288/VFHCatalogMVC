@@ -13,11 +13,15 @@ namespace VFHCatalogMVC.Domain.Model
         public int PlantDetailId { get; set; }
         public virtual PlantDetail PlantDetail { get; set; }
         public DateTime DateAdded { get; set; }
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? UpdatedAtUtc { get; set; }
         public DateTime? InactivatedAtUtc { get; set; }
         public string CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
         public string? InactivatedBy { get; set; }
+
     }
 }

@@ -10,7 +10,6 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class Plant:BaseEntity, IAuditableEntity
     {
-        //public int Id { get; set; }
         public int PlantTypeId { get; set; }
         public virtual PlantType PlantType { get; set; }
         public int PlantGroupId { get; set; }

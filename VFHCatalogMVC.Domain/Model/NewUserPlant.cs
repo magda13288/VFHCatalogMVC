@@ -9,6 +9,6 @@ namespace VFHCatalogMVC.Domain.Model
     {
         public int PlantId { get; set; }
         public virtual Plant Plant { get; set; }
-        public string Comment { get; set; }
+      
     }
 }

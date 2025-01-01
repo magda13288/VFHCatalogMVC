@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Infrastructure.Common;
 using VFHCatalogMVC.Infrastructure.Repositories;
 
 namespace VFHCatalogMVC.Infrastructure
@@ -11,6 +12,7 @@ namespace VFHCatalogMVC.Infrastructure
             services.AddTransient<IPlantRepository, PlantRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
+            services.AddScoped<ICurrentSessionProvider, CurrentSessionProvider>();
 
             return services;
         }

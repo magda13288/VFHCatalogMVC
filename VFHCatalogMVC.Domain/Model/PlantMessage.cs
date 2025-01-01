@@ -6,7 +6,7 @@ using VFHCatalogMVC.Domain.Interface;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantMessage:AuditableEntity, IAuditableEntity
+    public class PlantMessage:IAuditableEntity
     {
         public int PlantId { get; set; }
         public virtual Plant Plant { get; set; }
