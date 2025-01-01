@@ -29,10 +29,10 @@ namespace VFHCatalogMVC.Domain.Model
         [PersonalData]
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
-        //[PersonalData]
-        //public string UserId { get; set; }
-        //public virtual ApplicationUser User { get; set; }
-        
+        [PersonalData]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
 
     }
 }

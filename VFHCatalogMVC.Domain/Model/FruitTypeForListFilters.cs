@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class FruitTypeForListFilters
+    public class FruitTypeForListFilters:AuditableEntity
     {
         public int FruitTypeId { get; set; }
         public FruitType FruitType { get; set; }

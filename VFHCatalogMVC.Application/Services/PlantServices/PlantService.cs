@@ -55,7 +55,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _userPlantService = userPlantService;
             _seedProcessor = seedProcessor;
             _seedlingProcessor = seedlingProcessor;
-               ;
+               
         }
 
         public int AddPlant(NewPlantVm model, string user)
