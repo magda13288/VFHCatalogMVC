@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class CompanyContactInformation
+    public class CompanyContactInformation:BaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
