@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VFHCatalogMVC.Infrastructure;
 
 namespace VFHCatalogMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20250101193232_DataSeedIdentityRoles")]
+    partial class DataSeedIdentityRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,21 +51,21 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         new
                         {
                             Id = "Admin",
-                            ConcurrencyStamp = "57a2bced-4c68-431a-93ac-958d6936a7c6",
+                            ConcurrencyStamp = "9a7c0139-f21c-497c-adb7-4bc4a2564bb9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "PrivateUser",
-                            ConcurrencyStamp = "027ca4a0-3682-471e-aba3-a4c1d52ab2af",
+                            ConcurrencyStamp = "e571f857-89d2-4480-9f47-98a8933ad78f",
                             Name = "PrivateUser",
                             NormalizedName = "PRIVATE_USER"
                         },
                         new
                         {
                             Id = "Company",
-                            ConcurrencyStamp = "50e234a4-4ae7-4e25-964d-a8ac5d51ceaa",
+                            ConcurrencyStamp = "5cac8242-a1fe-40c9-b2f3-0f7e0285246e",
                             Name = "Company",
                             NormalizedName = "COMPANY"
                         });
@@ -154,23 +156,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "0a249d73-5e9a-4c07-9832-27645a2c2fe8",
-                            RoleId = "Admin"
-                        },
-                        new
-                        {
-                            UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924",
-                            RoleId = "PrivateUser"
-                        },
-                        new
-                        {
-                            UserId = "b9c413fb-7822-4bf2-8028-30597aab757b",
-                            RoleId = "PrivateUser"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -331,62 +316,6 @@ namespace VFHCatalogMVC.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0a249d73-5e9a-4c07-9832-27645a2c2fe8",
-                            AccessFailedCount = 0,
-                            AccountName = "Admin",
-                            ConcurrencyStamp = "88df6574-21db-41c6-b833-ce439584e236",
-                            Email = "admin@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = true,
-                            NormalizedEmail = "ADMIN@GMAIL.COM",
-                            NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDeZRsN0w0Gs6YSisBi9jbmg7ihLkvOxZgsuCjScMg2GD1JtcbU2tSzMjclvwSrSxA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "Z4NQVBZ2LMDZAJM675CY3465JPFGY2PS",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@gmail.com",
-                            isActive = true
-                        },
-                        new
-                        {
-                            Id = "2ef2b510-aa25-42ca-b68a-ee2fa0635924",
-                            AccessFailedCount = 0,
-                            AccountName = "Kinga",
-                            ConcurrencyStamp = "cce6f078-25f9-4bb8-9af5-73cd0c91d645",
-                            Email = "kinga123@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = true,
-                            NormalizedEmail = "KINGA123@GMAIL.COM",
-                            NormalizedUserName = "KINGA123@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAECycEAX8sBrbNrgbYD2NdV0xoMgU2pJjfmsSi3J+ZczthajMzjaIuU5VMuKVyLGV/w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "3QZ3HMO2U2QS27FOTYYOKNS2AYMMYTZM",
-                            TwoFactorEnabled = false,
-                            UserName = "kinga123@gmail.com",
-                            isActive = true
-                        },
-                        new
-                        {
-                            Id = "b9c413fb-7822-4bf2-8028-30597aab757b",
-                            AccessFailedCount = 0,
-                            AccountName = "Sara",
-                            ConcurrencyStamp = "b5d8a96f-6606-472d-9646-61ff81fa5a1d",
-                            Email = "sara2013@gmail.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SARA2013@GMAIL.COM",
-                            NormalizedUserName = "SARA2013@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAENew82n5Ros4D7PYuUpk0hyOVL6qkqteLtF1Wrz0uBd0BhoHnHd9VKfzUvIn/ySdRQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "QHE5B4ZDTU3QRAMHMMLIMHOOWXLK73S7",
-                            TwoFactorEnabled = false,
-                            UserName = "sara2013@gmail.com",
-                            isActive = true
-                        });
                 });
 
             modelBuilder.Entity("VFHCatalogMVC.Domain.Model.AuditTrial", b =>

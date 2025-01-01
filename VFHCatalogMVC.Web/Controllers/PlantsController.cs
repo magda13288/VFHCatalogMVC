@@ -552,7 +552,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypes = _plantHelperService.GetPropertiesListJR<FruitSizeVm,FruitType>(typeId, groupId, sectionId);
+            var fruitTypes = _plantHelperService.GetPropertiesListJR<FruitTypeVm,FruitType>(typeId, groupId, sectionId);
 
             List<SelectListItem> fruitTypesList = new List<SelectListItem>();
 

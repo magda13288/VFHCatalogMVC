@@ -108,7 +108,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 opinion.DateAdded = DateTime.Now;
                 var plantOpinion = _mapper.Map<PlantOpinion>(opinion);
-                _plantRepo.AddPlantOpinion(plantOpinion);
+                _plantRepo.AddEntity<PlantOpinion>(plantOpinion);
             }
             else { throw new NullReferenceException(); }
         }

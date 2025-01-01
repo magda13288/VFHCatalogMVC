@@ -124,11 +124,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return growthTypes;
         }
-        public List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int groupId, int? sectionId)
+        public List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int? groupId, int? sectionId)
            where TSource : class
            where TVm : SelectListItemVm
         {
             List<TVm> fruitTypeList = new List<TVm>();
+
+            //var list = _plantRepo.GetEntitiesForListFilters<TSource>(typeId, groupId, sectionId);
 
             if (!sectionId.HasValue)
             {
@@ -153,7 +155,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return destinationsList;
         }
 
-        public List<TVm> GetPropertiesListJR<TVm,TSource>(int typeId, int groupId, int? sectionId)
+        public List<TVm> GetPropertiesListJR<TVm,TSource>(int typeId, int? groupId, int? sectionId)
            where TSource : class
            where TVm : SelectListItemVm
         {

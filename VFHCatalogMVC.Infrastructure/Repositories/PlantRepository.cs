@@ -27,13 +27,13 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
            _context.SaveChanges();
         }
 
-        public int AddPlant(Plant plant)
+        public int AddEntity<T>(T entity) where T : BaseEntity
         {
-            _context.Plants.Add(plant);
+            _context.Set<T>().Add(entity);
             _context.SaveChanges();
 
-            return plant.Id;
-        }
+            return entity.Id;
+        }    
         public int AddPlantDetails(PlantDetail plantDetail, int plantId)
         {
             plantDetail.PlantRef = plantId;
@@ -125,6 +125,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return _context.PlantOpinions.Where(p=>p.PlantDetailId== id);
         }
 
+        public IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T:BasePropertyForListFilters
+        {
+            return _context.Set<T>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+
+        }
         public IQueryable<T> GetAllEntities<T>() where T : class
         {
             return _context.Set<T>();
@@ -174,34 +179,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.PlantDetailsImages.Remove(imageToDelete);
             _context.SaveChanges();
 
-        }
-        public int AddPlantSeed(PlantSeed seed)
-        {
-            _context.PlantSeeds.Add(seed);
-            _context.SaveChanges();
-
-            return seed.Id;
-        }
-
-        public int AddPlantSeedling(PlantSeedling seedling)
-        {
-            _context.PlantSeedlings.Add(seedling);
-            _context.SaveChanges();
-            return seedling.Id;
-        }
-
-        public void AddPlantOpinion(PlantOpinion opinion)
-        {
-            _context.PlantOpinions.Add(opinion);
-            _context.SaveChanges();
-        }
-
-        public IQueryable<PlantSeed> GetPlantSeeds(int id)
-        {
-            var seeds = _context.PlantSeeds.Where(p => p.PlantId == id);
-            return seeds;
-        }
-
+        }       
         public int GetPlantDetailId(int id)
         {
             var plant = _context.PlantDetails.FirstOrDefault(p => p.PlantRef == id);
@@ -209,12 +187,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plant.Id;
         }
 
-        public IQueryable<PlantSeedling> GetPlantSeedlings(int id)
+        public IQueryable<T> GetPlantSeedOrSeedling<T>(int id) where T : BasePlantSeedSeedlingProperty
         {
-            var seedlings = _context.PlantSeedlings.Where(p => p.PlantId == id);
-            return seedlings;
-        }
-
+            return _context.Set<T>().Where(p => p.PlantId == id);
+        }      
         public int AddContactDetailsEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);

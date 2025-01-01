@@ -8,6 +8,7 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class ApplicationUser:IdentityUser
     {
+       
         [PersonalData]
         public string AccountName { get; set; }
         [PersonalData]

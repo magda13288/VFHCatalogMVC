@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -207,6 +208,138 @@ namespace VFHCatalogMVC.Infrastructure.Seed
                     new Color() { Id = 8, Name = "Green" },
                     new Color() { Id = 9, Name = "Yellow" }
                 );
+
+            builder.Entity<Country>()
+                .HasData(new Country() { Id = 1, Name = "Poland" });
+
+            builder.Entity<Region>()
+               .HasData(
+                   new Region { Id = 1, Name = "Dolnośląskie", CountryId = 1 },
+                   new Region { Id = 2, Name = "Kujawsko-Pomorskie", CountryId = 1 },
+                   new Region { Id = 3, Name = "Lubelskie", CountryId = 1 },
+                   new Region { Id = 4, Name = "Lubuskie", CountryId = 1 },
+                   new Region { Id = 5, Name = "Łódzkie", CountryId = 1 },
+                   new Region { Id = 6, Name = "Małopolskie", CountryId = 1 },
+                   new Region { Id = 7, Name = "Mazowieckie", CountryId = 1 },
+                   new Region { Id = 8, Name = "Opolskie", CountryId = 1 },
+                   new Region { Id = 9, Name = "Podkarpackie", CountryId = 1 },
+                   new Region { Id = 10, Name = "Podlaskie", CountryId = 1 },
+                   new Region { Id = 11, Name = "Pomorskie", CountryId = 1 },
+                   new Region { Id = 12, Name = "Śląskie", CountryId = 1 },
+                   new Region { Id = 13, Name = "Świętokrzyskie", CountryId = 1 },
+                   new Region { Id = 14, Name = "Warmińsko-Mazurskie", CountryId = 1 },
+                   new Region { Id = 15, Name = "Wielkopolskie", CountryId = 1 },
+                   new Region { Id = 16, Name = "Zachodniopomorskie", CountryId = 1 }
+               );
+
+            builder.Entity<City>()
+               .HasData(
+                   new City { Id = 1, Name = "Katowice", RegionId = 12 },
+                   new City { Id = 2, Name = "Gliwice", RegionId = 12 },
+                   new City { Id = 3, Name = "Zabrze", RegionId = 12 },
+                   new City { Id = 4, Name = "Sosnowiec", RegionId = 12 },
+                   new City { Id = 5, Name = "Bytom", RegionId = 12 },
+                   new City { Id = 6, Name = "Rybnik", RegionId = 12 },
+                   new City { Id = 7, Name = "Chorzów", RegionId = 12 },
+                   new City { Id = 8, Name = "Tychy", RegionId = 12 },
+                   new City { Id = 9, Name = "Dąbrowa Górnicza", RegionId = 12 },
+                   new City { Id = 10, Name = "Jaworzno", RegionId = 12 }
+               );
+
+            builder.Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole { Id = "Admin", Name = "Admin", NormalizedName = "ADMIN" },
+                    new IdentityRole { Id = "PrivateUser", Name = "PrivateUser", NormalizedName = "PRIVATE_USER" },
+                    new IdentityRole { Id = "Company", Name = "Company", NormalizedName = "COMPANY" }
+                );
+
+            builder.Entity<ApplicationUser>()
+            .HasData(new ApplicationUser
+            {
+                Id = "0a249d73-5e9a-4c07-9832-27645a2c2fe8", 
+                UserName = "admin@gmail.com",
+                NormalizedUserName = "ADMIN@GMAIL.COM",
+                Email = "admin@gmail.com",
+                NormalizedEmail = "ADMIN@GMAIL.COM",
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAEAACcQAAAAEDeZRsN0w0Gs6YSisBi9jbmg7ihLkvOxZgsuCjScMg2GD1JtcbU2tSzMjclvwSrSxA==", //Admin1_1
+                SecurityStamp = "Z4NQVBZ2LMDZAJM675CY3465JPFGY2PS",
+                ConcurrencyStamp = "88df6574-21db-41c6-b833-ce439584e236",
+                PhoneNumber = null,
+                PhoneNumberConfirmed = false,
+                TwoFactorEnabled = false,
+                LockoutEnd = null,
+                LockoutEnabled = true,
+                AccessFailedCount = 0,
+                AccountName = "Admin",
+                FirstName = null,
+                LastName = null,
+                CompanyName = null,
+                NIP = null,
+                REGON = null,
+                CEOName = null,
+                CEOLastName = null,
+                LogoPic = null, 
+                isActive = true 
+            },
+            new ApplicationUser
+            {
+                Id = "2ef2b510-aa25-42ca-b68a-ee2fa0635924",
+                UserName = "kinga123@gmail.com",
+                NormalizedUserName = "KINGA123@GMAIL.COM",
+                Email = "kinga123@gmail.com",
+                NormalizedEmail = "KINGA123@GMAIL.COM",
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAEAACcQAAAAECycEAX8sBrbNrgbYD2NdV0xoMgU2pJjfmsSi3J+ZczthajMzjaIuU5VMuKVyLGV/w==", // Kinga1_123
+                SecurityStamp = "3QZ3HMO2U2QS27FOTYYOKNS2AYMMYTZM",
+                ConcurrencyStamp = "cce6f078-25f9-4bb8-9af5-73cd0c91d645",
+                PhoneNumber = null,
+                PhoneNumberConfirmed = false,
+                TwoFactorEnabled = false,
+                LockoutEnd = null,
+                LockoutEnabled = true,
+                AccessFailedCount = 0,
+                AccountName = "Kinga",
+                FirstName = null,
+                LastName = null,
+                CompanyName = null,
+                NIP = null,
+                REGON = null,
+                CEOName = null,
+                CEOLastName = null,
+                LogoPic = null,
+                isActive = true
+            },
+            new ApplicationUser
+            {
+                Id = "b9c413fb-7822-4bf2-8028-30597aab757b",
+                UserName = "sara2013@gmail.com",
+                NormalizedUserName = "SARA2013@GMAIL.COM",
+                Email = "sara2013@gmail.com",
+                NormalizedEmail = "SARA2013@GMAIL.COM",
+                EmailConfirmed = true,
+                PasswordHash = "AQAAAAEAACcQAAAAENew82n5Ros4D7PYuUpk0hyOVL6qkqteLtF1Wrz0uBd0BhoHnHd9VKfzUvIn/ySdRQ==", //Sara_123
+                SecurityStamp = "QHE5B4ZDTU3QRAMHMMLIMHOOWXLK73S7",
+                ConcurrencyStamp = "b5d8a96f-6606-472d-9646-61ff81fa5a1d",
+                AccountName = "Sara",
+                FirstName = null,
+                LastName = null,
+                CompanyName = null,
+                NIP = null,
+                REGON = null,
+                CEOName = null,
+                CEOLastName = null,
+                LogoPic = null,
+                isActive = true
+            });
+
+            builder.Entity<IdentityUserRole<string>>()
+                .HasData(
+                  new IdentityUserRole<string> { UserId = "0a249d73-5e9a-4c07-9832-27645a2c2fe8", RoleId = "Admin" },
+                  new IdentityUserRole<string> { UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924", RoleId = "PrivateUser" },
+                  new IdentityUserRole<string> { UserId = "b9c413fb-7822-4bf2-8028-30597aab757b", RoleId = "PrivateUser" });
+
+
         }
     }
 }

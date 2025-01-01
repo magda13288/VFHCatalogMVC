@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\plantGallery\plantDetailsGallery\" />
+    <Folder Include="wwwroot\plantGallery\searchPhoto\" />
   </ItemGroup>
 
 </Project>

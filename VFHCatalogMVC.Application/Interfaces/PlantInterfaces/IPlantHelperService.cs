@@ -20,15 +20,15 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<SelectListItem> GetGroups(int? typeId);
         List<SelectListItem> GetSections(int? groupId);        
         List<SelectListItem> GetGrowthTypes(int typeId, int? groupId, int? sectionId);
-        List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int groupId, int? sectionId)
+        List<TVm> FilterFruitSizeOrType<TSource, TVm>(int typeId, int? groupId, int? sectionId)
             where TSource : class
             where TVm : SelectListItemVm;
-        List<SelectListItem> GetFruitPropertyList<TSource, TViewModel>(int typeId, int groupId, int? sectionId)
+        List<SelectListItem> GetFruitPropertyList<TSource, TViewModel>(int typeId, int? groupId, int? sectionId)
            where TViewModel : SelectListItemVm
            where TSource : class;
         //methods with ends "JR" used in Views and used by JS
         List<PlantGroupsVm> GetGroupsJR(int typeId);
-        List<TVm> GetPropertiesListJR<TVm, TSource>(int typeId, int groupId, int? sectionId)
+        List<TVm> GetPropertiesListJR<TVm, TSource>(int typeId, int? groupId, int? sectionId)
           where TSource : class
           where TVm : SelectListItemVm;   
         List<PlantSectionsVm> GetSectionsJR(int groupId); 

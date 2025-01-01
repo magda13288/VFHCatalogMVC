@@ -82,7 +82,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, "Admin").Result;
 
             SetPropertiesAndAddNewUserPlant(newPlant, isAdmin);
-            id = _plantRepo.AddPlant(newPlant);
+            id = _plantRepo.AddEntity<Plant>(newPlant);
 
             if (id > 0)
             {
@@ -189,7 +189,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             bool isCompany, 
             string userName)
         {
-            var seeds = _plantRepo.GetPlantSeeds(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
+            var seeds = _plantRepo.GetPlantSeedOrSeedling<PlantSeed>(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
             var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany);
             var paginateList = Paginate(processedSeeds, pageSize, pageNo);
@@ -206,7 +206,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             int? pageNo,
             bool isCompany)
         {
-            var seedlings = _plantRepo.GetPlantSeedlings(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
+            var seedlings = _plantRepo.GetPlantSeedOrSeedling<PlantSeedling>(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
             var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany);
             var paginateList = Paginate(processedSeedlings, pageSize, pageNo);
@@ -414,7 +414,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         public void AddPlantSeed(PlantSeedVm seed)
         {
 
-           var plantEntityId =  AddPlantEntity<PlantSeedVm,PlantSeed>(seed, _plantRepo.AddPlantSeed);
+           var plantEntityId =  AddPlantEntity<PlantSeedVm,PlantSeed>(seed, _plantRepo.AddEntity<PlantSeed>);
             var contactId = AddEntityContactDetails(
                 plantEntityId,
                 seed,
@@ -429,7 +429,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public void AddPlantSeedling(PlantSeedlingVm seedling)
         {
-            var plantEntityId = AddPlantEntity<PlantSeedlingVm, PlantSeedling>(seedling, _plantRepo.AddPlantSeedling);
+            var plantEntityId = AddPlantEntity<PlantSeedlingVm, PlantSeedling>(seedling, _plantRepo.AddEntity<PlantSeedling>);
             var contactId = AddEntityContactDetails(
                 plantEntityId,
                 seedling,
