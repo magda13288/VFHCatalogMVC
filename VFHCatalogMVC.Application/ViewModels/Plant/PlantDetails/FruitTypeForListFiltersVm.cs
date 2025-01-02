@@ -11,8 +11,9 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
     {
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Domain.Model.FruitTypeForListFilters, FruitTypeForListFiltersVm>().ReverseMap()
-                .ForMember(m => m.FruitTypeId, opt => opt.MapFrom(d => d.Id));
+            profile.CreateMap<Domain.Model.FruitTypeForListFilters, FruitTypeForListFiltersVm>()
+                .ForMember(m => m.Id, opt => opt.MapFrom(d => d.FruitTypeId));
+                
 
         }
     }

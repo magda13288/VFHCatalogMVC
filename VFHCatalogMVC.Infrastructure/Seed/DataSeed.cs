@@ -253,14 +253,16 @@ namespace VFHCatalogMVC.Infrastructure.Seed
                     new IdentityRole { Id = "Company", Name = "Company", NormalizedName = "COMPANY" }
                 );
 
+          
+
             builder.Entity<ApplicationUser>()
             .HasData(new ApplicationUser
             {
                 Id = "0a249d73-5e9a-4c07-9832-27645a2c2fe8", 
-                UserName = "admin@gmail.com",
-                NormalizedUserName = "ADMIN@GMAIL.COM",
-                Email = "admin@gmail.com",
-                NormalizedEmail = "ADMIN@GMAIL.COM",
+                UserName = "admin2@gmail.com",
+                NormalizedUserName = "ADMIN2@GMAIL.COM",
+                Email = "admin2@gmail.com",
+                NormalizedEmail = "ADMIN2@GMAIL.COM",
                 EmailConfirmed = true,
                 PasswordHash = "AQAAAAEAACcQAAAAEDeZRsN0w0Gs6YSisBi9jbmg7ihLkvOxZgsuCjScMg2GD1JtcbU2tSzMjclvwSrSxA==", //Admin1_1
                 SecurityStamp = "Z4NQVBZ2LMDZAJM675CY3465JPFGY2PS",
@@ -339,7 +341,12 @@ namespace VFHCatalogMVC.Infrastructure.Seed
                   new IdentityUserRole<string> { UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924", RoleId = "PrivateUser" },
                   new IdentityUserRole<string> { UserId = "b9c413fb-7822-4bf2-8028-30597aab757b", RoleId = "PrivateUser" });
 
+            //builder.Entity<Address>()
+            //    .HasData(
+            //    new Address { Id = 1, BuildingNumber =null, FlatNumber=null, Street=null, ZipCode=null, CountryId = 1, RegionId = 12, CityId = 1, UserId = "0a249d73-5e9a-4c07-9832-27645a2c2fe8" },
+            //    new Address { Id = 2, BuildingNumber = null, FlatNumber = null, Street = null, ZipCode = null, CountryId = 1, RegionId = 12, CityId = 1, UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924" },
+            //    new Address { Id = 3, BuildingNumber = null, FlatNumber = null, Street = null, ZipCode = null, CountryId = 1, RegionId = 12, CityId = 1, UserId = "b9c413fb-7822-4bf2-8028-30597aab757b" });
 
-        }
+         }
     }
 }

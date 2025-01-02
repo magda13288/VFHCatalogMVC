@@ -352,21 +352,9 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)
         {
-            var groups = _plantHelperService.GetGroupsJR(typeId);
-            List<SelectListItem> groupsList = new List<SelectListItem>();
+            var groups = _plantHelperService.GetGroups(typeId);       
 
-            if (groups.Count > 0)
-            {
-
-                groupsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in groups)
-                {
-                    groupsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(groupsList);
+            return Json(groups);
 
         }
 
@@ -374,27 +362,9 @@ namespace VFHCatalogMVC.Web.Controllers
         public JsonResult GetPlantSectionsList(int groupId, int typeId)
         {
 
-            List<SelectListItem> sectionsList = new List<SelectListItem>();
-            var sections = _plantHelperService.GetSectionsJR(groupId);
-
-            if (sections.Count > 0)
-            {
-                if (typeId != 3)
-                {
-                    sectionsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                    foreach (var section in sections)
-                    {
-                        sectionsList.Add(new SelectListItem { Text = section.Name, Value = section.Id.ToString() });
-                    }
-                }
-            }
-            //else
-            //{
-            //    sectionsList.Add(new SelectListItem { Text = "Brak sekcji", Value = 0.ToString() });
-
-            //}
-            return Json(sectionsList);
+            var sections = _plantHelperService.GetSections(groupId);
+           
+            return Json(sections);
         }
 
 

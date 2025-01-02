@@ -127,7 +127,9 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T:BasePropertyForListFilters
         {
-            return _context.Set<T>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+            var entities = _context.Set<T>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+
+            return entities;
 
         }
         public IQueryable<T> GetAllEntities<T>() where T : class
