@@ -68,8 +68,8 @@ namespace VFHCatalogMVC.Infrastructure
             base.OnModelCreating(builder);
 
             GetApplyConfiguration(builder);
+            DataSeed.Seed(builder);
 
-                                          
         }
 
         private static void GetApplyConfiguration(ModelBuilder builder)
@@ -89,9 +89,7 @@ namespace VFHCatalogMVC.Infrastructure
             builder.ApplyConfiguration(new ContactDetailForSeedlingConfiguration());
             builder.ApplyConfiguration(new MessageAnswerConfiguration());
             builder.ApplyConfiguration(new NewUserPlantConfiguration());
-            builder.ApplyConfiguration(new PlantMessageConfiguration());
-
-            DataSeed.Seed(builder);
+            builder.ApplyConfiguration(new PlantMessageConfiguration());         
          
         }
 
