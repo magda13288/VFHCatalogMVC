@@ -5,13 +5,13 @@
 }
 
 <body>
-<h3>Wiadomości</h3>
+<h3>Messages</h3>
 
 <div class="row">
     <div class="col">
      @*   <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {type=0})'">Wszystkie wiadomości</button>*@
-        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexMessages", "Message",new {type=1})'">Odebrane</button>
-        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexMessages", "Message",new {type=2})'">Wysłane</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexMessages", "Message",new {type=1})'">Received</button>
+        <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexMessages", "Message",new {type=2})'">Sent</button>
     </div>
 </div>
 <p></p>
@@ -20,16 +20,16 @@
         <thead class="thead-light">
             <tr class="text-center text-wrap">
             <th>
-                Nadawca
+                Sender
             </th>
             <th class="text-center text-wrap">
-                Wiadomość
+                Message
             </th>
             <th>
-                Data wysłania
+                Date sent
             </th>
             <th>
-                Odbiorca
+                Recipient
             </th>
             <th></th>
         </tr>
@@ -64,7 +64,7 @@
                        <td>
                         @if (item.UserName != User.Identity.Name && item.isAnswer == false)
                     {
-                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Odpowiedz</button>                          
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action($"SendPlantMessage/{item.Id}")">Answer</button>                          
                     }          
                     </td>
                 </tr>

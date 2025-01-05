@@ -12,7 +12,7 @@ namespace VFHCatalogMVC.Infrastructure.Common
         private readonly string? _currentUserId;
         public CurrentSessionProvider(IHttpContextAccessor accessor)
         {
-            var userId = accessor.HttpContext?.User.FindFirstValue("userid");
+            var userId = accessor.HttpContext?.User.FindFirstValue("UserId");
             if (userId is null)
             {
                 return;

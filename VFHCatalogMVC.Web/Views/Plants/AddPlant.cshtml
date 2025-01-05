@@ -6,7 +6,7 @@
 
 <body>
 <div id="PlaceHolderHere"></div>
-<h1>Dodawanie nowej rośliny</h1>
+<h1>Add new plant</h1>
 
 @*<h4>NewPlantVm</h4>*@
 <hr />
@@ -16,72 +16,72 @@
         <form asp-action="AddPlant" id="AddEditPlant" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="TypeId" class="control-label">Typ</label>
+                <label asp-for="TypeId" class="control-label">Type</label>
                 <select id="ddlType" asp-for="TypeId" class="form-control" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text"@*,selectedValue:Model.TypeId*@))"></select>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="GroupId" class="control-label">Grupa</label>           
+                <label asp-for="GroupId" class="control-label">Group</label>           
                 <select id="ddlGroup" asp-for="GroupId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.GroupId*@))"></select>
                 <span asp-validation-for="GroupId" class="text-danger"></span>
             </div>
                 <div class="form-group">
-                <label asp-for="SectionId" class="control-label">Sekcja</label>              
+                <label asp-for="SectionId" class="control-label">Subgroup</label>              
                 <select id="ddlSection" asp-for="SectionId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"@*,selectedValue:Model.SectionId*@))"></select>
                 <span asp-validation-for="SectionId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FullName" class="control-label">Nazwa</label>
+                <label asp-for="FullName" class="control-label">Name</label>
                 <input asp-for="FullName" class="form-control" />
                 <label @*asp-for="FullName"*@ class="control-label text-danger">@ViewBag.Message</label>
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div  class="form-group">
-                <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
+                <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Growth type</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control", multiple= true,id="ddlGrowthTypes"})
             </div>
             <div  class="form-group">
-                <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
+                <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Destination</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(string.Empty,"Value","Text"), new {@class="form-control", multiple= true,id="ddlDestinations"})
             </div>
             <div class="form-group">
-                <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
+                <label asp-for="PlantDetails.ColorId" class="control-label">Color</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.ColorId, new SelectList(ViewBag.ColorsList,"Value","Text"),  new { @class = "form-control m-0", id="ddlColors" })
                 <span asp-validation-for="PlantDetails.ColorId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
+                <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Growing seazon</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons,"Value","Text"),  new { @class = "form-control", multiple = true, id="ddlGrowingSeazons" })
                 <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
             </div>
               <div class="form-group">
-                <label asp-for="PlantDetails.FruitTypeId" class="control-label">Typ owocu</label>
+                <label asp-for="PlantDetails.FruitTypeId" class="control-label">Fruit type</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.FruitTypeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control", id="ddlFruitType" })
                @* <select id="ddlColor" asp-for="ColorId" class="form-control" asp-items="@(new SelectList(string.Empty, "Value", "Text"))"></select>*@
                 <span asp-validation-for="PlantDetails.FruitTypeId" class="text-danger"></span>
             </div>
               <div class="form-group">
-                <label asp-for="PlantDetails.FruitSizeId" class="control-label">Wielkość owocu</label>
+                <label asp-for="PlantDetails.FruitSizeId" class="control-label">Fruit size</label>
                 @Html.DropDownListFor(model=>model.PlantDetails.FruitSizeId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control", id="ddlFruitSize" })
                 <span asp-validation-for="PlantDetails.FruitSizeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PlantDetails.Description" class="control-label">Opis</label>
+                <label asp-for="PlantDetails.Description" class="control-label">Description</label>
                 <textarea asp-for="PlantDetails.Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="PlantDetails.Description" class="text-danger"></span>
             </div>
              <div class="form-group">
-                <label asp-for="PlantDetails.PlantPassportNumber" class="control-label">Numer paszportu rośliny</label>
+                <label asp-for="PlantDetails.PlantPassportNumber" class="control-label">Passport number</label>
                 <input asp-for="PlantDetails.PlantPassportNumber" class="form-control" />
                 <span asp-validation-for="PlantDetails.PlantPassportNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Photo" class="control-label">Zdjęcie do wyszukiwarki</label>
+                <label asp-for="Photo" class="control-label">Image for search results</label>
                 <input asp-for="Photo" class="form-control" type="file" accept="image/*"/>
                 <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PlantDetails.Images" class="control-label">Zdjęcia do galerii w sekcji "Szczegóły"</label>
+                    <label asp-for="PlantDetails.Images" class="control-label">Photos for the gallery in the 'Details' section</label>
                 <input asp-for="PlantDetails.Images" class="form-control" multiple accept="image/*"/>
                 <span asp-validation-for="PlantDetails.Images" class="text-danger"></span>
             </div>
@@ -93,7 +93,7 @@
     </div>
 </div>
 <div>
-    <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
+    <a asp-action="Index" class="btn btn-dark">Back to search</a>
 </div>
 </body>
 

@@ -7,22 +7,22 @@
 @*<h1>IndexNewPlants</h1>*@
 <div id="PlaceHolderHere"></div>
 <p>
-    <a asp-action="AddPlant" asp-controller="Plant" class="btn btn-success">Dodaj nową roślinę</a>
+    <a asp-action="AddPlant" asp-controller="Plant" class="btn btn-success">Add new plant</a>
 </p>
 <form asp-action="IndexNewPlants" asp-controller="User" method="post">
     <div class="container-fluid">
         <div class="row">
      <nav class="navbar navbar-expand-lg" @*style="background-color: #e3f2fd;"*@>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-         <label asp-for="PlantForList.TypeId" class="control-label">Typ</label>
+         <label asp-for="PlantForList.TypeId" class="control-label">Type</label>
                <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", selectedValue: ViewBag.TypeId))"></select>
-           <label asp-for="PlantForList.GroupId" class="control-label">Grupa</label>
+           <label asp-for="PlantForList.GroupId" class="control-label">Group</label>
                <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", selectedValue: ViewBag.GroupId))" ></select>
-           <label asp-for="PlantForList.SectionId" class="control-label">Sekcja</label>
+           <label asp-for="PlantForList.SectionId" class="control-label">Subgroup</label>
                <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",selectedValue:ViewBag.SectionId))"></select>
-                    <label asp-for="ViewAll" class="control-label text-md-center">Wyświetl wszystko</label>
+                    <label asp-for="ViewAll" class="control-label text-md-center">Display all</label>
                     @Html.CheckBoxFor(m=>Model.ViewAll, new { @class = "checkbox" , id="viewAll", name="viewAll"})
-                    <button class="btn btn-outline-success" id="Submit" type="submit">Szukaj</button>
+                    <button class="btn btn-outline-success" id="Submit" type="submit">Search</button>
        </div>      
 </nav>
     </div>
@@ -31,16 +31,16 @@
             <thead class="thead-light">
                 <tr class="text-center">
             <th class="text-center">
-               Nazwa
+               Name
             </th>
             <th>
-                Zdjęcie
+                Image
             </th>
               <th>
-               Użytkownik
+               User
               </th>
             <th>
-               Uwagi
+               Notes
             </th>
                
             <th></th>
@@ -65,14 +65,14 @@
             </td>
                             
             <td>
-            <button type="button" class="btn btn-info" onclick="window.location= '@Url.Action( "Edit", "Plants",new {id=item.PlantId})'">Edytuj</button>
-            <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.PlantId})'">Szczegóły</button>
-            <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId,newPlant=true})'">Wiadomości</button>
-            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.PlantId, newPlant=true})">Wyślij wiadomość</button>
+            <button type="button" class="btn btn-info" onclick="window.location= '@Url.Action( "Edit", "Plants",new {id=item.PlantId})'">Edit</button>
+            <button type="button" class="btn btn-warning" onclick="window.location= '@Url.Action( "Details", "Plants",new {id=item.PlantId})'">Details</button>
+            <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId,newPlant=true})'">Message</button>
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Message" data-url="@Url.Action("SendPlantMessage","Message",new {id=item.PlantId, newPlant=true})">Send message</button>
              @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"SendPlantMessage/{item.PlantId}")">Wyślij wiadomość</button>*@
              @if (User.IsInRole("Admin"))
               {
-               <button type="button" class="btn btn-success" onclick="window.location= '@Url.Action( "ActivatePlant", "Plants",new {id=item.PlantId})'">Aktywuj</button>
+               <button type="button" class="btn btn-success" onclick="window.location= '@Url.Action( "ActivatePlant", "Plants",new {id=item.PlantId})'">Activate</button>
               }
                                
         </tr>

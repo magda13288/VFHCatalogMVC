@@ -6,27 +6,27 @@
 
 <body>
 <div id="PlaceHolderHere"></div>
-<h3 class="text-center">Twoja lista nasion</h3>
+<h3 class="text-center">Your seeds list</h3>
 
 <form asp-action="IndexSeeds" asp-controller="User" method="post">
     <div class="container-fluid">
         <div class="row">
              <nav class="navbar navbar-expand-lg">
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">     
-                 <label asp-for="PlantForList.TypeId" class="control-label">Typ</label>
+                 <label asp-for="PlantForList.TypeId" class="control-label">Type</label>
                  <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" 
                     aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", 
                     selectedValue: ViewBag.TypeId))"></select>
-                 <label asp-for="PlantForList.GroupId" class="control-label">Grupa</label>
+                 <label asp-for="PlantForList.GroupId" class="control-label">Group</label>
                  <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center" 
                     aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text",
                     selectedValue: ViewBag.GroupId))" ></select>
-                 <label asp-for="PlantForList.SectionId" class="control-label">Sekcja</label>
+                 <label asp-for="PlantForList.SectionId" class="control-label">Subgroup</label>
                  <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" 
                     aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",
                     selectedValue:ViewBag.SectionId))"></select>
-                 <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
-                <button class="btn btn-outline-success" id="Submit" type="submit">Szukaj</button>
+                 <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" id="Submit" type="submit">Search</button>
                  </div>      
              </nav>
         </div>
@@ -46,17 +46,17 @@
                         else
                         {
                             <th>
-                                Ilość
+                                Count
                             </th>
                         }
                         <th>
-                            Opis
+                            Description
                         </th>
                         <th>
-                            Data dodania
+                            Date added
                         </th>
                         <th>
-                            Zdjęcie
+                            Image
                         </th>
                         <th></th>
                     </tr>
@@ -73,7 +73,7 @@
                                 <td>
                                     @if (item.ContactDetail.ContactDetailInformation != "")
                                     {
-                                        <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
+                                        <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Go to page</a>
                                     }
                                     else
                                     {
@@ -99,9 +99,9 @@
                                      asp-append-version="true" />\
                             </td>
                             <td>
-                             <button type="button" class="btn btn-info" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeed/{item.Id}")">Edytuj</button>
-                             <button type="button" class="btn btn-danger" onclick="window.location= '@Url.Action( "DeleteSeed", "User",new {id=item.Id})'">Usuń</button>
-                             <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId, seeds=true})'">Wiadomości</button>
+                             <button type="button" class="btn btn-info" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeed/{item.Id}")">Edit</button>
+                             <button type="button" class="btn btn-danger" onclick="window.location= '@Url.Action( "DeleteSeed", "User",new {id=item.Id})'">Delete</button>
+                             <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId, seeds=true})'">Messages</button>
                             </td>
                         </tr>
                                 }

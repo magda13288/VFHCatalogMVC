@@ -15,36 +15,36 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Input.IsPrivateUser">Użytkownik prywatny</label>
+                <label asp-for="Input.IsPrivateUser">Private user</label>
                 @Html.CheckBoxFor(m=>Model.Input.IsPrivateUser, new { @class = "checkbox" , id="chkPrivateUser",onclick= "EnableDisableTextBoxUser(this)"})   
-                <label asp-for="Input.IsCompany">Firma</label>
+                <label asp-for="Input.IsCompany">Company</label>
                 @Html.CheckBoxFor(m=>Model.Input.IsCompany, new { @class = "checkbox", id="chkCompany",onclick="EnableDisableTextBoxCompany(this)" }) 
             </div>
             <div class="form-group">
-                <label asp-for="Input.CountryId">Kraj</label>
+                <label asp-for="Input.CountryId">Country</label>
                @*  <select id="ddlCountry" asp-for="Input.CountryId" name="countryId" class="form-control text-center" aria-label="Country" asp-items="@(new SelectList(ViewBag.Country,"Value", "Text"))"></select>*@
                @Html.DropDownListFor(model=>model.Input.CountryId, new SelectList(ViewBag.Country,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlCountry" })
                  <span asp-validation-for="Input.CountryId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.RegionId">Województwo</label>
+                <label asp-for="Input.RegionId">Region</label>
                  @*<select id="ddlRegion" asp-for="Input.RegionId" name="regionId" class="form-control text-center" aria-label="Region" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
                   @Html.DropDownListFor(model=>model.Input.RegionId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlRegion" })
                  <span asp-validation-for="Input.RegionId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.CityId">Miasto</label>
+                <label asp-for="Input.CityId">City</label>
                  @*<select id="ddlCity" asp-for="Input.CityId" name="CityId" class="form-control text-center" aria-label="City" asp-items="@(new SelectList(string.Empty,"Value", "Text"))"></select>*@
                  @Html.DropDownListFor(model=>model.Input.CityId, new SelectList(string.Empty,"Value","Text"),  new { @class = "form-control text-center m-0", id="ddlCity" })
                  <span asp-validation-for="Input.CityId" class="text-danger"></span>
              </div>
             <div class="form-group">
-                <label asp-for="Input.AccountName">Nazwa konta</label>
+                <label asp-for="Input.AccountName">Account name</label>
                 <input asp-for="Input.AccountName" class="form-control" id="txtUser", disabled="disabled"/>
                 <span asp-validation-for="Input.AccountName" class="text-danger"></span>
             </div>
              <div class="form-group">
-                <label asp-for="Input.CompanyName">Nazwa firmy</label>
+                <label asp-for="Input.CompanyName">Company name</label>
                 <input asp-for="Input.CompanyName" class="form-control" id="txtCustomer" disabled="disabled"/>
                 <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
             </div>
@@ -54,12 +54,12 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.Password">Hasło</label>
+                <label asp-for="Input.Password">Password</label>
                 <input asp-for="Input.Password" class="form-control" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.ConfirmPassword">Powtórz hasło</label>
+                <label asp-for="Input.ConfirmPassword">Confirm password</label>
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>

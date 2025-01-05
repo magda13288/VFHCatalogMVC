@@ -20,43 +20,43 @@
      </dl>
         <dl class="row">
         <dt class = "col-sm-2">
-          <label>Kolor</label>
+          <label>Color</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ColorName)
         </dd>
         <dt class = "col-sm-2">
-            <label>Wielkość owocu</label>
+            <label>Fruit size</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FruitSizeName)
         </dd>
         <dt class = "col-sm-2">
-            <label>Typ owocu</label>
+            <label>Fruit type</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FruitTypeName)
         </dd>
          <dt class = "col-sm-2">
-        <label>Przeznaczenie</label>
+        <label>Destination</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ListPlantDestinations.DestinationsNames)
         </dd>
         <dt class = "col-sm-2">
-            <label>Typ wzrostu</label>
+            <label>Growth type</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ListGrowthTypes.GrowthTypesNames)
         </dd>
         <dt class = "col-sm-2">
-        <label>Okres wegetacji</label>
+        <label>Growing seazon</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ListGrowingSeazons.GrwoingSeazonsNames)
         </dd>      
         <dt class = "col-sm-2">
-           <label>Numer paszportu</label>
+           <label>Passport number</label>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PlantPassportNumber)
@@ -93,11 +93,11 @@
     <p></p>
     <div class="row">
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOpinions" aria-expanded="false" aria-controls="collapseOpinions" onscroll="true">
-       Opinie
+       Opinions
       </button>
         <div class="collapse" id="collapseOpinions" onscroll="true" >
             <div class="card card-body" style="background-color: transparent">
-                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Dodaj opinię</button>
+                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#Plant" data-url="@Url.Action($"AddOpinion/{Model.Id}")" >Add opinion</button>
                 <table class="table-hover" border="0">
                     <tbody>
                  @for(int i=0;i<Model.PlantOpinions.Count;i++)
@@ -129,7 +129,7 @@
         @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
     }
     <p></p>
-    <a asp-action="Index" class="btn btn-dark">Powrót do wyszukiwarki</a>
+    <a asp-action="Index" class="btn btn-dark">Back to search</a>
 </div>
     </body>
 
