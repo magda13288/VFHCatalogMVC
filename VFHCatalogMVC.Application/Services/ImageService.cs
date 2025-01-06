@@ -62,6 +62,8 @@ namespace VFHCatalogMVC.Application.Services
                     throw ex;
                 }
             }
+
+            await Task.CompletedTask;
         }
 
         public async Task<string> UploadImageAsync(IFormFile file, string name, string path)
