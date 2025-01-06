@@ -78,7 +78,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            var address = _userHelperService.GetAddress(user.Id);
+            var address = await _userHelperService.GetAddressAsync(user.Id);
 
             Username = userName;
 

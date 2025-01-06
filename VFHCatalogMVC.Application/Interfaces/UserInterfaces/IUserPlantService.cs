@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Services.PlantServices;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
@@ -16,18 +17,18 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
 {
     public interface IUserPlantService
     {       
-        List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantItemVm> items);
-        UserSeedsForListVm GetUserSeeds(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
-        UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
-        UserSeedVm GetUserSeedToEdit(int id);
-        void DeleteItem<T>(int id)  where T : BaseEntityProperty;
-        void UpdateSeed(UserSeedVm seed);
-        void UpdateSeedling(UserSeedlingVm seedling);
-        UserSeedlingVm GetUserSeedlingToEdit(int id);      
-        ContactDetail GetContactDetail(int? id);
-        int? GetContactDetailForPlant(int id, Func<int, int?> getContact);
-        void AddNewUserPlant(int plantId, string userId);
-        NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
+        Task<List<string>> FilterUsersAsync(int countryId, int regionId, int cityId, List<PlantItemVm> items);
+        Task<UserSeedsForListVm> GetUserSeedsAsync(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
+        Task<UserSeedlingsForListVm> GetUserSeedlingsAsync(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName);
+        Task<UserSeedVm> GetUserSeedToEditAsync(int id);
+        Task<UserSeedlingVm> GetUserSeedlingToEditAsync(int id);
+        Task DeleteItemAsync<T>(int id)  where T : BaseEntityProperty;
+        Task UpdateSeedAsync(UserSeedVm seed);
+        Task UpdateSeedlingAsync(UserSeedlingVm seedling);       
+        Task<ContactDetail> GetContactDetailAsync(int? id);
+        Task<int?> GetContactDetailForPlantAsync(int id, Func<int, Task<int?>> getContact);
+        Task AddNewUserPlantAsync(int plantId, string userId);
+        Task<NewUserPlantsForListVm> GetNewUserPlantsAsync(int pageSize, int? pageNo, int typeId, int groupId, int? sectionId, bool viewAll, string userName);
 
 
     }

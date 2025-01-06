@@ -20,6 +20,7 @@ using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Domain.Common;
 using System.Web.Razor.Generator;
+using Microsoft.EntityFrameworkCore;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {
@@ -34,61 +35,67 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _plantRepo = plantRepository;
         }
 
-        public List<SelectListItem> GetGroups(int? typeId)
+        public async Task<List<SelectListItem>> GetGroupsAsync(int? typeId)
         {
-            var groups = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
+            var groupsQuery = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider);
 
-            return GetSelectListItem(groups);
+            var groups = await groupsQuery.ToListAsync();
+
+            return await GetSelectListItemAsync(groups);
         }
 
-        public List<SelectListItem> GetSections(int? groupId)
+        public async Task<List<SelectListItem>> GetSectionsAsync(int? groupId)
         {
-            var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
+            var sectionsQuery = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider);
 
-            return GetSelectListItem(sections);
+            var sections = await sectionsQuery.ToListAsync();
+
+            return await GetSelectListItemAsync(sections);
         }
-        public List<SelectListItem> GetDestinations()
+        public async Task<List<SelectListItem>> GetDestinationsAsync()
         {
 
-            var destinationsList = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            var destinationsListQuery = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider);
 
-            return  GetSelectListItem(destinationsList);
+            var destinationList = await destinationsListQuery.ToListAsync();
+
+            return  await GetSelectListItemAsync(destinationList);
         }
-        public List<SelectListItem> GetSelectList<TSource, TViewModel>()
+        public async Task<List<SelectListItem>> GetSelectListAsync<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource: class
         {
-            var entities = _plantRepo.GetAllEntities<TSource>()
+            var entities = await _plantRepo.GetAllEntities<TSource>()
                                      .ProjectTo<TViewModel>(_mapper.ConfigurationProvider)
-                                     .ToList();
+                                     .ToListAsync();
 
-            return GetSelectListItem(entities); 
+            return await GetSelectListItemAsync(entities); 
 
         }
-        public List<SelectListItem> GetPlantPropertySelectListItem<TSource, TVm, TSourceList, TVmList>(int typeId, int? groupId, int? sectionId)
+        public async Task<List<SelectListItem>> GetPlantPropertySelectListItemAsync<TSource, TVm, TSourceList, TVmList>(int typeId, int? groupId, int? sectionId)
            where TSource : class
            where TSourceList : BasePropertyForListFilters
            where TVm : SelectListItemVm
            where TVmList : PlantPropertyForListFiltersVm
         {
-            var filteredList = GetPlantProperty<TSourceList, TVmList>(typeId, groupId, sectionId);
-            var propertyList = FilterPropertyList<TSource, TVm, TVmList>(filteredList);
+            var filteredList = await GetPlantPropertyAsync<TSourceList, TVmList>(typeId, groupId, sectionId);
+            var propertyList = await FilterPropertyListAsync<TSource, TVm, TVmList>(filteredList);
 
-            return GetSelectListItem(propertyList);
+            return await GetSelectListItemAsync(propertyList);
         }
-        private List<TVm> GetPlantProperty<TSource, TVm>(int typeId, int? groupId, int? sectionId)
+        private async Task<List<TVm>> GetPlantPropertyAsync<TSource, TVm>(int typeId, int? groupId, int? sectionId)
            where TSource : BasePropertyForListFilters
            where TVm : PlantPropertyForListFiltersVm
         {
-            return _plantRepo.GetEntitiesForListFilters<TSource>(typeId, groupId, sectionId).ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+            return await _plantRepo.GetEntitiesForListFilters<TSource>(typeId, groupId, sectionId).ProjectTo<TVm>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
-        private List<TVm> FilterPropertyList<TSource, TVm, TVmList>(List<TVmList> entity)
+        private async Task<List<TVm>> FilterPropertyListAsync<TSource, TVm, TVmList>(List<TVmList> entity)
            where TSource : class
            where TVm : SelectListItemVm
            where TVmList : PlantPropertyForListFiltersVm
         {
-            var propertyList = _plantRepo.GetAllEntities<TSource>().ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+            var propertyList = await _plantRepo.GetAllEntities<TSource>().ProjectTo<TVm>(_mapper.ConfigurationProvider).ToListAsync();
 
             if (!entity.Any())
             {
@@ -100,12 +107,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 return propertyList.Where(p => entityIds.Contains(p.Id)).ToList();
             }
         }
-        public List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
+        public async Task<List<SelectListItem>> GetSelectListItemAsync<T>(IEnumerable<T> entity) where T : SelectListItemVm
         {
 
             if (!entity.Any()) return new List<SelectListItem>();
 
-            return entity
+            var result = entity
                            .OrderBy(p => p.Id)
                            .Where(e => e.Id != 0 && !string.IsNullOrEmpty(e.Name))
                            .Select(e => new SelectListItem
@@ -115,6 +122,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                            })
                            .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
                            .ToList();
+
+            return await Task.FromResult(result);
         }      
         public IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant)
         {

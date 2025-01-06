@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
@@ -40,82 +41,97 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
            
         }
  
-        public int AddPlantDetails(NewPlantVm model)
+        public async Task<int> AddPlantDetailsAsync(NewPlantVm model)
         {
             //Save to table PlantDetails
-            SetPlantDetailsModelFields(model.PlantDetails);
+            await SetPlantDetailsModelFieldsAsync(model.PlantDetails);
             var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
-            var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, model.Id);
+            var plantDetailId =  await _plantRepo.AddPlantDetailsAsync(newPlantDetail, model.Id);
 
             // Add related entities
+            Task<int> destinationTask = Task.FromResult(0);
+            Task<int> growingTask = Task.FromResult(0);
+            Task<int> growthTask = Task.FromResult(0);
 
-            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowthTypes?.GrowthTypesIds, _plantRepo.AddPlantGrowthTypes);
-            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowingSeazons?.GrowingSeaznosIds,_plantRepo.AddPlantGrowingSeazons);
-            AddRealatedEntity(plantDetailId,model.PlantDetails.ListPlantDestinations?.DestinationsIds,_plantRepo.AddPlantDestinations);
+            growthTask = AddRealatedEntityAsync(plantDetailId, model.PlantDetails.ListGrowthTypes?.GrowthTypesIds, _plantRepo.AddPlantGrowthTypesAsync);
+
+            growingTask = AddRealatedEntityAsync(plantDetailId, model.PlantDetails.ListGrowingSeazons?.GrowingSeaznosIds,_plantRepo.AddPlantGrowingSeazonsAsync);
+
+            destinationTask = AddRealatedEntityAsync(plantDetailId,model.PlantDetails.ListPlantDestinations?.DestinationsIds,_plantRepo.AddPlantDestinationsAsync);
 
             if (HasElements(model.PlantDetails.Images))
             {
-                var fileNames = _imageService.AddPlantGaleryPhotos(model, plantDetailId);
+                var fileNamesTask = await _imageService.AddPlantGaleryPhotosAsync(model, plantDetailId);
             }
 
+            await Task.WhenAll(growthTask,growingTask, destinationTask);
 
             return plantDetailId;
 
         }
-        public PlantDetailsVm GetPlantDetails(int id)
+        public async Task<PlantDetailsVm> GetPlantDetailsAsync(int id)
         {
-            var plantDetails = _plantRepo.GetPlantDetails(id);
+            var plantDetails = await _plantRepo.GetPlantDetailsAsync(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
 
             if (plantDetailsVm != null)
             {
+                Task<string> colorTask = Task.FromResult(string.Empty);
+                Task<string> fruitSizeTask = Task.FromResult(string.Empty);
+                Task<string> fruitTypeTask = Task.FromResult(string.Empty);
 
-                var plant = _plantRepo.GetPlantById(id);
+                var plant = await _plantRepo.GetPlantByIdAsync(id);
                 var plantVm = _mapper.Map<PlantForListVm>(plant);
 
-                plantDetailsVm.ColorName = GetNameOrNull(plantDetailsVm.ColorId, _plantRepo.GetPlantDetailsPropertyName<Color>);
-                plantDetailsVm.FruitSizeName = GetNameOrNull(plantDetailsVm.FruitSizeId, _plantRepo.GetPlantDetailsPropertyName<FruitSize>);
-                plantDetailsVm.FruitTypeName = GetNameOrNull(plantDetailsVm.FruitTypeId, _plantRepo.GetPlantDetailsPropertyName<FruitType>);
-                plantDetailsVm.Plant = plantVm;
-
+                colorTask = GetNameOrNullAsync(plantDetailsVm.ColorId, _plantRepo.GetPlantDetailsPropertyNameAsync<Color>);
+                fruitSizeTask = GetNameOrNullAsync(plantDetailsVm.FruitSizeId, _plantRepo.GetPlantDetailsPropertyNameAsync<FruitSize>);
+                fruitTypeTask = GetNameOrNullAsync(plantDetailsVm.FruitTypeId, _plantRepo.GetPlantDetailsPropertyNameAsync<FruitType>);
+               
                 plantDetailsVm.ListGrowthTypes = BuildGrowthTypesVm(plantDetailsVm.Id);
                 plantDetailsVm.ListPlantDestinations = BuildDestinationsVm(plantDetailsVm.Id);
                 plantDetailsVm.ListGrowingSeazons = BuildGrowingSeaznosVm(plantDetailsVm.Id);
                 plantDetailsVm.PlantDetailsImages = BuildGalleryVm(plantDetailsVm.Id);
                 plantDetailsVm.PlantOpinions = BuildOpinionsVm(plantDetailsVm.Id);
+
+                await Task.WhenAll(colorTask, fruitSizeTask, fruitTypeTask);
+
+                plantDetailsVm.ColorName = colorTask.Result;
+                plantDetailsVm.FruitSizeName = fruitSizeTask.Result;
+                plantDetailsVm.FruitTypeName = fruitTypeTask.Result;
+                plantDetailsVm.Plant = plantVm;
             }
                 return plantDetailsVm;
 
         }
-        public void UpdateEntity<T>(
+        public async Task<int> UpdateEntityAsync<T>(
             int plantDetailId,
             IEnumerable<int> entityIds, 
             Func<int, IEnumerable<T>> getPropertiesAction,
-            Action<int[], int> addAction,
-            Action<int> deleteAction)
+            Func<int[], int,Task<int>> addAction,
+            Func<int, Task<int>> deleteAction)
         {
             var existingEntities = getPropertiesAction(plantDetailId);
 
             if (HasElements(existingEntities) && existingEntities.Any())
             {
-                deleteAction(plantDetailId);          
+                await deleteAction(plantDetailId);          
             }
-            addAction(entityIds.ToArray(), plantDetailId);
+           return await addAction(entityIds.ToArray(), plantDetailId);
         }
-        public void AddPlantOpinion(PlantOpinionsVm opinion)
+        public async Task AddPlantOpinionAsync(PlantOpinionsVm opinion)
         {
             if (opinion != null)
             {
                 opinion.DateAdded = DateTime.Now;
                 var plantOpinion = _mapper.Map<PlantOpinion>(opinion);
-                _plantRepo.AddEntity<PlantOpinion>(plantOpinion);
+                await _plantRepo.AddEntityAsync<PlantOpinion>(plantOpinion);
             }
             else { throw new NullReferenceException(); }
         }
-        public PlantOpinionsVm FillPropertyOpinion(int id, string userName)
+        public async Task<PlantOpinionsVm> FillPropertyOpinionAsync(int id, string userName)
         {
-            var user = _userManager.FindByNameAsync(userName);
-            var plantOpinion = new PlantOpinionsVm() { PlantDetailId = id, UserId = user.Result.Id };
+            var user = await _userManager.FindByNameAsync(userName);
+            var plantOpinion = new PlantOpinionsVm() { PlantDetailId = id, UserId = user.Id };
             return plantOpinion;
         }
 
@@ -125,7 +141,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         /// 
         /// </summary>
         /// <param name="details"></param>
-        private void SetPlantDetailsModelFields(PlantDetailsVm details)
+        private async Task SetPlantDetailsModelFieldsAsync(PlantDetailsVm details)
         {
             if (details == null) return;
             details.ColorId = details.ColorId == 0 ? null : details.ColorId;
@@ -139,12 +155,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         /// <param name="plantDetailId"></param>
         /// <param name="entityIds"></param>
         /// <param name="addAction"></param>
-        private void AddRealatedEntity(int plantDetailId, IEnumerable<int> entityIds, Action<int[], int> addAction)
+        private async Task<int> AddRealatedEntityAsync(int plantDetailId, IEnumerable<int> entityIds, Func<int[], int, Task<int>> addAction)
         {
+
             if (HasElements(entityIds))
             {
-                addAction(entityIds.ToArray(), plantDetailId);
+               return await addAction(entityIds.ToArray(), plantDetailId);
             }
+
+            return 0;
         }
         private bool HasElements<T>(IEnumerable<T> list) => list != null && list.Any();
         private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowthType>, _plantRepo.GetAllEntities<GrowthType>, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
@@ -185,6 +204,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             var plantProperties = getPlantProperties(id)?.ToList();
             var allProperties = getAllProperties()?.ToList();
 
+            //var plantPropertiesTask = Task.Run(() => getPlantProperties(id)?.ToList());
+            //var allPropertiesTask = Task.Run(() => getAllProperties()?.ToList());
+
+            //// Pobieranie danych asynchronicznie
+            //var plantProperties = await plantPropertiesTask;
+            //var allProperties = await allPropertiesTask;
+
             if (plantProperties == null || allProperties == null)
                 return new List<string>();
 
@@ -205,6 +231,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
            return plantPropertiesNames = plantPropertiesNames.Take(plantPropertiesNames.Count - 1).ToList();
         }
-        private string GetNameOrNull(int? id, Func<int?, string> fetchNameFunc) => id.HasValue ? fetchNameFunc(id) : null;
+        private async Task<string> GetNameOrNullAsync(int? id, Func<int?, Task<string>> fetchNameFunc) => id.HasValue ? await fetchNameFunc(id) : null;
     }
 }

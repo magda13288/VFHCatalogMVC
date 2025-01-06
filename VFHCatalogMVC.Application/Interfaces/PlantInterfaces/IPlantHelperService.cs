@@ -14,17 +14,17 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
 {
     public interface IPlantHelperService
     {
-        List<SelectListItem> GetSelectList<TSource, TViewModel>()
+        Task<List<SelectListItem>> GetSelectListAsync<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource : class;
-        List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
-        List<SelectListItem> GetGroups(int? typeId);
-        List<SelectListItem> GetSections(int? groupId);
-        List<SelectListItem> GetDestinations();
+        Task<List<SelectListItem>> GetSelectListItemAsync<T>(IEnumerable<T> entity) where T : SelectListItemVm;
+        Task<List<SelectListItem>> GetGroupsAsync(int? typeId);
+        Task<List<SelectListItem>> GetSectionsAsync(int? groupId);
+        Task<List<SelectListItem>> GetDestinationsAsync();
         MessageDisplay MessagesToView(int type);
         IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant);
 
-        List<SelectListItem> GetPlantPropertySelectListItem<TSource, TVm, TSourceList, TVmList>(int typeId, int? groupId, int? sectionId)
+        Task<List<SelectListItem>> GetPlantPropertySelectListItemAsync<TSource, TVm, TSourceList, TVmList>(int typeId, int? groupId, int? sectionId)
            where TSource : class
            where TSourceList : BasePropertyForListFilters
            where TVm : SelectListItemVm

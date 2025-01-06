@@ -14,22 +14,22 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
 {
     public interface IPlantService
     {
-        ListPlantForListVm GetAllActivePlantsForList(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId);
-        int AddPlant(NewPlantVm model, string user);
-        void AddPlantSeed(PlantSeedVm seed);
-        void AddPlantSeedling(PlantSeedlingVm seedling);
-        NewPlantVm GetPlantToEdit(int id);
-        void UpdatePlant(NewPlantVm model);
-        PlantForListVm DeletePlant(int id);
-        public T FillProperty<T>(
+        Task<ListPlantForListVm> GetAllActivePlantsForListAsync(int pageSize, int? pageNo, string searchString, int? typeId, int? groupId, int? sectionId);
+        Task<int> AddPlantAsync(NewPlantVm model, string user);
+        Task AddPlantSeedAsync(PlantSeedVm seed);
+        Task AddPlantSeedlingAsync(PlantSeedlingVm seedling);
+        Task<NewPlantVm> GetPlantToEditAsync(int id);
+        Task UpdatePlantAsync(NewPlantVm model);
+        Task<PlantForListVm> DeletePlantAsync(int id);
+        Task<T> FillPropertyAsync<T>(
              int id,
              string userName
              )
                 where T : PlantItemVm, new();
 
-         PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
-        PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
-        void ActivatePlant(int id);
+        Task<PlantSeedsForListVm> GetAllPlantSeedsAsync(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
+        Task<PlantSeedlingsForListVm> GetAllPlantSeedlingsAsync(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
+        Task ActivatePlantAsync(int id);
         
     }
 }

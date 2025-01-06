@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Domain.Interface;
@@ -25,28 +26,28 @@ namespace VFHCatalogMVC.Application.Services
             _plantRepo = plantRepository;
         }
 
-        public List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId)
+        public async Task<List<string>> AddPlantGaleryPhotosAsync(NewPlantVm model, int plantDetailId)
         {
        
             var fileNames = new List<string>();
 
             foreach (var item in model.PlantDetails.Images)
             {
-                string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
-                _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                string fileName = await UploadImageAsync(item, model.FullName, _DIR_GALLERY);
+                await _plantRepo.AddPlantDetailsImagesAsync(fileName, plantDetailId);
                 fileNames.Add(fileName);
             }
 
             return fileNames;
         }
 
-        public string AddPlantSearchPhoto(NewPlantVm model)
+        public async Task<string> AddPlantSearchPhotoAsync(NewPlantVm model)
         {
-            var fileName = UploadImage(model.Photo, model.FullName, _DIR_SEARCH);
+            var fileName = await UploadImageAsync(model.Photo, model.FullName, _DIR_SEARCH);
             return fileName;
         }
 
-        public void DeleteImage(string path)
+        public async Task DeleteImageAsync(string path)
         {
             var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
 
@@ -63,7 +64,7 @@ namespace VFHCatalogMVC.Application.Services
             }
         }
 
-        public string UploadImage(IFormFile file, string name, string path)
+        public async Task<string> UploadImageAsync(IFormFile file, string name, string path)
         {
             string fileName = null;
 

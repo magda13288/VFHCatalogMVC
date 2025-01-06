@@ -18,6 +18,7 @@ using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.Constants;
 using System.Web.WebPages;
 using VFHCatalogMVC.Application.Services.UserServices;
+using System.Threading.Tasks;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
@@ -25,7 +26,7 @@ namespace VFHCatalogMVC.Web.Controllers
     {
 
         private readonly IPlantService _plantService;
-        private readonly IPlantDetailsService _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsService;
         private readonly IUserContactDataService _userContactDataService;
         private readonly ILogger<PlantsController> _logger;
         private readonly IPlantHelperService _plantHelperService;
@@ -36,12 +37,12 @@ namespace VFHCatalogMVC.Web.Controllers
             ILogger<PlantsController> logger, 
             IUserContactDataService userContactDataService, 
             IPlantHelperService plantHelperService, 
-            IPlantDetailsService plantDetailsSerrvice
+            IPlantDetailsService plantDetailsService
        )
         {
             _plantService = plantService;
             _logger = logger;
-            _plantDetailsSerrvice = plantDetailsSerrvice;
+            _plantDetailsService = plantDetailsService;
             _plantHelperService = plantHelperService;
             _userContactDataService = userContactDataService;
    
@@ -52,7 +53,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [AllowAnonymous]
         //pageSize okresla ile rekordow bedzie wyswietlanych na stronie 
         //pageNumber okresla na ktorej stronie jestesm
-        public IActionResult Index(
+        public async Task<IActionResult> Index(
             int pageSize,
             int? pageNo,
             string searchString, 
@@ -62,10 +63,10 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {        
-                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
-                var groupsList = GetPlantGroupsList(typeId);
+                ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType,PlantTypesVm>();
+                var groupsList = await GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
-                var sectionsList = GetPlantSectionsList(groupId, typeId);
+                var sectionsList = await GetPlantSectionsList(groupId, typeId);
                 ViewBag.SectionsList = sectionsList.Value;
 
                 pageNo = pageNo.HasValue ? pageNo.Value : 1;
@@ -75,7 +76,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.GroupId = groupId;
                 ViewBag.SectionId = sectionId;
 
-                var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo.Value, searchString, typeId, groupId, sectionId);
+                var model = await _plantService.GetAllActivePlantsForListAsync(pageSize, pageNo.Value, searchString, typeId, groupId, sectionId);
 
                 return View(model);
             }
@@ -89,7 +90,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet,HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeeds(
+        public async Task<IActionResult> IndexSeeds(
             int id,
             int countryId,
             int regionId,
@@ -116,7 +117,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
 
 
-                var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
+                var model = await _plantService.GetAllPlantSeedsAsync(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
             }
             catch(Exception ex)
@@ -129,7 +130,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet, HttpPost]
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeedlings(
+        public async Task<IActionResult> IndexSeedlings(
             int id, 
             int countryId,
             int regionId,
@@ -151,7 +152,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.RegionId = regionId;
                 ViewBag.CityId = cityId;
 
-                var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo,isCompany);
+                var model = await _plantService.GetAllPlantSeedlingsAsync(id, countryId, regionId, cityId, pageSize, pageNo,isCompany);
                 return View(model);
             }
             catch (Exception ex)
@@ -165,11 +166,11 @@ namespace VFHCatalogMVC.Web.Controllers
         //wyświetli pusty formularz gotowy do wypełnienia
         [HttpGet]
         [Authorize(Roles = UserRoles.ALL_ROLES)]
-        public IActionResult AddPlant()
+        public async Task<IActionResult> AddPlant()
         {
-            ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
-            ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
-            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();
+            ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
+            ViewBag.ColorsList = await _plantHelperService.GetSelectListAsync<Color, ColorsVm>();
+            ViewBag.GrowingSeazons = await _plantHelperService.GetSelectListAsync<GrowingSeazon, GrowingSeazonVm>();
 
             return View();
         }
@@ -178,20 +179,20 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,PrivateUser,Company")]
         [ValidateAntiForgeryToken] // zabezpiecza przed przesłaniem falszywego widoku podczas dodawania nowego widoku (danych)
-        public IActionResult AddPlant(NewPlantVm model)
+        public async Task<IActionResult> AddPlant(NewPlantVm model)
         {
             try
             {
                 if (ModelState.IsValid)
                 { //check DataAnnotations
-                    var id = _plantService.AddPlant(model,User.Identity.Name);
+                    var id = await _plantService.AddPlantAsync(model,User.Identity.Name);
 
                     if (id == 0)
                     {
                         ViewBag.Message = "Podana nazwa już istnieje";
-                        ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
-                        ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                        ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
+                        ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
+                        ViewBag.ColorsList = await _plantHelperService.GetSelectListAsync<Color, ColorsVm>();
+                        ViewBag.GrowingSeazons = await _plantHelperService.GetSelectListAsync<GrowingSeazon, GrowingSeazonVm>();
                         return View(model);
                     }
                     else
@@ -199,9 +200,9 @@ namespace VFHCatalogMVC.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
-                    ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                    ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
+                    ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
+                    ViewBag.ColorsList = await _plantHelperService.GetSelectListAsync<Color, ColorsVm>();
+                    ViewBag.GrowingSeazons = await _plantHelperService.GetSelectListAsync<GrowingSeazon, GrowingSeazonVm>();
                     return View(model);
                 }
             }
@@ -214,9 +215,9 @@ namespace VFHCatalogMVC.Web.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
+            var plantDetails = await _plantDetailsService.GetPlantDetailsAsync(id);
 
             if (plantDetails == null)
             {
@@ -230,23 +231,23 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.ALL_ROLES)]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var plantToEdit = _plantService.GetPlantToEdit(id);
+                var plantToEdit = await _plantService.GetPlantToEditAsync(id);
 
-                ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
+                ViewBag.ColorsList = await _plantHelperService.GetSelectListAsync<Color, ColorsVm>();
 
-                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();               
+                ViewBag.GrowingSeazons = await _plantHelperService.GetSelectListAsync<GrowingSeazon, GrowingSeazonVm>();               
         
-                ViewBag.GrowthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.GrowthTypes = await _plantHelperService.GetPlantPropertySelectListItemAsync<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                   
-                ViewBag.Destinations = _plantHelperService.GetSelectList<Destination,DestinationsVm>();
+                ViewBag.Destinations = await _plantHelperService.GetSelectListAsync<Destination, DestinationsVm>();
 
-                ViewBag.FruitTypes = _plantHelperService.GetPlantPropertySelectListItem<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.FruitTypes = await _plantHelperService.GetPlantPropertySelectListItemAsync<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
-                ViewBag.FruitSizes = _plantHelperService.GetPlantPropertySelectListItem<FruitSize, FruitSizeVm, FruitSizeForListFilters, FruitSizeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.FruitSizes = await _plantHelperService.GetPlantPropertySelectListItemAsync<FruitSize, FruitSizeVm, FruitSizeForListFilters, FruitSizeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
                 return View(plantToEdit);
             }
@@ -260,13 +261,13 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         [Authorize(Roles = UserRoles.ALL_ROLES)]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(NewPlantVm plant)
+        public async Task<IActionResult> Edit(NewPlantVm plant)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _plantService.UpdatePlant(plant);
+                    await _plantService.UpdatePlantAsync(plant);
                     return RedirectToAction("Index");
                 }
                 else
@@ -283,11 +284,11 @@ namespace VFHCatalogMVC.Web.Controllers
         //Add referesing table after delete plant
         [HttpGet]
         [Authorize(Roles = UserRoles.ADMIN)]
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var plant = _plantService.DeletePlant(id);
+                var plant = await _plantService.DeletePlantAsync(id);
                 return RedirectToAction("Index");
             }
             catch(Exception ex)
@@ -299,11 +300,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public IActionResult AddSeed(int id)
+        public async Task<IActionResult> AddSeed(int id)
         {
             try
             {
-                var plantSedd = _plantService.FillProperty<PlantSeedVm>(id, User.Identity.Name);
+                var plantSedd = await _plantService.FillPropertyAsync<PlantSeedVm>(id, User.Identity.Name);
                 return PartialView("AddSeedModalPartial", plantSedd);
             }
             catch (Exception ex)
@@ -317,13 +318,13 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
     
-        public IActionResult AddSeed(PlantSeedVm plantSeed)
+        public async Task<IActionResult> AddSeed(PlantSeedVm plantSeed)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _plantService.AddPlantSeed(plantSeed);
+                    await _plantService.AddPlantSeedAsync(plantSeed);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddSeedModalPartial");
@@ -346,11 +347,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public IActionResult AddSeedling(int id)
+        public async Task<IActionResult> AddSeedling(int id)
         {
             try
             {
-                var plantSeedling = _plantService.FillProperty<PlantSeedlingVm>(id, User.Identity.Name);
+                var plantSeedling = await _plantService.FillPropertyAsync<PlantSeedlingVm>(id, User.Identity.Name);
                 return PartialView("AddSeedlingModalPartial", plantSeedling);
             }
             catch (Exception ex)
@@ -362,13 +363,13 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public IActionResult AddSeedling(PlantSeedlingVm plantSeedling)
+        public async Task<IActionResult> AddSeedling(PlantSeedlingVm plantSeedling)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _plantService.AddPlantSeedling(plantSeedling);
+                   await _plantService.AddPlantSeedlingAsync(plantSeedling);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddSeedlingModalPartial");
@@ -394,11 +395,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "PrivateUser,Company")]
-        public IActionResult AddOpinion(int id)
+        public async Task<IActionResult> AddOpinion(int id)
         {
             try
             {
-                var plantOpinion = _plantDetailsSerrvice.FillPropertyOpinion(id, User.Identity.Name);
+                var plantOpinion = await _plantDetailsService.FillPropertyOpinionAsync(id, User.Identity.Name);
                 return PartialView("AddOpinionModalPartial", plantOpinion);
             }
             catch (Exception ex)
@@ -411,13 +412,13 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
         //Add refereshing page after save opinion on modal popup
-        public IActionResult AddOpinion(PlantOpinionsVm plantOpinion)
+        public async Task<IActionResult> AddOpinion(PlantOpinionsVm plantOpinion)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _plantDetailsSerrvice.AddPlantOpinion(plantOpinion);
+                   await _plantDetailsService.AddPlantOpinionAsync(plantOpinion);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddOpinionModalPartial");
@@ -444,11 +445,11 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpGet]
         [Authorize(Roles = UserRoles.ADMIN)]
 
-        public IActionResult ActivatePlant(int id)
+        public async Task<IActionResult> ActivatePlant(int id)
         {
             try
             {
-                _plantService.ActivatePlant(id);
+                await _plantService.ActivatePlantAsync(id);
                 bool viewAll = true;
                 return RedirectToAction("IndexNewPlants", "User", viewAll);
             }
@@ -460,53 +461,53 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetPlantGroupsList(int typeId)
+        public async Task<JsonResult> GetPlantGroupsList(int typeId)
         {
-            var groupsList = _plantHelperService.GetGroups(typeId);        
+            var groupsList = await _plantHelperService.GetGroupsAsync(typeId);        
 
             return Json(groupsList);
 
         }
 
         [HttpPost]
-        public JsonResult GetPlantSectionsList(int groupId, int typeId)
+        public async Task<JsonResult> GetPlantSectionsList(int groupId, int typeId)
         {
 
-            var sectionsList = _plantHelperService.GetSections(groupId) ;
+            var sectionsList = await _plantHelperService.GetSectionsAsync(groupId) ;
             
             return Json(sectionsList);
         }
 
         [HttpPost]
-        public JsonResult GetGrowthTypes( int typeId, int groupId, int? sectionId)
+        public async Task<JsonResult> GetGrowthTypes( int typeId, int groupId, int? sectionId)
         {
 
-            var growthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType,GrowthTypeVm,GrowthTypesForListFilters,GrowthTypesForListFiltersVm>(typeId,groupId,sectionId);        
+            var growthTypes = await _plantHelperService.GetPlantPropertySelectListItemAsync<GrowthType,GrowthTypeVm,GrowthTypesForListFilters,GrowthTypesForListFiltersVm>(typeId,groupId,sectionId);        
 
             return Json(growthTypes);
         }
 
         [HttpPost]
-        public JsonResult GetDestinations()
+        public async Task<JsonResult> GetDestinations()
         {
-            var destList = _plantHelperService.GetDestinations();
+            var destList = await _plantHelperService.GetDestinationsAsync();
 
             return Json(destList);
         }
 
         [HttpPost]
-        public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
+        public async Task<JsonResult> GetFruitTypes(int typeId, int groupId, int? sectionId)
         {
-            var fruitTypesList = _plantHelperService.GetPlantPropertySelectListItem<FruitType,FruitTypeVm,FruitTypeForListFilters,FruitTypeForListFiltersVm>(typeId,groupId,sectionId);
+            var fruitTypesList = await _plantHelperService.GetPlantPropertySelectListItemAsync<FruitType,FruitTypeVm,FruitTypeForListFilters,FruitTypeForListFiltersVm>(typeId,groupId,sectionId);
 
             return Json(fruitTypesList);
         }
 
         [HttpPost]
-        public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId)
+        public async Task<JsonResult> GetFruitSizes(int typeId, int groupId, int? sectionId)
         {
          
-            var fruitSizesList = _plantHelperService.GetPlantPropertySelectListItem<FruitSize,FruitSizeVm,FruitSizeForListFilters,FruitSizeForListFiltersVm>(typeId,groupId,sectionId);
+            var fruitSizesList = await _plantHelperService.GetPlantPropertySelectListItemAsync<FruitSize,FruitSizeVm,FruitSizeForListFilters,FruitSizeForListFiltersVm>(typeId,groupId,sectionId);
 
             return Json(fruitSizesList);
         }

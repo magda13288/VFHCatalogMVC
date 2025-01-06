@@ -16,6 +16,11 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using System.Threading.Tasks;
+using VFHCatalogMVC.Application.Constants;
+using System.Runtime.InteropServices;
+using Microsoft.EntityFrameworkCore;
+using NPOI.OpenXmlFormats.Dml;
 
 
 
@@ -30,7 +35,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserPlantService _userPlantService;
         private readonly IImageService _imageService;
-        private readonly IPlantDetailsService _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsService;
         private readonly IPlantItemProcessor<PlantSeedVm> _seedProcessor;
         private readonly IPlantItemProcessor<PlantSeedlingVm> _seedlingProcessor;
 
@@ -42,7 +47,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             IPlantRepository plantRepo,
             IMapper mapper, UserManager<ApplicationUser> userManager,
             IImageService imageService,
-            IPlantDetailsService plantDetailsSerrvice,
+            IPlantDetailsService plantDetailsService,
             IUserPlantService userPlantService,
             IPlantItemProcessor<PlantSeedVm> seedProcessor ,
             IPlantItemProcessor<PlantSeedlingVm> seedlingProcessor)
@@ -51,14 +56,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _mapper = mapper;
             _userManager = userManager;
             _imageService = imageService;
-            _plantDetailsSerrvice = plantDetailsSerrvice;
+            _plantDetailsService = plantDetailsService;
             _userPlantService = userPlantService;
             _seedProcessor = seedProcessor;
             _seedlingProcessor = seedlingProcessor;
                
         }
 
-        public int AddPlant(NewPlantVm model, string user)
+        public async Task<int> AddPlantAsync(NewPlantVm model, string user)
         {
             int id = 0;
 
@@ -66,7 +71,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             //check if adding plant does't exist in database
 
-            if (DoesPlantExist(model.FullName))
+            if (await DoesPlantExist(model.FullName))
                 return 0;
 
             //Save to table Plant
@@ -74,39 +79,43 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (model.Photo != null)
             {
-                string fileName = _imageService.AddPlantSearchPhoto(model);
+                string fileName = await _imageService.AddPlantSearchPhotoAsync(model);
                 newPlant.Photo = fileName;
             }
 
             var userInfo = _userManager.FindByNameAsync(user);
-            var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, "Admin").Result;
+            var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, UserRoles.ADMIN);
 
-            SetPropertiesAndAddNewUserPlant(newPlant, isAdmin);
-            id = _plantRepo.AddEntity<Plant>(newPlant);
+            await Task.WhenAll(userInfo, isAdmin);
+
+            SetPropertiesAndAddNewUserPlant(newPlant, isAdmin.Result);
+
+            id = await _plantRepo.AddEntityAsync<Plant>(newPlant);
 
             if (id > 0)
             {
                 model.Id = id;
-                var plantDetailId = _plantDetailsSerrvice.AddPlantDetails(model);
 
-                if (!isAdmin)
+                if (!isAdmin.Result)
                 {
-                    _userPlantService.AddNewUserPlant(id, userInfo.Result.Id);
+                   await _userPlantService.AddNewUserPlantAsync(id, userInfo.Result.Id);
                 }
 
+                var plantDetailId = await _plantDetailsService.AddPlantDetailsAsync(model);
+               
             }
 
             return id;
 
         }
-        private bool DoesPlantExist(string fullName) => GetAllActivePlantsForList(1, 10, fullName, null, null, null).Count > 0;
+        private async Task<bool> DoesPlantExist(string fullName) => (await GetAllActivePlantsForListAsync(1, 10, fullName, null, null, null)).Count > 0;
         private void SetPropertiesAndAddNewUserPlant(Plant plant, bool isAdmin)
         {
             plant.isActive = isAdmin;
             plant.isNew = !isAdmin;
 
         }
-        public ListPlantForListVm GetAllActivePlantsForList(
+        public async Task<ListPlantForListVm> GetAllActivePlantsForListAsync(
             int pageSize, 
             int? pageNo, 
             string searchString, 
@@ -115,7 +124,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             int? sectionId)
         {
 
-            var plants = ActivePlantsFilters(searchString, typeId, groupId, sectionId);
+            var plants = await ActivePlantsFiltersAsync(searchString, typeId, groupId, sectionId);
 
             var plantsToShow = Paginate(plants, pageSize, pageNo);
 
@@ -141,13 +150,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
         }
 
-        private List<PlantForListVm> ActivePlantsFilters(string searchString, int? typeId, int? groupId, int? sectionId)
+        private async Task<List<PlantForListVm>> ActivePlantsFiltersAsync(string searchString, int? typeId, int? groupId, int? sectionId)
         {
+            
+            var plantTask = await _plantRepo.GetAllActivePlantsAsync();
             var plants = new List<PlantForListVm>();
 
             if (!string.IsNullOrWhiteSpace(searchString))
             {
-                plants = _plantRepo.GetAllActivePlants().Where(p => p.FullName.StartsWith(searchString))
+                plants = plantTask.Where(p => p.FullName.StartsWith(searchString))
                        .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
             }
             else
@@ -159,19 +170,19 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                         //projectTo wykorzystywane przy kolekcjach IQueryable
                         if (sectionId > 0 && sectionId != null)
                         {
-                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
+                            plants = plantTask.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
                         }
                         else
                         {
-                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
+                            plants = plantTask.Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
 
                         }
                     }
                     else
                     {
-                        plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+                        plants = plantTask.Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
                     }
                 }
             }
@@ -179,7 +190,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         }
 
-        public PlantSeedsForListVm GetAllPlantSeeds(
+        public async Task<PlantSeedsForListVm> GetAllPlantSeedsAsync(
             int id,
             int countryId,
             int regionId,
@@ -190,14 +201,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             string userName)
         {
             var seeds = _plantRepo.GetPlantSeedOrSeedling<PlantSeed>(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
-            var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany);
+            var detailId = await _plantRepo.GetPlantDetailIdAsync(id);
+            var processedSeeds = await _seedProcessor.ProcessItemsAsync(seeds, detailId, countryId, regionId, cityId, isCompany);
             var paginateList = Paginate(processedSeeds, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, paginateList, seeds.Count, pageSize, pageNo, isCompany, userName);
         }
 
-        public PlantSeedlingsForListVm GetAllPlantSeedlings(
+        public async Task<PlantSeedlingsForListVm> GetAllPlantSeedlingsAsync(
             int id,
             int countryId,
             int regionId, 
@@ -207,8 +218,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             bool isCompany)
         {
             var seedlings = _plantRepo.GetPlantSeedOrSeedling<PlantSeedling>(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
-            var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany);
+            var detailId = await _plantRepo.GetPlantDetailIdAsync(id);
+            var processedSeedlings = await _seedlingProcessor.ProcessItemsAsync(seedlings, detailId, countryId, regionId, cityId, isCompany);
             var paginateList = Paginate(processedSeedlings, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, paginateList, seedlings.Count, pageSize, pageNo, isCompany, null);
@@ -233,13 +244,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 LoggedUserName = userName
             };
         }
-        public NewPlantVm GetPlantToEdit(int id)
+        public async Task<NewPlantVm> GetPlantToEditAsync(int id)
         {
 
-            var plant = _plantRepo.GetPlantById(id);
+            var plant = await _plantRepo.GetPlantByIdAsync(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
 
-            var plantDetails = _plantRepo.GetPlantDetails(id);
+            var plantDetails = await _plantRepo.GetPlantDetailsAsync(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
             plantVm.PlantDetails = plantDetailsVm;
 
@@ -247,17 +258,20 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 plantVm.PlantDetails.PlantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
-                SetPlantGrowthType(plantDetailsVm, plantDetailsVm.Id);
-                SetPlantGrowingSeazons(plantDetailsVm, plantDetailsVm.Id);
-                SetPlantDestinations(plantDetailsVm, plantDetailsVm.Id);
+               var growthTypeTask = SetPlantGrowthTypeAsync(plantDetailsVm, plantDetailsVm.Id);
+               var growingSeazonTask =  SetPlantGrowingSeazonsAsync(plantDetailsVm, plantDetailsVm.Id);
+               var destinationTask = SetPlantDestinationsAsync(plantDetailsVm, plantDetailsVm.Id);
+
+               await Task.WhenAll(growthTypeTask,growingSeazonTask,destinationTask);
             }
 
             return plantVm;
         }
 
-        private bool SetPlantGrowthType(PlantDetailsVm plant, int plantDetailId)
+        private async Task<bool> SetPlantGrowthTypeAsync(PlantDetailsVm plant, int plantDetailId)
         {
-            var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+            var growthTypes = await _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToListAsync();
+
             if (growthTypes != null)
             {
                 plant.ListGrowthTypes = new ListGrowthTypesVm();
@@ -273,9 +287,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return set;
         }
 
-        private bool SetPlantGrowingSeazons(PlantDetailsVm plant, int plantDetailId)
+        private async Task<bool> SetPlantGrowingSeazonsAsync(PlantDetailsVm plant, int plantDetailId)
         {
-            var growingSeazons = _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+            var growingSeazons = await _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToListAsync();
+
             if (growingSeazons != null)
             {
                 plant.ListGrowingSeazons = new ListGrowingSeazonsVm();
@@ -290,9 +305,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             return set;
         }
-        private bool SetPlantDestinations(PlantDetailsVm plant, int plantDetailId)
+        private async Task<bool> SetPlantDestinationsAsync(PlantDetailsVm plant, int plantDetailId)
         {
-            var destinations = _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            var destinations = await _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToListAsync();
+
             if (destinations != null)
             {
                 plant.ListPlantDestinations = new ListPlantDestinationsVm();
@@ -308,22 +324,23 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return set;
 
         }
-        private void UpdatePlantPhoto(NewPlantVm model)
+        private async Task UpdatePlantPhotoAsync(NewPlantVm model)
         {
             if (model.Photo != null)
             {
-                var existingPlant = _plantRepo.GetPlantById(model.Id);
+                var existingPlant = await _plantRepo.GetPlantByIdAsync(model.Id);
                 string direction = "plantGallery/searchPhoto";
-                string newPhoto = _imageService.UploadImage(model.Photo, model.FullName, direction);
-                _imageService.DeleteImage($"plantGallery/searchPhoto/{existingPlant.Photo}");
+                string newPhoto = await _imageService.UploadImageAsync(model.Photo, model.FullName, direction);
+                await _imageService.DeleteImageAsync($"plantGallery/searchPhoto/{existingPlant.Photo}");
                 model.PhotoFileName = newPhoto;
             }
             else
             {
-                model.PhotoFileName = _plantRepo.GetPlantById(model.Id).Photo;
+                var task = await _plantRepo.GetPlantByIdAsync(model.Id);
+                model.PhotoFileName = task.Photo;
             }
         }
-        private void UpdatePlantDetailsImages(NewPlantVm model)
+        private async Task UpdatePlantDetailsImagesAsync(NewPlantVm model)
         {
             string direction = "plantGallery/plantDetailsGallery";
 
@@ -331,8 +348,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 foreach (var image in model.PlantDetails.Images)
                 {
-                    string fileName = _imageService.UploadImage(image, model.FullName, direction);
-                    _plantRepo.AddPlantDetailsImages(fileName, model.PlantDetails.Id);
+                    string fileName = await _imageService.UploadImageAsync(image, model.FullName, direction);
+                    await _plantRepo.AddPlantDetailsImagesAsync(fileName, model.PlantDetails.Id);
                 }
             }
 
@@ -341,61 +358,85 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 foreach (var image in model.PlantDetails.PlantDetailsImages.Where(i => i.IsChecked))
                 {
                     string imagePath = direction + "/" + image.ImageURL;
-                    _imageService.DeleteImage(imagePath);
-                    _plantRepo.DeleteImageFromGallery(image.Id);
+                    await _imageService.DeleteImageAsync(imagePath);
+                    await _plantRepo.DeleteImageFromGalleryAsync(image.Id);
                 }
             }
+
         }
-        public void UpdatePlant(NewPlantVm model)
+        public async Task UpdatePlantAsync(NewPlantVm model)
         {
-            UpdatePlantPhoto(model);
+            await UpdatePlantPhotoAsync(model);
   
-            UpdatePlantDetailsImages(model);
+            await UpdatePlantDetailsImagesAsync(model);
 
             var plant = _mapper.Map<Plant>(model);
 
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
-            _plantRepo.UpdatePlant(plant);
-            _plantRepo.UpdatePlantDetails(plantDetails);
+            var plantTask = _plantRepo.UpdatePlantAsync(plant);
+            var plantDetailsTask = _plantRepo.UpdatePlantDetailsAsync(plantDetails);
+
+            await Task.WhenAll(plantTask, plantDetailsTask);
+
+            Task<int> destinationTask = Task.FromResult(0);
+            Task<int> growingTask = Task.FromResult(0);
+            Task<int> growthTask = Task.FromResult(0);
+
+            Task<bool> destinationTaskBool = Task.FromResult(true);
+            Task<bool> growingTaskBool = Task.FromResult(true);
+            Task<bool> growthTaskBool = Task.FromResult(true);
+
 
             //Update Destinations
             if (model.PlantDetails.ListPlantDestinations != null)
-                _plantDetailsSerrvice.UpdateEntity(
-                                        model.PlantDetails.Id,
-                                        model.PlantDetails.ListPlantDestinations.DestinationsIds,
-                                        id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
-                                        (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
-                                        id => _plantRepo.DeletePlantDetailEntity<PlantDestination>(model.PlantDetails.Id)
-                                                );
-            else SetPlantDestinations(model.PlantDetails, model.PlantDetails.Id);
+            {
+                destinationTask = _plantDetailsService.UpdateEntityAsync(
+                                         model.PlantDetails.Id,
+                                         model.PlantDetails.ListPlantDestinations.DestinationsIds,
+                                         id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
+                                         (ids, plantId) => _plantRepo.AddPlantDestinationsAsync(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
+                                         id => _plantRepo.DeletePlantDetailEntityAsync<PlantDestination>(model.PlantDetails.Id)
+                                               );
+            }
+            else destinationTaskBool = SetPlantDestinationsAsync(model.PlantDetails, model.PlantDetails.Id);
 
             //Update GrowingSeazons
             if (model.PlantDetails.ListGrowingSeazons != null)
-                _plantDetailsSerrvice.UpdateEntity(
+                growingTask = _plantDetailsService.UpdateEntityAsync(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(model.PlantDetails.Id),
-                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntity<PlantGrowingSeazon>(model.PlantDetails.Id)
+                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazonsAsync(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
+                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowingSeazon>(model.PlantDetails.Id)
                                                );
-            else SetPlantGrowingSeazons(model.PlantDetails, model.PlantDetails.Id);
+            else growingTaskBool = SetPlantGrowingSeazonsAsync(model.PlantDetails, model.PlantDetails.Id);
 
             //UpdateGrowthTypes
             if (model.PlantDetails.ListGrowthTypes != null)
-                _plantDetailsSerrvice.UpdateEntity(
+                growthTask =  _plantDetailsService.UpdateEntityAsync(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowthType>(model.PlantDetails.Id),
-                                       (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntity<PlantGrowthType>(model.PlantDetails.Id)
+                                       (ids, plantId) => _plantRepo.AddPlantGrowthTypesAsync(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
+                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowthType>(model.PlantDetails.Id)
                                                );
-            else SetPlantGrowthType(model.PlantDetails,model.PlantDetails.Id); 
+            else growthTaskBool = SetPlantGrowthTypeAsync(model.PlantDetails,model.PlantDetails.Id);
             //_plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
 
+            try
+            {
+                await Task.WhenAll(destinationTask, growthTask, growingTask);
+                await Task.WhenAll(destinationTaskBool, growthTaskBool, growingTaskBool);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating the plant: {ex.Message}");
+                throw; // Optionally, propagate the exception further.
+            }          
         }
-        public PlantForListVm DeletePlant(int id)
+        public async Task<PlantForListVm> DeletePlantAsync(int id)
         {
-            var getPlantToDelete = _plantRepo.GetPlantById(id);
+            var getPlantToDelete = await _plantRepo.GetPlantByIdAsync(id);
             var plantVm = _mapper.Map<PlantForListVm>(getPlantToDelete);
             plantVm.isActive = false;
             //var plantVm = _mapper.Map<PlantForListVm>(getPlantToDelete);
@@ -405,17 +446,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 getPlantToDelete.isActive = false;
                 //plantVm.isActive = false;
                 //var plantToDelete = _mapper.Map<Plant>(plantVm);
-                _plantRepo.DeletePlant(getPlantToDelete);
+                await _plantRepo.DeletePlantAsync(getPlantToDelete);
             }
 
             return plantVm;
         }
 
-        public void AddPlantSeed(PlantSeedVm seed)
+        public async Task AddPlantSeedAsync(PlantSeedVm seed)
         {
 
-           var plantEntityId =  AddPlantEntity<PlantSeedVm,PlantSeed>(seed, _plantRepo.AddEntity<PlantSeed>);
-            var contactId = AddEntityContactDetails(
+           var plantEntityId = await AddPlantEntityAsync<PlantSeedVm,PlantSeed>(seed, _plantRepo.AddEntityAsync<PlantSeed>);
+
+            var contactId = await AddEntityContactDetailsAsync(
                 plantEntityId,
                 seed,
                 (plantEntityId, contactDetailId) => new ContactDetailForSeed
@@ -423,14 +465,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     PlantSeedId = plantEntityId,
                     ContactDetailId = contactDetailId
                 },
-                contactEntity => _plantRepo.AddContactDetailsEntity(contactEntity)
+                contactEntity => _plantRepo.AddContactDetailsEntityAsync(contactEntity)
                 );
                       
         }
-        public void AddPlantSeedling(PlantSeedlingVm seedling)
+        public async Task AddPlantSeedlingAsync(PlantSeedlingVm seedling)
         {
-            var plantEntityId = AddPlantEntity<PlantSeedlingVm, PlantSeedling>(seedling, _plantRepo.AddEntity<PlantSeedling>);
-            var contactId = AddEntityContactDetails(
+            var plantEntityId = await AddPlantEntityAsync<PlantSeedlingVm, PlantSeedling>(seedling, _plantRepo.AddEntityAsync<PlantSeedling>);
+
+            var contactId = await AddEntityContactDetailsAsync(
                 plantEntityId,
                 seedling,
                 (plantEntityId, contactDetailId) => new ContactDetailForSeedling
@@ -438,11 +481,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                     PlantSeedlingId = plantEntityId,
                     ContactDetailId = contactDetailId
                 },
-                contactEntity => _plantRepo.AddContactDetailsEntity(contactEntity)
+                contactEntity => _plantRepo.AddContactDetailsEntityAsync(contactEntity)
                 );
         }
 
-        public int AddPlantEntity<TVm, TSource>(TVm entity, Func<TSource, int> addEntity)
+        private async Task<int> AddPlantEntityAsync<TVm, TSource>(TVm entity, Func<TSource, Task<int>> addEntity)
            where TVm : PlantItemVm
            where TSource : class
         {
@@ -450,7 +493,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             {
                 entity.DateAdded = DateTime.Now;
                 var plantEntity = _mapper.Map<TSource>(entity);
-                var plantEntityId = addEntity(plantEntity);
+                var plantEntityId = await addEntity(plantEntity);
                 return plantEntityId;
 
             }
@@ -461,11 +504,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         }
 
-        public int AddEntityContactDetails<TVm, TContactEntity>(
+        private async Task<int> AddEntityContactDetailsAsync<TVm, TContactEntity>(
              int entityId,
              TVm entity,
              Func<int, int, TContactEntity> createContactEntity,
-             Func<TContactEntity, int> saveContactEntity)
+             Func<TContactEntity, Task<int>> saveContactEntity)
             where TVm : PlantItemVm
             where TContactEntity : class
         {
@@ -477,10 +520,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 entity.ContactDetail.ContactDetailInformation = entity.Link;
 
                 var contactDetail = _mapper.Map<ContactDetail>(entity.ContactDetail);
-                var contactDetailId = _plantRepo.AddContactDetail(contactDetail);
+                var contactDetailId = await _plantRepo.AddContactDetailAsync(contactDetail);
 
                 var contactEntity = createContactEntity(entityId, contactDetailId);
-                var id = saveContactEntity(contactEntity);
+                var id = await saveContactEntity(contactEntity);
                 return id;
             }
             else
@@ -489,22 +532,22 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
         }
-        public T FillProperty<T>(
+        public async Task<T> FillPropertyAsync<T>(
             int id, 
             string userName
             )
                where T : PlantItemVm, new()
         {
-            var user = _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
                 throw new Exception($"User with name {userName} not found.");
-            var plantSeddling = new T() { PlantId = id, UserId = user.Result.Id };
+            var plantSeddling = new T() { PlantId = id, UserId = user.Id };
             return plantSeddling;
         }
       
-        public void ActivatePlant(int id)
+        public async Task ActivatePlantAsync(int id)
         {
-            var plant = _plantRepo.GetPlantToActivate(id);
+            var plant = await _plantRepo.GetPlantToActivateAsync(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
 
             plantVm.isActive = true;

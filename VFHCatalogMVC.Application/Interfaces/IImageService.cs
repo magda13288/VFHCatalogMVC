@@ -2,16 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 
 namespace VFHCatalogMVC.Application.Interfaces
 {
     public interface IImageService
     {
-        string UploadImage(IFormFile file, string name, string path);
-        void DeleteImage(string path);
-        string AddPlantSearchPhoto(NewPlantVm model);
-        List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId);
+        Task<string> UploadImageAsync(IFormFile file, string name, string path);
+        Task DeleteImageAsync(string path);
+        Task<string> AddPlantSearchPhotoAsync(NewPlantVm model);
+        Task<List<string>> AddPlantGaleryPhotosAsync(NewPlantVm model, int plantDetailId);
 
     }
 }

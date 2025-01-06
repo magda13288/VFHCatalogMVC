@@ -86,26 +86,26 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
             return propertyList;
         }
-        public AddressVm GetAddress(string userId)
+        public async Task<AddressVm> GetAddressAsync(string userId)
         {
-            var address = _userRepo.GetAddressInfo(userId);
+            var address = await _userRepo.GetAddressInfoAsync(userId);
             var addressVm = _mapper.Map<AddressVm>(address);
 
             return addressVm;
         }
-        public void AddAddress(AddressVm address)
+        public async Task AddAddressAsync(AddressVm address)
         {
             var addressToSave = _mapper.Map<Address>(address);
-            _userRepo.AddEntity<Address>(addressToSave);
+            await _userRepo.AddEntityAsync<Address>(addressToSave);
         }
-        public string UserAccountName(Task<ApplicationUser> user)
+        public string UserAccountName(ApplicationUser user)
         {
             string userAccountName = null;
 
-            if (user.Result.AccountName != null)
-                userAccountName = user.Result.AccountName;
-            if (user.Result.CompanyName != null)
-                userAccountName = user.Result.CompanyName;
+            if (user.AccountName != null)
+                userAccountName = user.AccountName;
+            if (user.CompanyName != null)
+                userAccountName = user.CompanyName;
             return userAccountName;
         }
     }
