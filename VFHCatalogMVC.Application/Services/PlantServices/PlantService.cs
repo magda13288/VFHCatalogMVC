@@ -272,10 +272,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             var growthTypes = await _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToListAsync();
 
-            if (growthTypes != null)
+            if (growthTypes != null && growthTypes.Any())
             {
                 plant.ListGrowthTypes = new ListGrowthTypesVm();
                 plant.ListGrowthTypes.GrowthTypesIds = new int[growthTypes.Count];
+
                 for (int i = 0; i < growthTypes.Count; i++)
                 {
                     plant.ListGrowthTypes.GrowthTypesIds[i] = growthTypes[i].GrowthTypeId;
@@ -291,7 +292,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             var growingSeazons = await _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToListAsync();
 
-            if (growingSeazons != null)
+            if (growingSeazons != null && growingSeazons.Any())
             {
                 plant.ListGrowingSeazons = new ListGrowingSeazonsVm();
                 plant.ListGrowingSeazons.GrowingSeaznosIds = new int[growingSeazons.Count];
@@ -309,7 +310,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             var destinations = await _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToListAsync();
 
-            if (destinations != null)
+            if (destinations != null && destinations.Any())
             {
                 plant.ListPlantDestinations = new ListPlantDestinationsVm();
                 plant.ListPlantDestinations.DestinationsIds = new int[destinations.Count];
@@ -326,41 +327,58 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         private async Task UpdatePlantPhotoAsync(NewPlantVm model)
         {
-            if (model.Photo != null)
+            try
             {
                 var existingPlant = await _plantRepo.GetPlantByIdAsync(model.Id);
-                string direction = "plantGallery/searchPhoto";
-                string newPhoto = await _imageService.UploadImageAsync(model.Photo, model.FullName, direction);
-                await _imageService.DeleteImageAsync($"plantGallery/searchPhoto/{existingPlant.Photo}");
-                model.PhotoFileName = newPhoto;
+
+                if (model.Photo != null)
+                {
+
+                    string direction = "plantGallery/searchPhoto";
+                    string newPhoto = await _imageService.UploadImageAsync(model.Photo, model.FullName, direction);
+                    if (!string.IsNullOrEmpty(existingPlant.Photo))
+                    {
+                        await _imageService.DeleteImageAsync($"plantGallery/searchPhoto/{existingPlant.Photo}");
+                    }
+                    model.PhotoFileName = newPhoto;
+                }
+                else
+                {
+                    model.PhotoFileName = existingPlant.Photo;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var task = await _plantRepo.GetPlantByIdAsync(model.Id);
-                model.PhotoFileName = task.Photo;
+                throw new InvalidOperationException("An error occurred while updating the plant photo.", ex);
             }
         }
         private async Task UpdatePlantDetailsImagesAsync(NewPlantVm model)
         {
             string direction = "plantGallery/plantDetailsGallery";
 
-            if (model.PlantDetails.Images != null)
+            if (model.PlantDetails.Images != null && model.PlantDetails.Images.Any())
             {
-                foreach (var image in model.PlantDetails.Images)
+                var uploadTasks = model.PlantDetails.Images.Select(async image =>
                 {
                     string fileName = await _imageService.UploadImageAsync(image, model.FullName, direction);
                     await _plantRepo.AddPlantDetailsImagesAsync(fileName, model.PlantDetails.Id);
-                }
+                });
+
+                await Task.WhenAll(uploadTasks);           
             }
 
-            if (model.PlantDetails.PlantDetailsImages != null)
+            if (model.PlantDetails.PlantDetailsImages != null && model.PlantDetails.PlantDetailsImages.Any(i => i.IsChecked))
             {
-                foreach (var image in model.PlantDetails.PlantDetailsImages.Where(i => i.IsChecked))
+                var deleteTasks = model.PlantDetails.PlantDetailsImages
+                .Where(i => i.IsChecked)
+                .Select(async image =>
                 {
                     string imagePath = direction + "/" + image.ImageURL;
                     await _imageService.DeleteImageAsync(imagePath);
                     await _plantRepo.DeleteImageFromGalleryAsync(image.Id);
-                }
+                });
+
+                await Task.WhenAll(deleteTasks);              
             }
 
         }
@@ -433,6 +451,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 Console.WriteLine($"Error updating the plant: {ex.Message}");
                 throw; // Optionally, propagate the exception further.
             }          
+        }
+
+        private async Task ProcessSetPlantPropertyTaskIntAsync(NewPlantVm model)
+        {
+            
         }
         public async Task<PlantForListVm> DeletePlantAsync(int id)
         {
