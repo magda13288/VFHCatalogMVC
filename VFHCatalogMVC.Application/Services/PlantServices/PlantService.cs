@@ -384,67 +384,51 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public async Task UpdatePlantAsync(NewPlantVm model)
         {
-            await UpdatePlantPhotoAsync(model);
-  
-            await UpdatePlantDetailsImagesAsync(model);
-
-            var plant = _mapper.Map<Plant>(model);
-
-            var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
-            var plantTask = _plantRepo.UpdatePlantAsync(plant);
-            var plantDetailsTask = _plantRepo.UpdatePlantDetailsAsync(plantDetails);
-
-            await Task.WhenAll(plantTask, plantDetailsTask);
-
-            Task<int> destinationTask = Task.FromResult(0);
-            Task<int> growingTask = Task.FromResult(0);
-            Task<int> growthTask = Task.FromResult(0);
-
-            Task<bool> destinationTaskBool = Task.FromResult(true);
-            Task<bool> growingTaskBool = Task.FromResult(true);
-            Task<bool> growthTaskBool = Task.FromResult(true);
-
-
-            //Update Destinations
-            if (model.PlantDetails.ListPlantDestinations != null)
+            try
             {
-                destinationTask = _plantDetailsService.UpdateEntityAsync(
+                await UpdatePlantPhotoAsync(model);
+
+                await UpdatePlantDetailsImagesAsync(model);
+
+                var plant = _mapper.Map<Plant>(model);
+
+                var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
+                var plantTask = _plantRepo.UpdatePlantAsync(plant);
+                var plantDetailsTask = _plantRepo.UpdatePlantDetailsAsync(plantDetails);
+
+                await Task.WhenAll(plantTask, plantDetailsTask);
+
+                var updateTasks = new List<Task>
+            {
+                UpdateRelatedEntitiesAsync(
                                          model.PlantDetails.Id,
                                          model.PlantDetails.ListPlantDestinations.DestinationsIds,
                                          id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
                                          (ids, plantId) => _plantRepo.AddPlantDestinationsAsync(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
-                                         id => _plantRepo.DeletePlantDetailEntityAsync<PlantDestination>(model.PlantDetails.Id)
-                                               );
-            }
-            else destinationTaskBool = SetPlantDestinationsAsync(model.PlantDetails, model.PlantDetails.Id);
+                                         id => _plantRepo.DeletePlantDetailEntityAsync<PlantDestination>(model.PlantDetails.Id),
+                                         () => SetPlantDestinationsAsync(model.PlantDetails, model.PlantDetails.Id)
 
-            //Update GrowingSeazons
-            if (model.PlantDetails.ListGrowingSeazons != null)
-                growingTask = _plantDetailsService.UpdateEntityAsync(
+                    ),
+
+                UpdateRelatedEntitiesAsync(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(model.PlantDetails.Id),
-                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazonsAsync(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowingSeazon>(model.PlantDetails.Id)
-                                               );
-            else growingTaskBool = SetPlantGrowingSeazonsAsync(model.PlantDetails, model.PlantDetails.Id);
-
-            //UpdateGrowthTypes
-            if (model.PlantDetails.ListGrowthTypes != null)
-                growthTask =  _plantDetailsService.UpdateEntityAsync(
+                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazonsAsync       (model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
+                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowingSeazon>(model.PlantDetails.Id),
+                                      ()=> SetPlantGrowingSeazonsAsync(model.PlantDetails, model.PlantDetails.Id)
+                                      ),
+                UpdateRelatedEntitiesAsync(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
                                        id => _plantRepo.GetPlantDetailsById<PlantGrowthType>(model.PlantDetails.Id),
                                        (ids, plantId) => _plantRepo.AddPlantGrowthTypesAsync(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
-                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowthType>(model.PlantDetails.Id)
-                                               );
-            else growthTaskBool = SetPlantGrowthTypeAsync(model.PlantDetails,model.PlantDetails.Id);
-            //_plantDetailsSerrvice.UpdatePlantGrowthTypes(model);
+                                       id => _plantRepo.DeletePlantDetailEntityAsync<PlantGrowthType>(model.PlantDetails.Id),
+                                       ()=>SetPlantGrowthTypeAsync(model.PlantDetails,model.PlantDetails.Id)
+                                       )
 
-            try
-            {
-                await Task.WhenAll(destinationTask, growthTask, growingTask);
-                await Task.WhenAll(destinationTaskBool, growthTaskBool, growingTaskBool);
+            };
+                await Task.WhenAll(updateTasks);
             }
             catch (Exception ex)
             {
@@ -453,9 +437,29 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }          
         }
 
-        private async Task ProcessSetPlantPropertyTaskIntAsync(NewPlantVm model)
+        private async Task UpdateRelatedEntitiesAsync<T>(
+            int plantDetailId,
+            IEnumerable<int> entityIds,
+            Func<int, IEnumerable<T>> getPropertiesAction,
+            Func<int[], int, Task<int>> addAction,
+            Func<int, Task<int>> deleteAction,
+            Func<Task<bool>> setDefaults)
         {
-            
+            if (entityIds != null)
+            {
+                await _plantDetailsService.UpdateEntityAsync(
+                    plantDetailId,
+                    entityIds,
+                    getPropertiesAction,
+                    addAction,
+                    deleteAction
+                );
+            }
+            else
+            {
+                // Set default values
+                await setDefaults();
+            }
         }
         public async Task<PlantForListVm> DeletePlantAsync(int id)
         {
