@@ -528,7 +528,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
         }
-
         private async Task<int> AddEntityContactDetailsAsync<TVm, TContactEntity>(
              int entityId,
              TVm entity,

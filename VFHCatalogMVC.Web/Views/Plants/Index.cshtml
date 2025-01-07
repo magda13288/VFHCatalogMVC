@@ -3,7 +3,12 @@
  @{
   ViewData["Title"] = "Index";
  }
-
+<style>
+    .form-group label {
+        display: block; /* Wymusza wyświetlenie nad select */
+        margin-bottom: 5px; 
+    }
+</style>
 
 <body>
     @* <body style="background-image: url('/images/16243.jpg'); background-position: center; background-size: cover; background-repeat: no-repeat;"> *@
@@ -22,14 +27,14 @@
             <nav class="navbar navbar-expand-lg" id="selectNav">
                  <div class="collapse navbar-collapse" id="navbarSupportedContent">     
                      <label asp-for="PlantForList.TypeId" class="control-label">Type</label>
-                     <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control 
+                     <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control"
                             aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text", 
                             selectedValue: ViewBag.TypeId))"></select>
                      <label asp-for="PlantForList.GroupId" class="control-label">Group</label>
                      <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control"
                             aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text", 
                             selectedValue: ViewBag.GroupId))" ></select>
-                     <label asp-for="PlantForList.SectionId" class="control-label">Subgroup</label>
+                     <label asp-for="PlantForList.SectionId" class="control-label">Section</label>
                      <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control" 
                             aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",
                             selectedValue:ViewBag.SectionId))"></select>
