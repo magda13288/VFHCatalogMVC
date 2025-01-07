@@ -62,7 +62,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _seedlingProcessor = seedlingProcessor;
                
         }
-
         public async Task<int> AddPlantAsync(NewPlantVm model, string user)
         {
             int id = 0;
