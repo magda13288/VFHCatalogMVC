@@ -30,17 +30,33 @@ namespace VFHCatalogMVC.Application.Services
         {
        
             var fileNames = new List<string>();
+            var tasks = new List<Task>();
 
             foreach (var item in model.PlantDetails.Images)
             {
-                string fileName = await UploadImageAsync(item, model.FullName, _DIR_GALLERY);
-                await _plantRepo.AddPlantDetailsImagesAsync(fileName, plantDetailId);
-                fileNames.Add(fileName);
+                tasks.Add(ProcessImageAsync(item, model.FullName, plantDetailId, fileNames));
             }
+
+            await Task.WhenAll(tasks);
 
             return fileNames;
         }
-
+        private async Task ProcessImageAsync(IFormFile image, string fullName, int plantDetailId, List<string> fileNames)
+        {
+            try
+            {
+                string fileName = await UploadImageAsync(image, fullName, _DIR_GALLERY);
+                await _plantRepo.AddPlantDetailsImagesAsync(fileName, plantDetailId);
+                lock (fileNames) // Zapobiega konfliktom w przypadku współbieżnego dostępu,zabezpieczenia dostępu do listy fileNames w przypadku współbieżnych zapisów.
+                {
+                    fileNames.Add(fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing image: {ex.Message}");
+            }
+        }
         public async Task<string> AddPlantSearchPhotoAsync(NewPlantVm model)
         {
             var fileName = await UploadImageAsync(model.Photo, model.FullName, _DIR_SEARCH);
@@ -55,15 +71,13 @@ namespace VFHCatalogMVC.Application.Services
             {
                 try
                 {
-                    System.IO.File.Delete(imagePath);
+                    await Task.Run(() => File.Delete(imagePath));
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    throw new IOException($"Error deleting file at path {imagePath}.", ex);
                 }
             }
-
-            await Task.CompletedTask;
         }
 
         public async Task<string> UploadImageAsync(IFormFile file, string name, string path)
@@ -78,14 +92,20 @@ namespace VFHCatalogMVC.Application.Services
                     string extension = Path.GetExtension(file.FileName);
                     fileName = Guid.NewGuid().ToString() + "-" + name + extension;
                     string filePath = Path.Combine(uploadDir, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+
+                    if (!Directory.Exists(uploadDir))
                     {
-                        file.CopyTo(fileStream);
+                        Directory.CreateDirectory(uploadDir);
+                    }
+
+                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                       await file.CopyToAsync(fileStream);
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    throw new IOException($"Error uploading file to path {path}.", ex);
                 }
             }
 
