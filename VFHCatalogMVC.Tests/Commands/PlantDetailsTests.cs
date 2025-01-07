@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.Services;
@@ -28,7 +29,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
+        public async Task Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
         {
             //Arrange
 
@@ -39,7 +40,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var plantDetailId = plantDetailService.AddPlantDetails(plant);
+            var plantDetailId = await plantDetailService.AddPlantDetailsAsync(plant);
 
             //Assert
 
@@ -123,7 +124,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public void GetPlantDetailsById_ShouldReturnPlantDetail()
+        public async Task GetPlantDetailsById_ShouldReturnPlantDetail()
         {
             //Arrange
 
@@ -131,7 +132,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var plantDetails = plantDetailService.GetPlantDetails(1);
+            var plantDetails = await plantDetailService.GetPlantDetailsAsync(1);
 
             //Arrange
             Assert.NotNull(plantDetails);
@@ -216,9 +217,9 @@ namespace Application.UnitTests.Commands
                     FruitSizeId = 1,
                     FruitTypeId = 1,
                     Description = "TestTest",
-                    ListGrowingSeazons = new ListGrowingSeazonsVm() { GrowingSeaznosIds = new int[] { 1, 2 } },
-                    ListGrowthTypes = new ListGrowthTypesVm() { GrowthTypesIds = new int[] { 1 } },
-                    ListPlantDestinations = new ListPlantDestinationsVm() { DestinationsIds = new int[] { 1, 2 } },
+                    ListGrowingSeazons = new ListGrowingSeazonsVm() { GrowingSeaznosIds = new int[] { 1, 4 } },
+                    ListGrowthTypes = new ListGrowthTypesVm() { GrowthTypesIds = new int[] { 2, 3 } },
+                    ListPlantDestinations = new ListPlantDestinationsVm() { DestinationsIds = new int[] { 1, 2, 3 } },
                 }
 
             };

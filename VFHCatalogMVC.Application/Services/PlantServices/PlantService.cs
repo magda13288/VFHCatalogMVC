@@ -386,17 +386,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             try
             {
-                await UpdatePlantPhotoAsync(model);
-
-                await UpdatePlantDetailsImagesAsync(model);
+                var photoTask = UpdatePlantPhotoAsync(model);
+                var imageTask = UpdatePlantDetailsImagesAsync(model);
 
                 var plant = _mapper.Map<Plant>(model);
 
                 var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
                 var plantTask = _plantRepo.UpdatePlantAsync(plant);
                 var plantDetailsTask = _plantRepo.UpdatePlantDetailsAsync(plantDetails);
-
-                await Task.WhenAll(plantTask, plantDetailsTask);
 
                 var updateTasks = new List<Task>
             {
@@ -429,6 +426,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             };
                 await Task.WhenAll(updateTasks);
+                await Task.WhenAll(plantTask, plantDetailsTask, photoTask, imageTask);
             }
             catch (Exception ex)
             {
