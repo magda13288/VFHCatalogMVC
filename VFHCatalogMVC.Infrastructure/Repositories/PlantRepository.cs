@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
@@ -20,75 +19,69 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task DeletePlantAsync(Plant plant)
+        public void DeletePlant(Plant plant)
         {
             
            _context.Attach(plant);
            _context.Entry(plant).Property(e=>e.isActive).IsModified = true;
-           await _context.SaveChangesAsync();
+           _context.SaveChanges();
         }
 
-        public async Task<int> AddEntityAsync<T>(T entity) where T : BaseEntity
-        {
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
-
-            return entity.Id;
-        }
-
-        public async Task<int> AddContactDetailsEntityAsync<T>(T entity) where T : class
+        public int AddEntity<T>(T entity) where T : BaseEntity
         {
             _context.Set<T>().Add(entity);
-            return await _context.SaveChangesAsync();
-        }
-        public async Task<int> AddPlantDetailsAsync(PlantDetail plantDetail, int plantId)
+            _context.SaveChanges();
+
+            return entity.Id;
+        }    
+        public int AddPlantDetails(PlantDetail plantDetail, int plantId)
         {
             plantDetail.PlantRef = plantId;
-            await _context.PlantDetails.AddAsync(plantDetail);
-            await _context.SaveChangesAsync();
+            _context.PlantDetails.Add(plantDetail);
+            _context.SaveChanges();
 
             return plantDetail.Id;
 
         }
-        public async Task<int> AddEntitiesAsync<T>(int[] entityIds, int plantDetailId, Func<int, int, T> createEntity) where T : class
+        public void AddEntities<T>(int[] entityIds, int plantDetailId, Func<int, int, T> createEntity) where T : class
         {
             var entities = entityIds.Select(id => createEntity(id, plantDetailId)).ToList(); //createEntity - funkcja, która tworzy instancję encji na podstawie przekazanych danych
             _context.Set<T>().AddRange(entities); //AddRange dodaje zbiorczo wszystkie encje zamiast dodwać je w pętli
-            return await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
-        public async Task<int> AddPlantGrowthTypesAsync(int[] growthTypesIds, int plantDetailId)
+        public void AddPlantGrowthTypes(int[] growthTypesIds, int plantDetailId)
         {
-           return await AddEntitiesAsync<PlantGrowthType>(
+            AddEntities<PlantGrowthType>(
                 growthTypesIds,
                 plantDetailId,
                 (id, detailId) => new PlantGrowthType { GrowthTypeId = id, PlantDetailId = detailId });
         }
 
-        public async Task<int> AddPlantDestinationsAsync(int[] plantDestinationsIds, int plantDetailId)
+        public void AddPlantDestinations(int[] plantDestinationsIds, int plantDetailId)
         {
-           return await AddEntitiesAsync<PlantDestination>(
+            AddEntities<PlantDestination>(
                 plantDestinationsIds,
                 plantDetailId,
                 (id, detailId) => new PlantDestination { DestinationId = id, PlantDetailId = detailId });
         }
 
-        public async Task<int> AddPlantGrowingSeazonsAsync(int[] growingSeazonsIds, int plantDetailId)
+        public void AddPlantGrowingSeazons(int[] growingSeazonsIds, int plantDetailId)
         {
-          return await AddEntitiesAsync<PlantGrowingSeazon>(
+            AddEntities<PlantGrowingSeazon>(
                 growingSeazonsIds,
                 plantDetailId,
                 (id, detailId) => new PlantGrowingSeazon { GrowingSeazonId = id, PlantDetailId = detailId });
         }
-        public async Task AddPlantDetailsImagesAsync(string fileName, int plantDetailId)
+        public void AddPlantDetailsImages(string fileName, int plantDetailId)
         {
 
             _context.PlantDetailsImages.Add(new PlantDetailsImages { PlantDetailId = plantDetailId, ImageURL = fileName });
-             await _context.SaveChangesAsync();
+           _context.SaveChanges();
         }
-        public async Task<PlantDetail> GetPlantDetailsAsync(int id)
+        public PlantDetail GetPlantDetails(int id)
         {
-          return await _context.PlantDetails.FirstOrDefaultAsync(p=>p.PlantRef == id);
-           
+            var plantDetails = _context.PlantDetails.FirstOrDefault(p=>p.PlantRef == id);
+            return plantDetails;
         }
 
         //IQueryable tworzy jedynie zapytanie do bazy danych ale nie pobiera tych danych z bazy. W serwisie bedzie metoda do pobierania danych/ wyorzystuje się to ponieważ mozna dane jeszcze przefiltrowac, co robi sie pozniej
@@ -100,14 +93,14 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         //}
 
         //zwraca juz wynik zpytania, poniewaz nie da się już bardziej przefiltrwac danych/ zwracamy jedne wynik
-        public async Task<Plant> GetPlantByIdAsync(int plantId)
+        public Plant GetPlantById(int plantId)
         {
-            var plant = await _context.Plants.AsNoTracking().FirstOrDefaultAsync(p => p.Id == plantId);
+            var plant = _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == plantId);
             return plant;
         }
-        public async Task<string> GetPlantDetailsPropertyNameAsync<T>(int? id) where T: BasePlantEntityNameProperty
+        public string GetPlantDetailsPropertyName<T>(int? id) where T: BasePlantEntityNameProperty
         {
-            var entity = await _context.Set<T>().FirstOrDefaultAsync(p =>p.Id== id);
+            var entity = _context.Set<T>().FirstOrDefault(p =>p.Id== id);
             if (entity == null) return null;
 
             //var nameProperty = typeof(T).GetProperty("Name");
@@ -143,7 +136,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>();
         }
-        public async Task<IQueryable<Plant>> GetAllActivePlantsAsync()
+        public IQueryable<Plant> GetAllActivePlants()
         {
             var plants = _context.Plants.Where(p => p.isActive == true).OrderBy(p => p.Id);
 
@@ -155,15 +148,15 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return plantDetailsImages;
         }
 
-        public async Task<int> UpdatePlantAsync(Plant plant)
+        public void UpdatePlant(Plant plant)
         {
             _context.Attach(plant);
             _context.Entry(plant).Property(e=>e.FullName).IsModified = true;
             _context.Entry(plant).Property(e=>e.Photo).IsModified = true;
-            return await _context.SaveChangesAsync();          
+            _context.SaveChanges();          
         }
 
-        public async Task<int> UpdatePlantDetailsAsync(PlantDetail plant)
+        public void UpdatePlantDetails(PlantDetail plant)
         {
             _context.Attach(plant);
             _context.Entry(plant).Property(e=>e.ColorId).IsModified = true;
@@ -172,26 +165,26 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Entry(plant).Property(e=>e.Description).IsModified = true;
             _context.Entry(plant).Property(e=>e.PlantPassportNumber).IsModified = true;
             _context.Entry(plant).Property(e=>e.PlantRef).IsModified = false;
-            return await _context.SaveChangesAsync();
+            _context.SaveChanges();
             
         }
 
-        public async Task<int> DeletePlantDetailEntityAsync<T>(int id) where T : BasePlantDetailKeyProperty
+        public void DeletePlantDetailEntity<T>(int id) where T : BasePlantDetailKeyProperty
         {
             var entity = _context.Set<T>().Where(p => p.PlantDetailId == id); 
             _context.Set<T>().RemoveRange(entity);
-           return await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
-        public async Task DeleteImageFromGalleryAsync(int id)
+        public void DeleteImageFromGallery(int id)
         {
-            var imageToDelete = await _context.PlantDetailsImages.FirstOrDefaultAsync(p => p.Id == id);
+            var imageToDelete = _context.PlantDetailsImages.FirstOrDefault(p => p.Id == id);
             _context.PlantDetailsImages.Remove(imageToDelete);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
         }       
-        public async Task<int> GetPlantDetailIdAsync(int id)
+        public int GetPlantDetailId(int id)
         {
-            var plant = await _context.PlantDetails.FirstOrDefaultAsync(p => p.PlantRef == id);
+            var plant = _context.PlantDetails.FirstOrDefault(p => p.PlantRef == id);
 
             return plant.Id;
         }
@@ -199,17 +192,22 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public IQueryable<T> GetPlantSeedOrSeedling<T>(int id) where T : BasePlantSeedSeedlingProperty
         {
             return _context.Set<T>().Where(p => p.PlantId == id);
-        }             
-        public async Task<int> AddContactDetailAsync(ContactDetail contact)
+        }      
+        public int AddContactDetailsEntity<T>(T entity) where T : class
+        {
+            _context.Set<T>().Add(entity);
+            return _context.SaveChanges();
+        }
+        public int AddContactDetail(ContactDetail contact)
         {
             _context.ContactDetails.Add(contact);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return contact.Id;
         }
 
-        public async Task<Plant> GetPlantToActivateAsync(int id)
+        public Plant GetPlantToActivate(int id)
         {
-            var plant = await _context.Plants.FirstOrDefaultAsync(e => e.Id == id);
+            var plant = _context.Plants.FirstOrDefault(e => e.Id == id);
             return plant;
         }
 

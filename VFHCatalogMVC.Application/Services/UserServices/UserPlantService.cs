@@ -11,7 +11,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
@@ -48,7 +47,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         }
 
 
-        public async Task<UserSeedsForListVm> GetUserSeedsAsync(
+        public UserSeedsForListVm GetUserSeeds(
             int pageSize,
             int? pageNo,
             string searchString,
@@ -58,7 +57,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             string userName)
         {
 
-            return await GetUserPlantItemsAsync<UserSeedVm, UserSeedsForListVm, PlantSeed>(
+            return GetUserPlantItems<UserSeedVm, UserSeedsForListVm, PlantSeed>(
                pageSize,
                pageNo,
                searchString,
@@ -66,14 +65,14 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                groupId,
                sectionId,
                userName,
-               _userRepo.GetUserPlantEntity<PlantSeed>
-               //_userRepo.GetContactDetailForSeed
+               _userRepo.GetUserPlantEntity<PlantSeed>,
+               _userRepo.GetContactDetailForSeed
            );
         }
-        public async Task<UserSeedlingsForListVm> GetUserSeedlingsAsync(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
+        public UserSeedlingsForListVm GetUserSeedlings(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId, string userName)
         {
 
-            return await GetUserPlantItemsAsync<UserSeedlingVm, UserSeedlingsForListVm, PlantSeedling>(
+            return GetUserPlantItems<UserSeedlingVm, UserSeedlingsForListVm, PlantSeedling>(
                pageSize,
                pageNo,
                searchString,
@@ -81,12 +80,12 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                groupId,
                sectionId,
                userName,
-               _userRepo.GetUserPlantEntity<PlantSeedling>
-               //_userRepo.GetContactDetailForSeedAsync
+               _userRepo.GetUserPlantEntity<PlantSeedling>,
+               _userRepo.GetContactDetailForSeed
            );
         }
 
-        public async Task<List<string>> FilterUsersAsync(int countryId, int regionId, int cityId, List<PlantItemVm> items)
+        public List<string> FilterUsers(int countryId, int regionId, int cityId, List<PlantItemVm> items)
         {
             if (countryId == 0)
                 return new List<string>(); 
@@ -95,7 +94,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             foreach (var item in items)
             {
-                var address = await _userRepo.GetAddressInfoAsync(item.UserId);
+                var address = _userRepo.GetAddressInfo(item.UserId);
 
                 if (address.CountryId != countryId)
                     continue; // If countryId isn't match,skip
@@ -111,88 +110,78 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             return usersList;
         }      
-        public async Task UpdateSeedlingAsync(UserSeedlingVm seedling)
+        public void UpdateSeedling(UserSeedlingVm seedling)
         {
-           await UpdateEntityAsync<PlantSeedling,UserSeedlingVm, ContactDetailForSeedlingVm, ContactDetailForSeedling>(
+            UpdateEntity<PlantSeedling,UserSeedlingVm, ContactDetailForSeedlingVm, ContactDetailForSeedling>(
                 seedling,
-                id => _userRepo.GetContactDetailForSeedlingAsync(id),
+                id => _userRepo.GetContactDetailForSeedling(id),
                 id => new ContactDetailForSeedlingVm { ContactDetailId = id, PlantSeedlingId = seedling.Id },
                 vm => _mapper.Map<ContactDetailForSeedling>(vm)
             );
         }
 
-        public async Task UpdateSeedAsync(UserSeedVm seed)
+        public void UpdateSeed(UserSeedVm seed)
         {
-            await UpdateEntityAsync<PlantSeed, UserSeedVm, ContactDetailForSeedVm, ContactDetailForSeed>(
+            UpdateEntity<PlantSeed, UserSeedVm, ContactDetailForSeedVm, ContactDetailForSeed>(
                 seed,
-                id => _userRepo.GetContactDetailForSeedAsync(id),
+                id => _userRepo.GetContactDetailForSeed(id),
                 id => new ContactDetailForSeedVm { ContactDetailId = id, PlantSeedId = seed.Id },
                 vm => _mapper.Map<ContactDetailForSeed>(vm)
             );
         }
 
-        public async Task DeleteItemAsync<T>(int id)
+        public void DeleteItem<T>(int id)
             where T : BaseEntityProperty
         {
-            var item = await _userRepo.GetUserEntityAsync<T>(id);
-            await _userRepo.DeleteEntityAsync<T>(item);
+            var item = _userRepo.GetUserEntity<T>(id);
+            _userRepo.DeleteEntity<T>(item);
         }
 
-        public async Task<UserSeedVm> GetUserSeedToEditAsync(int id)
+        public UserSeedVm GetUserSeedToEdit(int id)
         {
-            return await GetUserPlantSeeOrSeedlingToEditAsync<UserSeedVm, PlantSeed> (id, _userRepo.GetContactDetailForSeedAsync);
+            return GetUserPlantSeeOrSeedlingToEdit<UserSeedVm, PlantSeed> (id, _userRepo.GetContactDetailForSeed);
 
         }
-        public async Task<UserSeedlingVm> GetUserSeedlingToEditAsync(int id)
+        public UserSeedlingVm GetUserSeedlingToEdit(int id)
         {
 
-            return await GetUserPlantSeeOrSeedlingToEditAsync<UserSeedlingVm, PlantSeedling>(id, _userRepo.GetContactDetailForSeedlingAsync);
+            return GetUserPlantSeeOrSeedlingToEdit<UserSeedlingVm, PlantSeedling>(id, _userRepo.GetContactDetailForSeedling);
         }
 
-        public async Task<ContactDetail> GetContactDetailAsync(int? id)
+        public ContactDetail GetContactDetail(int? id)
         {
-            var contactDetails = await _userRepo.GetContactDetailAsync(id);
+            var contactDetails = _userRepo.GetContactDetail(id);
             return contactDetails;
         }
 
-        public async Task<int?> GetContactDetailForPlantAsync(int id, Func<int,Task<int?>> getContact)
+        public int? GetContactDetailForPlant(int id, Func<int,int?> getContact)
         {
-            return await getContact(id);
+            return getContact(id);
            
         }
-        public async Task AddNewUserPlantAsync(int plantId, string userId)
+        public void AddNewUserPlant(int plantId, string userId)
         {
             var newPlant = new NewUserPlantVm { PlantId = plantId, UserId = userId };
             var newUserPlant = _mapper.Map<NewUserPlant>(newPlant);
 
-            await _userRepo.AddEntityAsync<NewUserPlant>(newUserPlant);
+            _userRepo.AddEntity<NewUserPlant>(newUserPlant);
 
         }
-        private async Task<List<NewUserPlantVm>> GetPlantsByUserRoleAsync(string userName)
+        private List<NewUserPlantVm> GetPlantsByUserRole(string userName)
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            var userRole = await _userManager.GetRolesAsync(user);
-
+            var user = _userManager.FindByNameAsync(userName).Result;
+            var userRole = _userManager.GetRolesAsync(user);
             var plants = new List<NewUserPlantVm>();
 
-            if (userRole.Count > 0 && userRole.Contains(UserRoles.ADMIN) == true)
+            if (userRole.Result.Count > 0 && userRole.Result.Contains(UserRoles.ADMIN) == true)
             {
                 plants = _userRepo.GetEntity<NewUserPlant>().ProjectTo<NewUserPlantVm>(_mapper.ConfigurationProvider).ToList();
 
-                //foreach (var plant in plants)
-                //{
-                //    var userInfo = await _userManager.FindByIdAsync(plant.UserId);
-                //    plant.UserName = userInfo.AccountName;
-
-                // Creating collection of async tasks 
-                var tasks = plants.Select(async plant =>
+                foreach (var plant in plants)
                 {
-                    var userInfo = await _userManager.FindByIdAsync(plant.UserId);
-                    plant.UserName = userInfo.AccountName;
-                });
-
-                // Waiting for ending of all tasks
-                await Task.WhenAll(tasks);
+                    var userInfo = _userManager.FindByIdAsync(plant.UserId);
+                    plant.UserName = userInfo.Result.AccountName;
+                }
             }
             else
             {
@@ -230,23 +219,15 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             return true;
 
         }
-        public async Task<NewUserPlantsForListVm> GetNewUserPlantsAsync(int pageSize, int? pageNo, int typeId, int groupId, int? sectionId, bool viewAll, string userName)
+        public NewUserPlantsForListVm GetNewUserPlants(int pageSize, int? pageNo, int typeId, int groupId, int? sectionId, bool viewAll, string userName)
         {
-            var plants = await GetPlantsByUserRoleAsync(userName);
+            var plants = GetPlantsByUserRole(userName);
 
-            //foreach (var plant in plants)
-            //{
-            //    var details = _plantRepo.GetPlantByIdAsync(plant.PlantId);
-            //    plant.PlantForList = _mapper.Map<PlantForListVm>(details);
-            //}
-
-            var tasks = plants.Select(async plant =>
+            foreach (var plant in plants)
             {
-                var details = await _plantRepo.GetPlantByIdAsync(plant.PlantId);
+                var details = _plantRepo.GetPlantById(plant.PlantId);
                 plant.PlantForList = _mapper.Map<PlantForListVm>(details);
-            });
-
-            await Task.WhenAll(tasks);
+            }
 
             var filteredPlants = FilterPlants(plants,typeId,groupId,sectionId,viewAll);
             var plantsToShow = Paginate(filteredPlants,pageSize,pageNo);
@@ -262,21 +243,19 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             return newUserPlantsForList;
         }
-        private async Task<List<TVm>> FilterItemsAsync<TVm>(List<TVm> items, string searchString, int typeId, int groupId, int? sectionId)
+        private List<TVm> FilterItems<TVm>(List<TVm> items, string searchString, int typeId, int groupId, int? sectionId)
           where TVm : PlantItemVm
         {
-            var tasks = items.Select(async item =>
-            {
-                var plant = await _plantRepo.GetPlantByIdAsync(item.PlantId);
-                return new { Plant = plant, Item = item };
-            });
 
-            var results = await Task.WhenAll(tasks);
-
-            return results
-                .Where(x => MatchesCriteria(x.Plant, searchString, typeId, groupId, sectionId))
-                .Select(x => GetEntityList<TVm>(x.Plant, x.Item))
-                .ToList();
+            return items
+             .Select(item =>
+             {
+                 var plant = _plantRepo.GetPlantById(item.PlantId);
+                 return new { Plant = plant, Item = item }; // create new temporary struct which contain Plant and Item
+             })
+             .Where(x => MatchesCriteria(x.Plant, searchString, typeId, groupId, sectionId))
+             .Select(x => GetEntityList<TVm>(x.Plant, x.Item))
+             .ToList();
 
         }
         private bool MatchesCriteria(Plant plant, string searchString, int typeId, int groupId, int? sectionId)
@@ -304,7 +283,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
 
             return true;
         }
-        private async Task<TListVm> GetUserPlantItemsAsync<TVm, TListVm, T>(
+        private TListVm GetUserPlantItems<TVm, TListVm, T>(
             int pageSize,
             int? pageNo,
             string searchString,
@@ -312,26 +291,25 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             int groupId,
             int? sectionId,
             string userName,
-            Func<string, IQueryable<T>> getItems
-            //Func<int, Task<int?>> getContactDetailId
+            Func<string, IQueryable<T>> getItems,
+            Func<int, int?> getContactDetailId
             )
             where TVm : PlantItemVm
             where TListVm : UserPlantItemListVm<TVm>, new()
 
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            var items = getItems(user.Id).ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+            var user = _userManager.FindByNameAsync(userName);
+            var items = getItems(user.Result.Id).ProjectTo<TVm>(_mapper.ConfigurationProvider).ToList();
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
 
             if (items == null) return null;
 
-            var userRole = await _userManager.IsInRoleAsync(user, UserRoles.COMPANY);
-
-            if (userRole is true)
+            if (userRole.Result is true)
             {
-               await PopulateItemPropertiesAsync(items);
+                PopulateItemProperties(items);
             }
 
-            var filteredItems = await FilterItemsAsync(items, searchString, typeId, groupId, sectionId);
+            var filteredItems = FilterItems(items, searchString, typeId, groupId, sectionId);
             var paginatedItems = Paginate(filteredItems, pageSize, pageNo);
 
             return new TListVm
@@ -344,18 +322,18 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             };
 
         }      
-        private async Task<List<TVm>> PopulateItemPropertiesAsync<TVm>(List<TVm> entity) where TVm : PlantItemVm
+        private List<TVm> PopulateItemProperties<TVm>(List<TVm> entity) where TVm : PlantItemVm
         {
 
             foreach (var item in entity)
             {
                 item.Date = item.DateAdded.ToShortDateString();
 
-                var contactId = await _userRepo.GetContactDetailForSeedAsync(item.Id);
+                var contactId = _userRepo.GetContactDetailForSeed(item.Id);
 
                 if (contactId != null)
                 {
-                    var contactDetails = await _userRepo.GetContactDetailAsync(contactId);
+                    var contactDetails = _userRepo.GetContactDetail(contactId);
                     var contactDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
                     item.ContactDetail = new ContactDetailVm();
                     item.ContactDetail = contactDetailsVm;
@@ -393,9 +371,9 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             return item;
 
         }
-        private async Task UpdateEntityAsync<T, TVm, TDetailForEntityVm, TDetailForEntity>(
+        private void UpdateEntity<T, TVm, TDetailForEntityVm, TDetailForEntity>(
                TVm entityVm,
-               Func<int, Task<int?>> getExistingDetail,
+               Func<int, int?> getExistingDetail,
                Func<int, TDetailForEntityVm> createDetailForEntityVm,
                Func<TDetailForEntityVm, TDetailForEntity> mapDetailForEntity)
                where T : BasePlantSeedSeedlingProperty
@@ -406,19 +384,19 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             if (entityVm != null)
             {
                 var entityToEdit = _mapper.Map<T>(entityVm);
-                await _userRepo.EditEntityAsync<T>(entityToEdit);
+                _userRepo.EditEntity<T>(entityToEdit);
 
                 if (entityVm.ContactDetail != null)
                 {
-                    var existingDetail = await getExistingDetail(entityVm.Id);
+                    var existingDetail = getExistingDetail(entityVm.Id);
                     if (existingDetail != null)
                     {
-                        var contact = await _userRepo.GetContactDetailAsync(existingDetail);
+                        var contact = _userRepo.GetContactDetail(existingDetail);
                         entityVm.ContactDetail.Id = contact.Id;
                         entityVm.ContactDetail.ContactDetailTypeID = contact.ContactDetailTypeID;
                         entityVm.ContactDetail.UserId = contact.UserId;
                         var contactDetails = _mapper.Map<ContactDetail>(entityVm.ContactDetail);
-                        await _userRepo.EditContactDetailsAsync(contactDetails);
+                        _userRepo.EditContactDetails(contactDetails);
                     }
                     else
                     {
@@ -430,35 +408,34 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                         };
 
                         var contactDetails = _mapper.Map<ContactDetail>(contact);
-                        var id = await _plantRepo.AddContactDetailAsync(contactDetails);
+                        var id = _plantRepo.AddContactDetail(contactDetails);
 
                         var contactDetailsForEntityVm = createDetailForEntityVm(id);
                         var contactDetailsForEntity = mapDetailForEntity(contactDetailsForEntityVm);
-                        await _plantRepo.AddContactDetailsEntityAsync<TDetailForEntity>(contactDetailsForEntity);
+                        _plantRepo.AddContactDetailsEntity(contactDetailsForEntity);
                     }
                 }
             }
         }
-        private async Task<TVm> GetUserPlantSeeOrSeedlingToEditAsync<TVm, TPlant>
+        private TVm GetUserPlantSeeOrSeedlingToEdit<TVm, TPlant>
             (int id,
-             Func<int, Task<int?>> getContactDetailId
+             Func<int, int?> getContactDetailId
             )
             where TVm : PlantItemVm
             where TPlant : BasePlantSeedSeedlingProperty
         {
-            var item = await _userRepo.GetUserEntityAsync<TPlant>(id);
+            var item = _userRepo.GetUserEntity<TPlant>(id);
             var userItem = _mapper.Map<TVm>(item);
 
-            var user = await _userManager.FindByIdAsync(userItem.UserId);
-            var userRole = await _userManager.IsInRoleAsync(user, UserRoles.COMPANY);
+            var user = _userManager.FindByIdAsync(userItem.UserId);
+            var userRole = _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY);
 
-
-            if (userRole is true)
+            if (userRole.Result is true)
             {
-                var itemContactDetails = await getContactDetailId(item.Id);
+                var itemContactDetails = getContactDetailId(item.Id);
                 if (itemContactDetails != 0)
                 {
-                    var contactDetails = await _userRepo.GetContactDetailAsync(itemContactDetails);
+                    var contactDetails = _userRepo.GetContactDetail(itemContactDetails);
                     var contacDetailsVm = _mapper.Map<ContactDetailVm>(contactDetails);
                     userItem.ContactDetail = contacDetailsVm;
 

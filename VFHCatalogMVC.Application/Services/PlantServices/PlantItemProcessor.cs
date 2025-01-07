@@ -42,27 +42,27 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _mapper = mapper;
         }
 
-        public async Task<List<TVm>> ProcessItemsAsync(List<TVm> items, int detailId, int countryId, int regionId, int cityId, bool isCompany)
+        public List<TVm> ProcessItems(List<TVm> items, int detailId, int countryId, int regionId, int cityId, bool isCompany)
         {
             var result = new List<TVm>();
 
             if (countryId == 0 && regionId == 0 && cityId == 0)
             {
-                result = await FilterAsync(items, isCompany, detailId);
+                result = Filter(items, isCompany, detailId);
             }
             else
             {
-                var filteredUserList =  await _userPlantService.FilterUsersAsync(countryId, regionId, cityId, items.Cast<PlantItemVm>().ToList());
+                var filteredUserList = _userPlantService.FilterUsers(countryId, regionId, cityId, items.Cast<PlantItemVm>().ToList());
 
-                var list = await FilterPlantItems(items, filteredUserList);
+                var list = FilterPlantItems(items, filteredUserList);
 
-                result = await FilterAsync(list,isCompany,detailId);
+                result = Filter(list,isCompany,detailId);
             }
                 
 
             return result;
         }
-        private async Task<List<TVm>> FilterPlantItems<TVm>(List<TVm> items, List<string> filteredUsersList)
+        private List<TVm> FilterPlantItems<TVm>(List<TVm> items, List<string> filteredUsersList)
            where TVm : PlantItemVm
         {
             //FilteredUsersList Filter elements which UserId in on the list filteredUsersList
@@ -71,46 +71,43 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 .Distinct() // Removes duplicates based on reference values
                 .ToList();
 
-            // Symulacja operacji asynchronicznej
-            await Task.CompletedTask;
-
             return filteredItems;
         }
 
-        private async Task<List<TVm>> FilterAsync(List<TVm> items, bool isCompany, int detailId)
+        private List<TVm> Filter(List<TVm> items, bool isCompany, int detailId)
         {
             var result = new List<TVm>();
 
             foreach (var item in items)
             {
-                var user = await _userManager.FindByIdAsync(item.UserId);
+                var user = _userManager.FindByIdAsync(item.UserId);
                 if (user != null && CheckUserRole(user, isCompany))
                 {
-                    await PopulatePlantItemDetailsAsync(item, user, detailId, isCompany);
+                    PopulatePlantItemDetails(item, user, detailId, isCompany);
                     result.Add(item);
                 }
             }
             return result;
         }
-        private bool CheckUserRole(ApplicationUser user, bool isCompany)
+        private bool CheckUserRole(Task<ApplicationUser> user, bool isCompany)
         {
             return isCompany
-                ? _userManager.IsInRoleAsync(user, "Company").Result
-                : _userManager.IsInRoleAsync(user, "PRIVATE_USER").Result;
+                ? _userManager.IsInRoleAsync(user.Result, "Company").Result
+                : _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER").Result;
         }
 
-        private async Task PopulatePlantItemDetailsAsync(TVm item, ApplicationUser user, int detailId, bool isCompany)
+        private void PopulatePlantItemDetails(TVm item, Task<ApplicationUser> user, int detailId, bool isCompany)
         {
-            item.AccountName = isCompany ? user.CompanyName : _userContactDataService.UserAccountName(user);
+            item.AccountName = isCompany ? user.Result.CompanyName : _userContactDataService.UserAccountName(user);
             item.Date = item.DateAdded.ToShortDateString();
 
             var contactId = isCompany
-                ? await _userPlantService.GetContactDetailForPlantAsync(item.Id, id => _userRepo.GetContactDetailForSeedAsync(item.Id))
-                : await _userPlantService.GetContactDetailForPlantAsync(item.Id, id=> _userRepo.GetContactDetailForSeedlingAsync(item.Id));
+                ? _userPlantService.GetContactDetailForPlant(item.Id, id => _userRepo.GetContactDetailForSeed(item.Id))
+                : _userPlantService.GetContactDetailForPlant(item.Id, id=> _userRepo.GetContactDetailForSeedling(item.Id));
 
             if (contactId.HasValue)
             {
-                var contactDetails = await _userPlantService.GetContactDetailAsync(contactId.Value);
+                var contactDetails = _userPlantService.GetContactDetail(contactId.Value);
                 item.ContactDetail = _mapper.Map<ContactDetailVm>(contactDetails);
             }
             else
@@ -119,7 +116,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
             item.PlantOpinions = _plantRepo.GetPlantOpinions(detailId)
-                .Where(p => p.UserId == user.Id)
+                .Where(p => p.UserId == user.Result.Id)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();
         }

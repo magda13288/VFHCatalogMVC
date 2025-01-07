@@ -1,0 +1,135 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.Plant.NewPlantVm
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<body>
+<h1>Edycja</h1>
+
+<h4>@Model.FullName</h4>
+<hr />
+@Html.AntiForgeryToken()
+<div class="container px-4">
+ <form asp-action="Edit" id="AddEditPlant" enctype="multipart/form-data">
+<div class="row gx-5">
+    <div class="col-md-5">      
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+               <input id="id" type="hidden" asp-for="Id" class="control-label"/> 
+                <input id="typeId" type="hidden" asp-for="TypeId" class="control-label"/>
+                <input id="groupId" type="hidden" asp-for="GroupId" class="form-control" />
+                <input id="sectionId" type="hidden" asp-for="SectionId" class="form-control" /> 
+                <input type="hidden" asp-for="PlantDetails.Id" class="form-control"/>
+                <input type="hidden" asp-for="PlantDetails.PlantRef" class="form-control" />
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label">Nazwa</label>
+                <input asp-for="FullName" class="form-control" placeholder="Nazwa" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+             <div  class="form-group" id="AddEditPlant">
+                <label asp-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="control-label">Typ wzrostu</label>
+                  @Html.DropDownListFor(model=>model.PlantDetails.ListGrowthTypes.GrowthTypesIds, new MultiSelectList(ViewBag.GrowthTypes,"Value","Text", Model.PlantDetails.ListGrowthTypes.GrowthTypesIds),new {@class="form-control m-0", multiple= "multiple",id="ddlGrowthTypes"})
+                <span asp-validation-for="PlantDetails.ListGrowthTypes.GrowthTypesIds" class="text-danger"></span>
+            </div>
+            <div  class="form-group">
+                <label asp-for="PlantDetails.ListPlantDestinations.DestinationsIds" class="control-label">Przeznaczenie</label>
+                        @Html.DropDownListFor(model => model.PlantDetails.ListPlantDestinations.DestinationsIds, new MultiSelectList(ViewBag.Destinations, "Value", "Text", selectedValues: Model.PlantDetails.ListPlantDestinations.DestinationsIds), new { @class = "form-control m-0", multiple = true, id = "ddlDestinations" })
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.ColorId" class="control-label">Kolor</label>
+                        @Html.DropDownListFor(model => model.PlantDetails.ColorId, new SelectList(ViewBag.ColorsList, "Value", "Text"), new { @class = "form-control", id = "ddlColors" })
+                <span asp-validation-for="PlantDetails.ColorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="control-label">Okres wegetacji</label>
+                        @Html.DropDownListFor(model => model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, new MultiSelectList(ViewBag.GrowingSeazons, "Value", "Text", selectedValues: Model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds), new { @class = "form-control m-0", multiple = "multiple", id = "ddlGrowingSeazons" })
+                <span asp-validation-for="PlantDetails.ListGrowingSeazons.GrowingSeaznosIds" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+                <label asp-for="PlantDetails.FruitTypeId" class="control-label">Typ owocu</label>
+                        @Html.DropDownListFor(model => model.PlantDetails.FruitTypeId, new SelectList(ViewBag.FruitTypes, "Value", "Text"), new { @class = "form-control", id = "ddlFruitType" })
+                <span asp-validation-for="PlantDetails.FruitTypeId" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+                <label asp-for="PlantDetails.FruitSizeId" class="control-label">Wielkość owocu</label>
+                        @Html.DropDownListFor(model => model.PlantDetails.FruitSizeId, new SelectList(ViewBag.FruitSizes, "Value", "Text"), new { @class = "form-control", id = "ddlFruitSize" })
+                <span asp-validation-for="PlantDetails.FruitSizeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDetails.Description" class="control-label">Opis</label>
+                <textarea asp-for="PlantDetails.Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="PlantDetails.Description" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="PlantDetails.PlantPassportNumber" class="control-label">Numer paszportu rośliny</label>
+                <input asp-for="PlantDetails.PlantPassportNumber" class="form-control" />
+                <span asp-validation-for="PlantDetails.PlantPassportNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input type="hidden" class="form-control" asp-for="isActive" value="true" />
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6">
+             <div>
+                <label>Obecne zdjęcie do wyszukiwarki</label>
+             </div>
+             <div >
+                <img src="/plantGallery/searchPhoto/@Model.PhotoFileName" class="img-fluid img-thumbnail" width="120" height="80" asp-append-version="true"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="control-label">Nowe zdjęcie do wyszukiwarki</label>
+                <input asp-for="Photo" class="form-control" type="file" accept="image/*"/>
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+        <div class="form-group">
+                    <span data-bs-toggle ="tooltip" data-bs-placement="top" data-bs-title="Aby usunąć zdjęcia z galerii, które są wyświetlone powyżej zaznacz wybrane pola">
+                        <label>Obecne zdjęcia do galerii</label>
+                    </span>
+                   
+      <table class="table-hover">
+    <tbody>
+@for (int i=0;i<Model.PlantDetails.PlantDetailsImages.Count;i++) 
+{
+        <tr class="text-center">
+             <td>
+               @Html.HiddenFor(it=>Model.PlantDetails.PlantDetailsImages[i].Id)
+            </td>
+             <td>
+                 @Html.HiddenFor(it=>Model.PlantDetails.PlantDetailsImages[i].PlantDetailId)
+            </td>
+             <td>
+                  @Html.HiddenFor(it=>Model.PlantDetails.PlantDetailsImages[i].ImageURL)
+                <img src="/plantGallery/plantDetailsGallery/@Model.PlantDetails.PlantDetailsImages[i].ImageURL" class="img-fluid" width="120" height="80" asp-append-version="true"/>
+            </td>
+            <td>
+                @Html.CheckBoxFor(it=>Model.PlantDetails.PlantDetailsImages[i].IsChecked,new { @checked = "checked" })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>         
+</div>
+            <div class="form-group">
+                 <label asp-for="PlantDetails.Images" class="control-label">Dodaj nowe zdjęcia do galerii w sekcji "Szczegóły"</label>
+                <input asp-for="PlantDetails.Images" class="form-control" multiple accept="image/*"/>
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+           </div>
+            <div class="form-group">
+                <input type="submit" value="Zapisz" class="btn btn-primary" />
+            </div>
+        </div>
+   </form>
+   </div>
+<div>
+
+    <a asp-action="Index" class="btn btn-dark">Powrót do wyszkiwarki</a>
+</div>
+</body>
+
+@section Scripts
+{
+}
+
+

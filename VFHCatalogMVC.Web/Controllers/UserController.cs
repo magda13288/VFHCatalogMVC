@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
@@ -47,7 +46,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> IndexSeeds(
+        public IActionResult IndexSeeds(
             int pageSize,
             int? pageNo,
             string searchString, 
@@ -57,10 +56,10 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
-                var groupsList = await GetPlantGroupsList(typeId);
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
+                var groupsList = GetPlantGroupsList(typeId);
                 ViewBag.GroupsList = groupsList.Value;
-                var sectionsList = await GetPlantSectionsList(groupId, typeId);
+                var sectionsList = GetPlantSectionsList(groupId, typeId);
                 ViewBag.SectionsList = sectionsList.Value;
 
                 if (!pageNo.HasValue)
@@ -82,7 +81,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
 
-                var model = await _userService.GetUserSeedsAsync(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
+                var model = _userService.GetUserSeeds(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
                 return View(model);
             }
@@ -95,7 +94,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> IndexSeedlings(
+        public IActionResult IndexSeedlings(
             int pageSize,
             int? pageNo, 
             string searchString, 
@@ -105,9 +104,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
-                ViewBag.GroupsList = await _plantHelperService.GetGroupsAsync(typeId);
-                ViewBag.SectionsList = await _plantHelperService.GetSectionsAsync(groupId);
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
+                ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
+                ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
                 if (!pageNo.HasValue)
                 {
@@ -128,7 +127,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
 
-                var model = await _userService.GetUserSeedlingsAsync(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
+                var model = _userService.GetUserSeedlings(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
                 return View(model);
             }
@@ -142,7 +141,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet, HttpPost]
         [Authorize(Roles = UserRoles.ALL_ROLES)]
-        public async Task<IActionResult> IndexNewPlants(
+        public IActionResult IndexNewPlants(
             int pageSize, 
             int? pageNo, 
             string searchString, 
@@ -153,9 +152,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.TypesList = await _plantHelperService.GetSelectListAsync<PlantType, PlantTypesVm>();
-                ViewBag.GroupsList = await _plantHelperService.GetGroupsAsync(typeId);
-                ViewBag.SectionsList = await _plantHelperService.GetGroupsAsync(groupId);
+                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
+                ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
+                ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
                 if (!pageNo.HasValue)
                 {
@@ -176,7 +175,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 if (sectionId != 0)
                     ViewBag.SectionId = sectionId;
 
-                var model = await _userService.GetNewUserPlantsAsync(pageSize, pageNo, typeId, groupId, sectionId, viewAll, User.Identity.Name);
+                var model = _userService.GetNewUserPlants(pageSize, pageNo, typeId, groupId, sectionId, viewAll, User.Identity.Name);
 
                 return View(model);
             }
@@ -190,11 +189,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> EditSeed(int id)
+        public IActionResult EditSeed(int id)
         {
             try
             {
-                var seed = await _userService.GetUserSeedToEditAsync(id);
+                var seed = _userService.GetUserSeedToEdit(id);
 
                 return PartialView("EditSeedModalPartial", seed);
             }
@@ -206,13 +205,13 @@ namespace VFHCatalogMVC.Web.Controllers
         }
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> EditSeed(UserSeedVm model)
+        public IActionResult EditSeed(UserSeedVm model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _userService.UpdateSeedAsync(model);
+                    _userService.UpdateSeed(model);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     //ViewData["JavaScript"] = " window.location.reload()" /*+ Url.Action("IndexSeeds") + "'"*/;
@@ -234,11 +233,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> DeleteSeed(int id)
+        public IActionResult DeleteSeed(int id)
         {
             try
             {
-                await _userService.DeleteItemAsync<PlantSeed>(id);
+                _userService.DeleteItem<PlantSeed>(id);
                 return RedirectToAction("IndexSeeds");
             }
             catch (Exception ex)
@@ -250,11 +249,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> EditSeedling(int id)
+        public IActionResult EditSeedling(int id)
         {
             try
             {
-                var seedling = await _userService.GetUserSeedlingToEditAsync(id);
+                var seedling = _userService.GetUserSeedlingToEdit(id);
 
                 return PartialView("EditSeedlingModalPartial", seedling);
             }
@@ -267,13 +266,13 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> EditSeedling(UserSeedlingVm model)
+        public IActionResult EditSeedling(UserSeedlingVm model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _userService.UpdateSeedlingAsync(model);
+                    _userService.UpdateSeedling(model);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     //return RedirectToAction("IndexSeedlings","User");
@@ -295,11 +294,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-        public async Task<IActionResult> DeleteSeedling(int id)
+        public IActionResult DeleteSeedling(int id)
         {
             try
             {
-                await _userService.DeleteItemAsync<PlantSeedling>(id);
+                _userService.DeleteItem<PlantSeedling>(id);
                 return RedirectToAction("IndexSeedlings");
             }
             catch (Exception ex)
@@ -351,19 +350,19 @@ namespace VFHCatalogMVC.Web.Controllers
             return Json(citiesList);
         }
         [HttpPost]
-        public async Task<JsonResult> GetPlantGroupsList(int typeId)
+        public JsonResult GetPlantGroupsList(int typeId)
         {
-            var groups = await _plantHelperService.GetGroupsAsync(typeId);       
+            var groups = _plantHelperService.GetGroups(typeId);       
 
             return Json(groups);
 
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetPlantSectionsList(int groupId, int typeId)
+        public JsonResult GetPlantSectionsList(int groupId, int typeId)
         {
 
-            var sections = await _plantHelperService.GetGroupsAsync(groupId);
+            var sections = _plantHelperService.GetSections(groupId);
            
             return Json(sections);
         }

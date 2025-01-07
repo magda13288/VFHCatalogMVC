@@ -93,7 +93,7 @@ namespace VFHCatalogMVC.Infrastructure
          
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override int SaveChanges()
         {
             //foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             //{
@@ -134,7 +134,7 @@ namespace VFHCatalogMVC.Infrastructure
                 AuditTrials.AddRange(auditEntries);
             }
 
-            return await base.SaveChangesAsync(cancellationToken);
+            return  base.SaveChanges();
         }
 
         private List<AuditTrial> HandleAuditingBeforeSaveChanges(string userId)

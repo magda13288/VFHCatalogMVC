@@ -36,7 +36,7 @@ namespace Application.UnitTests.Commands
         
         [Fact]
 
-        public async Task Add_NewPlant_ProperRequest_ShouldReturnIdNotEquall0()
+        public void Add_NewPlant_ProperRequest_ShouldReturnIdNotEquall0()
         {
             //Arrange              
 
@@ -53,7 +53,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var id = await plantService.AddPlantAsync(newPlant, mockUser.UserName);
+            var id = plantService.AddPlant(newPlant, mockUser.UserName);
 
             //Assert
 
@@ -65,7 +65,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public async Task Add_NewPlantWithSectionIdEqual0_ShouldSetParamSectionIdOnNull()
+        public void Add_NewPlantWithSectionIdEqual0_ShouldSetParamSectionIdOnNull()
         {//Arrange
 
             var mockUserManager = new Mock<UserManager<ApplicationUser>>(Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
@@ -81,7 +81,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var id = await plantService.AddPlantAsync(newPlant, mockUser.UserName);
+            var id = plantService.AddPlant(newPlant, mockUser.UserName);
             var addedPlant = _context.Plants.FirstOrDefault(p => p.Id == id);
 
             //Assert
@@ -92,7 +92,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public async Task Add_NewExistingPlant_CheckThatPlantExist_CompareFullName_ShouldReturnIdEqual0()
+        public void Add_NewExistingPlant_CheckThatPlantExist_CompareFullName_ShouldReturnIdEqual0()
         {
             //Arrange
             var mockUser = SetUser();
@@ -111,7 +111,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var id = await plantService.AddPlantAsync(newPlant, "test");
+            var id = plantService.AddPlant(newPlant, "test");
 
             //Assert
 
@@ -123,7 +123,7 @@ namespace Application.UnitTests.Commands
         
         [Fact]
 
-        public async Task Add_NewPlant_IfUserRoleIsAdmin_ShouldReturnPropertyIsActiveTrueAndIsNewFalse()
+        public void Add_NewPlant_IfUserRoleIsAdmin_ShouldReturnPropertyIsActiveTrueAndIsNewFalse()
         {
             //Arrange
             var mockUser = SetUser();
@@ -139,7 +139,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var id = await plantService.AddPlantAsync(newPlant, mockUser.UserName);
+            var id = plantService.AddPlant(newPlant, mockUser.UserName);
             var isActive = _context.Plants.FirstOrDefault(x => x.Id == id).isActive;
             var isNew = _context.Plants.FirstOrDefault(x => x.Id == id).isNew;
 
@@ -152,7 +152,7 @@ namespace Application.UnitTests.Commands
 
         [Fact]
 
-        public async Task Add_NewPlant_IfUserRoleIsOtherThanAdmin_ShouldReturnPropertyIsActiveFalseAndIsNewTrue()
+        public void Add_NewPlant_IfUserRoleIsOtherThanAdmin_ShouldReturnPropertyIsActiveFalseAndIsNewTrue()
         {
             //Arrange
             var mockUser = SetUser();
@@ -168,7 +168,7 @@ namespace Application.UnitTests.Commands
 
             //Act
 
-            var id = await plantService.AddPlantAsync(newPlant, mockUser.UserName);
+            var id = plantService.AddPlant(newPlant, mockUser.UserName);
             var isActive = _context.Plants.FirstOrDefault(x => x.Id == id).isActive;
             var isNew = _context.Plants.FirstOrDefault(x => x.Id == id).isNew;
 
@@ -222,9 +222,9 @@ namespace Application.UnitTests.Commands
                     FruitSizeId = 1,
                     FruitTypeId = 1,
                     Description = "TestTest",
-                    ListGrowingSeazons = new ListGrowingSeazonsVm() { GrowingSeaznosIds = new int[] { 1, 4 } },
-                    ListGrowthTypes = new ListGrowthTypesVm() { GrowthTypesIds = new int[] { 2, 3 } },
-                    ListPlantDestinations = new ListPlantDestinationsVm() { DestinationsIds = new int[] { 1, 2, 3 } },
+                    ListGrowingSeazons = new ListGrowingSeazonsVm() { GrowingSeaznosIds = new int[] { 1, 2 } },
+                    ListGrowthTypes = new ListGrowthTypesVm() { GrowthTypesIds = new int[] { 1 } },
+                    ListPlantDestinations = new ListPlantDestinationsVm() { DestinationsIds = new int[] { 1, 2 } },
                 }
 
             };

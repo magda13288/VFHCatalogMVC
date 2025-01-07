@@ -18,8 +18,8 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         List<RegionVm> GetRegions(int countryId);
         List<CityVm> GetCities(int regionId);
         List<SelectListItem> FillList<TVm>(List<TVm> items) where TVm : SelectListItemVm;
-        Task<AddressVm> GetAddressAsync(string userId);
-        Task AddAddressAsync(AddressVm address);
-        string UserAccountName(ApplicationUser user);
+        AddressVm GetAddress(string userId);
+        void AddAddress(AddressVm address);
+        string UserAccountName(Task<ApplicationUser> user);
     }
 }

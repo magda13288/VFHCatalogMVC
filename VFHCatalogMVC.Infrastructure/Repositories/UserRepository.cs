@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -18,43 +17,43 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<int> AddEntityAsync<T>(T entity) where T : class
+        public int AddEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);
-            return await _context.SaveChangesAsync();
+            return _context.SaveChanges();
         }
 
-        public async Task<int> DeleteEntityAsync<T>(T entity) where T : class
+        public int DeleteEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Remove(entity);
-            return await _context.SaveChangesAsync();
+            return _context.SaveChanges();
         }      
-        public async Task EditContactDetailsAsync(ContactDetail contact)
+        public void EditContactDetails(ContactDetail contact)
         {
             _context.Attach(contact);
             _context.Entry(contact).Property(e=>e.ContactDetailInformation).IsModified = true;
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task EditEntityAsync<T>(T entity) where T: BasePlantSeedSeedlingProperty
+        public void EditEntity<T>(T entity) where T: BasePlantSeedSeedlingProperty
         {
             _context.Attach(entity);
             _context.Entry(entity).Property(e=>e.Count).IsModified = true;
             _context.Entry(entity).Property(e=>e.Description).IsModified = true;
             _context.Entry(entity).Property(e=>e.DateAdded).IsModified = true;
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
         
-        public async Task<Address> GetAddressAsync(int id)
+        public Address GetAddress(int id)
         {
-            return await _context.Addresses.FirstOrDefaultAsync(p => p.Id == id);
-            
+            var address = _context.Addresses.FirstOrDefault(p => p.Id == id);
+            return address;
         }
 
-        public async Task<Address> GetAddressInfoAsync(string userId)
+        public Address GetAddressInfo(string userId)
         {
-           return await _context.Addresses.FirstOrDefaultAsync(p => p.UserId == userId);
-            
+            var address = _context.Addresses.FirstOrDefault(p => p.UserId == userId);
+            return address;
         }
 
         public IQueryable<City> GetCities(int regionId)
@@ -63,24 +62,24 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return cities;
         }
 
-        public async Task<ContactDetail> GetContactDetailAsync(int? id)
+        public ContactDetail GetContactDetail(int? id)
         {
-            var contactDetail = await _context.ContactDetails.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            var contactDetail = _context.ContactDetails.AsNoTracking().FirstOrDefault(p => p.Id == id);
             return contactDetail;
         }
 
-        public async Task<int?> GetContactDetailForSeedAsync(int id)
+        public int? GetContactDetailForSeed(int id)
         {
-            var contactDetails = await _context.ContactDetailForSeeds.FirstOrDefaultAsync(p => p.PlantSeedId == id);
+            var contactDetails = _context.ContactDetailForSeeds.FirstOrDefault(p => p.PlantSeedId == id);
             if (contactDetails == null)
                 return null;
             else
             return contactDetails.ContactDetailId;
         }
 
-        public async Task<int?> GetContactDetailForSeedlingAsync(int id)
+        public int? GetContactDetailForSeedling(int id)
         {
-            var contactDetails = await _context.ContactDetailForSeedlings.FirstOrDefaultAsync(p => p.PlantSeedlingId == id);
+            var contactDetails = _context.ContactDetailForSeedlings.FirstOrDefault(p => p.PlantSeedlingId == id);
             if (contactDetails == null)
                 return null;
             else
@@ -93,18 +92,21 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public IQueryable<Region> GetRegions(int countryId)
         {
-            return _context.Regions.Where(p => p.CountryId == countryId);
+           var regions = _context.Regions.Where(p => p.CountryId == countryId);
+            return regions;
         }
 
         public IQueryable<T> GetUserPlantEntity<T>(string userId) where T : BaseEntityProperty
         {
-            return _context.Set<T>().Where(p => p.UserId == userId);
+            var entity = _context.Set<T>().Where(p=>p.UserId == userId);
+            return entity;
         }
 
-        public async Task<T> GetUserEntityAsync<T>(int id) where T : BaseEntityProperty
+        public T GetUserEntity<T>(int id) where T : BaseEntityProperty
         {
-            return await _context.Set<T>().FirstOrDefaultAsync(p => p.Id == id);
-
+            var entity = _context.Set<T>().FirstOrDefault(p=>p.Id == id);
+            return entity;
+            
         }      
     }
 }

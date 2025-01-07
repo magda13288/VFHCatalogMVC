@@ -1,0 +1,166 @@
+﻿@model VFHCatalogMVC.Application.ViewModels.User.UserSeedlingsForListVm
+
+@{
+    ViewData["Title"] = "IndexSeedlings";
+}
+
+<body>
+<div id="PlaceHolderHere"></div>
+<h3 class="text-center">Twoja lista sadzonek</h3>
+
+<form asp-action="IndexSeedlings" asp-controller="User" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="navbar navbar-expand-lg">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <label asp-for="PlantForList.TypeId" class="control-label">Typ</label>
+                    <select id="ddlType" asp-for="PlantForList.TypeId" name="typeId" class="form-control text-center" 
+                        aria-label="Type" asp-items="@(new SelectList(ViewBag.TypesList,"Value", "Text",
+                        selectedValue: ViewBag.TypeId))"></select>
+                    <label asp-for="PlantForList.GroupId" class="control-label">Grupa</label>
+                    <select id="ddlGroup" asp-for="PlantForList.GroupId" name="groupId" class="form-control text-center"
+                        aria-label="Group" asp-items="@(new SelectList(ViewBag.GroupsList,"Value", "Text",
+                        selectedValue: ViewBag.GroupId))"></select>
+                    <label asp-for="PlantForList.SectionId" class="control-label">Sekcja</label>
+                    <select id="ddlSection" asp-for="PlantForList.SectionId" name="sectionId" class="form-control  text-center" 
+                        aria-label="Section" asp-items="@(new SelectList(ViewBag.SectionsList,"Value", "Text",
+                        selectedValue:ViewBag.SectionId))"></select>
+                    <input class="form-control md-3" asp-for="SearchString" name="searchString" id="searchString" type="search" placeholder="Wyszukaj" aria-label="Search">
+                    <button class="btn btn-outline-success" id="Submit" type="submit">Szukaj</button>
+                </div>
+            </nav>
+        </div>
+        <div class="row">
+            <table class="table-striped table-hover">
+                <thead class="thead-light">
+                    <tr class="text-center">
+                        <th class="text-center">
+                            Nazwa
+                        </th>
+                        @if (User.IsInRole("Company"))
+                        {
+                            <th>
+                                Link
+                            </th>
+                        }
+                        else
+                        {
+                            <th>
+                                Ilość
+                            </th>
+                        }
+                        <th>
+                            Opis
+                        </th>
+                        <th>
+                            Data dodania
+                        </th>
+                        <th>
+                            Zdjęcie
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.UserSeedlings)
+                    {
+                        <tr class="text-center">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PlantForList.FullName)
+                            </td>
+                            @if (User.IsInRole("Company"))
+                            {
+                                <td>
+                                    <a href="@item.ContactDetail.ContactDetailInformation" target="_blank">Idź do strony</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Count)
+                                </td>
+                            }
+                            <td class="text-wrap">
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PlantForList.Image)
+                                <img src="/plantGallery/searchPhoto/@item.PlantForList.Photo" class="img-fluid" width="120" height="80" asp-append-version="true" />\
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-info" data-toggle="ajax-modal" data-target="#User" data-url="@Url.Action($"EditSeedling/{item.Id}")">Edytuj</button>
+                                <button type="button" class="btn btn-danger" onclick="window.location= '@Url.Action( "DeleteSeedling", "User",new {id=item.Id})'">Usuń</button>
+                                <button type="button" class="btn btn-primary" onclick="window.location= '@Url.Action( "IndexPlantMessages", "Message",new {id=item.PlantId,seedlings=true})'">Wiadomości</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <table>
+                <tr>
+                    @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                    {
+                        <td>
+                            @if (i != Model.CurrentPage)
+                            {
+                                <a href="javascript:PagerClick(@i)">@i</a>
+                            }
+                            else
+                            {
+                                <span>@i</span>
+                            }
+                        </td>
+
+                    }
+                </tr>
+            </table>
+            <input type="hidden" name="pageNo" id="pageNo" />
+            <input type="hidden" name="pageSize" id="pageSize" value="30" />
+        </div>
+    </div>
+</form>
+</body>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        function PagerClick(index) {
+            document.getElementById("pageNo").value = index;
+            document.forms[0].submit();
+        }
+
+        $(function () {
+            $("#ddlType").change(function () {
+                $.post("@Url.Action("GetPlantGroupsList")", { typeId: $("#ddlType").val() }, function (d) {
+                    var row = "";
+                    $("#ddlGroup").empty();
+                    $.each(d, function (i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlGroup").html(row);
+                })
+            })
+        })
+        $(function () {
+            $("#ddlGroup").change(function () {
+                var tId = $("#ddlType").val();
+                var gId = $("#ddlGroup").val();
+                $.post('@Url.Action("GetPlantSectionsList")', { groupId: gId, typeId: tId }, function (d) {
+                    var row = "";
+                    $("#ddlSection").empty();
+                    $.each(d, function (i, v) {
+                        row += "<option value=" + v.value + ">" + v.text + "</option>";
+                    });
+                    $("#ddlSection").html(row);
+                })
+            })
+        })
+    </script>
+
+}

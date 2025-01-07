@@ -108,7 +108,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "PRIVATE_USER");
                     address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
-                    await _userContactDataService.AddAddressAsync(address);
+                    _userContactDataService.AddAddress(address);
                 }
 
                 if (Input.IsCompany == true)
@@ -117,7 +117,7 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
                     result = await _userManager.CreateAsync(user, Input.Password);
                     roleResult = await _userManager.AddToRoleAsync(user, "Company");
                     address = new AddressVm() { CountryId = Input.CountryId, RegionId = Input.RegionId, CityId = Input.CityId, UserId = user.Id };
-                    await _userContactDataService.AddAddressAsync(address);
+                    _userContactDataService.AddAddress(address);
                 }
 
 

@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant;
-using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Infrastructure;
-using VFHCatalogMVC.Infrastructure.Seed;
 
 namespace Application.UnitTests.Common
 {
@@ -22,7 +20,7 @@ namespace Application.UnitTests.Common
             //create database in memory
             var options = new DbContextOptionsBuilder<Context>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
 
-            var mock = new Mock<Context>(options) {CallBase=true}; //call base construct
+            var mock = new Mock<Context>(options) { CallBase = true }; //call base construct
 
             var context = mock.Object;
 
@@ -30,7 +28,8 @@ namespace Application.UnitTests.Common
             context.Database.EnsureCreated();
 
             DataSeed(context);
-                    
+
+            context.SaveChanges();
 
             return mock;
 
@@ -42,8 +41,7 @@ namespace Application.UnitTests.Common
             //cleaning context
             context.Dispose();
         }
-
-        public static void  DataSeed(Context context)
+        public static void DataSeed(Context context)
         {
             var plantType = new List<PlantType>
             {
@@ -169,7 +167,7 @@ namespace Application.UnitTests.Common
                      new GrowingSeazon() { Id = 5, Name = "Annual" },
                      new GrowingSeazon() { Id = 6, Name = "Perennial" }
             };
-           context.AddRange(growingSeazons);
+            context.AddRange(growingSeazons);
 
             var destinations = new List<Destination>
             {
@@ -201,7 +199,7 @@ namespace Application.UnitTests.Common
                 ColorId = 1,
                 FruitSizeId = 1,
                 FruitTypeId = 1
-              
+
             };
             context.Add(plantDetails);
 
@@ -213,7 +211,7 @@ namespace Application.UnitTests.Common
             context.AddRange(plantGrowthType);
 
             var plantGrowingSeazons = new List<PlantGrowingSeazon>
-            { 
+            {
                 new PlantGrowingSeazon{GrowingSeazonId = 1, PlantDetailId =1 },
                 new PlantGrowingSeazon{GrowingSeazonId = 4, PlantDetailId =1 }
             };
@@ -292,7 +290,6 @@ namespace Application.UnitTests.Common
                 new IdentityUserRole<string> { UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924", RoleId = "PrivateUser" },
             };
 
-            context.SaveChanges();
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Domain.Interface;
@@ -26,44 +25,28 @@ namespace VFHCatalogMVC.Application.Services
             _plantRepo = plantRepository;
         }
 
-        public async Task<List<string>> AddPlantGaleryPhotosAsync(NewPlantVm model, int plantDetailId)
+        public List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId)
         {
        
             var fileNames = new List<string>();
-            var tasks = new List<Task>();
 
             foreach (var item in model.PlantDetails.Images)
             {
-                tasks.Add(ProcessImageAsync(item, model.FullName, plantDetailId, fileNames));
+                string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
+                _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                fileNames.Add(fileName);
             }
-
-            await Task.WhenAll(tasks);
 
             return fileNames;
         }
-        private async Task ProcessImageAsync(IFormFile image, string fullName, int plantDetailId, List<string> fileNames)
+
+        public string AddPlantSearchPhoto(NewPlantVm model)
         {
-            try
-            {
-                string fileName = await UploadImageAsync(image, fullName, _DIR_GALLERY);
-                await _plantRepo.AddPlantDetailsImagesAsync(fileName, plantDetailId);
-                lock (fileNames) // Zapobiega konfliktom w przypadku współbieżnego dostępu,zabezpieczenia dostępu do listy fileNames w przypadku współbieżnych zapisów.
-                {
-                    fileNames.Add(fileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error processing image: {ex.Message}");
-            }
-        }
-        public async Task<string> AddPlantSearchPhotoAsync(NewPlantVm model)
-        {
-            var fileName = await UploadImageAsync(model.Photo, model.FullName, _DIR_SEARCH);
+            var fileName = UploadImage(model.Photo, model.FullName, _DIR_SEARCH);
             return fileName;
         }
 
-        public async Task DeleteImageAsync(string path)
+        public void DeleteImage(string path)
         {
             var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
 
@@ -71,16 +54,16 @@ namespace VFHCatalogMVC.Application.Services
             {
                 try
                 {
-                    await Task.Run(() => File.Delete(imagePath));
+                    System.IO.File.Delete(imagePath);
                 }
                 catch (Exception ex)
                 {
-                    throw new IOException($"Error deleting file at path {imagePath}.", ex);
+                    throw ex;
                 }
             }
         }
 
-        public async Task<string> UploadImageAsync(IFormFile file, string name, string path)
+        public string UploadImage(IFormFile file, string name, string path)
         {
             string fileName = null;
 
@@ -92,20 +75,14 @@ namespace VFHCatalogMVC.Application.Services
                     string extension = Path.GetExtension(file.FileName);
                     fileName = Guid.NewGuid().ToString() + "-" + name + extension;
                     string filePath = Path.Combine(uploadDir, fileName);
-
-                    if (!Directory.Exists(uploadDir))
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        Directory.CreateDirectory(uploadDir);
-                    }
-
-                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                       await file.CopyToAsync(fileStream);
+                        file.CopyTo(fileStream);
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new IOException($"Error uploading file to path {path}.", ex);
+                    throw ex;
                 }
             }
 
