@@ -45,7 +45,8 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public void AddEntities<T>(int[] entityIds, int plantDetailId, Func<int, int, T> createEntity) where T : class
         {
-            var entities = entityIds.Select(id => createEntity(id, plantDetailId)).ToList(); //createEntity - funkcja, która tworzy instancję encji na podstawie przekazanych danych
+            var entities = entityIds.Select(id => createEntity(id, plantDetailId)).ToList();
+            //createEntity - funkcja, która tworzy instancję encji na podstawie przekazanych danych
             _context.Set<T>().AddRange(entities); //AddRange dodaje zbiorczo wszystkie encje zamiast dodwać je w pętli
             _context.SaveChanges();
         }
@@ -80,7 +81,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public PlantDetail GetPlantDetails(int id)
         {
-            var plantDetails = _context.PlantDetails.FirstOrDefault(p=>p.PlantRef == id);
+            var plantDetails = _context.PlantDetails.AsNoTracking().FirstOrDefault(p=>p.PlantRef == id);
             return plantDetails;
         }
 
@@ -100,7 +101,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public string GetPlantDetailsPropertyName<T>(int? id) where T: BasePlantEntityNameProperty
         {
-            var entity = _context.Set<T>().FirstOrDefault(p =>p.Id== id);
+            var entity = _context.Set<T>().AsNoTracking().FirstOrDefault(p =>p.Id== id);
             if (entity == null) return null;
 
             //var nameProperty = typeof(T).GetProperty("Name");
@@ -118,16 +119,16 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         /// <returns></returns>
         public IQueryable<T> GetPlantDetailsById<T>(int id) where T : BasePlantDetailKeyProperty
         {
-            return _context.Set<T>().Where(p => p.PlantDetailId == id);
+            return _context.Set<T>().AsNoTracking().Where(p => p.PlantDetailId == id);
         }
         public IQueryable<PlantOpinion> GetPlantOpinions(int id)
         {
-            return _context.PlantOpinions.Where(p=>p.PlantDetailId== id);
+            return _context.PlantOpinions.AsNoTracking().Where(p=>p.PlantDetailId== id);
         }
 
         public IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T:BasePropertyForListFilters
         {
-            var entities = _context.Set<T>().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+            var entities = _context.Set<T>().AsNoTracking().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
 
             return entities;
 
@@ -138,13 +139,13 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public IQueryable<Plant> GetAllActivePlants()
         {
-            var plants = _context.Plants.Where(p => p.isActive == true).OrderBy(p => p.Id);
+            var plants = _context.Plants.AsNoTracking().Where(p => p.isActive == true).OrderBy(p => p.Id);
 
             return plants;
         }
         public IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId)
         {
-            var plantDetailsImages = _context.PlantDetailsImages.Where(p => p.PlantDetailId == plantDetailId);
+            var plantDetailsImages = _context.PlantDetailsImages.AsNoTracking().Where(p => p.PlantDetailId == plantDetailId);
             return plantDetailsImages;
         }
 
@@ -184,14 +185,14 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }       
         public int GetPlantDetailId(int id)
         {
-            var plant = _context.PlantDetails.FirstOrDefault(p => p.PlantRef == id);
+            var plant = _context.PlantDetails.AsNoTracking().FirstOrDefault(p => p.PlantRef == id);
 
             return plant.Id;
         }
 
         public IQueryable<T> GetPlantSeedOrSeedling<T>(int id) where T : BasePlantSeedSeedlingProperty
         {
-            return _context.Set<T>().Where(p => p.PlantId == id);
+            return _context.Set<T>().AsNoTracking().Where(p => p.PlantId == id);
         }      
         public int AddContactDetailsEntity<T>(T entity) where T : class
         {
@@ -207,7 +208,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public Plant GetPlantToActivate(int id)
         {
-            var plant = _context.Plants.FirstOrDefault(e => e.Id == id);
+            var plant = _context.Plants.AsNoTracking().FirstOrDefault(e => e.Id == id);
             return plant;
         }
 

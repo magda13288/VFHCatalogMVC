@@ -25,7 +25,7 @@ namespace VFHCatalogMVC.Web.Controllers
         private readonly IPlantService _plantService;
         private readonly IMessageService _messageService;
         private readonly IPlantHelperService _plantHelperService;
-        private readonly IUserContactDataService _userHelperService;
+        private readonly IUserContactDataService _userContactDataService;
 
         public UserController(
             IUserPlantService userService, 
@@ -33,7 +33,7 @@ namespace VFHCatalogMVC.Web.Controllers
             IPlantService plantService, 
             IMessageService messageService, 
             IPlantHelperService plantHelperService,
-            IUserContactDataService userHelperService
+            IUserContactDataService userContactDataService
             )
         {
             _userService = userService;
@@ -41,7 +41,7 @@ namespace VFHCatalogMVC.Web.Controllers
             _plantService = plantService;
             _messageService = messageService;
             _plantHelperService = plantHelperService;
-            _userHelperService = userHelperService;
+            _userContactDataService = userContactDataService;
         }
 
         [HttpGet, HttpPost]
@@ -62,24 +62,12 @@ namespace VFHCatalogMVC.Web.Controllers
                 var sectionsList = GetPlantSectionsList(groupId, typeId);
                 ViewBag.SectionsList = sectionsList.Value;
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
-                if (searchString is null)
-                {
-                    searchString = string.Empty;
-                }
-                if (pageSize == 0)
-                {
-                    pageSize = 30;
-                }
-                if (typeId != 0)
-                    ViewBag.TypeId = typeId;
-                if (groupId != 0)
-                    ViewBag.GroupId = groupId;
-                if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageSize = pageSize == 0 ? 30 : pageSize;
+                searchString = searchString is null ? string.Empty : searchString;
+                ViewBag.TypeId = typeId;
+                ViewBag.GroupId = groupId;
+                ViewBag.SectionId = sectionId;
 
                 var model = _userService.GetUserSeeds(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
@@ -108,24 +96,12 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
                 ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
-                if (searchString is null)
-                {
-                    searchString = string.Empty;
-                }
-                if (pageSize == 0)
-                {
-                    pageSize = 30;
-                }
-                if (typeId != 0)
-                    ViewBag.TypeId = typeId;
-                if (groupId != 0)
-                    ViewBag.GroupId = groupId;
-                if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageSize = pageSize == 0 ? 30 : pageSize;
+                searchString = searchString is null ? string.Empty : searchString;
+                ViewBag.TypeId = typeId;
+                ViewBag.GroupId = groupId;
+                ViewBag.SectionId = sectionId;
 
                 var model = _userService.GetUserSeedlings(pageSize, pageNo, searchString, typeId, groupId, sectionId, User.Identity.Name);
 
@@ -156,24 +132,12 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.GroupsList = _plantHelperService.GetGroups(typeId);
                 ViewBag.SectionsList = _plantHelperService.GetSections(groupId);
 
-                if (!pageNo.HasValue)
-                {
-                    pageNo = 1;
-                }
-                if (searchString is null)
-                {
-                    searchString = string.Empty;
-                }
-                if (pageSize == 0)
-                {
-                    pageSize = 30;
-                }
-                if (typeId != 0)
-                    ViewBag.TypeId = typeId;
-                if (groupId != 0)
-                    ViewBag.GroupId = groupId;
-                if (sectionId != 0)
-                    ViewBag.SectionId = sectionId;
+                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageSize = pageSize == 0 ? 30 : pageSize;
+                searchString = searchString is null ? string.Empty : searchString;
+                ViewBag.TypeId = typeId;
+                ViewBag.GroupId = groupId;
+                ViewBag.SectionId = sectionId;
 
                 var model = _userService.GetNewUserPlants(pageSize, pageNo, typeId, groupId, sectionId, viewAll, User.Identity.Name);
 
@@ -311,43 +275,17 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetRegions(int id)
         {
-            var regions = _userHelperService.GetRegions(id);
+            var regions = _userContactDataService.Regions(id);
 
-            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
-
-            if (regions.Count > 0)
-            {
-
-                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in regions)
-                {
-                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(voivodeshipsList);
+            return Json(regions);
         }
 
         [HttpPost]
         public JsonResult GetCities(int id)
         {
-            var cities = _userHelperService.GetCities(id);
+            var cities = _userContactDataService.Cities(id);
 
-            List<SelectListItem> citiesList = new List<SelectListItem>();
-
-            if (cities.Count > 0)
-            {
-
-                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in cities)
-                {
-                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(citiesList);
+            return Json(cities);
         }
         [HttpPost]
         public JsonResult GetPlantGroupsList(int typeId)

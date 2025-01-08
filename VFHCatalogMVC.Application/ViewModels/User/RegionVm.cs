@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
-using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using VFHCatalogMVC.Application.ViewModels.User.Common;
 
 namespace VFHCatalogMVC.Application.ViewModels.Adresses
 {

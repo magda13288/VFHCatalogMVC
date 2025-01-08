@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using VFHCatalogMVC.Domain.Common;
@@ -30,25 +31,25 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public IQueryable<PlantMessage> GetMessagesForNewUserPlant(int plantId)
         {
-            var messagesList = _context.PlantMessages.Where(m => m.PlantId == plantId);
+            var messagesList = _context.PlantMessages.AsNoTracking().Where(m => m.PlantId == plantId);
             return messagesList;
         }
 
         public Message GetMessageById(int id)
         {
-            var message = _context.Messages.FirstOrDefault(m => m.Id == id);
+            var message = _context.Messages.AsNoTracking().FirstOrDefault(m => m.Id == id);
             return message;
         }
 
         public string GetPlantOwnerId(int plantId)
         {
-            var userInfo = _context.NewUserPlants.FirstOrDefault(e => e.PlantId == plantId);
+            var userInfo = _context.NewUserPlants.AsNoTracking().FirstOrDefault(e => e.PlantId == plantId);
             return userInfo.UserId;
         }
 
         public int GetPlantId(int id)
         {
-            var message = _context.PlantMessages.FirstOrDefault(e => e.MessageId == id);
+            var message = _context.PlantMessages.AsNoTracking().FirstOrDefault(e => e.MessageId == id);
             if (message == null)
                 return 0;
             else
@@ -63,18 +64,18 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public int GetMessageAnswerIdById(int id)
         {
-            var message = _context.MessageAnswers.FirstOrDefault(e => e.MessageId == id);
+            var message = _context.MessageAnswers.AsNoTracking().FirstOrDefault(e => e.MessageId == id);
             return message.MessageAnswerId;
 
         }
 
         public IQueryable<T> GetMessage<T>(string userId) where T: BaseEntityProperty
         {
-            return _context.Set<T>().Where(e => e.UserId == userId);
+            return _context.Set<T>().AsNoTracking().Where(e => e.UserId == userId);
         }
         public MessageReceiver GetMessageReceiverByMessageId(int id)
         {
-            var message = _context.MessageReceivers.FirstOrDefault(e=>e.MessageId== id);
+            var message = _context.MessageReceivers.AsNoTracking().FirstOrDefault(e=>e.MessageId== id);
             return message;
         }
     }

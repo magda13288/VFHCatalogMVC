@@ -10,7 +10,8 @@ using System.Linq;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Domain.Model;
 using System.Threading.Tasks;
-using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using VFHCatalogMVC.Application.ViewModels.User.Common;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace VFHCatalogMVC.Application.Services.UserServices
@@ -30,62 +31,55 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             _userRepo = userRepository;
 
         }
+        public List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
+        {
+
+            if (!entity.Any()) return new List<SelectListItem>();
+
+            return entity
+                           .OrderBy(p => p.Id)
+                           .Where(e => e.Id != 0 && !string.IsNullOrEmpty(e.Name))
+                           .Select(e => new SelectListItem
+                           {
+                               Value = e.Id.ToString(),
+                               Text = e.Name
+                           })
+                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
+                           .ToList();
+        }
         public List<SelectListItem> Cities(int regionId)
         {
-            var cities = GetCities(regionId);
-            var list = FillList(cities);
-            return list;
+            var cities = _userRepo.GetAllEntities<City>().Where(p=>p.RegionId == regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
+            return GetSelectListItem(cities);
         }
         public List<SelectListItem> Countries()
         {
-            var countries = GetCountries();
-            var list = FillList(countries);
-            return list;
+            var countries = _userRepo.GetAllEntities<Country>().OrderBy(p=>p.Id).ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
+            return GetSelectListItem(countries);
         }
         public List<SelectListItem> Regions(int countryId)
         {
-            var regions = GetRegions(countryId);
-            var list = FillList(regions);
-            return list;
+            var regions = _userRepo.GetAllEntities<Region>().Where(p=>p.CountryId == countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
+            return GetSelectListItem(regions);
         }
-        public List<CityVm> GetCities(int regionId)
-        {
-            var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-            return cities;
-        }
+        //public List<CityVm> GetCities(int regionId)
+        //{
+        //    var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
+        //    return cities;
+        //}
 
-        public List<CountryVm> GetCountries()
-        {
-            var countries = _userRepo.GetEntity<Country>().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-            return countries;
-        }
+        //public List<CountryVm> GetCountries()
+        //{
+        //    var countries = _userRepo.GetEntity<Country>().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
+        //    return countries;
+        //}
 
-        public List<RegionVm> GetRegions(int countryId)
-        {
-            var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-            return regions;
-        }
-
-        public List<SelectListItem> FillList<TVm>(List<TVm> items)
-            where TVm: SelectListItemVm
-        {
-            List<SelectListItem> propertyList = new List<SelectListItem>();
-
-            if (items != null)
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var type in items)
-                {
-                    propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-                }
-            }
-            else
-            {
-                propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-            }
-            return propertyList;
-        }
+        //public List<RegionVm> GetRegions(int countryId)
+        //{
+        //    var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
+        //    return regions;
+        //}
+   
         public AddressVm GetAddress(string userId)
         {
             var address = _userRepo.GetAddressInfo(userId);

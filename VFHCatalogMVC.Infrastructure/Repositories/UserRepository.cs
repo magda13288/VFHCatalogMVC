@@ -16,7 +16,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             _context = context;
         }
-
+        public IQueryable<T> GetAllEntities<T>() where T : class
+        {
+            return _context.Set<T>();
+        }
         public int AddEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);
@@ -46,19 +49,19 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         
         public Address GetAddress(int id)
         {
-            var address = _context.Addresses.FirstOrDefault(p => p.Id == id);
+            var address = _context.Addresses.AsNoTracking().FirstOrDefault(p => p.Id == id);
             return address;
         }
 
         public Address GetAddressInfo(string userId)
         {
-            var address = _context.Addresses.FirstOrDefault(p => p.UserId == userId);
+            var address = _context.Addresses.AsNoTracking().FirstOrDefault(p => p.UserId == userId);
             return address;
         }
 
         public IQueryable<City> GetCities(int regionId)
         {
-            var cities = _context.Cities.Where(p => p.RegionId == regionId);
+            var cities = _context.Cities.AsNoTracking().Where(p => p.RegionId == regionId);
             return cities;
         }
 
@@ -70,7 +73,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public int? GetContactDetailForSeed(int id)
         {
-            var contactDetails = _context.ContactDetailForSeeds.FirstOrDefault(p => p.PlantSeedId == id);
+            var contactDetails = _context.ContactDetailForSeeds.AsNoTracking().FirstOrDefault(p => p.PlantSeedId == id);
             if (contactDetails == null)
                 return null;
             else
@@ -79,7 +82,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public int? GetContactDetailForSeedling(int id)
         {
-            var contactDetails = _context.ContactDetailForSeedlings.FirstOrDefault(p => p.PlantSeedlingId == id);
+            var contactDetails = _context.ContactDetailForSeedlings.AsNoTracking().FirstOrDefault(p => p.PlantSeedlingId == id);
             if (contactDetails == null)
                 return null;
             else
@@ -88,23 +91,23 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 
         public IQueryable<T> GetEntity<T>() where T : class
         {
-            return _context.Set<T>();
+            return _context.Set<T>().AsNoTracking();
         }
         public IQueryable<Region> GetRegions(int countryId)
         {
-           var regions = _context.Regions.Where(p => p.CountryId == countryId);
+           var regions = _context.Regions.AsNoTracking().Where(p => p.CountryId == countryId);
             return regions;
         }
 
         public IQueryable<T> GetUserPlantEntity<T>(string userId) where T : BaseEntityProperty
         {
-            var entity = _context.Set<T>().Where(p=>p.UserId == userId);
+            var entity = _context.Set<T>().AsNoTracking().Where(p=>p.UserId == userId);
             return entity;
         }
 
         public T GetUserEntity<T>(int id) where T : BaseEntityProperty
         {
-            var entity = _context.Set<T>().FirstOrDefault(p=>p.Id == id);
+            var entity = _context.Set<T>().AsNoTracking().FirstOrDefault(p=>p.Id == id);
             return entity;
             
         }      

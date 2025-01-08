@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace VFHCatalogMVC.Domain.Interface
     public interface IUserRepository
     {
         IQueryable<T> GetUserPlantEntity<T>(string userId) where T : BaseEntityProperty;
+        IQueryable<T> GetAllEntities<T>() where T : class;
+
         T GetUserEntity<T>(int id) where T : BaseEntityProperty;
         void EditEntity<T>(T entity) where T : BasePlantSeedSeedlingProperty;
         int AddEntity<T>(T entity) where T : class;

@@ -86,9 +86,8 @@ namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var countries =  _userContactDataService.GetCountries();
-            var countriesList = _userContactDataService.FillList(countries);
-            ViewData["Country"] = countriesList;     
+            var countries =  _userContactDataService.Countries();
+            ViewData["Country"] = countries;     
         }   
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
