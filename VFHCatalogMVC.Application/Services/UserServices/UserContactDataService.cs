@@ -44,7 +44,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                                Value = e.Id.ToString(),
                                Text = e.Name
                            })
-                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
+                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0", Disabled = true })
                            .ToList();
         }
         public List<SelectListItem> Cities(int regionId)

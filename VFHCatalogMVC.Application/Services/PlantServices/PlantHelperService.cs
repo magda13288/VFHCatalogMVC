@@ -113,7 +113,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                Value = e.Id.ToString(),
                                Text = e.Name
                            })
-                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
+                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" , Disabled = true})
                            .ToList();
         }      
         public IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant)
