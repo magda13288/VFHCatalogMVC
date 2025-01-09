@@ -104,9 +104,9 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
                 ViewData["PriceSortParam"] = sortOrder == "Price" ? "price_desc" : "";
-                ViewBag.CountriesList = _userContactDataService.Countries();
-                ViewBag.RegionsList = _userContactDataService.Regions(countryId);
-                ViewBag.CitiesList = _userContactDataService.Cities(regionId);
+                ViewBag.CountriesList = await _userContactDataService.Countries();
+                ViewBag.RegionsList =await _userContactDataService.Regions(countryId);
+                ViewBag.CitiesList = await _userContactDataService.Cities(regionId);
 
                 pageNo = pageNo.HasValue ? pageNo.Value : 1;
                 pageSize = pageSize == 0 ? 30 : pageSize;
@@ -141,9 +141,9 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                ViewBag.CountriesList = _userContactDataService.Countries();
-                ViewBag.RegionsList = _userContactDataService.Regions(countryId);
-                ViewBag.CitiesList = _userContactDataService.Cities(regionId);
+                ViewBag.CountriesList = await _userContactDataService.Countries();
+                ViewBag.RegionsList = await _userContactDataService.Regions(countryId);
+                ViewBag.CitiesList =await  _userContactDataService.Cities(regionId);
 
                 pageNo = !pageNo.HasValue ? 1 : pageNo;
                 pageSize = pageSize == 0 ? 30 : pageSize;
