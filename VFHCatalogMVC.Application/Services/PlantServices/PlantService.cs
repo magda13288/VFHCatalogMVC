@@ -429,8 +429,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating the plant: {ex.Message}");
-                throw; // Optionally, propagate the exception further.
+                throw new Exception($"Error updating the plant: {ex.Message}");
+               
             }          
         }
 
