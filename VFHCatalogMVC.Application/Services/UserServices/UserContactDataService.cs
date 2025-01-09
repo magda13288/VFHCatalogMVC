@@ -61,25 +61,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         {
             var regions = _userRepo.GetAllEntities<Region>().Where(p=>p.CountryId == countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
             return GetSelectListItem(regions);
-        }
-        //public List<CityVm> GetCities(int regionId)
-        //{
-        //    var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-        //    return cities;
-        //}
-
-        //public List<CountryVm> GetCountries()
-        //{
-        //    var countries = _userRepo.GetEntity<Country>().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-        //    return countries;
-        //}
-
-        //public List<RegionVm> GetRegions(int countryId)
-        //{
-        //    var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-        //    return regions;
-        //}
-   
+        }       
         public AddressVm GetAddress(string userId)
         {
             var address = _userRepo.GetAddressInfo(userId);
