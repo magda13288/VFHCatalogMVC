@@ -54,7 +54,7 @@ namespace VFHCatalogMVC.Application.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing image: {ex.Message}");
+                throw new Exception($"Error processing image: {ex.Message}");
             }
         }
         public async Task<string> AddPlantSearchPhotoAsync(NewPlantVm model)
