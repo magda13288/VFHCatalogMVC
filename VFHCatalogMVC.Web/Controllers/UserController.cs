@@ -310,45 +310,19 @@ namespace VFHCatalogMVC.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetRegions(int id)
+        public async Task<JsonResult> GetRegions(int id)
         {
-            var regions = _userHelperService.GetRegions(id);
+            var regions = await _userHelperService.Regions(id);         
 
-            List<SelectListItem> voivodeshipsList = new List<SelectListItem>();
-
-            if (regions.Count > 0)
-            {
-
-                voivodeshipsList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in regions)
-                {
-                    voivodeshipsList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(voivodeshipsList);
+            return Json(regions);
         }
 
         [HttpPost]
-        public JsonResult GetCities(int id)
+        public async Task<JsonResult> GetCities(int id)
         {
-            var cities = _userHelperService.GetCities(id);
+            var cities = await _userHelperService.Cities(id);            
 
-            List<SelectListItem> citiesList = new List<SelectListItem>();
-
-            if (cities.Count > 0)
-            {
-
-                citiesList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-                foreach (var group in cities)
-                {
-                    citiesList.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-                }
-            }
-
-            return Json(citiesList);
+            return Json(cities);
         }
         [HttpPost]
         public async Task<JsonResult> GetPlantGroupsList(int typeId)
