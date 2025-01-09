@@ -114,8 +114,6 @@ namespace VFHCatalogMVC.Web.Controllers
                 ViewBag.RegionId = regionId;
                 ViewBag.CityId = cityId;
 
-
-
                 var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
             }

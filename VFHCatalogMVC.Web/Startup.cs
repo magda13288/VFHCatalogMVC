@@ -38,6 +38,7 @@ using Microsoft.IdentityModel.Tokens;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
+using VFHCatalogMVC.Infrastructure.Common;
 
 namespace VFHCatalogMVC.Web
 {
@@ -106,7 +107,8 @@ namespace VFHCatalogMVC.Web
             services.AddTransient<IValidator<PlantOpinionsVm>, PlantOpinionValidation>();
             services.AddTransient<IValidator<UserSeedVm>, UserSeedValidation>();
             services.AddTransient<IValidator<UserSeedlingVm>, UserSeedlingValidation>();
-            
+            services.AddScoped<ICurrentSessionProvider, CurrentSessionProvider>();
+
             services.AddRazorPages();
 
             services.Configure<IdentityOptions>(options =>

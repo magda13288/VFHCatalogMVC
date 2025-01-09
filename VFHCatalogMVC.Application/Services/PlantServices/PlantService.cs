@@ -80,7 +80,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             var userInfo = _userManager.FindByNameAsync(user);
             var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, "Admin").Result;
-
+          
             SetPropertiesAndAddNewUserPlant(newPlant, isAdmin);
             id = _plantRepo.AddEntity<Plant>(newPlant);
 

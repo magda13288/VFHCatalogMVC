@@ -95,46 +95,44 @@ namespace VFHCatalogMVC.Infrastructure
 
         public override int SaveChanges()
         {
-            //foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-            //{
-            //    switch (entry.State)
-            //    {
-            //        case EntityState.Added:
-            //            entry.Entity.CreatedBy = string.Empty;
-            //            entry.Entity.Created = DateTime.Now;
-            //            entry.Entity.StatusId = 1;
-            //            break;
-
-            //        case EntityState.Modified:
-            //            entry.Entity.ModifiedBy = string.Empty; 
-            //            entry.Entity.Modified = DateTime.Now;
-            //            break;
-
-            //        case EntityState.Deleted:
-            //            entry.Entity.ModifiedBy = string.Empty;
-            //            entry.Entity.Modified = DateTime.Now;
-            //            entry.Entity.InactivatedBy = string.Empty;
-            //            entry.Entity.Inactivated = DateTime.Now;
-            //            entry.Entity.StatusId = 0;
-            //            entry.State = EntityState.Modified;
-            //            break;
-
-
-            //    }
-            //}
-            //return base.SaveChanges();
-
             var userId = CurrentSessionProvider.GetUserId();
 
-            SetAuditableProperties(userId);
-
-            var auditEntries = HandleAuditingBeforeSaveChanges(userId).ToList();
-            if (auditEntries.Count > 0)
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
             {
-                AuditTrials.AddRange(auditEntries);
-            }
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedBy = userId;
+                        entry.Entity.CreatedAtUtc = DateTime.Now;
+                        break;
 
-            return  base.SaveChanges();
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedBy = userId;
+                        entry.Entity.UpdatedAtUtc = DateTime.Now;
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.Entity.UpdatedBy = userId;
+                        entry.Entity.UpdatedAtUtc = DateTime.Now;
+                        entry.Entity.InactivatedBy = userId;
+                        entry.Entity.InactivatedAtUtc = DateTime.Now;
+                        entry.State = EntityState.Modified;
+                        break;
+                }
+            }
+            return base.SaveChanges();
+
+            //var userId = CurrentSessionProvider.GetUserId();
+
+            //SetAuditableProperties(userId);
+
+            //var auditEntries = HandleAuditingBeforeSaveChanges(userId).ToList();
+            //if (auditEntries.Count > 0)
+            //{
+            //    AuditTrials.AddRange(auditEntries);
+            //}
+
+            //return  base.SaveChanges();
         }
 
         private List<AuditTrial> HandleAuditingBeforeSaveChanges(string userId)

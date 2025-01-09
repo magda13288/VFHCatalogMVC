@@ -10,9 +10,12 @@ namespace VFHCatalogMVC.Infrastructure.Common
     public class CurrentSessionProvider : ICurrentSessionProvider
     {
         private readonly string? _currentUserId;
-        public CurrentSessionProvider(IHttpContextAccessor accessor)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CurrentSessionProvider(IHttpContextAccessor httpContextAccessor)
         {
-            var userId = accessor.HttpContext?.User.FindFirstValue("UserId");
+            _httpContextAccessor = httpContextAccessor;
+
+            var userId = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
             if (userId is null)
             {
                 return;

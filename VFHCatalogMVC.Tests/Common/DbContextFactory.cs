@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using VFHCatalogMVC.Application.ViewModels.Plant;
+using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Infrastructure;
 
@@ -17,10 +18,12 @@ namespace Application.UnitTests.Common
     {
         public static Mock<Context> Create()
         {
+            var sessionProviderMock = new Mock<ICurrentSessionProvider>();
+            sessionProviderMock.Setup(x => x.GetUserId()).Returns("mockedUserId");
             //create database in memory
             var options = new DbContextOptionsBuilder<Context>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
 
-            var mock = new Mock<Context>(options) { CallBase = true }; //call base construct
+            var mock = new Mock<Context>(options, sessionProviderMock.Object) { CallBase = true }; //call base construct
 
             var context = mock.Object;
 
@@ -190,6 +193,7 @@ namespace Application.UnitTests.Common
 
             };
             context.Add(plant);
+
             var plantDetails = new PlantDetail
             {
                 Id = 1,
@@ -215,6 +219,7 @@ namespace Application.UnitTests.Common
                 new PlantGrowingSeazon{GrowingSeazonId = 1, PlantDetailId =1 },
                 new PlantGrowingSeazon{GrowingSeazonId = 4, PlantDetailId =1 }
             };
+            context.AddRange(plantGrowingSeazons);
 
             var plantDestinations = new List<PlantDestination>
             {
@@ -223,6 +228,7 @@ namespace Application.UnitTests.Common
                 new PlantDestination {DestinationId =3, PlantDetailId=1 },
 
             };
+            context.AddRange(plantDestinations);
 
             var userAdmin = new List<ApplicationUser>
             {   new ApplicationUser()
@@ -289,6 +295,7 @@ namespace Application.UnitTests.Common
                 new IdentityUserRole<string> { UserId = "0a249d73-5e9a-4c07-9832-27645a2c2fe8", RoleId = "Admin" },
                 new IdentityUserRole<string> { UserId = "2ef2b510-aa25-42ca-b68a-ee2fa0635924", RoleId = "PrivateUser" },
             };
+            context.AddRange(identityRole);
 
         }
     }

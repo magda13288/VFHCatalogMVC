@@ -126,7 +126,7 @@
 <div>
     @if(User.IsInRole("Admin"))
     {
-        @Html.ActionLink("Edytuj", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
+        @Html.ActionLink("Edit", "Edit", new {  id = Model.Id },new { @class = "btn btn-info" })
     }
     <p></p>
     <a asp-action="Index" class="btn btn-dark">Back to search</a>
