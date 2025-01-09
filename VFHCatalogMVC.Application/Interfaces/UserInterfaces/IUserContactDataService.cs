@@ -13,11 +13,7 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
     {
         Task<List<SelectListItem>> Countries();
         Task<List<SelectListItem>> Regions(int countryId);
-        Task<List<SelectListItem>> Cities(int regionId);
-        //List<CountryVm> GetCountries();
-        //List<RegionVm> GetRegions(int countryId);
-        //List<CityVm> GetCities(int regionId);
-        //List<SelectListItem> FillList<TVm>(List<TVm> items) where TVm : SelectListItemVm;
+        Task<List<SelectListItem>> Cities(int regionId);  
         Task<AddressVm> GetAddressAsync(string userId);
         Task AddAddressAsync(AddressVm address);
         string UserAccountName(ApplicationUser user);

@@ -120,7 +120,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                Value = e.Id.ToString(),
                                Text = e.Name
                            })
-                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
+                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" , Disabled = true})
                            .ToList();
 
             return await Task.FromResult(result);

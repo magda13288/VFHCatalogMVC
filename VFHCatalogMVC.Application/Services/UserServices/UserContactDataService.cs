@@ -44,7 +44,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
                                Value = e.Id.ToString(),
                                Text = e.Name
                            })
-                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" })
+                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0", Disabled=true })
                            .ToList();
 
             return await Task.FromResult(result);
@@ -71,63 +71,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             var regions = await regionsEntity.ToListAsync();
 
             return await GetSelectListItemAsync(regions);
-        }
-        //public List<SelectListItem> Cities(int regionId)
-        //{
-        //    var cities = GetCities(regionId);
-        //    var list = FillList(cities);
-        //    return list;
-        //}
-        //public List<SelectListItem> Countries()
-        //{
-        //    var countries = GetCountries();
-        //    var list = FillList(countries);
-        //    return list;
-        //}
-        //public List<SelectListItem> Regions(int countryId)
-        //{
-        //    var regions = GetRegions(countryId);
-        //    var list = FillList(regions);
-        //    return list;
-        //}
-        //public List<CityVm> GetCities(int regionId)
-        //{
-        //    var cities = _userRepo.GetCities(regionId).ProjectTo<CityVm>(_mapper.ConfigurationProvider).ToList();
-        //    return cities;
-        //}
-
-        //public List<CountryVm> GetCountries()
-        //{
-        //    var countries = _userRepo.GetEntity<Country>().ProjectTo<CountryVm>(_mapper.ConfigurationProvider).ToList();
-        //    return countries;
-        //}
-
-        //public List<RegionVm> GetRegions(int countryId)
-        //{
-        //    var regions = _userRepo.GetRegions(countryId).ProjectTo<RegionVm>(_mapper.ConfigurationProvider).ToList();
-        //    return regions;
-        //}
-
-        //public List<SelectListItem> FillList<TVm>(List<TVm> items)
-        //    where TVm: SelectListItemVm
-        //{
-        //    List<SelectListItem> propertyList = new List<SelectListItem>();
-
-        //    if (items != null)
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-
-        //        foreach (var type in items)
-        //        {
-        //            propertyList.Add(new SelectListItem { Text = type.Name, Value = type.Id.ToString() });
-        //        }
-        //    }
-        //    else
-        //    {
-        //        propertyList.Add(new SelectListItem { Text = "-Wybierz-", Value = 0.ToString() });
-        //    }
-        //    return propertyList;
-        //}
+        }     
         public async Task<AddressVm> GetAddressAsync(string userId)
         {
             var address = await _userRepo.GetAddressInfoAsync(userId);
