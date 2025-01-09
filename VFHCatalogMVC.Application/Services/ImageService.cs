@@ -29,12 +29,18 @@ namespace VFHCatalogMVC.Application.Services
         {
        
             var fileNames = new List<string>();
-
-            foreach (var item in model.PlantDetails.Images)
+            try
             {
-                string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
-                _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
-                fileNames.Add(fileName);
+                foreach (var item in model.PlantDetails.Images)
+                {
+                    string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
+                    _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                    fileNames.Add(fileName);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error during uploading images", ex);
             }
 
             return fileNames;
@@ -58,7 +64,7 @@ namespace VFHCatalogMVC.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    throw new IOException("Error during deleting image", ex);
                 }
             }
         }
@@ -82,7 +88,7 @@ namespace VFHCatalogMVC.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    throw new IOException($"Error uploading file to path {path}.", ex);
                 }
             }
 
