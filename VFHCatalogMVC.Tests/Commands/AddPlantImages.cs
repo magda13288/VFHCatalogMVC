@@ -16,11 +16,16 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Infrastructure.Repositories;
 using Xunit;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using VFHCatalogMVC.Domain.Interface;
 
 namespace Application.UnitTests.Commands
 {
     public class AddPlantImages: CommandTestBase
     {
+        private readonly Mock<IWebHostEnvironment> _webHostEnvironment;
+        private readonly Mock<IPlantRepository> _plantRepo;
+        private readonly string _DIR_GALLERY = "plantGallery/plantDetailsGallery";
+        private readonly string _DIR_SEARCH = "plantGallery/searchPhoto";
         public AddPlantImages():base()
         {
                 

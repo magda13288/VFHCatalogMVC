@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using VFHCatalogMVC.Application.Mapping;
-using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using VFHCatalogMVC.Application.ViewModels.Common;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {

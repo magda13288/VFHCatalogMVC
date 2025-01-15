@@ -20,6 +20,8 @@ using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Domain.Common;
 using System.Web.Razor.Generator;
+using VFHCatalogMVC.Application.ViewModels.Common;
+using VFHCatalogMVC.Application.Interfaces;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {
@@ -28,31 +30,33 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
       
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
-        public PlantHelperService( IMapper mapper, IPlantRepository plantRepository)
+        private readonly IListService _listService;
+        public PlantHelperService( IMapper mapper, IPlantRepository plantRepository, IListService listService)
         {            
             _mapper = mapper;
             _plantRepo = plantRepository;
+            _listService = listService;
         }
 
         public List<SelectListItem> GetGroups(int? typeId)
         {
             var groups = _plantRepo.GetAllEntities<PlantGroup>().Where(e => e.PlantTypeId == typeId).ProjectTo<PlantGroupsVm>(_mapper.ConfigurationProvider).ToList();
 
-            return GetSelectListItem(groups);
+            return _listService.GetSelectListItem(groups);
         }
 
         public List<SelectListItem> GetSections(int? groupId)
         {
             var sections = _plantRepo.GetAllEntities<PlantSection>().Where(e => e.PlantGroupId == groupId).ProjectTo<PlantSectionsVm>(_mapper.ConfigurationProvider).ToList();
 
-            return GetSelectListItem(sections);
+            return _listService.GetSelectListItem(sections);
         }
         public List<SelectListItem> GetDestinations()
         {
 
             var destinationsList = _plantRepo.GetAllEntities<Destination>().OrderBy(p => p.Id).ProjectTo<DestinationsVm>(_mapper.ConfigurationProvider).ToList();
 
-            return  GetSelectListItem(destinationsList);
+            return _listService.GetSelectListItem(destinationsList);
         }
         public List<SelectListItem> GetSelectList<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
@@ -62,7 +66,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                                      .ProjectTo<TViewModel>(_mapper.ConfigurationProvider)
                                      .ToList();
 
-            return GetSelectListItem(entities); 
+            return  _listService.GetSelectListItem(entities); 
 
         }
         public List<SelectListItem> GetPlantPropertySelectListItem<TSource, TVm, TSourceList, TVmList>(int typeId, int? groupId, int? sectionId)
@@ -74,7 +78,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             var filteredList = GetPlantProperty<TSourceList, TVmList>(typeId, groupId, sectionId);
             var propertyList = FilterPropertyList<TSource, TVm, TVmList>(filteredList);
 
-            return GetSelectListItem(propertyList);
+            return _listService.GetSelectListItem(propertyList);
         }
         private List<TVm> GetPlantProperty<TSource, TVm>(int typeId, int? groupId, int? sectionId)
            where TSource : BasePropertyForListFilters
@@ -99,23 +103,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 var entityIds = entity.Select(p => p.Id).ToList();
                 return propertyList.Where(p => entityIds.Contains(p.Id)).ToList();
             }
-        }
-        public List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm
-        {
-
-            if (!entity.Any()) return new List<SelectListItem>();
-
-            return entity
-                           .OrderBy(p => p.Id)
-                           .Where(e => e.Id != 0 && !string.IsNullOrEmpty(e.Name))
-                           .Select(e => new SelectListItem
-                           {
-                               Value = e.Id.ToString(),
-                               Text = e.Name
-                           })
-                           .Prepend(new SelectListItem { Text = "-Select-", Value = "0" , Disabled = true})
-                           .ToList();
-        }      
+        }     
         public IndexPlantType GetIndexPlantType(bool seeds, bool seedlings, bool newPlant)
         {
             var index = new IndexPlantType() 

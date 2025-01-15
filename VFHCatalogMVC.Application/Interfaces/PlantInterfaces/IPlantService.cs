@@ -21,13 +21,8 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         NewPlantVm GetPlantToEdit(int id);
         void UpdatePlant(NewPlantVm model);
         PlantForListVm DeletePlant(int id);
-        public T FillProperty<T>(
-             int id,
-             string userName
-             )
-                where T : PlantItemVm, new();
-
-         PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
+        public T FillProperty<T>(int id,string userName) where T : PlantItemVm, new();
+        PlantSeedsForListVm GetAllPlantSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string userName);
         PlantSeedlingsForListVm GetAllPlantSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany);
         void ActivatePlant(int id);
         

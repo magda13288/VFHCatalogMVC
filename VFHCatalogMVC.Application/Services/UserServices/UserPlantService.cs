@@ -12,6 +12,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using VFHCatalogMVC.Application.Constants;
+using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant;
@@ -19,6 +20,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Application.ViewModels.User.Common;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -32,18 +34,21 @@ namespace VFHCatalogMVC.Application.Services.UserServices
         private readonly IPlantRepository _plantRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IListService _listService;
 
         public UserPlantService(
             IUserRepository userRepo,
             IMapper mapper,
             UserManager<ApplicationUser> userManager,
-            IPlantRepository plantRepository
+            IPlantRepository plantRepository,
+            IListService listService
             )
         {
             _userRepo = userRepo;
             _mapper = mapper;
             _userManager = userManager;
             _plantRepo = plantRepository;
+            _listService = listService;
         }
 
 
@@ -230,7 +235,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
 
             var filteredPlants = FilterPlants(plants,typeId,groupId,sectionId,viewAll);
-            var plantsToShow = Paginate(filteredPlants,pageSize,pageNo);
+            var plantsToShow = _listService.Paginate(filteredPlants,pageSize,pageNo);
 
             var newUserPlantsForList = new NewUserPlantsForListVm()
             {
@@ -310,7 +315,7 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
 
             var filteredItems = FilterItems(items, searchString, typeId, groupId, sectionId);
-            var paginatedItems = Paginate(filteredItems, pageSize, pageNo);
+            var paginatedItems = _listService.Paginate(filteredItems, pageSize, pageNo);
 
             return new TListVm
             {
@@ -346,16 +351,6 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             }
 
             return entity;
-        }
-
-        private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)
-        {
-            if (!pageNo.HasValue || pageNo <= 0)
-            {
-                pageNo = 1; // default first page
-            }
-
-            return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
         }
         private T GetEntityList<T>(Plant plant, T item)
            where T : PlantItemVm

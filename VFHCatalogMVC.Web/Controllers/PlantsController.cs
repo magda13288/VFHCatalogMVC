@@ -167,7 +167,7 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
             ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
-            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();
+            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
 
             return View();
         }
@@ -189,7 +189,7 @@ namespace VFHCatalogMVC.Web.Controllers
                         ViewBag.Message = "Podana nazwa już istnieje";
                         ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
                         ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                        ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
+                        ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
                         return View(model);
                     }
                     else
@@ -199,7 +199,7 @@ namespace VFHCatalogMVC.Web.Controllers
                 {
                     ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
                     ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                    ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>();
+                    ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
                     return View(model);
                 }
             }
@@ -236,11 +236,11 @@ namespace VFHCatalogMVC.Web.Controllers
 
                 ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
 
-                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon,GrowingSeazonVm>();               
+                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);               
         
-                ViewBag.GrowthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
+                ViewBag.GrowthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId).Skip(1);
                   
-                ViewBag.Destinations = _plantHelperService.GetSelectList<Destination,DestinationsVm>();
+                ViewBag.Destinations = _plantHelperService.GetSelectList<Destination, DestinationsVm>().Skip(1);
 
                 ViewBag.FruitTypes = _plantHelperService.GetPlantPropertySelectListItem<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
 
@@ -479,7 +479,7 @@ namespace VFHCatalogMVC.Web.Controllers
         public JsonResult GetGrowthTypes( int typeId, int groupId, int? sectionId)
         {
 
-            var growthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType,GrowthTypeVm,GrowthTypesForListFilters,GrowthTypesForListFiltersVm>(typeId,groupId,sectionId);        
+            var growthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType,GrowthTypeVm,GrowthTypesForListFilters,GrowthTypesForListFiltersVm>(typeId,groupId,sectionId).Skip(1);        
 
             return Json(growthTypes);
         }
@@ -487,7 +487,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [HttpPost]
         public JsonResult GetDestinations()
         {
-            var destList = _plantHelperService.GetDestinations();
+            var destList = _plantHelperService.GetDestinations().Skip(1);
 
             return Json(destList);
         }

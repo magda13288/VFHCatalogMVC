@@ -16,6 +16,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using VFHCatalogMVC.Application.Constants;
 
 
 
@@ -33,6 +34,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private readonly IPlantDetailsService _plantDetailsSerrvice;
         private readonly IPlantItemProcessor<PlantSeedVm> _seedProcessor;
         private readonly IPlantItemProcessor<PlantSeedlingVm> _seedlingProcessor;
+        private readonly IListService _listService;
 
         public PlantService()
         {
@@ -40,12 +42,14 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public PlantService(
             IPlantRepository plantRepo,
-            IMapper mapper, UserManager<ApplicationUser> userManager,
+            IMapper mapper, 
+            UserManager<ApplicationUser> userManager,
             IImageService imageService,
             IPlantDetailsService plantDetailsSerrvice,
             IUserPlantService userPlantService,
             IPlantItemProcessor<PlantSeedVm> seedProcessor ,
-            IPlantItemProcessor<PlantSeedlingVm> seedlingProcessor)
+            IPlantItemProcessor<PlantSeedlingVm> seedlingProcessor,
+            IListService listService)
         {
             _plantRepo = plantRepo;
             _mapper = mapper;
@@ -55,6 +59,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             _userPlantService = userPlantService;
             _seedProcessor = seedProcessor;
             _seedlingProcessor = seedlingProcessor;
+            _listService = listService;
                
         }
 
@@ -79,7 +84,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
             var userInfo = _userManager.FindByNameAsync(user);
-            var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, "Admin").Result;
+            var isAdmin = _userManager.IsInRoleAsync(userInfo.Result, UserRoles.ADMIN).Result;
           
             SetPropertiesAndAddNewUserPlant(newPlant, isAdmin);
             id = _plantRepo.AddEntity<Plant>(newPlant);
@@ -117,7 +122,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             var plants = ActivePlantsFilters(searchString, typeId, groupId, sectionId);
 
-            var plantsToShow = Paginate(plants, pageSize, pageNo);
+            var plantsToShow = _listService.Paginate(plants, pageSize, pageNo);
 
             var plantsList = new ListPlantForListVm()
             {
@@ -131,16 +136,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return plantsList;
 
         }
-        private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)
-        {
-            if (!pageNo.HasValue || pageNo <= 0)
-            {
-                pageNo = 1; // default first page
-            }
-
-            return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
-        }
-
         private List<PlantForListVm> ActivePlantsFilters(string searchString, int? typeId, int? groupId, int? sectionId)
         {
             var plants = new List<PlantForListVm>();
@@ -192,7 +187,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             var seeds = _plantRepo.GetPlantSeedOrSeedling<PlantSeed>(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
             var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany);
-            var paginateList = Paginate(processedSeeds, pageSize, pageNo);
+            var paginateList = _listService.Paginate(processedSeeds, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, paginateList, seeds.Count, pageSize, pageNo, isCompany, userName);
         }
@@ -209,7 +204,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             var seedlings = _plantRepo.GetPlantSeedOrSeedling<PlantSeedling>(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
             var detailId = _plantRepo.GetPlantDetailId(id);
             var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany);
-            var paginateList = Paginate(processedSeedlings, pageSize, pageNo);
+            var paginateList = _listService.Paginate(processedSeedlings, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, paginateList, seedlings.Count, pageSize, pageNo, isCompany, null);
         }
@@ -485,7 +480,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
             else
             {
-                throw new NullReferenceException();
+                //throw new NullReferenceException();
+                return 0;
             }
 
         }

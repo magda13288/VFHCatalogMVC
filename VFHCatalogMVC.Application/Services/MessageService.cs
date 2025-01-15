@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using VFHCatalogMVC.Application.HelperClasses;
 using VFHCatalogMVC.Application.Interfaces;
-using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -19,18 +19,19 @@ namespace VFHCatalogMVC.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMessageRepository _messageRepo;
         private readonly IMapper _mapper;
-        private readonly IPlantHelperService _helperService;
+        private readonly IListService _listService;
 
         public MessageService(
             UserManager<ApplicationUser> userManager, 
             IMessageRepository messageRepository,
             IMapper mapper, 
-            IPlantHelperService helperService)
+            IListService listService
+  )
         {
             _userManager = userManager;
             _messageRepo = messageRepository;
             _mapper = mapper;
-            _helperService = helperService;
+            _listService = listService;
         }
 
         public MessageVm FillMessageProperties(
@@ -129,7 +130,7 @@ namespace VFHCatalogMVC.Application.Services
                 var sentMessages = GetSentMessages(userInfo.Id);
 
                 messagesCount = sentMessages.Count;
-                messagesToShow = Paginate(sentMessages, pageSize, pageNo);
+                messagesToShow = _listService.Paginate(sentMessages, pageSize, pageNo);
             }
             else
             {
@@ -137,7 +138,7 @@ namespace VFHCatalogMVC.Application.Services
                 {
                     var receivedMessages = GetReceivedMessages(userInfo.Id);
                     messagesCount = receivedMessages.Count;
-                    messagesToShow = Paginate(receivedMessages, pageSize, pageNo);
+                    messagesToShow =  _listService.Paginate(receivedMessages, pageSize, pageNo);
                 }
             }
 
@@ -238,7 +239,7 @@ namespace VFHCatalogMVC.Application.Services
                     }
                 }
             }
-            return Paginate(filteredMessages, pageSize, pageNo);
+            return _listService.Paginate(filteredMessages, pageSize, pageNo);
         }
 
         public MessageForListVm GetMessagesForPlant(
@@ -381,16 +382,6 @@ namespace VFHCatalogMVC.Application.Services
             };
 
             _messageRepo.AddEntity<PlantMessage>(_mapper.Map<PlantMessage>(plantMessage));
-        }
-
-        private List<T> Paginate<T>(IEnumerable<T> items, int pageSize, int? pageNo)
-        {
-            if (!pageNo.HasValue || pageNo <= 0)
-            {
-                pageNo = 1; // default first page
-            }
-
-            return items.Skip(pageSize * (pageNo.Value - 1)).Take(pageSize).ToList();
         }
     }
 }

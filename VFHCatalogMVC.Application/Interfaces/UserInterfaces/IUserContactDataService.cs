@@ -18,6 +18,6 @@ namespace VFHCatalogMVC.Application.Interfaces.UserInterfaces
         AddressVm GetAddress(string userId);
         void AddAddress(AddressVm address);
         string UserAccountName(Task<ApplicationUser> user);
-        List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
+        //List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
     }
 }

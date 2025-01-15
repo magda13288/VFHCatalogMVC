@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using VFHCatalogMVC.Application.ViewModels.Plant.Common;
+using VFHCatalogMVC.Application.ViewModels.Common;
 
 namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails
 {

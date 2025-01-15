@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 //using System.Web.Mvc;
 using VFHCatalogMVC.Application.HelperClasses;
+using VFHCatalogMVC.Application.ViewModels.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
-using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Common;
-using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
 {
@@ -17,7 +16,7 @@ namespace VFHCatalogMVC.Application.Interfaces.PlantInterfaces
         List<SelectListItem> GetSelectList<TSource, TViewModel>()
         where TViewModel : SelectListItemVm
         where TSource : class;
-        List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
+        //List<SelectListItem> GetSelectListItem<T>(IEnumerable<T> entity) where T : SelectListItemVm;
         List<SelectListItem> GetGroups(int? typeId);
         List<SelectListItem> GetSections(int? groupId);
         List<SelectListItem> GetDestinations();
