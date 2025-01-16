@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
@@ -27,7 +28,7 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         public bool isNew { get; set; }
 
         [NotMapped]
-        public PlantDetailsVm PlantDetails { get; set; }
+        public PlantDetailsVm PlantDetails { get; set; } = new PlantDetailsVm();
 
         [NotMapped]
         public AddressVm Address { get; set; }
@@ -49,12 +50,25 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant
         {
             public NewPlantValidation()
             {
-                RuleFor(x => x.Id).GreaterThanOrEqualTo(0);
-                RuleFor(x => x.TypeId).NotEmpty().GreaterThan(0).WithMessage("Pole wymagane");
-                RuleFor(x => x.GroupId).NotEmpty().GreaterThan(0).WithMessage("Pole wymagane");
-                RuleFor(x => x.FullName).NotEmpty().WithMessage("Pole wymagane").MaximumLength(255).WithMessage("Maksymalna długość nazwy wynosi 255znaków");
-                //RuleFor(x => x.PhotoFileName).NotEmpty();
+                //RuleFor(x => x.Id).GreaterThanOrEqualTo(0);
+                RuleFor(x => x.TypeId).NotEmpty().GreaterThan(0).WithMessage(ValidationMessages.REQUIRED);
+                RuleFor(x => x.GroupId).NotEmpty().GreaterThan(0).WithMessage(ValidationMessages.REQUIRED);
+                RuleFor(x => x.FullName).NotEmpty().WithMessage(ValidationMessages.REQUIRED).MaximumLength(255).WithMessage(ValidationMessages.MAX_VALUE_STRING + " 255");
+                RuleFor(x => x.PlantDetails).NotNull().WithMessage("PlantDetails cannot be null.");
+                RuleFor(x => x.PlantDetails.FruitSizeId).NotEqual(0).WithMessage(ValidationMessages.SELECT_VALUE)
+                 .When(x => x.PlantDetails != null);
 
+                RuleFor(x => x.PlantDetails.FruitTypeId).NotEqual(0).WithMessage(ValidationMessages.SELECT_VALUE)
+                    .When(x => x.PlantDetails != null);
+
+                RuleFor(x => x.PlantDetails.ListGrowthTypes.GrowthTypesIds).NotNull().WithMessage(ValidationMessages.SELECT_VALUE)
+                    .When(x => x.PlantDetails?.ListGrowthTypes != null);
+
+                RuleFor(x => x.PlantDetails.ListPlantDestinations.DestinationsIds).NotNull().WithMessage(ValidationMessages.SELECT_VALUE)
+                    .When(x => x.PlantDetails?.ListPlantDestinations != null);
+
+                RuleFor(x => x.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds).NotNull().WithMessage(ValidationMessages.SELECT_VALUE)
+                    .When(x => x.PlantDetails?.ListGrowingSeazons != null);
             }
         }
     }

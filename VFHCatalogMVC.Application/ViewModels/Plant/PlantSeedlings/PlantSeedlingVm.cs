@@ -10,12 +10,6 @@ namespace VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings
 {
     public class PlantSeedlingVm : PlantItemVm, IMapFrom<Domain.Model.PlantSeedling>
     {
-
-        //[NotMapped]
-        //public string Link { get; set; }
-        //[NotMapped]
-        //public int Price { get; set; }
-
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Domain.Model.PlantSeedling, PlantSeedlingVm>().ReverseMap();
