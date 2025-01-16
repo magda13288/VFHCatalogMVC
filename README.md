@@ -75,6 +75,9 @@ You can find gardener by localization (now searching is basing on drop down list
 <h5>User seeds or seedlings list</h5>
 <img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
 <br>
+<h5>Home page for PrivateUser</h5>
+<img src="/VFHCatalogMVC.Web/Screens/AddOpinion.png">
+<br>
 <h5>Home page for admin</h5>
 <img src="/VFHCatalogMVC.Web/Screens/IndexAdmin.png">  
 <br>
@@ -92,6 +95,12 @@ You can find gardener by localization (now searching is basing on drop down list
 <br>
 <h5>User messages</h5>
 <img src="/VFHCatalogMVC.Web/Screens/UserMessages.png">
+<br>
+<h5>User messages for choosen plant</h5>
+<img src="/VFHCatalogMVC.Web/Screens/UserIndexPlantMessages.png">
+<br>
+<h5>Send message to other user for choosen plant</h5>
+<img src="/VFHCatalogMVC.Web/Screens/SendMessagePUByPU.png">
 <br>
 <h5>Registration</h5>
 <img src="/VFHCatalogMVC.Web/Screens/Register.png">
