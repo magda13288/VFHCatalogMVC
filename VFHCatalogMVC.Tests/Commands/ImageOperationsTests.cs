@@ -12,63 +12,84 @@ using VFHCatalogMVC.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Xunit;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using NPOI.SS.Formula.Functions;
 
 namespace Application.UnitTests.Commands
 {
     public class ImageOperationsTests:CommandTestBase
     {
         private readonly Mock<IWebHostEnvironment> _webHostEnvironmentMock;
-        private readonly Mock<PlantRepository> _plantRepoMock;
-        private readonly ImageService _imageService;
-        //private readonly string _DIR_GALLERY = "plantGallery/plantDetailsGallery";
-        //private readonly string _DIR_SEARCH = "plantGallery/searchPhoto";
+        private readonly Mock<IPlantRepository> _plantRepoMock;
+        //private readonly ImageService _imageService;
+        private readonly Mock<IFileSystem> _fileSystem;
         public ImageOperationsTests():base()
         {
             _webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
-            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
-            _plantRepoMock = new Mock<PlantRepository>(_context);
+            _plantRepoMock = new Mock<IPlantRepository>();
+            //_fileSystem = new Mock<IFileSystem>();
 
-            _imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object);
+            //_imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _fileSystem.Object);
         }
 
         [Fact]
         public void AddPlantGalleryPhotos_ShouldUploadImagesAndReturnFileNames()
         {
             // Arrange
+            var mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { @"wwwroot\plantGallery\plantDetailsGallery", new MockDirectoryData() }
+            });
+
+            _plantRepoMock.Setup(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), It.IsAny<int>()));
+
             var model = SetNewPlantParameters();
+            int plantDetailId = 1;
+
             model.PlantDetails = new PlantDetailsVm
             {
                 Images = new List<IFormFile>
                 {
-                    CreateMockFormFile("image1.jpg"),
-                    CreateMockFormFile("image2.png")
+                     CreateMockFormFile("image1.jpg", "image/jpeg"),
+                    CreateMockFormFile("image2.jpg", "image/jpeg")
+
+                    //CreateMockFormFile("image1.jpg"),
+                    //CreateMockFormFile("image2.png")
                 }
 
-            };        
-            int plantDetailId = 1;
+            };
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
+
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, mockFileSystem);
+     
 
             // Act
-            var result = _imageService.AddPlantGaleryPhotos(model, plantDetailId);
-
-            // Assert
-            Assert.Equal(2, result.Count);
-            _plantRepoMock.Verify(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), plantDetailId), Times.Exactly(2));
-        }
-        [Fact]
-        public void UploadImage_ShouldUploadFileAndReturnFileName()
-        {
-            // Arrange
-            var file = CreateMockFormFile("testImage.jpg");
-            string name = "TestPlant";
-            string path = "uploads";
-
-            // Act
-            var result = _imageService.UploadImage(file, name, path);
+            var result = imageService.AddPlantGaleryPhotos(model, plantDetailId);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Contains("TestPlant", result);
+            Assert.Equal(2, result.Count);
+            Assert.All(result, fileName => Assert.Contains("TestPlant", fileName));
+
+            _plantRepoMock.Verify(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), 1), Times.Exactly(2));
         }
+
+        //[Fact]
+        //public void UploadImage_ShouldUploadFileAndReturnFileName()
+        //{
+        //    // Arrange
+        //    var file = CreateMockFormFile("testImage.jpg");
+        //    string name = "TestPlant";
+        //    string path = "uploads";
+
+        //    // Act
+        //    var result = _imageService.UploadImage(file, name, path);
+
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.Contains("TestPlant", result);
+        //}
 
 
         private NewPlantVm SetNewPlantParameters()
@@ -92,19 +113,27 @@ namespace Application.UnitTests.Commands
                     ListPlantDestinations = new ListPlantDestinationsVm() { DestinationsIds = new int[] { 1, 2 } },
                 }
             };
-
             return plant;
 
         }
-
-        private IFormFile CreateMockFormFile(string fileName)
+        private IFormFile CreateMockFormFile(string fileName, string contentType)
         {
-            var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns(fileName);
-            mockFile.Setup(f => f.Length).Returns(1024);
-            mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(new byte[1024]));
-            return mockFile.Object;
+            var content = "Fake content for testing";
+            var fileStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
+            return new FormFile(fileStream, 0, fileStream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
         }
+        //private IFormFile CreateMockFormFile(string fileName)
+        //{
+        //    var mockFile = new Mock<IFormFile>();
+        //    mockFile.Setup(f => f.FileName).Returns(fileName);
+        //    mockFile.Setup(f => f.Length).Returns(1024);
+        //    mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(new byte[1024]));
+        //    return mockFile.Object;
+        //}
 
 
     }

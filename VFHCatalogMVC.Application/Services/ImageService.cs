@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Domain.Interface;
-using VFHCatalogMVC.Domain.Model;
+using System.IO.Abstractions;
 
 namespace VFHCatalogMVC.Application.Services
 {
@@ -16,13 +14,15 @@ namespace VFHCatalogMVC.Application.Services
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IPlantRepository _plantRepo;
+        private readonly IFileSystem _fileSystem;
         private readonly string _DIR_GALLERY = "plantGallery/plantDetailsGallery";
         private readonly string _DIR_SEARCH = "plantGallery/searchPhoto";
 
-        public ImageService(IWebHostEnvironment webHostEnvironment, IPlantRepository plantRepository)
+        public ImageService(IWebHostEnvironment webHostEnvironment, IPlantRepository plantRepository, IFileSystem fileSystem)
         {
             _webHostEnvironment = webHostEnvironment;
             _plantRepo = plantRepository;
+            _fileSystem = fileSystem;
         }
 
         public List<string> AddPlantGaleryPhotos(NewPlantVm model, int plantDetailId)
@@ -54,13 +54,13 @@ namespace VFHCatalogMVC.Application.Services
 
         public void DeleteImage(string path)
         {
-            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
+            var imagePath = _fileSystem.Path.Combine(_webHostEnvironment.WebRootPath, path);
 
-            if (System.IO.File.Exists(imagePath))
+            if (_fileSystem.File.Exists(imagePath))
             {
                 try
                 {
-                    System.IO.File.Delete(imagePath);
+                    _fileSystem.File.Delete(imagePath);
                 }
                 catch (Exception ex)
                 {
@@ -77,11 +77,19 @@ namespace VFHCatalogMVC.Application.Services
             {
                 try
                 {
-                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, path);
-                    string extension = Path.GetExtension(file.FileName);
+                    string uploadDir = _fileSystem.Path.Combine(_webHostEnvironment.WebRootPath, path);
+
+                    if (!_fileSystem.Directory.Exists(uploadDir))
+                    {
+                        _fileSystem.Directory.CreateDirectory(uploadDir);
+                    }
+
+                    string extension = _fileSystem.Path.GetExtension(file.FileName);
                     fileName = Guid.NewGuid().ToString() + "-" + name + extension;
-                    string filePath = Path.Combine(uploadDir, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    string filePath = _fileSystem.Path.Combine(uploadDir, fileName);
+
+
+                    using (var fileStream = _fileSystem.File.Create(filePath))
                     {
                         file.CopyTo(fileStream);
                     }

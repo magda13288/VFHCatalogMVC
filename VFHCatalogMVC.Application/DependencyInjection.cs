@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Reflection;
 using System.Text;
 using VFHCatalogMVC.Application.Interfaces;
@@ -25,6 +26,8 @@ namespace VFHCatalogMVC.Application
             services.AddTransient<IMessageService, MessageService>();
             services.AddTransient(typeof(IPlantItemProcessor<>), typeof(PlantItemProcessor<>));
             services.AddTransient<IListService, ListService>();
+            services.AddSingleton<IFileSystem, FileSystem>();
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

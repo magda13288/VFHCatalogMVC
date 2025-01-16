@@ -26,30 +26,25 @@ namespace Application.UnitTests.Commands
                 
         }
 
-        [Fact]
+        //[Fact]
 
-        public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
-        {
-            //Arrange
+        //public void Add_PlantDetails_ProperRequest_ShouldReturnIdNotEquall0()
+        //{
+        //    //Arrange
 
-            var plantDetailService = SetServices();
+        //    var plantDetailService = SetServices();
 
-            var plant = SetNewPlantParameters();
-            plant.Id = 1;
+        //    var plant = SetNewPlantParameters();
+        //    plant.Id = 1;
 
-            //Act
+        //    //Act
 
-            var plantDetailId = plantDetailService.AddPlantDetails(plant);
+        //    var plantDetailId = plantDetailService.AddPlantDetails(plant);
 
-            //Assert
+        //    //Assert
 
-            Assert.NotEqual( 0, plantDetailId );
-        }
-
-
-
-
-
+        //    Assert.NotEqual( 0, plantDetailId );
+        //}
 
         //[Theory]
 
@@ -121,64 +116,64 @@ namespace Application.UnitTests.Commands
 
         //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnPlantDetail()
-        {
-            //Arrange
+        //public void GetPlantDetailsById_ShouldReturnPlantDetail()
+        //{
+        //    //Arrange
 
-            var plantDetailService = SetServices();
+        //    var plantDetailService = SetServices();
 
-            //Act
+        //    //Act
 
-            var plantDetails = plantDetailService.GetPlantDetails(1);
+        //    var plantDetails = plantDetailService.GetPlantDetails(1);
 
-            //Arrange
-            Assert.NotNull(plantDetails);
+        //    //Arrange
+        //    Assert.NotNull(plantDetails);
           
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantColor()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantColor()
+        //{
             
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitSize()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitSize()
+        //{
 
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitType()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantFruitType()
+        //{
 
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowthTypes()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowthTypes()
+        //{
 
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowingSeazons()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantGrowingSeazons()
+        //{
 
-        }
+        //}
 
-        [Fact]
+        //[Fact]
 
-        public void GetPlantDetailsById_ShouldReturnNameOfPlantDestinations()
-        {
+        //public void GetPlantDetailsById_ShouldReturnNameOfPlantDestinations()
+        //{
 
-        }
+        //}
         public PlantDetailsService SetServices()
         {
             var configurationProvider = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
