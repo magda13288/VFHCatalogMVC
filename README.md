@@ -75,7 +75,7 @@ You can find gardener by localization (now searching is basing on drop down list
 <h5>User seeds or seedlings list</h5>
 <img src="/VFHCatalogMVC.Web/Screens/IndexUserSeedsList.png">
 <br>
-<h5>Home page for PrivateUser</h5>
+<h5>Add opinion about plant</h5>
 <img src="/VFHCatalogMVC.Web/Screens/AddOpinion.png">
 <br>
 <h5>Home page for admin</h5>
