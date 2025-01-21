@@ -201,7 +201,9 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             if(viewAll)
             return plants;
 
-            return plants.Where(plant => MatchPlantCriteria(plant, typeId, groupId, sectionId)).ToList();
+            var filteredPlants = plants.Where(plant => MatchPlantCriteria(plant, typeId, groupId, sectionId)).ToList();
+
+            return filteredPlants.Where(p=>p.PlantForList.isActive == false).ToList();
         }
         private bool MatchPlantCriteria(NewUserPlantVm plant, int typeId, int groupId, int? sectionId)
         {

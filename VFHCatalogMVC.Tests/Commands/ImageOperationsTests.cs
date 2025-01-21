@@ -22,47 +22,30 @@ namespace Application.UnitTests.Commands
     {
         private readonly Mock<IWebHostEnvironment> _webHostEnvironmentMock;
         private readonly Mock<IPlantRepository> _plantRepoMock;
-        //private readonly ImageService _imageService;
-        private readonly Mock<IFileSystem> _fileSystem;
-        public ImageOperationsTests():base()
+        private readonly MockFileSystem _mockFileSystem;
+        public ImageOperationsTests() : base()
         {
             _webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
             _plantRepoMock = new Mock<IPlantRepository>();
-            //_fileSystem = new Mock<IFileSystem>();
-
-            //_imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _fileSystem.Object);
+            _mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
         }
 
         [Fact]
         public void AddPlantGalleryPhotos_ShouldUploadImagesAndReturnFileNames()
         {
             // Arrange
-            var mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-            {
-                { @"wwwroot\plantGallery\plantDetailsGallery", new MockDirectoryData() }
-            });
-
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
             _plantRepoMock.Setup(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), It.IsAny<int>()));
 
             var model = SetNewPlantParameters();
+            model.PlantDetails.Images = new List<IFormFile>
+            {
+                CreateMockFormFile("image1.jpg", "image/jpeg"),
+                CreateMockFormFile("image2.jpg", "image/jpeg")
+            };
             int plantDetailId = 1;
 
-            model.PlantDetails = new PlantDetailsVm
-            {
-                Images = new List<IFormFile>
-                {
-                     CreateMockFormFile("image1.jpg", "image/jpeg"),
-                    CreateMockFormFile("image2.jpg", "image/jpeg")
-
-                    //CreateMockFormFile("image1.jpg"),
-                    //CreateMockFormFile("image2.png")
-                }
-
-            };
-            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
-
-            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, mockFileSystem);
-     
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _mockFileSystem);
 
             // Act
             var result = imageService.AddPlantGaleryPhotos(model, plantDetailId);
@@ -70,26 +53,78 @@ namespace Application.UnitTests.Commands
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
-            Assert.All(result, fileName => Assert.Contains("TestPlant", fileName));
-
-            _plantRepoMock.Verify(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), 1), Times.Exactly(2));
+            Assert.All(result, fileName => Assert.Contains(model.FullName, fileName));
+            _plantRepoMock.Verify(repo => repo.AddPlantDetailsImages(It.IsAny<string>(), plantDetailId), Times.Exactly(2));
         }
 
-        //[Fact]
-        //public void UploadImage_ShouldUploadFileAndReturnFileName()
-        //{
-        //    // Arrange
-        //    var file = CreateMockFormFile("testImage.jpg");
-        //    string name = "TestPlant";
-        //    string path = "uploads";
+        [Fact]
+        public void AddPlantSearchPhoto_ShouldUploadImageAndReturnFileName()
+        {
+            // Arrange
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
 
-        //    // Act
-        //    var result = _imageService.UploadImage(file, name, path);
+            var model = SetNewPlantParameters();
+            model.Photo = CreateMockFormFile("photo.jpg", "image/jpeg");
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Contains("TestPlant", result);
-        //}
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _mockFileSystem);
+
+            // Act
+            var result = imageService.AddPlantSearchPhoto(model);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Contains(model.FullName, result);
+            Assert.EndsWith(".jpg", result);
+        }
+
+        [Fact]
+        public void DeleteImage_ShouldRemoveFileIfExists()
+        {
+            // Arrange
+            string filePath = @"wwwroot/plantGallery/searchPhoto/test.jpg";
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
+            _mockFileSystem.AddFile(filePath, new MockFileData("File content"));
+
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _mockFileSystem);
+
+            // Act
+            imageService.DeleteImage("plantGallery/searchPhoto/test.jpg");
+
+            // Assert
+            Assert.False(_mockFileSystem.File.Exists(filePath));
+        }
+
+        [Fact]
+        public void DeleteImage_ShouldNotThrowIfFileDoesNotExist()
+        {
+            // Arrange
+            string filePath = @"wwwroot/plantGallery/searchPhoto/nonexistent.jpg";
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
+
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _mockFileSystem);
+
+            // Act & Assert
+            imageService.DeleteImage("plantGallery/searchPhoto/nonexistent.jpg");
+        }
+
+        [Fact]
+        public void UploadImage_ShouldUploadFileAndReturnFileName()
+        {
+            // Arrange
+            _webHostEnvironmentMock.Setup(env => env.WebRootPath).Returns("wwwroot");
+
+            var file = CreateMockFormFile("testImage.jpg", "image/jpeg");
+            var imageService = new ImageService(_webHostEnvironmentMock.Object, _plantRepoMock.Object, _mockFileSystem);
+
+            // Act
+            var result = imageService.UploadImage(file, "TestPlant", "uploads");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Contains("TestPlant", result);
+            Assert.True(_mockFileSystem.File.Exists($"wwwroot/uploads/{result}"));
+        }
+
 
 
         private NewPlantVm SetNewPlantParameters()
@@ -125,16 +160,6 @@ namespace Application.UnitTests.Commands
                 Headers = new HeaderDictionary(),
                 ContentType = contentType
             };
-        }
-        //private IFormFile CreateMockFormFile(string fileName)
-        //{
-        //    var mockFile = new Mock<IFormFile>();
-        //    mockFile.Setup(f => f.FileName).Returns(fileName);
-        //    mockFile.Setup(f => f.Length).Returns(1024);
-        //    mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(new byte[1024]));
-        //    return mockFile.Object;
-        //}
-
-
+        }     
     }
 }
