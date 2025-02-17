@@ -368,6 +368,20 @@ namespace VFHCatalogMVC.Application.Services.UserServices
             return item;
 
         }
+
+        /// <summary>
+        /// Updates an entity and its associated contact details, if provided.  
+        /// The method first updates the main entity, then handles updating or creating contact details as needed.
+        /// </summary>
+        /// <typeparam name="T">The type of the main entity to be updated, which must inherit from BasePlantSeedSeedlingProperty.</typeparam>
+        /// <typeparam name="TVm">The view model type representing the main entity.</typeparam>
+        /// <typeparam name="TDetailForEntityVm">The view model type for contact details associated with the entity.</typeparam>
+        /// <typeparam name="TDetailForEntity">The entity type representing the saved contact details.</typeparam>
+        /// <param name="entityVm">The view model containing updated entity data.</param>
+        /// <param name="getExistingDetail">A function that retrieves the existing contact detail ID for the entity, if available.</param>
+        /// <param name="createDetailForEntityVm">A function that creates a contact detail view model using the generated contact detail ID.</param>
+        /// <param name="mapDetailForEntity">A function that maps the contact detail view model to the entity model.</param>
+
         private void UpdateEntity<T, TVm, TDetailForEntityVm, TDetailForEntity>(
                TVm entityVm,
                Func<int, int?> getExistingDetail,

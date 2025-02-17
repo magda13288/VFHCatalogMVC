@@ -173,7 +173,6 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return plants;
 
         }
-
         public PlantSeedsForListVm GetAllPlantSeeds(
             int id,
             int countryId,
@@ -455,6 +454,25 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
 
         }
+
+        /// <summary>
+        /// Adds contact details for a given entity and associates them with the entity using a contact entity.
+        /// </summary>
+        /// <typeparam name="TVm">The view model type representing the entity that contains contact details.</typeparam>
+        /// <typeparam name="TContactEntity">The type representing the contact entity associated with the main entity.</typeparam>
+        /// <param name="entityId">The identifier of the main entity to which the contact details should be assigned.</param>
+        /// <param name="entity">The view model containing contact detail information.</param>
+        /// <param name="createContactEntity">
+        /// A function that creates a contact entity linking the main entity with its contact details.
+        /// Takes two parameters: the entity ID and the generated contact detail ID.
+        /// </param>
+        /// <param name="saveContactEntity">
+        /// A function that saves the created contact entity and returns its ID.
+        /// </param>
+        /// <returns>
+        /// The ID of the saved contact entity.  
+        /// Returns 0 if no contact details are provided.
+        /// </returns>
 
         public int AddEntityContactDetails<TVm, TContactEntity>(
              int entityId,

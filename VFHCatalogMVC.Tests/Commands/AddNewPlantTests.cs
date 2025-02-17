@@ -198,33 +198,6 @@ namespace Application.UnitTests.Commands
             Assert.Equal(true, isNew);
         }
 
-
-        //[Fact]
-
-        //public void GetAllActivePlantsForList_SearchByName_ShouldReturnPlantList()
-        //{
-        //    //Arrange
-        //    var mockUser = SetUser();
-        //    var userRole = UserRoles.ADMIN;
-
-        //    _userManagerMock.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
-        //    _userManagerMock.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
-
-        //    var searchString = "Test";
-        //    var newPlant = SetNewPlantParameters();
-        //    var id = _plantService.AddPlant(newPlant,mockUser.UserName);
-
-        //    //Act
-
-        //    var plantList = _plantService.GetAllActivePlantsForList(10, 1, "Test", 1, 1, 1);
-        //    var plant = plantList.Plants.FirstOrDefault(x => x.Id == 1);
-
-        //    //Arrange
-
-        //    Assert.True(plantList.Count == 1);
-        //    Assert.True(plant.FullName == searchString);
-        //}
-
         private NewPlantVm SetNewPlantParameters()
         {
             var plant = new NewPlantVm()

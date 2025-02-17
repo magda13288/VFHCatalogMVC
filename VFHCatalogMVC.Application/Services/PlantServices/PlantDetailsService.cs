@@ -87,6 +87,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 return plantDetailsVm;
 
         }
+
+        /// <summary>
+        /// Updates the related entities for a given plantDetailId.
+        /// First, it removes existing entities if they exist, then adds new entities from the provided entityIds.
+        /// </summary>
+        /// <typeparam name="T">The type of entities being updated.</typeparam>
+        /// <param name="plantDetailId">The identifier of the plant detail for which entities are being updated.</param>
+        /// <param name="entityIds">A list of identifiers for the new entities to be assigned.</param>
+        /// <param name="getPropertiesAction">A function that retrieves the existing entities associated with the plantDetailId.</param>
+        /// <param name="addAction">An action that adds new entities, taking an array of entity IDs and the plantDetailId.</param>
+        /// <param name="deleteAction">An action that deletes the existing entities associated with the plantDetailId.</param>
+
         public void UpdateEntity<T>(
             int plantDetailId,
             IEnumerable<int> entityIds, 
@@ -134,7 +146,10 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
 
         /// <summary>
-        ///  Action - Delegat, który wskazuje funkcję wykonującą faktyczne dodanie tych encji do bazy danych lub innego źródła. Funkcja ta przyjmuje dwa parametry:Tablicę   identyfikatorów(int[]) – encje, które mają być dodane. Identyfikator głównego obiektu (int) – do którego te encje mają być przypisane.
+        /// Action - A delegate that points to a function performing the actual addition of these entities to the database or another data source.  
+        /// This function takes two parameters:  
+        /// - An array of identifiers (int[]) – the entities to be added.  
+        /// - The identifier of the main object (int) – to which these entities should be assigned.  
         /// </summary>
         /// <param name="plantDetailId"></param>
         /// <param name="entityIds"></param>
@@ -147,6 +162,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
         }
         private bool HasElements<T>(IEnumerable<T> list) => list != null && list.Any();
+
+        /// <summary>
+        /// Builds a view model containing names of related entities for a given plant detail ID.
+        /// Each method retrieves related entity names using the `GetPropertyNames` helper method.
+        /// </summary>
+        /// <param name="id">The identifier of the plant detail for which related entity names are retrieved.</param>
+        /// <returns>A view model containing the names of the associated entities.</returns>
         private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowthType>, _plantRepo.GetAllEntities<GrowthType>, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
         private ListPlantDestinationsVm BuildDestinationsVm(int id) => new ListPlantDestinationsVm { DestinationsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantDestination>, _plantRepo.GetAllEntities<Destination>, x => x.DestinationId, x => x.Id, x => x.Name, id) };
         private ListGrowingSeazonsVm BuildGrowingSeaznosVm(int id) => new ListGrowingSeazonsVm { GrwoingSeazonsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowingSeazon>, _plantRepo.GetAllEntities<GrowingSeazon>, x => x.GrowingSeazonId, x => x.Id, x => x.Name, id) };
@@ -174,6 +196,22 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             return plantOpinions;
         }
 
+        /// <summary>
+        /// Retrieves a list of property names associated with a specific plant detail ID.  
+        /// It maps plant properties to their corresponding names from a list of all available entities.
+        /// </summary>
+        /// <typeparam name="TVm">The type representing the plant property details.</typeparam>
+        /// <typeparam name="TEntity">The type representing the full list of available entities.</typeparam>
+        /// <param name="getPlantProperties">A function that retrieves plant-specific properties based on the provided ID.</param>
+        /// <param name="getAllProperties">A function that retrieves all available properties.</param>
+        /// <param name="getPropertyId">A function that extracts the property ID from the plant property.</param>
+        /// <param name="getEntityId">A function that extracts the entity ID from the full list of entities.</param>
+        /// <param name="getEntityName">A function that extracts the name of the entity.</param>
+        /// <param name="id">The identifier of the plant detail for which property names should be retrieved.</param>
+        /// <returns>
+        /// A list of property names, separated by commas, corresponding to the plant's associated properties.
+        /// Returns an empty list if no matching properties are found.
+        /// </returns>
         private List<string> GetPropertyNames<TVm, TEntity>(
             Func<int, IEnumerable<TVm>> getPlantProperties,
             Func<IEnumerable<TEntity>> getAllProperties,

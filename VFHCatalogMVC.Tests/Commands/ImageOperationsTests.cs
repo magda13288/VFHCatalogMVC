@@ -124,9 +124,6 @@ namespace Application.UnitTests.Commands
             Assert.Contains("TestPlant", result);
             Assert.True(_mockFileSystem.File.Exists($"wwwroot/uploads/{result}"));
         }
-
-
-
         private NewPlantVm SetNewPlantParameters()
         {
             var plant = new NewPlantVm()

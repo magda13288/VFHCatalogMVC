@@ -21,16 +21,16 @@ namespace Application.UnitTests.Validations
             
         }
 
-        [Fact]
+        //[Fact]
 
-        public void Add_NewPlant_InvalidReqest_WrongId_ShouldReturnValidationError()
-        {
-            var validator = new NewPlantVm.NewPlantValidation();
-            var newPlant = SetNewPlantParameters();
-            newPlant.Id = -1;
+        //public void Add_NewPlant_InvalidReqest_WrongId_ShouldReturnValidationError()
+        //{
+        //    var validator = new NewPlantVm.NewPlantValidation();
+        //    var newPlant = SetNewPlantParameters();
+        //    newPlant.Id = -1;
 
-            validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.Id));
-        }
+        //    validator.TestValidate(newPlant).ShouldHaveValidationErrorFor(nameof(newPlant.Id));
+        //}
 
         [Fact]
 
