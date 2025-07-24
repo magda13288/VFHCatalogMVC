@@ -20,7 +20,8 @@ services:
 
   aspnetapp:
     build:
-      context: ../UI/VFHCatalogMVC.Web 
+      context: ../
+      dockerfile: VFHCatalogMVC.Web/Dockerfile
     container_name: aspnetapp
     ports:
       - "8080:80"
