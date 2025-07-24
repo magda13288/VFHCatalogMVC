@@ -27,6 +27,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VFHCatalogApi", "VFHCatalog
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{483024E4-6AF2-44D0-8071-2F73149CA2C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker_files", "Docker_files", "{A47A455E-DB39-4EED-AA5F-DF4173BD57AE}"
+	ProjectSection(SolutionItems) = preProject
+		Docker_files\.env = Docker_files\.env
+		Docker_files\docker-compose.yml = Docker_files\docker-compose.yml
+		Docker_files\env.example = Docker_files\env.example
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "init", "init", "{D42F4B94-0EFA-41CB-8F7C-12D1325496B4}"
+	ProjectSection(SolutionItems) = preProject
+		Docker_files\init\init-db.sql = Docker_files\init\init-db.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +81,7 @@ Global
 		{DC8C8F05-18EF-4ABE-A619-4920A7AF5AFD} = {483024E4-6AF2-44D0-8071-2F73149CA2C5}
 		{F1484580-6560-4656-ABF6-FD164EE07044} = {6B012C24-205F-4FA2-8F3B-49CAA65CFA56}
 		{483024E4-6AF2-44D0-8071-2F73149CA2C5} = {851C105C-8BA7-40AE-A190-A967D5AA9193}
+		{D42F4B94-0EFA-41CB-8F7C-12D1325496B4} = {A47A455E-DB39-4EED-AA5F-DF4173BD57AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4055176A-83F5-4899-BE18-8C4130189E77}

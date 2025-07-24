@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+    volumes:
+      - ./init/init-db.sql:/var/opt/mssql/scripts/init-db.sql
+    command: >
+      /bin/bash -c "
+        /opt/mssql/bin/sqlservr &
+        sleep 20 &&
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '${SA_PASSWORD}' -i /var/opt/mssql/scripts/init-db.sql
+      "
+
+  aspnetapp:
+    build:
+      context: ../UI/VFHCatalogMVC.Web 
+    container_name: aspnetapp
+    ports:
+      - "8080:80"
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=VFHCatalog;User=SA;Password=${SA_PASSWORD};
