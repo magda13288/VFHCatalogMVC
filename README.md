@@ -104,29 +104,57 @@ You can find gardener by localization (now searching is basing on drop down list
 <br>
 <h5>Registration</h5>
 <img src="/VFHCatalogMVC.Web/Screens/Register.png">
-<h3>Prerequisites</h3>
+
+## Prerequisites
+
 * Docker Desktop (with WSL 2 enabled for Windows, if applicable)
 * (Optional: .NET SDK, if someone wants to work without Docker)
-<h2>Running the Project with Docker Compose</h2>
-This project uses Docker Compose to easily set up the development environment, including an SQL Server database and an ASP.NET Core application.  
-<h2>Environment Variables Configuration</h2>
+
+## Running the Project with Docker Compose
+
+This project uses Docker Compose to easily set up the development environment, including an SQL Server database and an ASP.NET Core application.
+
+### 1. Environment Variables Configuration
+
 This project requires certain environment variables, such as the database password and OAuth authentication keys (e.g., Google Client ID/Secret).
-<ul>
-<li></li> Copy the `env.example` file to a new file named `.env` in the same directory as `docker-compose.yml`:
+* Copy the `env.example` file to a new file named `.env` in the same directory as `docker-compose.yml`:
     ```bash
     cp env.example .env  # Linux/macOS
     copy env.example .env # Windows
-    ```</li>
-<li>Open the newly created `.env` file and fill in your actual values for `SA_PASSWORD`, `Authentication__Google__ClientId`, and `Authentication__Google__ClientSecret`.
+    ```
+* Open the newly created `.env` file and fill in your actual values for `SA_PASSWORD`, `Authentication__Google__ClientId`, and `Authentication__Google__ClientSecret`.
+
     **Example `.env` file (with your data):**
     ```
     SA_PASSWORD=YourSecurePassword!
     Authentication__Google__ClientId=your_actual_google_client_id
     Authentication__Google__ClientSecret=your_actual_google_client_secret
     ```
-    * **How to get Google Client ID/Secret:** (Paste your detailed instructions here, e.g., with links to the Google Cloud Console).
-</li>
-</ul>
+    * **How to get Google Client ID/Secret:**
+        1.  Go to [Google Cloud Console](https://console.cloud.google.com/).
+        2.  Create a new project (or select an existing one).
+        3.  Navigate to **"APIs & Services" > "Credentials"**.
+        4.  Click **"Create Credentials"** and select **"OAuth client ID"**.
+        5.  Choose application type **"Web application"**.
+        6.  In the **"Authorized redirect URIs"** section, add:
+            ```
+            http://localhost:8080
+            ```
+            (If your application uses other redirect URIs, add them as well).
+        7.  After creation, copy your **Client ID** and **Client Secret** and paste them into your `.env` file.
+
+### 2. Running the Docker Containers
+
+In the directory containing `docker-compose.yml` (and `.env`), run:
+```bash
+docker-compose up --build
+```
+This command will build the images, create and start the containers, and initialize the database.
+
+### 3. Accessing the Application
+Once all services are up and running (this might take a few minutes on the first run), the application will be available at:
+
+http://localhost:8080
 
 
 
