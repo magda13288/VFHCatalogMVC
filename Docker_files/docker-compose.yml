@@ -8,20 +8,29 @@ services:
       SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
     volumes:
-      - ./init/init-db.sql:/var/opt/mssql/scripts/init-db.sql
+      - ./init/init-db.sql:/var/opt/mssql/scripts/init-db.sql:ro
     networks:
-      - sqlnet
+      - appnet
 
-  sqlclient:
+  db-init:
     image: mcr.microsoft.com/mssql-tools
-    container_name: sqlclient
+    container_name: db-init
     depends_on:
       - sqlserver
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+    entrypoint: >
+      /bin/bash -c "
+        echo 'Czekam na SQL Server, próbuję połączyć się z portem 1433...'
+        until /opt/mssql-tools/bin/sqlcmd -S sqlserver -U SA -P '${SA_PASSWORD}' -Q 'SELECT 1' > /dev/null 2>&1; do
+          echo 'SQL Server nie jest jeszcze gotowy - czekam...'
+          sleep 5
+        done
+        echo 'SQL Server jest gotowy! Uruchamiam skrypt inicjalizacyjny...'
+        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U SA -P '${SA_PASSWORD}' -i /init/init-db.sql
+      "
+    volumes:
+      - ./init/init-db.sql:/init/init-db.sql:ro
     networks:
-      - sqlnet
+      - appnet
 
   aspnetapp:
     build:
@@ -33,9 +42,12 @@ services:
     depends_on:
       - sqlserver
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=VFHCatalog;User=SA;Password=${SA_PASSWORD};
+      ASPNETCORE_URLS: http://0.0.0.0:80
+      ConnectionStrings__DefaultConnection: Server=sqlserver;Database=VFHCatalog;User=SA;Password=${SA_PASSWORD};
+      Authentication__Google__ClientId: ${Authentication__Google__ClientId}
+      Authentication__Google__ClientSecret: ${Authentication__Google__ClientSecret}
     networks:
-      - sqlnet
+      - appnet
 
 networks:
-  sqlnet:
+  appnet:

@@ -39,6 +39,7 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Infrastructure.Common;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace VFHCatalogMVC.Web
 {
@@ -124,12 +125,17 @@ namespace VFHCatalogMVC.Web
                 options.User.RequireUniqueEmail = true;
 
             });
-
-            services.AddAuthentication().AddGoogle(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+            .AddGoogle(options =>
             {
                 IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
+                options.CallbackPath = "/signin-google"; // upewnij siê, ¿e odpowiada redirect_uri
             });
         }
 
