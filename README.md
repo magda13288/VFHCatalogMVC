@@ -117,6 +117,7 @@ This project uses Docker Compose to easily set up the development environment, i
 ### 1. Environment Variables Configuration
 
 This project requires certain environment variables, such as the database password and OAuth authentication keys (e.g., Google Client ID/Secret).
+*Download project 
 * Copy the `env.example` file to a new file named `.env` in the same directory as `docker-compose.yml`:
     ```bash
     cp env.example .env  # Linux/macOS
