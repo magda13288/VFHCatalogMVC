@@ -7,8 +7,8 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class GrowthType:BasePlantEntityNameProperty
     {    
-        public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; }
-        public ICollection<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; }
+        public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; } = new List<PlantGrowthType>();
+		public ICollection<GrowthTypesForListFilters> GrowthTypesForListFilters { get; set; } = new List<GrowthTypesForListFilters>();
 
-    }
+	}
 }

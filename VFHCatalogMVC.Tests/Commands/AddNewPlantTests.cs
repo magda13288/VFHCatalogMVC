@@ -1,31 +1,26 @@
 ﻿using Application.UnitTests.Common;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Shouldly;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.Mapping;
 using VFHCatalogMVC.Application.Services.PlantServices;
+using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
-using VFHCatalogMVC.Application.ViewModels.Plant;
-using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
-using Xunit;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using VFHCatalogMVC.Infrastructure.Repositories;
-using VFHCatalogMVC.Application.Constants;
+using Xunit;
 
 namespace Application.UnitTests.Commands
 {
@@ -65,10 +60,10 @@ namespace Application.UnitTests.Commands
                 _userPlantServiceMock.Object,
                 _seedProcessorMock.Object,
                 _seedlingProcessorMock.Object,
-                _listServiceMock.Object                
+                _listServiceMock.Object
             );
         }
-    
+
         [Fact]
 
         public void Add_NewPlant_ProperRequest_ShouldReturnIdNotEquall0()
@@ -77,7 +72,7 @@ namespace Application.UnitTests.Commands
 
             var mockUser = SetUser();
             var userRole = UserRoles.ADMIN;
-           
+
             _userManagerMock.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
             _userManagerMock.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
 
@@ -98,7 +93,7 @@ namespace Application.UnitTests.Commands
         [Fact]
 
         public void Add_NewPlantWithSectionIdEqual0_ShouldSetParamSectionIdOnNull()
-        {    
+        {
             //Arrange
 
             var mockUser = SetUser();
@@ -128,7 +123,7 @@ namespace Application.UnitTests.Commands
             //Arrange
             var mockUser = SetUser();
             var userRole = UserRoles.ADMIN;
-           
+
             _userManagerMock.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
             _userManagerMock.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
 
@@ -166,7 +161,7 @@ namespace Application.UnitTests.Commands
             var isActive = _context.Plants.FirstOrDefault(x => x.Id == id).isActive;
             var isNew = _context.Plants.FirstOrDefault(x => x.Id == id).isNew;
 
-            //Arrange
+            //Assert
 
             Assert.Equal(true, isActive);
             Assert.Equal(false, isNew);
@@ -180,7 +175,7 @@ namespace Application.UnitTests.Commands
             //Arrange
             var mockUser = SetUser();
             var userRole = UserRoles.PRIVATE_USER;
-         
+
             _userManagerMock.Setup(x => x.FindByNameAsync(mockUser.UserName)).ReturnsAsync(mockUser);
             _userManagerMock.Setup(x => x.IsInRoleAsync(mockUser, userRole)).ReturnsAsync(true);
 
@@ -192,7 +187,7 @@ namespace Application.UnitTests.Commands
             var isActive = _context.Plants.FirstOrDefault(x => x.Id == id).isActive;
             var isNew = _context.Plants.FirstOrDefault(x => x.Id == id).isNew;
 
-            //Arrange
+            //Assert
 
             Assert.Equal(false, isActive);
             Assert.Equal(true, isNew);
@@ -233,7 +228,7 @@ namespace Application.UnitTests.Commands
                 Email = "testUser@gmail.com",
                 EmailConfirmed = true,
                 isActive = true,
-                
+
             };
 
             return mockUser;
@@ -265,5 +260,5 @@ namespace Application.UnitTests.Commands
             );
         }
     }
-   
+
 }

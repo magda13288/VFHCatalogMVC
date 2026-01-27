@@ -11,7 +11,7 @@ namespace VFHCatalogMVC.Domain.Model
         public string MessageContent { get; set; }
         public DateTime AddedDate { get; set; }
         public bool isAnswer { get; set; }
-        public virtual ICollection<MessageAnswer> MessageAnswers { get; set; }
-        public virtual ICollection<PlantMessage> PlantMessages { get; set; }
-    }
+        public virtual ICollection<MessageAnswer> MessageAnswers { get; set; } = new List<MessageAnswer>();
+        public virtual ICollection<PlantMessage> PlantMessages { get; set; } = new List<PlantMessage>();
+	}
 }

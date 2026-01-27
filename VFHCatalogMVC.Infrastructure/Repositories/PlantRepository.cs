@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
@@ -13,18 +10,19 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
 {
     public class PlantRepository : IPlantRepository
     {
-        private Context _context;
+        private readonly Context _context;
         public PlantRepository(Context context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
             _context = context;
         }
 
         public void DeletePlant(Plant plant)
         {
-            
-           _context.Attach(plant);
-           _context.Entry(plant).Property(e=>e.isActive).IsModified = true;
-           _context.SaveChanges();
+
+            _context.Attach(plant);
+            _context.Entry(plant).Property(e => e.isActive).IsModified = true;
+            _context.SaveChanges();
         }
 
         public int AddEntity<T>(T entity) where T : BaseEntity
@@ -33,7 +31,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.SaveChanges();
 
             return entity.Id;
-        }    
+        }
         public int AddPlantDetails(PlantDetail plantDetail, int plantId)
         {
             plantDetail.PlantRef = plantId;
@@ -77,11 +75,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
 
             _context.PlantDetailsImages.Add(new PlantDetailsImages { PlantDetailId = plantDetailId, ImageURL = fileName });
-           _context.SaveChanges();
+            _context.SaveChanges();
         }
         public PlantDetail GetPlantDetails(int id)
         {
-            var plantDetails = _context.PlantDetails.AsNoTracking().FirstOrDefault(p=>p.PlantRef == id);
+            var plantDetails = _context.PlantDetails.AsNoTracking().FirstOrDefault(p => p.PlantRef == id);
             return plantDetails;
         }
 
@@ -99,15 +97,15 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var plant = _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == plantId);
             return plant;
         }
-        public string GetPlantDetailsPropertyName<T>(int? id) where T: BasePlantEntityNameProperty
+        public string GetPlantDetailsPropertyName<T>(int? id) where T : BasePlantEntityNameProperty
         {
-            var entity = _context.Set<T>().AsNoTracking().FirstOrDefault(p =>p.Id== id);
+            var entity = _context.Set<T>().AsNoTracking().FirstOrDefault(p => p.Id == id);
             if (entity == null) return null;
 
             //var nameProperty = typeof(T).GetProperty("Name");
             //return nameProperty?.GetValue(entity)?.ToString();
 
-            return entity.Name;        
+            return entity.Name;
 
         }
         /// <summary>
@@ -123,10 +121,10 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         }
         public IQueryable<PlantOpinion> GetPlantOpinions(int id)
         {
-            return _context.PlantOpinions.AsNoTracking().Where(p=>p.PlantDetailId== id);
+            return _context.PlantOpinions.AsNoTracking().Where(p => p.PlantDetailId == id);
         }
 
-        public IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T:BasePropertyForListFilters
+        public IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T : BasePropertyForListFilters
         {
             var entities = _context.Set<T>().AsNoTracking().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
 
@@ -137,12 +135,6 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         {
             return _context.Set<T>();
         }
-        public IQueryable<Plant> GetAllActivePlants()
-        {
-            var plants = _context.Plants.AsNoTracking().Where(p => p.isActive == true).OrderBy(p => p.Id);
-
-            return plants;
-        }
         public IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId)
         {
             var plantDetailsImages = _context.PlantDetailsImages.AsNoTracking().Where(p => p.PlantDetailId == plantDetailId);
@@ -152,27 +144,27 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void UpdatePlant(Plant plant)
         {
             _context.Attach(plant);
-            _context.Entry(plant).Property(e=>e.FullName).IsModified = true;
-            _context.Entry(plant).Property(e=>e.Photo).IsModified = true;
-            _context.SaveChanges();          
+            _context.Entry(plant).Property(e => e.FullName).IsModified = true;
+            _context.Entry(plant).Property(e => e.Photo).IsModified = true;
+            _context.SaveChanges();
         }
 
         public void UpdatePlantDetails(PlantDetail plant)
         {
             _context.Attach(plant);
-            _context.Entry(plant).Property(e=>e.ColorId).IsModified = true;
-            _context.Entry(plant).Property(e=>e.FruitSizeId).IsModified = true;
-            _context.Entry(plant).Property(e=>e.FruitSizeId).IsModified = true;
-            _context.Entry(plant).Property(e=>e.Description).IsModified = true;
-            _context.Entry(plant).Property(e=>e.PlantPassportNumber).IsModified = true;
-            _context.Entry(plant).Property(e=>e.PlantRef).IsModified = false;
+            _context.Entry(plant).Property(e => e.ColorId).IsModified = true;
+            _context.Entry(plant).Property(e => e.FruitSizeId).IsModified = true;
+            _context.Entry(plant).Property(e => e.FruitSizeId).IsModified = true;
+            _context.Entry(plant).Property(e => e.Description).IsModified = true;
+            _context.Entry(plant).Property(e => e.PlantPassportNumber).IsModified = true;
+            _context.Entry(plant).Property(e => e.PlantRef).IsModified = false;
             _context.SaveChanges();
-            
+
         }
 
         public void DeletePlantDetailEntity<T>(int id) where T : BasePlantDetailKeyProperty
         {
-            var entity = _context.Set<T>().Where(p => p.PlantDetailId == id); 
+            var entity = _context.Set<T>().Where(p => p.PlantDetailId == id);
             _context.Set<T>().RemoveRange(entity);
             _context.SaveChanges();
         }
@@ -182,7 +174,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.PlantDetailsImages.Remove(imageToDelete);
             _context.SaveChanges();
 
-        }       
+        }
         public int GetPlantDetailId(int id)
         {
             var plant = _context.PlantDetails.AsNoTracking().FirstOrDefault(p => p.PlantRef == id);
@@ -193,7 +185,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public IQueryable<T> GetPlantSeedOrSeedling<T>(int id) where T : BasePlantSeedSeedlingProperty
         {
             return _context.Set<T>().AsNoTracking().Where(p => p.PlantId == id);
-        }      
+        }
         public int AddContactDetailsEntity<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);
@@ -206,6 +198,7 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             return contact.Id;
         }
 
+        /// methods that stay
         public Plant GetPlantToActivate(int id)
         {
             var plant = _context.Plants.AsNoTracking().FirstOrDefault(e => e.Id == id);
@@ -215,9 +208,90 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
         public void ActivatePlant(Plant plant)
         {
             _context.Attach(plant);
-            _context.Entry(plant).Property(e=>e.isActive).IsModified = true;
-            _context.Entry(plant).Property(e=>e.isNew).IsModified = true;
+            _context.Entry(plant).Property(e => e.isActive).IsModified = true;
+            _context.Entry(plant).Property(e => e.isNew).IsModified = true;
             _context.SaveChanges();
         }
-    }
+
+		public IQueryable<Plant> GetAll()
+		{
+			return _context.Plants.AsNoTracking().Where(p => p.isActive).OrderBy(p => p.Id);
+		}
+
+		public IQueryable<Plant> GetAll(int pageNumber, int rowCount)
+		{
+			return _context.Plants.AsNoTracking()
+                .Where(p => p.isActive)
+                .OrderBy(p => p.Id)
+                .Skip((pageNumber - 1) * rowCount)
+                .Take(rowCount);
+		}
+
+		public Plant GetById(int id)
+		{
+			return _context.Plants.AsNoTracking().FirstOrDefault(p => p.Id == id);
+		}
+
+		public Plant GetByIdFull(int id)
+		{
+			return _context.Plants.AsNoTracking().Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.PlantGrowingSeazons)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.PlantDestinations)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.PlantGrowthTypes)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.PlantDetailsImages)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.PlantOpinions)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.Color)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.FruitSize)
+							   .Include(p => p.PlantDetail)
+								   .ThenInclude(pd => pd.FruitType)
+							   .FirstOrDefault(p => p.Id == id);
+		}
+
+		public int Add(Plant entity)
+		{
+			_context.Set<Plant>().Add(entity);
+			_context.SaveChanges();
+
+            return entity.Id;
+        }
+
+		public void Delete(Plant entity)
+		{
+			_context.Attach(entity);
+			_context.Entry(entity).Property(e => e.isActive).IsModified = true;
+			_context.SaveChanges();
+		}
+
+		public void DeleteById(int id)
+		{
+			var entity = _context.Set<Plant>().Find(id);
+			if (entity != null)
+			{
+				_context.Remove(entity);
+				_context.SaveChanges();
+			}
+		}
+
+		public void Update(Plant entity)
+		{
+			_context.Attach(entity);
+			_context.Entry(entity).Property(e => e.FullName).IsModified = true;
+			_context.Entry(entity).Property(e => e.Photo).IsModified = true;
+            _context.Entry(entity).Property(e => e.PlantDetail).IsModified = true;
+			_context.Entry(entity).Property(e => e.PlantDetail).IsModified = true;
+			_context.SaveChanges();
+		}
+
+        public IQueryable<Plant> GetEntitiesForFilterList(int typeId, int? groupId, int? sectionId)
+        {
+			return _context.Set<Plant>().AsNoTracking().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId);
+
+		}
+	}
 }

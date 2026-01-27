@@ -8,7 +8,7 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class FruitType: BasePlantEntityNameProperty
     {       
-        public virtual ICollection<PlantDetail> PlantDetails { get; set; }
-        public ICollection<FruitTypeForListFilters> FruitTypeForFilters { get; set; }
-    }
+        public virtual ICollection<PlantDetail> PlantDetails { get; set; } = new List<PlantDetail>();
+        public ICollection<FruitTypeForListFilters> FruitTypeForFilters { get; set; } = new List<FruitTypeForListFilters>();
+	}
 }

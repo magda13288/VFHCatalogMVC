@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Common;
 
 namespace VFHCatalogMVC.Domain.Model
 {
-    public class PlantTag: AuditableEntity
+    public class PlantTag : BaseEntity // Changed from AuditableEntity to BaseEntity
     {
         public int PlantId { get; set; }
         public Plant Plant { get; set; }

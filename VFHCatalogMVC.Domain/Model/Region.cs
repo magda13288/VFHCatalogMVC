@@ -11,7 +11,7 @@ namespace VFHCatalogMVC.Domain.Model
         public int CountryId { get; set; }
         public virtual Country Country { get; set; }
       
-        public virtual ICollection<City> Cities { get; set; }
-        public virtual ICollection<Address> Address { get; set; }
-    }
+        public virtual ICollection<City> Cities { get; set; } = new List<City>();
+        public virtual ICollection<Address> Address { get; set; } = new List<Address>();
+	}
 }

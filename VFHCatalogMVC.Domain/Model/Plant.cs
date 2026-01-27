@@ -20,18 +20,13 @@ namespace VFHCatalogMVC.Domain.Model
         public string Photo { get; set; }
         public bool isActive { get; set; }
         public bool isNew { get; set; }
-
-        // TypeId,GroupId, NameId, AvailabilityId jeden do wielu - jeden typ może być przypisany do wielu plantów     
-
-        //wiele do wielu - kilka plantów może mieć przypisane kilka tagów i na odwrót
-
         public PlantDetail PlantDetail { get; set; }
         public TypeOfAvailability TypeOfAvailability { get; set; }
         public ICollection<PlantTag> PlantTags { get; set; }
-        public virtual ICollection<PlantSeed> PlantSeeds { get; set; }
-        public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; }
-        public virtual ICollection<NewUserPlant> NewUserPlants { get; set; }
-        public virtual ICollection<PlantMessage> PlantMessages { get; set; }
+        public virtual ICollection<PlantSeed> PlantSeeds { get; set; } = new List<PlantSeed>();
+        public virtual ICollection<PlantSeedling> PlantSeedlings { get; set; } = new List<PlantSeedling>();
+		public virtual ICollection<NewUserPlant> NewUserPlants { get; set; } = new List<NewUserPlant>();
+        public virtual ICollection<PlantMessage> PlantMessages { get; set; } = new List<PlantMessage>();
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? UpdatedAtUtc { get; set; }
         public DateTime? InactivatedAtUtc { get; set; }

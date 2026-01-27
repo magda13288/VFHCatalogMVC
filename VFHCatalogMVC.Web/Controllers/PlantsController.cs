@@ -50,8 +50,6 @@ namespace VFHCatalogMVC.Web.Controllers
 
         [HttpPost, HttpGet]
         [AllowAnonymous]
-        //pageSize okresla ile rekordow bedzie wyswietlanych na stronie 
-        //pageNumber okresla na ktorej stronie jestesm
         public IActionResult Index(
             int pageSize,
             int? pageNo,
@@ -90,8 +88,8 @@ namespace VFHCatalogMVC.Web.Controllers
         //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
         public IActionResult IndexSeeds(
-            int id,
-            int countryId,
+			int id,
+			int countryId,
             int regionId,
             int cityId,
             int pageSize,
@@ -174,7 +172,7 @@ namespace VFHCatalogMVC.Web.Controllers
 
         //zostanie przekazny model plantu.Serwis po odpowiednim przygtowaniu danych do zapisu przekaże je do repozytorium, które zapisze je w bazie danych
         [HttpPost]
-        [Authorize(Roles = "Admin,PrivateUser,Company")]
+        [Authorize(Roles = UserRoles.ALL_ROLES)]
         [ValidateAntiForgeryToken] // zabezpiecza przed przesłaniem falszywego widoku podczas dodawania nowego widoku (danych)
         public IActionResult AddPlant(NewPlantVm model)
         {

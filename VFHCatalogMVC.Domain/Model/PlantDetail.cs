@@ -25,11 +25,11 @@ namespace VFHCatalogMVC.Domain.Model
         public string? UpdatedBy { get; set; }
         public string? InactivatedBy { get; set; }
 
-        public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; }
-        public ICollection<PlantDestination> PlantDestinations { get; set; }
-        public virtual ICollection<PlantOpinion> PlantOpinions { get; set; }
-        public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
-        public virtual ICollection<PlantDetailsImages> PlantDetailsImages { get; set; }
+        public ICollection<PlantGrowthType> PlantGrowthTypes { get; set; } = new List<PlantGrowthType>();
+        public ICollection<PlantDestination> PlantDestinations { get; set; } = new List<PlantDestination>();
+		public virtual ICollection<PlantOpinion> PlantOpinions { get; set; } = new List<PlantOpinion>();
+        public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; } = new List<PlantGrowingSeazon>();
+		public virtual ICollection<PlantDetailsImages> PlantDetailsImages { get; set; } = new List<PlantDetailsImages>(); 
 
     }
 }

@@ -8,6 +8,6 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class Color:BasePlantEntityNameProperty
     {    
-        public virtual ICollection<PlantDetail> PlantDetails { get; set; }
+        public virtual ICollection<PlantDetail> PlantDetails { get; set; } = new List<PlantDetail>();
     }
 }

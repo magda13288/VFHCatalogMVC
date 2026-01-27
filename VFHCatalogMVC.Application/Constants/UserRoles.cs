@@ -5,7 +5,7 @@ using System.Threading.Tasks.Dataflow;
 
 namespace VFHCatalogMVC.Application.Constants
 {
-    public class UserRoles
+    public static class UserRoles
     {
         public const string ADMIN = "Admin";
         public const string PRIVATE_USER = "PrivateUser";

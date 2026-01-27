@@ -10,6 +10,6 @@ namespace VFHCatalogMVC.Domain.Model
     {
         public int RegionId { get; set; }
         public virtual Region Region { get; set; }
-        public virtual ICollection<Address> Addresses { get; set; }
-    }
+        public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
+	}
 }

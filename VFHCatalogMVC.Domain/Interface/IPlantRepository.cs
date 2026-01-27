@@ -7,12 +7,22 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Interface
 {
-    public interface IPlantRepository
+    public interface IPlantRepository: IRepository <Plant>
     {
-        int AddEntity<T>(T entity) where T : BaseEntity;
+        Plant GetByIdFull(int id);
+
+		void ActivatePlant(Plant plant);
+
+        IQueryable<Plant> GetEntitiesForFilterList(int typeId, int? groupId, int? sectionId);
+
+		IQueryable<T> GetAllEntities<T>() where T : class;
+
+
+
+		int AddEntity<T>(T entity) where T : BaseEntity;
         IQueryable<T> GetPlantDetailsById<T>(int id) where T : BasePlantDetailKeyProperty;
         string GetPlantDetailsPropertyName<T>(int? id) where T : BasePlantEntityNameProperty;
-        IQueryable<T> GetAllEntities<T>() where T : class;
+        
         IQueryable<PlantOpinion> GetPlantOpinions(int id);
         void DeletePlantDetailEntity<T>(int id) where T : BasePlantDetailKeyProperty;
         int AddContactDetailsEntity<T>(T entity) where T : class;
@@ -29,12 +39,9 @@ namespace VFHCatalogMVC.Domain.Interface
         void DeleteImageFromGallery(int id);
         IQueryable<PlantDetailsImages> GetPlantDetailsImages(int plantDetailId);
         PlantDetail GetPlantDetails(int id);     
-        IQueryable<Plant> GetAllActivePlants(); //zwraca konkretny model bazodanowy (z konkretnej tabeli w bazie)    
         Plant GetPlantById(int plantId);
         IQueryable<T> GetPlantSeedOrSeedling<T>(int id) where T : BasePlantSeedSeedlingProperty;
         Plant GetPlantToActivate(int id);
-        void ActivatePlant(Plant plant);
-
         IQueryable<T> GetEntitiesForListFilters<T>(int typeId, int? groupId, int? sectionId) where T : BasePropertyForListFilters;
 
 

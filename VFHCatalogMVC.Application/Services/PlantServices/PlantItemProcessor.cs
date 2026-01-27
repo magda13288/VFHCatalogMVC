@@ -12,6 +12,7 @@ using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.User;
+using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 
@@ -92,8 +93,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         private bool CheckUserRole(Task<ApplicationUser> user, bool isCompany)
         {
             return isCompany
-                ? _userManager.IsInRoleAsync(user.Result, "Company").Result
-                : _userManager.IsInRoleAsync(user.Result, "PRIVATE_USER").Result;
+                ? _userManager.IsInRoleAsync(user.Result, UserRoles.COMPANY).Result
+                : _userManager.IsInRoleAsync(user.Result, UserRoles.PRIVATE_USER).Result;
         }
 
         private void PopulatePlantItemDetails(TVm item, Task<ApplicationUser> user, int detailId, bool isCompany)

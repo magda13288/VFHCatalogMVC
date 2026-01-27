@@ -7,6 +7,6 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class Destination:BasePlantEntityNameProperty
     {   
-        public ICollection<PlantDestination> PlantDestinations { get; set; }
+        public ICollection<PlantDestination> PlantDestinations { get; set; } = new List<PlantDestination>();
     }
 }

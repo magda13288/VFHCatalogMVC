@@ -7,6 +7,6 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class GrowingSeazon:BasePlantEntityNameProperty
     {      
-       public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; }
-    }
+       public ICollection<PlantGrowingSeazon> PlantGrowingSeazons { get; set; } = new List<PlantGrowingSeazon>();
+	}
 }

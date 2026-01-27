@@ -5,7 +5,7 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Common
 {
-    public class BasePropertyForListFilters
+    public class BasePropertyForListFilters:BaseEntity
     {
         public int PlantTypeId { get; set; }
         public PlantType PlantType { get; set; }

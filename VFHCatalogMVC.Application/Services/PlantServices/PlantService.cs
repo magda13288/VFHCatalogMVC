@@ -19,8 +19,6 @@ using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.Constants;
 
 
-
-
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {
     public class PlantService : IPlantService
@@ -41,9 +39,9 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         }
         public PlantService(
-            IPlantRepository plantRepo,
-            IMapper mapper, 
-            UserManager<ApplicationUser> userManager,
+			IPlantRepository plantRepo,
+			IMapper mapper,
+			UserManager<ApplicationUser> userManager,
             IImageService imageService,
             IPlantDetailsService plantDetailsSerrvice,
             IUserPlantService userPlantService,
@@ -142,7 +140,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             if (!string.IsNullOrWhiteSpace(searchString))
             {
-                plants = _plantRepo.GetAllActivePlants().Where(p => p.FullName.StartsWith(searchString))
+                plants = _plantRepo.GetAll().Where(p => p.FullName.StartsWith(searchString))
                        .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
             }
             else
@@ -154,19 +152,19 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                         //projectTo wykorzystywane przy kolekcjach IQueryable
                         if (sectionId > 0 && sectionId != null)
                         {
-                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
+                            plants = _plantRepo.GetAll().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId && p.PlantSectionId == sectionId)
                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
                         }
                         else
                         {
-                            plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
+                            plants = _plantRepo.GetAll().Where(p => p.PlantTypeId == typeId && p.PlantGroupId == groupId)
                                .ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
 
                         }
                     }
                     else
                     {
-                        plants = _plantRepo.GetAllActivePlants().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
+                        plants = _plantRepo.GetAll().Where(p => p.PlantTypeId == typeId).ProjectTo<PlantForListVm>(_mapper.ConfigurationProvider).ToList();
                     }
                 }
             }

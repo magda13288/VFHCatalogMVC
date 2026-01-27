@@ -7,7 +7,7 @@ namespace VFHCatalogMVC.Domain.Model
 {
     public class Tag:BasePlantEntityNameProperty
     {
-        public ICollection<PlantTag> PlantTags { get; set; }
+        public ICollection<PlantTag> PlantTags { get; set; } = new List<PlantTag>();
 
     }
 }

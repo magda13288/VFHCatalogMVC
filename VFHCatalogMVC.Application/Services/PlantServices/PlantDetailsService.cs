@@ -64,6 +64,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public PlantDetailsVm GetPlantDetails(int id)
         {
+            //var plantFull = _plantRepo.GetByIdFull(id);
+            //var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantFull.PlantDetail);
             var plantDetails = _plantRepo.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
 
