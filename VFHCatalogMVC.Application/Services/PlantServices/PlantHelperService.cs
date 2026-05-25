@@ -15,13 +15,12 @@ using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Message;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
-using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Domain.Common;
-using System.Web.Razor.Generator;
 using VFHCatalogMVC.Application.ViewModels.Common;
 using VFHCatalogMVC.Application.Interfaces;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {

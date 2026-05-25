@@ -7,12 +7,10 @@ using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Domain.Interface
 {
-    public interface IMessageRepository
+    public interface IMessageRepository: IRepository<Message>
     {
         void AddEntity<T>(T entity) where T : class;
-        int AddMessage(Message message);
         IQueryable<PlantMessage> GetMessagesForNewUserPlant(int plantId);
-        Message GetMessageById (int id);
         string GetPlantOwnerId(int plantId);
         int GetPlantId(int id);
         void UpdateMassageStatusIsAnswer(Message message);

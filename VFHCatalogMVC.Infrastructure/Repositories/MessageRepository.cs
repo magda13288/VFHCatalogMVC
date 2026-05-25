@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
@@ -19,23 +19,11 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             _context.Set<T>().Add(entity);
             _context.SaveChanges();
         }
-        public int AddMessage(Message message)
-        {
-            _context.Messages.Add(message);
-            _context.SaveChanges();
-            return message.Id;
-        }
 
         public IQueryable<PlantMessage> GetMessagesForNewUserPlant(int plantId)
         {
             var messagesList = _context.PlantMessages.AsNoTracking().Where(m => m.PlantId == plantId);
             return messagesList;
-        }
-
-        public Message GetMessageById(int id)
-        {
-            var message = _context.Messages.AsNoTracking().FirstOrDefault(m => m.Id == id);
-            return message;
         }
 
         public string GetPlantOwnerId(int plantId)
@@ -75,5 +63,43 @@ namespace VFHCatalogMVC.Infrastructure.Repositories
             var message = _context.MessageReceivers.AsNoTracking().FirstOrDefault(e => e.MessageId == id);
             return message;
         }
-    }
+
+		public IQueryable<Message> GetAll()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public IQueryable<Message> GetAll(int pageNumber, int rowCount)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public Message GetById(int id)
+		{
+			var message = _context.Messages.AsNoTracking().FirstOrDefault(m => m.Id == id);
+			return message;
+		}
+
+		public int Add(Message entity)
+		{
+			_context.Messages.Add(entity);
+			_context.SaveChanges();
+			return entity.Id;
+		}
+
+		public void Delete(Message entity)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void DeleteById(int id)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Update(Message entity)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 }

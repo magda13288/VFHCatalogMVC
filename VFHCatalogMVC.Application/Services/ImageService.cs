@@ -5,23 +5,24 @@ using System.Collections.Generic;
 using System.IO;
 using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
-using VFHCatalogMVC.Domain.Interface;
 using System.IO.Abstractions;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
+using VFHCatalogMVC.Domain.Interface.PlantDetailsRepositories;
 
 namespace VFHCatalogMVC.Application.Services
 {
     public class ImageService : IImageService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IPlantRepository _plantRepo;
+        private readonly IPlantDetailsImagesRepository _plantDetailsImagesRepo;
         private readonly IFileSystem _fileSystem;
         private readonly string _DIR_GALLERY = "plantGallery/plantDetailsGallery";
         private readonly string _DIR_SEARCH = "plantGallery/searchPhoto";
 
-        public ImageService(IWebHostEnvironment webHostEnvironment, IPlantRepository plantRepository, IFileSystem fileSystem)
+        public ImageService(IWebHostEnvironment webHostEnvironment, IPlantDetailsImagesRepository plantDetailsImagesRepo, IFileSystem fileSystem)
         {
             _webHostEnvironment = webHostEnvironment;
-            _plantRepo = plantRepository;
+            _plantDetailsImagesRepo = plantDetailsImagesRepo;
             _fileSystem = fileSystem;
         }
 
@@ -34,7 +35,7 @@ namespace VFHCatalogMVC.Application.Services
                 foreach (var item in model.PlantDetails.Images)
                 {
                     string fileName = UploadImage(item, model.FullName, _DIR_GALLERY);
-                    _plantRepo.AddPlantDetailsImages(fileName, plantDetailId);
+                    _plantDetailsImagesRepo.Add(fileName, plantDetailId);
                     fileNames.Add(fileName);
                 }
             }

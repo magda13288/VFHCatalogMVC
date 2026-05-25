@@ -59,7 +59,7 @@ namespace VFHCatalogMVC.Application.Services
 
         public MessageVm GetMessageById(int id)
         {
-            var message = _messageRepo.GetMessageById(id);
+            var message = _messageRepo.GetById(id);
             var messageVm = _mapper.Map<MessageVm>(message);
             
             var user = _userManager.FindByIdAsync(messageVm.UserId);
@@ -99,7 +99,7 @@ namespace VFHCatalogMVC.Application.Services
 
             foreach (var item in messages)
             {
-                var messageInfo = _messageRepo.GetMessageById(item.MessageId);
+                var messageInfo = _messageRepo.GetById(item.MessageId);
                 var messageVm = _mapper.Map<MessageVm>(messageInfo);
                 var user = _userManager.FindByIdAsync(messageVm.UserId).Result;
                 messageVm.UserName = user?.UserName;
@@ -175,7 +175,7 @@ namespace VFHCatalogMVC.Application.Services
 
             foreach (var item in messagesList)
             {
-                var message = _messageRepo.GetMessageById(item.MessageId);
+                var message = _messageRepo.GetById(item.MessageId);
                 var messageVm = _mapper.Map<MessageVm>(message);
 
                 var user = _userManager.FindByIdAsync(messageVm.UserId).Result;
@@ -298,7 +298,7 @@ namespace VFHCatalogMVC.Application.Services
         }       
         private void HandleAnswerMessage(MessageVm message, int messageId, IndexPlantType indexPlant)
         {
-            var messageInfo = _messageRepo.GetMessageById(message.MessageIdisAnswer);
+            var messageInfo = _messageRepo.GetById(message.MessageIdisAnswer);
             messageInfo.isAnswer = true;
             _messageRepo.UpdateMassageStatusIsAnswer(messageInfo);
 
@@ -339,7 +339,7 @@ namespace VFHCatalogMVC.Application.Services
         public void SendMessage(MessageVm message)
         {
             var sendMessage = _mapper.Map<Message>(message);
-            var messageId = _messageRepo.AddMessage(sendMessage);
+            var messageId = _messageRepo.Add(sendMessage);
 
             var indexPlant = new IndexPlantType() 
             {   seeds = message.isSeed, 

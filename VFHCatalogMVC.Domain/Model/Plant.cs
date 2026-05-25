@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Web.Mvc;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
 

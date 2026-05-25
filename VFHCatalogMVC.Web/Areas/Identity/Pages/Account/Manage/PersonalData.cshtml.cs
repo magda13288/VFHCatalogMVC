@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Application.ViewModels.Adresses;
-using System.Web.Mvc;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
 
 namespace VFHCatalogMVC.Web.Areas.Identity.Pages.Account.Manage

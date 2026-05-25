@@ -7,7 +7,6 @@ using System.Text;
 using VFHCatalogMVC.Application.Services;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.Plant;
-using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using System.IO;
@@ -15,6 +14,7 @@ using Xunit;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using NPOI.SS.Formula.Functions;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 
 namespace Application.UnitTests.Commands
 {

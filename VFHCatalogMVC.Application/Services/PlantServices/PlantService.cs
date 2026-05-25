@@ -17,6 +17,8 @@ using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Application.ViewModels.Plant.Common;
 using VFHCatalogMVC.Application.Constants;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
+using VFHCatalogMVC.Domain.Interface.PlantDetailsRepositories;
 
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
@@ -25,7 +27,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
     {
 
         private readonly IPlantRepository _plantRepo;
-        private readonly IMapper _mapper;
+        private readonly IPlantDetailRepository _plantDetailRepo;
+        private readonly IPlantDetailsImagesRepository _plantImagesRepo;
+        private readonly IPlantGrowthTypeRepository _plantGrowthTypeRepo;
+        private readonly IPlantGrowingSeazonRepository _plantGrowingSeazonRepo;
+        private readonly IPlantDestinationRepository _plantDestinationRepo;
+		private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserPlantService _userPlantService;
         private readonly IImageService _imageService;
@@ -40,6 +47,11 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public PlantService(
 			IPlantRepository plantRepo,
+		    IPlantDetailRepository plantDetailRepo,
+			IPlantDetailsImagesRepository plantImagesRepo,
+            IPlantGrowthTypeRepository plantGrowthTypeRepo,
+            IPlantGrowingSeazonRepository plantGrowingSeazonRepo,
+            IPlantDestinationRepository plantDestinationRepo,
 			IMapper mapper,
 			UserManager<ApplicationUser> userManager,
             IImageService imageService,
@@ -50,7 +62,12 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             IListService listService)
         {
             _plantRepo = plantRepo;
-            _mapper = mapper;
+            _plantDetailRepo = plantDetailRepo;
+            _plantImagesRepo = plantImagesRepo;
+            _plantGrowthTypeRepo = plantGrowthTypeRepo;
+            _plantGrowingSeazonRepo = plantGrowingSeazonRepo;
+            _plantDestinationRepo = plantDestinationRepo;
+			_mapper = mapper;
             _userManager = userManager;
             _imageService = imageService;
             _plantDetailsSerrvice = plantDetailsSerrvice;
@@ -182,8 +199,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             string userName)
         {
             var seeds = _plantRepo.GetPlantSeedOrSeedling<PlantSeed>(id).ProjectTo<PlantSeedVm>(_mapper.ConfigurationProvider).ToList();
-            var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeeds = _seedProcessor.ProcessItems(seeds, detailId, countryId, regionId, cityId, isCompany);
+            var details = _plantDetailRepo.GetById(id);
+            var processedSeeds = _seedProcessor.ProcessItems(seeds, details.Id, countryId, regionId, cityId, isCompany);
             var paginateList = _listService.Paginate(processedSeeds, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedVm, PlantSeedsForListVm>(id, paginateList, seeds.Count, pageSize, pageNo, isCompany, userName);
@@ -199,8 +216,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             bool isCompany)
         {
             var seedlings = _plantRepo.GetPlantSeedOrSeedling<PlantSeedling>(id).ProjectTo<PlantSeedlingVm>(_mapper.ConfigurationProvider).ToList();
-            var detailId = _plantRepo.GetPlantDetailId(id);
-            var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, detailId, countryId, regionId, cityId, isCompany);
+            var details = _plantDetailRepo.GetById(id);
+            var processedSeedlings = _seedlingProcessor.ProcessItems(seedlings, details.Id, countryId, regionId, cityId, isCompany);
             var paginateList = _listService.Paginate(processedSeedlings, pageSize, pageNo);
 
             return CreatePlantListVm<PlantSeedlingVm, PlantSeedlingsForListVm>(id, paginateList, seedlings.Count, pageSize, pageNo, isCompany, null);
@@ -228,16 +245,16 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         public NewPlantVm GetPlantToEdit(int id)
         {
 
-            var plant = _plantRepo.GetPlantById(id);
+            var plant = _plantRepo.GetById(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
 
-            var plantDetails = _plantRepo.GetPlantDetails(id);
+            var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
             plantVm.PlantDetails = plantDetailsVm;
 
             if (plantDetails != null)
             {
-                plantVm.PlantDetails.PlantDetailsImages = _plantRepo.GetPlantDetailsImages(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
+                plantVm.PlantDetails.PlantDetailsImages = _plantImagesRepo.GetPlantDetailsImagesById(plantDetailsVm.Id).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
                 SetPlantGrowthType(plantDetailsVm, plantDetailsVm.Id);
                 SetPlantGrowingSeazons(plantDetailsVm, plantDetailsVm.Id);
@@ -249,7 +266,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         private bool SetPlantGrowthType(PlantDetailsVm plant, int plantDetailId)
         {
-            var growthTypes = _plantRepo.GetPlantDetailsById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
+            var growthTypes = _plantDetailRepo.GetById<PlantGrowthType>(plantDetailId).ProjectTo<PlantGrowthTypeVm>(_mapper.ConfigurationProvider).ToList();
             if (growthTypes != null)
             {
                 plant.ListGrowthTypes = new ListGrowthTypesVm();
@@ -267,7 +284,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         private bool SetPlantGrowingSeazons(PlantDetailsVm plant, int plantDetailId)
         {
-            var growingSeazons = _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
+            var growingSeazons = _plantDetailRepo.GetById<PlantGrowingSeazon>(plantDetailId).ProjectTo<PlantGrowingSeazonsVm>(_mapper.ConfigurationProvider).ToList();
             if (growingSeazons != null)
             {
                 plant.ListGrowingSeazons = new ListGrowingSeazonsVm();
@@ -284,7 +301,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         private bool SetPlantDestinations(PlantDetailsVm plant, int plantDetailId)
         {
-            var destinations = _plantRepo.GetPlantDetailsById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
+            var destinations = _plantDetailRepo.GetById<PlantDestination>(plantDetailId).ProjectTo<PlantDestinationsVm>(_mapper.ConfigurationProvider).ToList();
             if (destinations != null)
             {
                 plant.ListPlantDestinations = new ListPlantDestinationsVm();
@@ -304,7 +321,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         {
             if (model.Photo != null)
             {
-                var existingPlant = _plantRepo.GetPlantById(model.Id);
+                var existingPlant = _plantRepo.GetById(model.Id);
                 string direction = "plantGallery/searchPhoto";
                 string newPhoto = _imageService.UploadImage(model.Photo, model.FullName, direction);
                 _imageService.DeleteImage($"plantGallery/searchPhoto/{existingPlant.Photo}");
@@ -312,7 +329,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             }
             else
             {
-                model.PhotoFileName = _plantRepo.GetPlantById(model.Id).Photo;
+                model.PhotoFileName = _plantRepo.GetById(model.Id).Photo;
             }
         }
         private void UpdatePlantDetailsImages(NewPlantVm model)
@@ -324,7 +341,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 foreach (var image in model.PlantDetails.Images)
                 {
                     string fileName = _imageService.UploadImage(image, model.FullName, direction);
-                    _plantRepo.AddPlantDetailsImages(fileName, model.PlantDetails.Id);
+                    _plantImagesRepo.Add(fileName, model.PlantDetails.Id);
                 }
             }
 
@@ -334,7 +351,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 {
                     string imagePath = direction + "/" + image.ImageURL;
                     _imageService.DeleteImage(imagePath);
-                    _plantRepo.DeleteImageFromGallery(image.Id);
+                    _plantImagesRepo.DeleteById(image.Id);
                 }
             }
         }
@@ -348,15 +365,15 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
             var plantDetails = _mapper.Map<PlantDetail>(model.PlantDetails);
             _plantRepo.UpdatePlant(plant);
-            _plantRepo.UpdatePlantDetails(plantDetails);
+            _plantDetailRepo.Update(plantDetails);
 
             //Update Destinations
             if (model.PlantDetails.ListPlantDestinations != null)
                 _plantDetailsSerrvice.UpdateEntity(
                                         model.PlantDetails.Id,
                                         model.PlantDetails.ListPlantDestinations.DestinationsIds,
-                                        id => _plantRepo.GetPlantDetailsById<PlantDestination>(model.PlantDetails.Id),
-                                        (ids, plantId) => _plantRepo.AddPlantDestinations(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
+                                        id => _plantDetailRepo.GetById<PlantDestination>(model.PlantDetails.Id),
+                                        (ids, plantId) => _plantDestinationRepo.Add(model.PlantDetails.ListPlantDestinations.DestinationsIds, model.PlantDetails.Id),
                                         id => _plantRepo.DeletePlantDetailEntity<PlantDestination>(model.PlantDetails.Id)
                                                 );
             else SetPlantDestinations(model.PlantDetails, model.PlantDetails.Id);
@@ -366,8 +383,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 _plantDetailsSerrvice.UpdateEntity(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds,
-                                       id => _plantRepo.GetPlantDetailsById<PlantGrowingSeazon>(model.PlantDetails.Id),
-                                       (ids, plantId) => _plantRepo.AddPlantGrowingSeazons(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
+                                       id => _plantDetailRepo.GetById<PlantGrowingSeazon>(model.PlantDetails.Id),
+                                       (ids, plantId) => _plantGrowingSeazonRepo.Add(model.PlantDetails.ListGrowingSeazons.GrowingSeaznosIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantDetailEntity<PlantGrowingSeazon>(model.PlantDetails.Id)
                                                );
             else SetPlantGrowingSeazons(model.PlantDetails, model.PlantDetails.Id);
@@ -377,8 +394,8 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 _plantDetailsSerrvice.UpdateEntity(
                                        model.PlantDetails.Id,
                                        model.PlantDetails.ListGrowthTypes.GrowthTypesIds,
-                                       id => _plantRepo.GetPlantDetailsById<PlantGrowthType>(model.PlantDetails.Id),
-                                       (ids, plantId) => _plantRepo.AddPlantGrowthTypes(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
+                                       id => _plantDetailRepo.GetById<PlantGrowthType>(model.PlantDetails.Id),
+                                       (ids, plantId) => _plantGrowthTypeRepo.Add(model.PlantDetails.ListGrowthTypes.GrowthTypesIds, model.PlantDetails.Id),
                                        id => _plantRepo.DeletePlantDetailEntity<PlantGrowthType>(model.PlantDetails.Id)
                                                );
             else SetPlantGrowthType(model.PlantDetails,model.PlantDetails.Id); 
@@ -387,7 +404,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public PlantForListVm DeletePlant(int id)
         {
-            var getPlantToDelete = _plantRepo.GetPlantById(id);
+            var getPlantToDelete = _plantRepo.GetById(id);
             var plantVm = _mapper.Map<PlantForListVm>(getPlantToDelete);
             plantVm.isActive = false;
             //var plantVm = _mapper.Map<PlantForListVm>(getPlantToDelete);
@@ -397,7 +414,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
                 getPlantToDelete.isActive = false;
                 //plantVm.isActive = false;
                 //var plantToDelete = _mapper.Map<Plant>(plantVm);
-                _plantRepo.DeletePlant(getPlantToDelete);
+                _plantRepo.Delete(getPlantToDelete);
             }
 
             return plantVm;
@@ -516,7 +533,7 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
       
         public void ActivatePlant(int id)
         {
-            var plant = _plantRepo.GetPlantToActivate(id);
+            var plant = _plantRepo.GetById(id);
             var plantVm = _mapper.Map<NewPlantVm>(plant);
 
             plantVm.isActive = true;

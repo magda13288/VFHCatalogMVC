@@ -1,161 +1,105 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using VFHCatalogMVC.Application;
-using System.IO;
-using VFHCatalogMVC.Application.ViewModels.Plant;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
-using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.Interfaces.UserInterfaces;
+using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeeds;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantSeedlings;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
 using VFHCatalogMVC.Domain.Model;
 using VFHCatalogMVC.Application.Constants;
-using System.Web.WebPages;
-using VFHCatalogMVC.Application.Services.UserServices;
+using System;
+using System.Linq;
 
 namespace VFHCatalogMVC.Web.Controllers
 {
     public class PlantsController : Controller
     {
-
         private readonly IPlantService _plantService;
-        private readonly IPlantDetailsService _plantDetailsSerrvice;
+        private readonly IPlantDetailsService _plantDetailsService;
         private readonly IUserContactDataService _userContactDataService;
         private readonly ILogger<PlantsController> _logger;
         private readonly IPlantHelperService _plantHelperService;
 
-
         public PlantsController(
-            IPlantService plantService, 
-            ILogger<PlantsController> logger, 
-            IUserContactDataService userContactDataService, 
-            IPlantHelperService plantHelperService, 
-            IPlantDetailsService plantDetailsSerrvice
-       )
+            IPlantService plantService,
+            ILogger<PlantsController> logger,
+            IUserContactDataService userContactDataService,
+            IPlantHelperService plantHelperService,
+            IPlantDetailsService plantDetailsService)
         {
             _plantService = plantService;
             _logger = logger;
-            _plantDetailsSerrvice = plantDetailsSerrvice;
+            _plantDetailsService = plantDetailsService;
             _plantHelperService = plantHelperService;
             _userContactDataService = userContactDataService;
-   
         }
 
-
-        [HttpPost, HttpGet]
+        [HttpGet, HttpPost]
         [AllowAnonymous]
-        public IActionResult Index(
-            int pageSize,
-            int? pageNo,
-            string searchString, 
-            int typeId,
-            int groupId,
-            int? sectionId)
+        public IActionResult Index(int pageSize, int? pageNo, string searchString, int typeId, int groupId, int? sectionId)
         {
             try
-            {        
-                ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
-                var groupsList = GetPlantGroupsList(typeId);
-                ViewBag.GroupsList = groupsList.Value;
-                var sectionsList = GetPlantSectionsList(groupId, typeId);
-                ViewBag.SectionsList = sectionsList.Value;
-
-                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+            {
+                SetPlantLists(typeId, groupId);
+                pageNo ??= 1;
                 pageSize = pageSize == 0 ? 30 : pageSize;
-                searchString = searchString is null ? string.Empty : searchString;
-                ViewBag.TypeId = typeId;
-                ViewBag.GroupId = groupId;
-                ViewBag.SectionId = sectionId;
+                searchString ??= string.Empty;
+                SetViewBagIds(typeId, groupId, sectionId);
 
                 var model = _plantService.GetAllActivePlantsForList(pageSize, pageNo.Value, searchString, typeId, groupId, sectionId);
-
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
 
-        [HttpGet,HttpPost]
-        //[Authorize(Roles = "PrivateUser,Company")]
+        [HttpGet, HttpPost]
         [AllowAnonymous]
-        public IActionResult IndexSeeds(
-			int id,
-			int countryId,
-            int regionId,
-            int cityId,
-            int pageSize,
-            int? pageNo,
-            bool isCompany,
-            string sortOrder)
+        public IActionResult IndexSeeds(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany, string sortOrder)
         {
             try
             {
+                SetLocationLists(countryId, regionId);
                 ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
                 ViewData["PriceSortParam"] = sortOrder == "Price" ? "price_desc" : "";
-                ViewBag.CountriesList = _userContactDataService.Countries();
-                ViewBag.RegionsList = _userContactDataService.Regions(countryId);
-                ViewBag.CitiesList = _userContactDataService.Cities(regionId);
-
-                pageNo = pageNo.HasValue ? pageNo.Value : 1;
+                pageNo ??= 1;
                 pageSize = pageSize == 0 ? 30 : pageSize;
-
-                ViewBag.CountryId = countryId;
-                ViewBag.RegionId = regionId;
-                ViewBag.CityId = cityId;
+                SetViewBagLocationIds(countryId, regionId, cityId);
 
                 var model = _plantService.GetAllPlantSeeds(id, countryId, regionId, cityId, pageSize, pageNo, isCompany, User.Identity.Name);
                 return View(model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
-            }                                                                      
+            }
         }
 
         [HttpGet, HttpPost]
-        //[Authorize(Roles = "PrivateUser,Company")]
         [AllowAnonymous]
-        public IActionResult IndexSeedlings(
-            int id, 
-            int countryId,
-            int regionId,
-            int cityId, 
-            int pageSize,
-            int? pageNo,
-            bool isCompany)
+        public IActionResult IndexSeedlings(int id, int countryId, int regionId, int cityId, int pageSize, int? pageNo, bool isCompany)
         {
             try
             {
-                ViewBag.CountriesList = _userContactDataService.Countries();
-                ViewBag.RegionsList = _userContactDataService.Regions(countryId);
-                ViewBag.CitiesList = _userContactDataService.Cities(regionId);
-
-                pageNo = !pageNo.HasValue ? 1 : pageNo;
+                SetLocationLists(countryId, regionId);
+                pageNo ??= 1;
                 pageSize = pageSize == 0 ? 30 : pageSize;
+                SetViewBagLocationIds(countryId, regionId, cityId);
 
-                ViewBag.CountryId = countryId;
-                ViewBag.RegionId = regionId;
-                ViewBag.CityId = cityId;
-
-                var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo,isCompany);
+                var model = _plantService.GetAllPlantSeedlings(id, countryId, regionId, cityId, pageSize, pageNo, isCompany);
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
-
         }
 
         //wyświetli pusty formularz gotowy do wypełnienia
@@ -163,10 +107,7 @@ namespace VFHCatalogMVC.Web.Controllers
         [Authorize(Roles = UserRoles.ALL_ROLES)]
         public IActionResult AddPlant()
         {
-            ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType,PlantTypesVm>();
-            ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
-            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
-
+            SetPlantFormLists();
             return View();
         }
 
@@ -179,31 +120,22 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {
                 if (ModelState.IsValid)
-                { //check DataAnnotations
-                    var id = _plantService.AddPlant(model,User.Identity.Name);
-
+                {
+                    var id = _plantService.AddPlant(model, User.Identity.Name);
                     if (id == 0)
                     {
                         ViewBag.Message = "Podana nazwa już istnieje";
-                        ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
-                        ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                        ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
+                        SetPlantFormLists();
                         return View(model);
                     }
-                    else
-                        return RedirectToAction("Index");
+                    return RedirectToAction("Index");
                 }
-                else
-                {
-                    ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
-                    ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
-                    ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
-                    return View(model);
-                }
+                SetPlantFormLists();
+                return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -212,16 +144,12 @@ namespace VFHCatalogMVC.Web.Controllers
         [AllowAnonymous]
         public IActionResult Details(int id)
         {
-            var plantDetails = _plantDetailsSerrvice.GetPlantDetails(id);
-
+            var plantDetails = _plantDetailsService.GetPlantDetails(id);
             if (plantDetails == null)
             {
                 return RedirectToAction("Index");
             }
-            else
-            { 
             return View(plantDetails);
-            }
         }
 
         [HttpGet]
@@ -231,24 +159,12 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {
                 var plantToEdit = _plantService.GetPlantToEdit(id);
-
-                ViewBag.ColorsList = _plantHelperService.GetSelectList<Color,ColorsVm>();
-
-                ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);               
-        
-                ViewBag.GrowthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId).Skip(1);
-                  
-                ViewBag.Destinations = _plantHelperService.GetSelectList<Destination, DestinationsVm>().Skip(1);
-
-                ViewBag.FruitTypes = _plantHelperService.GetPlantPropertySelectListItem<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
-
-                ViewBag.FruitSizes = _plantHelperService.GetPlantPropertySelectListItem<FruitSize, FruitSizeVm, FruitSizeForListFilters, FruitSizeForListFiltersVm>(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
-
+                SetEditFormLists(plantToEdit.TypeId, plantToEdit.GroupId, plantToEdit.SectionId);
                 return View(plantToEdit);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -265,14 +181,11 @@ namespace VFHCatalogMVC.Web.Controllers
                     _plantService.UpdatePlant(plant);
                     return RedirectToAction("Index");
                 }
-                else
-                {
-                    return View(plant);
-                }
+                return View(plant);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -283,12 +196,12 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plant = _plantService.DeletePlant(id);
+                _plantService.DeletePlant(id);
                 return RedirectToAction("Index");
             }
-            catch(Exception ex)
-            { 
-                _logger.LogError(ex.Message, ex);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -299,20 +212,18 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plantSedd = _plantService.FillProperty<PlantSeedVm>(id, User.Identity.Name);
-                return PartialView("AddSeedModalPartial", plantSedd);
+                var plantSeed = _plantService.FillProperty<PlantSeedVm>(id, User.Identity.Name);
+                return PartialView("AddSeedModalPartial", plantSeed);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
 
-
         [HttpPost]
         [Authorize(Roles = UserRoles.PRIVATEUSER_COMPANY)]
-    
         public IActionResult AddSeed(PlantSeedVm plantSeed)
         {
             try
@@ -324,18 +235,12 @@ namespace VFHCatalogMVC.Web.Controllers
                     ModelState.Clear();
                     return PartialView("AddSeedModalPartial");
                 }
-                else
-                {
-                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
-                    return PartialView("AddSeedModalPartial", plantSeed);
-                }
-
-                //return PartialView("AddSeedModalPartial", plantSeed);
-
+                ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                return PartialView("AddSeedModalPartial", plantSeed);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -351,7 +256,7 @@ namespace VFHCatalogMVC.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -368,24 +273,15 @@ namespace VFHCatalogMVC.Web.Controllers
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddSeedlingModalPartial");
-                    // return RedirectToAction("Index","Plants");
-
                 }
-                else
-                {
-                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
-                    return PartialView("AddSeedlingModalPartial", plantSeedling);
-                }
-      
-               
-
+                ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                return PartialView("AddSeedlingModalPartial", plantSeedling);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet]
@@ -394,12 +290,12 @@ namespace VFHCatalogMVC.Web.Controllers
         {
             try
             {
-                var plantOpinion = _plantDetailsSerrvice.FillPropertyOpinion(id, User.Identity.Name);
+                var plantOpinion = _plantDetailsService.FillPropertyOpinion(id, User.Identity.Name);
                 return PartialView("AddOpinionModalPartial", plantOpinion);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
@@ -413,28 +309,19 @@ namespace VFHCatalogMVC.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _plantDetailsSerrvice.AddPlantOpinion(plantOpinion);
+                    _plantDetailsService.AddPlantOpinion(plantOpinion);
                     ViewBag.Message = "Zapisano";
                     ModelState.Clear();
                     return PartialView("AddOpinionModalPartial");
-                    // return RedirectToAction("Details");
-
                 }
-                else
-                {
-                    ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
-                    return PartialView("AddOpinionModalPartial", plantOpinion);
-                }
-                   
-             
-               
+                ViewBag.Message = "Wystąpił bład podczas zapisu. Spróbuj ponownie.";
+                return PartialView("AddOpinionModalPartial", plantOpinion);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet]
@@ -445,66 +332,86 @@ namespace VFHCatalogMVC.Web.Controllers
             try
             {
                 _plantService.ActivatePlant(id);
-                bool viewAll = true;
-                return RedirectToAction("IndexNewPlants", "User", viewAll);
+                return RedirectToAction("IndexNewPlants", "User", new { viewAll = true });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500);
             }
         }
 
         [HttpPost]
-        public JsonResult GetPlantGroupsList(int typeId)
-        {
-            var groupsList = _plantHelperService.GetGroups(typeId);        
-
-            return Json(groupsList);
-
-        }
+        public JsonResult GetPlantGroupsList(int typeId) =>
+            Json(_plantHelperService.GetGroups(typeId));
 
         [HttpPost]
-        public JsonResult GetPlantSectionsList(int groupId, int typeId)
-        {
-
-            var sectionsList = _plantHelperService.GetSections(groupId) ;
-            
-            return Json(sectionsList);
-        }
+        public JsonResult GetPlantSectionsList(int groupId, int typeId) =>
+            Json(_plantHelperService.GetSections(groupId));
 
         [HttpPost]
-        public JsonResult GetGrowthTypes( int typeId, int groupId, int? sectionId)
-        {
-
-            var growthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType,GrowthTypeVm,GrowthTypesForListFilters,GrowthTypesForListFiltersVm>(typeId,groupId,sectionId).Skip(1);        
-
-            return Json(growthTypes);
-        }
+        public JsonResult GetGrowthTypes(int typeId, int groupId, int? sectionId) =>
+            Json(_plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(typeId, groupId, sectionId).Skip(1));
 
         [HttpPost]
-        public JsonResult GetDestinations()
-        {
-            var destList = _plantHelperService.GetDestinations().Skip(1);
-
-            return Json(destList);
-        }
+        public JsonResult GetDestinations() =>
+            Json(_plantHelperService.GetDestinations().Skip(1));
 
         [HttpPost]
-        public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId)
-        {
-            var fruitTypesList = _plantHelperService.GetPlantPropertySelectListItem<FruitType,FruitTypeVm,FruitTypeForListFilters,FruitTypeForListFiltersVm>(typeId,groupId,sectionId);
-
-            return Json(fruitTypesList);
-        }
+        public JsonResult GetFruitTypes(int typeId, int groupId, int? sectionId) =>
+            Json(_plantHelperService.GetPlantPropertySelectListItem<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(typeId, groupId, sectionId));
 
         [HttpPost]
-        public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId)
-        {
-         
-            var fruitSizesList = _plantHelperService.GetPlantPropertySelectListItem<FruitSize,FruitSizeVm,FruitSizeForListFilters,FruitSizeForListFiltersVm>(typeId,groupId,sectionId);
+        public JsonResult GetFruitSizes(int typeId, int groupId, int? sectionId) =>
+            Json(_plantHelperService.GetPlantPropertySelectListItem<FruitSize, FruitSizeVm, FruitSizeForListFilters, FruitSizeForListFiltersVm>(typeId, groupId, sectionId));
 
-            return Json(fruitSizesList);
+        #region Private Helpers
+
+        private void SetPlantLists(int typeId, int groupId)
+        {
+            ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
+            ViewBag.GroupsList = GetPlantGroupsList(typeId).Value;
+            ViewBag.SectionsList = GetPlantSectionsList(groupId, typeId).Value;
         }
+
+        private void SetViewBagIds(int typeId, int groupId, int? sectionId)
+        {
+            ViewBag.TypeId = typeId;
+            ViewBag.GroupId = groupId;
+            ViewBag.SectionId = sectionId;
+        }
+
+        private void SetLocationLists(int countryId, int regionId)
+        {
+            ViewBag.CountriesList = _userContactDataService.Countries();
+            ViewBag.RegionsList = _userContactDataService.Regions(countryId);
+            ViewBag.CitiesList = _userContactDataService.Cities(regionId);
+        }
+
+        private void SetViewBagLocationIds(int countryId, int regionId, int cityId)
+        {
+            ViewBag.CountryId = countryId;
+            ViewBag.RegionId = regionId;
+            ViewBag.CityId = cityId;
+        }
+
+        private void SetPlantFormLists()
+        {
+            ViewBag.TypesList = _plantHelperService.GetSelectList<PlantType, PlantTypesVm>();
+            ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
+            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
+        }
+
+        private void SetEditFormLists(int typeId, int groupId, int? sectionId)
+        {
+            ViewBag.ColorsList = _plantHelperService.GetSelectList<Color, ColorsVm>();
+            ViewBag.GrowingSeazons = _plantHelperService.GetSelectList<GrowingSeazon, GrowingSeazonVm>().Skip(1);
+            ViewBag.GrowthTypes = _plantHelperService.GetPlantPropertySelectListItem<GrowthType, GrowthTypeVm, GrowthTypesForListFilters, GrowthTypesForListFiltersVm>(typeId, groupId, sectionId).Skip(1);
+            ViewBag.Destinations = _plantHelperService.GetSelectList<Destination, DestinationsVm>().Skip(1);
+            ViewBag.FruitTypes = _plantHelperService.GetPlantPropertySelectListItem<FruitType, FruitTypeVm, FruitTypeForListFilters, FruitTypeForListFiltersVm>(typeId, groupId, sectionId);
+            ViewBag.FruitSizes = _plantHelperService.GetPlantPropertySelectListItem<FruitSize, FruitSizeVm, FruitSizeForListFilters, FruitSizeForListFiltersVm>(typeId, groupId, sectionId);
+        }
+
+        #endregion
     }
 }

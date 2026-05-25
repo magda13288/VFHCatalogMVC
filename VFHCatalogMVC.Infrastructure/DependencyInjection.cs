@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Domain.Interface.PlantDetailsRepositories;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 using VFHCatalogMVC.Infrastructure.Common;
 using VFHCatalogMVC.Infrastructure.Repositories;
 
@@ -12,7 +14,13 @@ namespace VFHCatalogMVC.Infrastructure
             services.AddTransient<IPlantRepository, PlantRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
-            services.AddScoped<ICurrentSessionProvider, CurrentSessionProvider>();
+            services.AddTransient<IPlantDetailRepository, PlantDetailsRepository>();
+            services.AddTransient<IPlantGrowthTypeRepository, PlantGrowthTypesRepository>();
+            services.AddTransient<IPlantGrowingSeazonRepository, PlantGrowingSeazonRepository>();
+            services.AddTransient<IPlantDestinationRepository, PlantDestinationRepository>();    
+            services.AddTransient<IPlantDetailsImagesRepository, PlantDetailsImagesRepository>();
+            services.AddTransient<IPlantOpinionRepository, PlantOpinionRepository>();
+			services.AddScoped<ICurrentSessionProvider, CurrentSessionProvider>();
 
             return services;
         }

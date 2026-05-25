@@ -15,6 +15,7 @@ using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Application.Constants;
 using VFHCatalogMVC.Domain.Interface;
 using VFHCatalogMVC.Domain.Model;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
 {

@@ -10,7 +10,8 @@ using VFHCatalogMVC.Application.Interfaces;
 using VFHCatalogMVC.Application.Interfaces.PlantInterfaces;
 using VFHCatalogMVC.Application.ViewModels.Plant;
 using VFHCatalogMVC.Application.ViewModels.Plant.PlantDetails;
-using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Domain.Interface.PlantDetailsRepositories;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 using VFHCatalogMVC.Domain.Model;
 
 namespace VFHCatalogMVC.Application.Services.PlantServices
@@ -18,7 +19,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
     public class PlantDetailsService : IPlantDetailsService
     {
         private readonly IPlantRepository _plantRepo;
-        private readonly IMapper _mapper;
+        private readonly IPlantDetailRepository _plantDetailRepo;
+        private readonly IPlantGrowthTypeRepository _plantGrowthTypeRepo;
+        private readonly IPlantGrowingSeazonRepository _plantGrowingSeazonRepo;
+        private readonly IPlantDestinationRepository _plantDestinationRepo;
+        private readonly IPlantDetailsImagesRepository _plantDetailsImagesRepo;
+        private readonly IPlantOpinionRepository _plantOpinionRepo;
+		private readonly IMapper _mapper;
         private readonly IImageService _imageService;
         private readonly UserManager<ApplicationUser> _userManager;        
         public PlantDetailsService()
@@ -28,12 +35,23 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
 
         public PlantDetailsService(
             IPlantRepository plantRepo, 
-            IMapper mapper,
+            IPlantDetailRepository plantDetailRepo,
+            IPlantGrowthTypeRepository plantGrowthTypeRepo,
+            IPlantGrowingSeazonRepository plantGrowingSeazonRepo,
+            IPlantDestinationRepository plantDestinationRepo,
+            IPlantDetailsImagesRepository plantDetailsImagesRepo,
+            IPlantOpinionRepository plantOpinionRepo,
+			IMapper mapper,
             IImageService imageService,
             UserManager<ApplicationUser> userManager
             )
         {
             _plantRepo = plantRepo;
+            _plantDetailRepo = plantDetailRepo;
+            _plantGrowthTypeRepo = plantGrowthTypeRepo;
+            _plantGrowingSeazonRepo = plantGrowingSeazonRepo;
+            _plantDestinationRepo = plantDestinationRepo;
+            _plantDetailsImagesRepo = plantDetailsImagesRepo;
             _mapper = mapper;
             _imageService = imageService;
             _userManager = userManager;
@@ -45,13 +63,13 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
             //Save to table PlantDetails
             SetPlantDetailsModelFields(model.PlantDetails);
             var newPlantDetail = _mapper.Map<PlantDetail>(model.PlantDetails);
-            var plantDetailId = _plantRepo.AddPlantDetails(newPlantDetail, model.Id);
+            var plantDetailId = _plantDetailRepo.Add(newPlantDetail, model.Id);
 
             // Add related entities
 
-            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowthTypes?.GrowthTypesIds, _plantRepo.AddPlantGrowthTypes);
-            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowingSeazons?.GrowingSeaznosIds,_plantRepo.AddPlantGrowingSeazons);
-            AddRealatedEntity(plantDetailId,model.PlantDetails.ListPlantDestinations?.DestinationsIds,_plantRepo.AddPlantDestinations);
+            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowthTypes?.GrowthTypesIds, _plantGrowthTypeRepo.Add);
+            AddRealatedEntity(plantDetailId, model.PlantDetails.ListGrowingSeazons?.GrowingSeaznosIds,_plantGrowingSeazonRepo.Add);
+            AddRealatedEntity(plantDetailId,model.PlantDetails.ListPlantDestinations?.DestinationsIds,_plantDestinationRepo.Add);
 
             if (HasElements(model.PlantDetails.Images))
             {
@@ -64,20 +82,18 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         }
         public PlantDetailsVm GetPlantDetails(int id)
         {
-            //var plantFull = _plantRepo.GetByIdFull(id);
-            //var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantFull.PlantDetail);
-            var plantDetails = _plantRepo.GetPlantDetails(id);
+            var plantDetails = _plantDetailRepo.GetById(id);
             var plantDetailsVm = _mapper.Map<PlantDetailsVm>(plantDetails);
 
             if (plantDetailsVm != null)
             {
 
-                var plant = _plantRepo.GetPlantById(id);
+                var plant = _plantRepo.GetById(id);
                 var plantVm = _mapper.Map<PlantForListVm>(plant);
 
-                plantDetailsVm.ColorName = GetNameOrNull(plantDetailsVm.ColorId, _plantRepo.GetPlantDetailsPropertyName<Color>);
-                plantDetailsVm.FruitSizeName = GetNameOrNull(plantDetailsVm.FruitSizeId, _plantRepo.GetPlantDetailsPropertyName<FruitSize>);
-                plantDetailsVm.FruitTypeName = GetNameOrNull(plantDetailsVm.FruitTypeId, _plantRepo.GetPlantDetailsPropertyName<FruitType>);
+                plantDetailsVm.ColorName = GetNameOrNull(plantDetailsVm.ColorId, _plantDetailRepo.GetPropertyName<Color>);
+                plantDetailsVm.FruitSizeName = GetNameOrNull(plantDetailsVm.FruitSizeId, _plantDetailRepo.GetPropertyName<FruitSize>);
+                plantDetailsVm.FruitTypeName = GetNameOrNull(plantDetailsVm.FruitTypeId, _plantDetailRepo.GetPropertyName<FruitType>);
                 plantDetailsVm.Plant = plantVm;
 
                 plantDetailsVm.ListGrowthTypes = BuildGrowthTypesVm(plantDetailsVm.Id);
@@ -171,16 +187,16 @@ namespace VFHCatalogMVC.Application.Services.PlantServices
         /// </summary>
         /// <param name="id">The identifier of the plant detail for which related entity names are retrieved.</param>
         /// <returns>A view model containing the names of the associated entities.</returns>
-        private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowthType>, _plantRepo.GetAllEntities<GrowthType>, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
-        private ListPlantDestinationsVm BuildDestinationsVm(int id) => new ListPlantDestinationsVm { DestinationsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantDestination>, _plantRepo.GetAllEntities<Destination>, x => x.DestinationId, x => x.Id, x => x.Name, id) };
-        private ListGrowingSeazonsVm BuildGrowingSeaznosVm(int id) => new ListGrowingSeazonsVm { GrwoingSeazonsNames = GetPropertyNames(_plantRepo.GetPlantDetailsById<PlantGrowingSeazon>, _plantRepo.GetAllEntities<GrowingSeazon>, x => x.GrowingSeazonId, x => x.Id, x => x.Name, id) };
+        private ListGrowthTypesVm BuildGrowthTypesVm(int id) => new ListGrowthTypesVm { GrowthTypesNames = GetPropertyNames(_plantDetailRepo.GetById<PlantGrowthType>, _plantRepo.GetAllEntities<GrowthType>, x => x.GrowthTypeId, x => x.Id, x => x.Name, id) };
+        private ListPlantDestinationsVm BuildDestinationsVm(int id) => new ListPlantDestinationsVm { DestinationsNames = GetPropertyNames(_plantDetailRepo.GetById<PlantDestination>, _plantRepo.GetAllEntities<Destination>, x => x.DestinationId, x => x.Id, x => x.Name, id) };
+        private ListGrowingSeazonsVm BuildGrowingSeaznosVm(int id) => new ListGrowingSeazonsVm { GrwoingSeazonsNames = GetPropertyNames(_plantDetailRepo.GetById<PlantGrowingSeazon>, _plantRepo.GetAllEntities<GrowingSeazon>, x => x.GrowingSeazonId, x => x.Id, x => x.Name, id) };
 
         private List<PlantDetailsImagesVm> BuildGalleryVm(int plantDetailsId) =>
-           _plantRepo.GetPlantDetailsImages(plantDetailsId).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
+           _plantDetailsImagesRepo.GetPlantDetailsImagesById(plantDetailsId).ProjectTo<PlantDetailsImagesVm>(_mapper.ConfigurationProvider).ToList();
 
         private List<PlantOpinionsVm> BuildOpinionsVm(int plantDetailsId)
         {
-            var plantOpinions = _plantRepo.GetPlantOpinions(plantDetailsId)
+            var plantOpinions = _plantOpinionRepo.GetAll(plantDetailsId)
                 .ProjectTo<PlantOpinionsVm>(_mapper.ConfigurationProvider)
                 .ToList();
 

@@ -137,6 +137,8 @@ namespace VFHCatalogMVC.Web
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
                 options.CallbackPath = "/signin-google"; // upewnij siê, ¿e odpowiada redirect_uri
             });
+
+            services.AddFluentValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -168,6 +170,7 @@ namespace VFHCatalogMVC.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
         }
     }
 }

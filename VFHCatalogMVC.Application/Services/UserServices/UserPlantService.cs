@@ -23,6 +23,7 @@ using VFHCatalogMVC.Application.ViewModels.User;
 using VFHCatalogMVC.Application.ViewModels.User.Common;
 using VFHCatalogMVC.Domain.Common;
 using VFHCatalogMVC.Domain.Interface;
+using VFHCatalogMVC.Domain.Interface.PlantRepositories;
 using VFHCatalogMVC.Domain.Model;
 
 
